@@ -1,0 +1,91 @@
+@startuml
+
+class Hecho{
+- título: String
+- descripción: String
+- categoría: Categoria
+- contenidoMultimedia : ???
+- lugarAcontecimiento: Coordenada
+- fechaDeCarga : LocalDateTime
+- fechaAcontecimiento: LocalDate
+- origen: Fuente
+- solicitudesEliminacion: HashSet<SolicitudDeEliminacion>
+- eliminado: boolean
+}
+
+class Categoria{
+}
+
+class Contribuyente{
+- nombre: String
+- apellido: String
+- edad: Integer
+--
++ solicitarEliminacion()
+}
+
+class Administrador {
+--
++ crearColeccion()
++ importarHechosCSV()
++ juzgarEliminacionDeHecho()
+
+}
+
+class Coleccion{
+- titulo: String
+- descripcion: String
+- hechos: HashSet<Hecho>
+- fuente: Fuente
+- criterioDePertenencia: ???
+
+}
+
+class SolicitudDeEliminacion{
+- descripcion: String
+- hecho: Hecho
+- estado : boolean
+--
++ aceptar()
++ rechazar()
+}
+
+interface Fuente{
+}
+
+class FuenteEstatica{
+
++ consultarCSV(String archivo) : List<Hecho>
++ setearFechaHecho(String fechaString,Hecho h) : void
+}
+
+class FuenteDinamica{
+}
+
+class FuenteProxy{
+}
+
+class Coordenada{
+- latitud : float
+- longitud : float
+--
++ Coordenada(float latitud, float longitud) : Coordenada
++ comoArray() : float[]
+}
+
+
+Hecho --> Coordenada
+Hecho -r->"*" Categoria
+Hecho -d->"*" SolicitudDeEliminacion
+Coleccion -->"*" Hecho
+
+Hecho --> Fuente
+Coleccion -r-> Fuente
+
+FuenteEstatica .u.|> Fuente
+FuenteDinamica .u.|> Fuente
+FuenteProxy .u.|> Fuente
+
+
+
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+
+:Visualizador: as Visualizador
+:Administrador: as Administrador
+:Contribuyente: as Contribuyente
+
+
+rectangle MetaMapa{
+    (Crear Coleccion)
+    (Importar Hechos Desde CSV)
+    (Navegar Hechos)
+    (Filtrar Hechos)
+    (Solicitar Eliminacion)
+    (Aceptar Rechazar Solicitudes)
+    (Publicar hecho)
+}
+
+Administrador --> (Crear Coleccion)
+Administrador --> (Importar Hechos Desde CSV)
+Administrador --> (Aceptar Rechazar Solicitudes)
+
+Visualizador --> (Navegar Hechos)
+(Filtrar Hechos) .u.|> (Navegar Hechos) : extends
+Contribuyente --> (Solicitar Eliminacion)
+Contribuyente --> (Publicar hecho)
+
+@enduml
