@@ -73,6 +73,15 @@ class Coordenada{
 + comoArray() : float[]
 }
 
+Object MetaMapa{
+--
++ verHecho() : Void
+}
+
+MetaMapa --> Fuente
+
+Contribuyente .d.> MetaMapa
+Administrador .d.> MetaMapa
 
 Hecho --> Coordenada
 Hecho -r->"*" Categoria
