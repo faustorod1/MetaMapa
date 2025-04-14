@@ -11,9 +11,15 @@ class Hecho{
 - origen: Fuente
 - solicitudesEliminacion: HashSet<SolicitudDeEliminacion>
 - eliminado: boolean
+
++ print(): void
++ aniadirSolicitud(SolicitudDeEliminacion solicitud): void
 }
 
 class Categoria{
+- nombre: String
+--
++ Categoria(String nombre): void
 }
 
 class Contribuyente{
@@ -21,15 +27,14 @@ class Contribuyente{
 - apellido: String
 - edad: Integer
 --
-+ solicitarEliminacion()
++ solicitarEliminacionDeHecho(Hecho hecho, String descripcion): void
 }
 
 class Administrador {
 --
-+ crearColeccion()
++ crearColeccion(String titulo, String descripcion, Fuente fuente): Coleccion
 + importarHechosCSV()
-+ juzgarEliminacionDeHecho()
-
++ juzgarEliminacionDeHecho(Hecho): void
 }
 
 class Coleccion{
@@ -39,6 +44,12 @@ class Coleccion{
 - fuente: Fuente
 - criterioDePertenencia: ???
 
+
++ getHechos(): HashSet<Hecho>
++ agregarHecho(Hecho hecho)): void
++ navegarHechos(): HashSet<Hecho>
++ navegarHechosFiltrados(??????): HashSet<Hecho>
++ eliminarHecho(Hecho hecho): void
 }
 
 class SolicitudDeEliminacion{
@@ -46,42 +57,38 @@ class SolicitudDeEliminacion{
 - hecho: Hecho
 - estado : boolean
 --
-+ aceptar()
-+ rechazar()
++ aceptar(): void
++ rechazar(): void
 }
 
-interface Fuente{
+class Fuente{
+- hechos: HashSet<Hecho>
+--
++ verHecho() : Hecho
 }
 
-class FuenteEstatica{
+Object FuenteEstatica{
 
-+ consultarCSV(String archivo) : List<Hecho>
-+ setearFechaHecho(String fechaString,Hecho h) : void
++ consultarCSV(String archivo): List<Hecho>
++ setearFechaHecho(String fechaString,Hecho h): void
 }
 
-class FuenteDinamica{
+Object FuenteDinamica{
 }
 
-class FuenteProxy{
+Object FuenteProxy{
 }
 
 class Coordenada{
 - latitud : float
 - longitud : float
 --
-+ Coordenada(float latitud, float longitud) : Coordenada
++ Coordenada(float latitud, float longitud): Coordenada
 + comoArray() : float[]
 }
 
-Object MetaMapa{
---
-+ verHecho() : Void
-}
-
-MetaMapa --> Fuente
-
-Contribuyente .d.> MetaMapa
-Administrador .d.> MetaMapa
+Contribuyente .d.> Fuente
+Administrador .d.> Fuente
 
 Hecho --> Coordenada
 Hecho -r->"*" Categoria
@@ -91,9 +98,11 @@ Coleccion -->"*" Hecho
 Hecho --> Fuente
 Coleccion -r-> Fuente
 
-FuenteEstatica .u.|> Fuente
-FuenteDinamica .u.|> Fuente
-FuenteProxy .u.|> Fuente
+Fuente -->"*" Hecho
+
+FuenteEstatica -u-|> Fuente
+FuenteDinamica -u-|> Fuente
+FuenteProxy -u-|> Fuente
 
 
 

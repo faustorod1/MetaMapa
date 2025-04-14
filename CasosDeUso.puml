@@ -21,6 +21,7 @@ Administrador --> (Aceptar Rechazar Solicitudes)
 
 Visualizador --> (Navegar Hechos)
 (Filtrar Hechos) .u.|> (Navegar Hechos) : extends
+Contribuyente --> (Navegar Hechos)
 Contribuyente --> (Solicitar Eliminacion)
 Contribuyente --> (Publicar hecho)
 
