@@ -13,7 +13,7 @@ public class Administrador {
 
   public void juzgarEliminacionDeHecho(Hecho hecho){
     HashSet<SolicitudDeEliminacion> solicitudes = hecho.getSolicitudesDeEliminacion();
-    solicitudes.forEach(solicitud -> {solicitud.preguntar()});
+    solicitudes.forEach(solicitud -> {solicitud.preguntar();});
   }
   // TODO: aceptar o rechazar solicitud
   //deberiamos tener una lista de colecciones? no c
