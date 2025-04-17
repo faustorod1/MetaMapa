@@ -17,7 +17,7 @@ public class Coleccion {
     private HashSet<Hecho> hechos;
 
     private final Fuente fuente;
-    private int criterioDePertenencia; // TODO: Cambiar, no debería ser int
+    private Criterio criterioDePertenencia; // TODO: Cambiar, no debería ser int
 
     public Coleccion(String titulo, String descripcion, Fuente fuente) {
         this.titulo = titulo;
@@ -36,9 +36,6 @@ public class Coleccion {
 
     public void navegarHechos(){
         hechos.forEach(Hecho::print);
-    }
-
-    public void navegarHechosFiltrados(){
     }
 
     public void eliminarHecho(Hecho hecho){

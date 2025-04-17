@@ -9,8 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FuenteEstatica {
+    private String archivo;
 
-    public List<Hecho> consultarCSV(String archivo){
+    public FuenteEstatica(String archivoCSV) {
+        this.archivo = archivoCSV;
+    }
+
+    public List<Hecho> consultarCSV(){
+
         List<Hecho> hechos = new ArrayList<Hecho>();
         try(CSVReader csvReader = new CSVReader(new FileReader(archivo))){
             String[] headers = csvReader.readNext();

@@ -40,7 +40,7 @@ public class Hecho {
         System.out.print("fechaDeCarga: " + fechaDeCarga + "]");
     }
 
-    public void aniadirSolicitud(SolicitudDeEliminacion solicitud) {
-        solicitudesDeEliminacion.add(solicitud);
+    public void solicitarEliminacion(String justificacion) {
+        solicitudesDeEliminacion.add(new SolicitudDeEliminacion(this, justificacion));
     }
 }
