@@ -9,27 +9,55 @@ import java.util.stream.Collectors;
 
 public class Criterio {
 
-  private ArrayList<Predicate<Hecho>> filtros;
+  private ArrayList<Predicate<Hecho>> filtros = new ArrayList<>();
 
-    //todo convertir un input en predicate
-    //ejemplo:
-    // Input: titulo = "string" ,
-    // Predicate: x -> x.titulo == titulo
+  public static Criterio nuevo() {
+    return new Criterio();
+  }
 
+  // FILTROS
+  public Criterio conCategoria(Categoria categoria) {
+    filtros.add(h -> h.getCategoria() == categoria);
+    return this;
+  }
 
+  public Criterio conFechaDeCargaDesde(LocalDateTime desde) {
+    filtros.add(h -> h.getFechaDeCarga().isAfter(desde) || h.getFechaDeCarga().isEqual(desde));
+    return this;
+  }
+
+  public Criterio conFechaDeCargaHasta(LocalDateTime hasta) {
+    filtros.add(h -> h.getFechaDeCarga().isBefore(hasta) || h.getFechaDeCarga().isEqual(hasta));
+    return this;
+  }
+
+  public Criterio conFechaDesde(LocalDate desde) {
+    filtros.add(h -> h.getFechaHecho().isAfter(desde) || h.getFechaHecho().isEqual(desde));
+    return this;
+  }
+
+  public Criterio conFechaHasta(LocalDate hasta) {
+    filtros.add(h -> h.getFechaHecho().isBefore(hasta) || h.getFechaHecho().isEqual(hasta));
+    return this;
+  }
+
+  public Criterio conTitulo(String titulo) {
+  filtros.add(h -> h.getTitulo().toLowerCase().contains(titulo.toLowerCase()));
+    return this;
+  }
+
+  public Criterio conDescripcion(String descripcion) {
+    filtros.add(h -> h.getDescripcion().toLowerCase().contains(descripcion.toLowerCase()));
+    return this;
+  }
+
+  public Criterio conLugar(Coordenada lugar) {
+    filtros.add(h -> h.getLugarAcontecimiento().equals(lugar));
+    return this;
+  }
 
   public List<Hecho> aplicarA(List<Hecho> listaOriginal){
     Predicate<Hecho> filtrosUnificados = filtros.stream().reduce(x -> true, Predicate::and);
     return listaOriginal.stream().filter(filtrosUnificados).collect(Collectors.toList());
   }
-
-
-
-  /*//Pense en Patron State. Hacer una Clase q herede para cada criterio deseado y definirle la implemetacion a "pertenece"
-  public boolean pertenece(Hecho hecho, Coleccion coleccion);*/
-
 }
-
-//No usar esto, usar Predicate y q sea atributo
-
-//Predicate<Hecho> criterio = hecho -> hecho.getCategoria().equals("Incendio forestal");

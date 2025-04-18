@@ -5,7 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class Coleccion {
@@ -14,32 +15,33 @@ public class Coleccion {
 
     @Getter(AccessLevel.NONE) // <-
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
-    private HashSet<Hecho> hechos;
+    private List<Hecho> hechos;
 
     private final Fuente fuente;
-    private Criterio criterioDePertenencia; // TODO: Cambiar, no debería ser int
+    private Criterio criterioDePertenencia;
 
-    public Coleccion(String titulo, String descripcion, Fuente fuente) {
+    public Coleccion(String titulo, String descripcion, Fuente fuente,Criterio criterioDePertenencia) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fuente = fuente;
-        //TODO: setear criterio
+        this.criterioDePertenencia = criterioDePertenencia;
+        this.hechos = criterioDePertenencia.aplicarA(fuente.getHechos());
     }
 
-    public HashSet<Hecho> getHechos() {
-        return new HashSet<>(hechos); // Creo uno nuevo para que no rompa el Set original si lo modifican
+    public List<Hecho> getHechos() {
+        return new ArrayList<Hecho>(hechos); // Creo uno nuevo para que no rompa el Set original si lo modifican
     }
 
     public void agregarHecho(Hecho hecho){
         hechos.add(hecho);
     }
 
-    public void navegarHechos(){
-        hechos.forEach(Hecho::print);
-    }
-
     public void eliminarHecho(Hecho hecho){
         hechos.remove(hecho);
+    }
+
+    public boolean pertenece(Hecho hecho){
+        return this.hechos.contains(hecho);
     }
 
     // TODO: adaptar todo el DDC

@@ -19,5 +19,7 @@ public class Coordenada {
         return new float[]{latitud, longitud};
     }
 
-    //TODO: public static Coordenada?? obtenerCoordenada() {}
+    public boolean equals(Coordenada other){
+        return this.getLatitud() == other.getLatitud() && this.getLongitud() == other.getLongitud();
+    }
 }

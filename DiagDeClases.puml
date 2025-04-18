@@ -42,12 +42,11 @@ class Coleccion{
 - descripcion: String
 - hechos: HashSet<Hecho>
 - fuente: Fuente
-- criterioDePertenencia: ???
+- criterioDePertenencia: Criterio
 
 
 + getHechos(): HashSet<Hecho>
 + agregarHecho(Hecho hecho)): void
-+ navegarHechos(): HashSet<Hecho>
 + navegarHechosFiltrados(??????): HashSet<Hecho>
 + eliminarHecho(Hecho hecho): void
 }
@@ -62,21 +61,14 @@ class SolicitudDeEliminacion{
 }
 
 class Fuente{
-- hechos: HashSet<Hecho>
---
-+ verHecho() : Hecho //este no va?
+- hechos: List<Hecho>
+
 }
 
-Object FuenteEstatica{
+class FuenteEstatica{
 
 + consultarCSV(String archivo): List<Hecho>
 + setearFechaHecho(String fechaString,Hecho h): void
-}
-
-Object FuenteDinamica{
-}
-
-Object FuenteProxy{
 }
 
 class Coordenada{

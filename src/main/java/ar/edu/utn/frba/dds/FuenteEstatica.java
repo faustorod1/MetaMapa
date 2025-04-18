@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuenteEstatica {
+public class FuenteEstatica extends Fuente {
     private String archivo;
 
     public FuenteEstatica(String archivoCSV) {
@@ -22,16 +22,20 @@ public class FuenteEstatica {
             String[] headers = csvReader.readNext();
             String[] fila = csvReader.readNext();
             do{
-                Hecho h = new Hecho();
-                h.setTitulo(fila[Hecho.Campos.TITULO.ordinal()]);
-                h.setDescripcion(fila[Hecho.Campos.DESCRIPCION.ordinal()]);
                 float latitud = Integer.parseInt(fila[Hecho.Campos.LATITUD.ordinal()]);
                 float longitud = Integer.parseInt(fila[Hecho.Campos.LONGITUD.ordinal()]);
-                Coordenada lugarAcontecimiento = new Coordenada(latitud, longitud);
-                h.setLugarAcontecimiento(lugarAcontecimiento);
                 String fechaString = fila[(Hecho.Campos.FECHADEHECHO.ordinal())];
-                this.setearFechaHecho(fechaString,h);
-                //TODO: falta settear la categoria
+                LocalDate fecha = LocalDate.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                Hecho h = Hecho.builder()
+                    .titulo(fila[Hecho.Campos.TITULO.ordinal()])
+                    .descripcion(fila[Hecho.Campos.DESCRIPCION.ordinal()])
+                    .categoria(new Categoria(fila[Hecho.Campos.CATEGORIA.ordinal()]))
+                    .lugarAcontecimiento(new Coordenada(latitud, longitud))
+                    .fechaHecho(fecha)
+                    .origen(OrigenHecho.DATASET)
+                    .build();
+
                 hechos.add(h);
                 fila = csvReader.readNext();
             } while((fila != null));
@@ -40,12 +44,4 @@ public class FuenteEstatica {
         }
         return hechos;
     }
-
-    public void setearFechaHecho(String fechaString,Hecho h) {
-        DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate fecha = LocalDate.parse(fechaString, formateador);
-        h.setFechaHecho(fecha);
-
-    }
-
 }

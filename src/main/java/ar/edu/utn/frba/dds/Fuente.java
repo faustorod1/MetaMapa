@@ -1,12 +1,16 @@
 package ar.edu.utn.frba.dds;
 
-import java.util.HashSet;
+import lombok.Getter;
 
-public class Fuente {
-  private HashSet<Hecho> hechos;
+import java.util.ArrayList;
+import java.util.List;
 
-  public Hecho verHecho(Hecho hecho){
+@Getter
+public abstract class Fuente {
+  private List<Hecho> hechos;
 
+  public List<Hecho> getHechos(){
+    return new ArrayList<Hecho>(hechos);
   }
 
 }
