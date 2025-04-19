@@ -8,18 +8,18 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuenteEstatica extends Fuente {
+public class FuenteEstatica implements Fuente {
     private String archivo;
 
     public FuenteEstatica(String archivoCSV) {
         this.archivo = archivoCSV;
     }
 
-    public List<Hecho> consultarCSV(){
+    public List<Hecho> getHechos(){
 
         List<Hecho> hechos = new ArrayList<Hecho>();
         try(CSVReader csvReader = new CSVReader(new FileReader(archivo))){
-            String[] headers = csvReader.readNext();
+            csvReader.readNext(); // Salta la primera fila que es la cabecera
             String[] fila = csvReader.readNext();
             do{
                 float latitud = Integer.parseInt(fila[Hecho.Campos.LATITUD.ordinal()]);

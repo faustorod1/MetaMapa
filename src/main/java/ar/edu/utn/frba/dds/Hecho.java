@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 
 @AllArgsConstructor
 @Builder
@@ -24,32 +26,16 @@ public class Hecho {
     private String titulo;
     private String descripcion;
     private Categoria categoria;
-    private HashSet<String> etiquetas;
-    //TODO: contenidoMultimedia
+    //TODO: contenidoMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private HashSet<SolicitudDeEliminacion> solicitudesDeEliminacion;
+    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
 
-
-    //public Hecho() {
-
-        // Hecho h = new Hecho();
-        // h.setTitulo("a");
-
-        // Hecho h2 = Hecho.nuevo()
-        //              .conTitulo("a")
-        //              .conDescripcion("b")
-        //              .conCategoria(new Categoria("c"))
-        //              .conLugar(new Coordenada(1,2))
-        //              .conFechaDeCargaDesde(LocalDateTime.now())
-        //              .conFechaDeCargaHasta(LocalDateTime.now().plusDays(1))
-        //              .conFechaDesde(LocalDate.now())
-        //              .conFechaHasta(LocalDate.now().plusDays(1))
-
-    //}
+    @Builder.Default //si el builder no le da el valor, hace esto por defecto
+    private HashSet<String> etiquetas = new HashSet<>();
 
 
     public void print(){ // Cuando podamos printear vemos de como formatteamos, tal vez como una lista.
@@ -60,9 +46,14 @@ public class Hecho {
         System.out.print("fechaHecho: " + fechaHecho + ", ");
         System.out.print("fechaDeCarga: " + fechaDeCarga + "]");
     }
+    // TODO: util para testing, quitar para la entrega
 
     public void solicitarEliminacion(String justificacion) {
-        solicitudesDeEliminacion.add(new SolicitudDeEliminacion(this, justificacion));
+        try {
+            solicitudesDeEliminacion.add(new SolicitudDeEliminacion(this, justificacion));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void etiquetar(String etiqueta){

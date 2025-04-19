@@ -7,16 +7,16 @@ import lombok.Setter;
 @Setter
 
 public class Coordenada {
-    private float latitud;
-    private float longitud;
+    private double latitud;
+    private double longitud;
 
-    public Coordenada(float latitud, float longitud) {
+    public Coordenada(double latitud, double longitud) {
         this.latitud = latitud;
         this.longitud = longitud;
     }
 
-    public float[] comoArray(){
-        return new float[]{latitud, longitud};
+    public double[] comoArray(){
+        return new double[]{latitud, longitud};
     }
 
     public boolean equals(Coordenada other){

@@ -52,7 +52,7 @@ class Coleccion{
 
 class Criterio{
 - filtros: ArrayList<Predicate<Hecho>>
-
+--
 + conCategoria(Categoria categoria): Criterio
 + conFechaDeCargaDesde(LocalDateTime desde): Criterio
 + conFechaDeCargaHasta(LocalDatTime hasta): Criterio
@@ -75,9 +75,7 @@ class SolicitudDeEliminacion{
 + rechazar(): void
 }
 
-class Fuente{
-- hechos: List<Hecho>
-
+interface Fuente{
 }
 
 class FuenteEstatica{
@@ -107,7 +105,7 @@ Hecho --> Fuente
 Coleccion -r-> Fuente
 
 Fuente -->"*" Hecho
-FuenteEstatica -u-|> Fuente
+FuenteEstatica .u.|> Fuente
 
 
 

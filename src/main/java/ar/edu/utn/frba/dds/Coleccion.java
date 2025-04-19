@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 public class Coleccion {
     private String titulo;
     private String descripcion;
+    private final Fuente fuente;
+    private Criterio criterioDePertenencia;
 
     @Getter(AccessLevel.NONE) // <-
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
-
-    private final Fuente fuente;
-    private Criterio criterioDePertenencia;
 
     public Coleccion(String titulo, String descripcion, Fuente fuente,Criterio criterioDePertenencia) {
         this.titulo = titulo;
@@ -32,18 +32,12 @@ public class Coleccion {
         return new ArrayList<Hecho>(hechos); // Creo uno nuevo para que no rompa el Set original si lo modifican
     }
 
-    public void agregarHecho(Hecho hecho){
-        hechos.add(hecho);
-    }
-
-    public void eliminarHecho(Hecho hecho){
-        hechos.remove(hecho);
-    }
-
-    public boolean pertenece(Hecho hecho){
+    public boolean contiene(Hecho hecho){
         return this.hechos.contains(hecho);
+        //TODO: revisar si este metodo es necesario
     }
 
-    // TODO: adaptar todo el DDC
-
+    public void recalcularHechos(){
+        this.hechos = criterioDePertenencia.aplicarA(fuente.getHechos());
+    }
 }

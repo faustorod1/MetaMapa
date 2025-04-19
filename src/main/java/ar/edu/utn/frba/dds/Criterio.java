@@ -11,9 +11,19 @@ public class Criterio {
 
   private ArrayList<Predicate<Hecho>> filtros = new ArrayList<>();
 
+  public Criterio() {
+    filtros.add(h -> !h.isEliminado());
+  }
+
   public static Criterio nuevo() {
     return new Criterio();
   }
+
+  public List<Hecho> aplicarA(List<Hecho> listaOriginal){
+    Predicate<Hecho> filtrosUnificados = filtros.stream().reduce(x -> true, Predicate::and);
+    return listaOriginal.stream().filter(filtrosUnificados).collect(Collectors.toList());
+  }
+
 
   // FILTROS
   public Criterio conCategoria(Categoria categoria) {
@@ -54,10 +64,6 @@ public class Criterio {
   public Criterio conLugar(Coordenada lugar) {
     filtros.add(h -> h.getLugarAcontecimiento().equals(lugar));
     return this;
-  }
-
-  public List<Hecho> aplicarA(List<Hecho> listaOriginal){
-    Predicate<Hecho> filtrosUnificados = filtros.stream().reduce(x -> true, Predicate::and);
-    return listaOriginal.stream().filter(filtrosUnificados).collect(Collectors.toList());
+    //TODO: quizas dos lugares debemos considerarlos como iguales si estan cerquita (pertenecen a una misma zona) y no si obligatoriamente tienen las mismas coordenadas exactamente
   }
 }
