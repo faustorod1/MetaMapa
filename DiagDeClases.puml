@@ -1,8 +1,8 @@
 @startuml
 
 class Hecho{
-
 + enum Origen
++ enum Campos
 - título: String
 - descripción: String
 - categoría: Categoria
@@ -13,8 +13,7 @@ class Hecho{
 - eliminado: boolean
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
 - etiquetas: HashSet<String>
-
-+ print(): void
+--
 + solicitarEliminacion(String justificacion): SolicitudDeEliminacion
 + etiquetar(String etiqueta): void
 }
@@ -43,17 +42,20 @@ class Criterio{
 
 
 class SolicitudDeEliminacion{
++ enum Estado
 - descripcion: String
 - hecho: Hecho
-- estaPendiente: boolean
+- fechaDeCarga: LocalDateTime
+- fechaDeResolucion: LocalDateTime
+- estado: Estado
 --
-+ preguntar(): void
 + aceptar(): void
 + rechazar(): void
++ estaPendiente(): boolean
 }
 
 interface Fuente{
-+ getHechos(): ArrayList<Hecho>;
++ getHechos(): ArrayList<Hecho>
 }
 
 class FuenteEstatica{
@@ -72,19 +74,20 @@ class Coordenada{
 
 
 
+Hecho --> Categoria
 Hecho --> Coordenada
-Hecho -r->"*" Categoria
-Hecho -d->"*" SolicitudDeEliminacion
-Coleccion -->"*" Hecho
-Coleccion --> Criterio
+Hecho -->"*" SolicitudDeEliminacion
 
-Hecho --> Fuente
 Coleccion -r-> Fuente
+Coleccion --> Criterio
+Coleccion -->"*" Hecho
 
-Fuente -->"*" Hecho
+Criterio .r.> Hecho
+
+SolicitudDeEliminacion --> Hecho
+
 FuenteEstatica .u.|> Fuente
-
-
+FuenteEstatica .l.> Hecho
 
 
 @enduml

@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,14 +46,14 @@ public class Hecho {
     private HashSet<String> etiquetas = new HashSet<>();
 
 
-    public void print(){ // Cuando podamos printear vemos de como formatteamos, tal vez como una lista.
+    /*public void print(){ // Cuando podamos printear vemos de como formatteamos, tal vez como una lista.
         System.out.println("[Titulo: " + titulo + ", ");
         System.out.print("descripcion: " + descripcion + ", ");
         System.out.print("categoria: " + categoria + ", ");
         System.out.print("lugarAcontecimiento: " + lugarAcontecimiento + ", ");
         System.out.print("fechaHecho: " + fechaHecho + ", ");
         System.out.print("fechaDeCarga: " + fechaDeCarga + "]");
-    }
+    }*/
     // TODO: util para testing, quitar para la entrega
 
     public SolicitudDeEliminacion solicitarEliminacion(String justificacion) {

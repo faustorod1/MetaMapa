@@ -12,6 +12,7 @@ public class Criterio {
   private ArrayList<Predicate<Hecho>> filtros = new ArrayList<>();
 
   public Criterio() {
+    // Por defecto, los criterios descartan los hechos eliminados
     filtros.add(h -> !h.isEliminado());
   }
 
