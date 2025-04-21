@@ -1,20 +1,21 @@
 @startuml
 
 class Hecho{
+
++ enum Origen
 - título: String
 - descripción: String
 - categoría: Categoria
-- etiquetas: HashSet<String>
-- contenidoMultimedia : ???
-- origen: OrigenHecho
+- origen: Origen
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDate
 - fechaDeCarga: LocalDateTime
-- solicitudesDeEliminacion: HashSet<SolicitudDeEliminacion>
 - eliminado: boolean
+- solicitudesDeEliminacion: List<SolicitudDeEliminacion>
+- etiquetas: HashSet<String>
 
 + print(): void
-+ solicitarEliminacion(String justificacion): void
++ solicitarEliminacion(String justificacion): SolicitudDeEliminacion
 + etiquetar(String etiqueta): void
 }
 
@@ -22,45 +23,21 @@ class Categoria{
 - nombre: String
 }
 
-class Contribuyente{
-- nombre: String
-- apellido: String
-- edad: Integer
---
-+ solicitarEliminacionDeHecho(Hecho hecho, String descripcion): void
-+ publicarHecho(Hecho hecho): void ???
-}
-
-class Administrador {
---
-+ crearColeccion(String titulo, String descripcion, Fuente fuente): Coleccion
-+ juzgarEliminacionDeHecho(Hecho hecho): void
-+ importarHechosDesdeCSV(): ?????
-}
 
 class Coleccion{
 - titulo: String
 - descripcion: String
-- hechos: List<Hecho>
 - fuente: Fuente
 - criterioDePertenencia: Criterio
+- hechos: List<Hecho>
 --
-+ agregarHecho(Hecho hecho)): void
-+ eliminarHecho(Hecho hecho): void
-+ pertenece(Hecho hecho): boolean
++ contiene (Hecho hecho): boolean
++ recalcularHechos(): void
 }
 
 class Criterio{
 - filtros: ArrayList<Predicate<Hecho>>
 --
-+ conCategoria(Categoria categoria): Criterio
-+ conFechaDeCargaDesde(LocalDateTime desde): Criterio
-+ conFechaDeCargaHasta(LocalDatTime hasta): Criterio
-+ conFechaDesde(LocalDateTime desde): Criterio
-+ conFechaHasta(LocalDateTime hasta): Criterio
-+ conTitulo(String titulo): Criterio
-+ conDescripcion(String descripcion): Criterio
-+ conLugar(Coordenada lugar): Criterio
 + aplicarA(List<Hecho> listaOriginal): List<Hecho>
 }
 
@@ -76,24 +53,24 @@ class SolicitudDeEliminacion{
 }
 
 interface Fuente{
++ getHechos(): ArrayList<Hecho>;
 }
 
 class FuenteEstatica{
 - archivo: String
 --
-+ consultarCSV(String archivoCSV): List<Hecho>
++ getHechos(): ArrayList<Hecho>
 }
 
 class Coordenada{
-- latitud : float
-- longitud : float
+- latitud : double
+- longitud : double
 --
-+ comoArray() : float[]
++ comoArray() : double[]
 + equals(Coordenada other): boolean
 }
 
-Contribuyente .d.> Fuente
-Administrador .d.> Fuente
+
 
 Hecho --> Coordenada
 Hecho -r->"*" Categoria

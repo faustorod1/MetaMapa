@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface Fuente {
 
-  List<Hecho> getHechos();
+  ArrayList<Hecho> getHechos();
 }

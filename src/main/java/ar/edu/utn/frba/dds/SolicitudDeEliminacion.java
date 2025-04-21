@@ -2,22 +2,27 @@ package ar.edu.utn.frba.dds;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.Scanner;
 
 @Getter
 @Setter
 public class SolicitudDeEliminacion {
+    enum Estado {
+        PENDIENTE,
+        ACEPTADA,
+        RECHAZADA
+    };
+
     private String descripcion;
     private Hecho hecho;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaDeResolucion;
-    private boolean estaPendiente;
+    private Estado estado;
 
     public SolicitudDeEliminacion(Hecho hecho, String descripcion) throws Exception {
         if(descripcion.length() >= 500) {
             this.descripcion = descripcion;
             this.hecho = hecho;
-            this.estaPendiente = true;
+            this.estado = Estado.PENDIENTE;
             this.fechaDeCarga = LocalDateTime.now();
         }else{
             throw new Exception("La descripcion debe tener al menos de 500 caracteres");
@@ -25,22 +30,23 @@ public class SolicitudDeEliminacion {
         }
     }
 
-    private void resolver(boolean aceptada){
-        if (!estaPendiente) return;
-
-        // TODO: Cómo hacer pasar 1 día antes de resolver?
-        this.fechaDeResolucion = LocalDateTime.now();
-        estaPendiente = false;
-        if (aceptada){
-            this.hecho.setEliminado(true);
-        }
-    }
 
     public void aceptar() {
-        resolver(true);
+        if (!estaPendiente()) return;
+
+        this.fechaDeResolucion = LocalDateTime.now();
+        this.estado = Estado.ACEPTADA;
+        this.hecho.setEliminado(true);
     }
 
     public void rechazar() {
-        resolver(false);
+        if (!estaPendiente()) return;
+
+        this.fechaDeResolucion = LocalDateTime.now();
+        estado = Estado.RECHAZADA;
+    }
+
+    public boolean estaPendiente() {
+        return this.estado == Estado.PENDIENTE;
     }
 }

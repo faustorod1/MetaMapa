@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,6 +20,13 @@ import java.util.List;
 
 public class Hecho {
 
+    public enum Origen {
+        CARGA_MANUAL,
+        CONTRIBUYENTE,
+        DATASET
+    }
+
+
     public enum Campos {
         TITULO, DESCRIPCION, CATEGORIA, LATITUD, LONGITUD, FECHADEHECHO
     }
@@ -27,13 +35,14 @@ public class Hecho {
     private String descripcion;
     private Categoria categoria;
     //TODO: contenidoMultimedia;
-    private OrigenHecho origen;
+    private Origen origen;
     private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
 
+    @Builder.Default
+    private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
     @Builder.Default //si el builder no le da el valor, hace esto por defecto
     private HashSet<String> etiquetas = new HashSet<>();
 
@@ -48,11 +57,14 @@ public class Hecho {
     }
     // TODO: util para testing, quitar para la entrega
 
-    public void solicitarEliminacion(String justificacion) {
+    public SolicitudDeEliminacion solicitarEliminacion(String justificacion) {
         try {
-            solicitudesDeEliminacion.add(new SolicitudDeEliminacion(this, justificacion));
+            SolicitudDeEliminacion solicitud = new SolicitudDeEliminacion(this, justificacion);
+            solicitudesDeEliminacion.add(solicitud);
+            return solicitud;
         }catch(Exception e){
             e.printStackTrace();
+            return null;
         }
     }
 

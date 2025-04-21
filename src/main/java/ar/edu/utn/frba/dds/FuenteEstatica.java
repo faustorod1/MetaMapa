@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.List;
 
 public class FuenteEstatica implements Fuente {
     private String archivo;
@@ -15,15 +14,15 @@ public class FuenteEstatica implements Fuente {
         this.archivo = archivoCSV;
     }
 
-    public List<Hecho> getHechos(){
+    public ArrayList<Hecho> getHechos(){
 
-        List<Hecho> hechos = new ArrayList<Hecho>();
+        ArrayList<Hecho> hechos = new ArrayList<Hecho>();
         try(CSVReader csvReader = new CSVReader(new FileReader(archivo))){
             csvReader.readNext(); // Salta la primera fila que es la cabecera
             String[] fila = csvReader.readNext();
             do{
-                float latitud = Integer.parseInt(fila[Hecho.Campos.LATITUD.ordinal()]);
-                float longitud = Integer.parseInt(fila[Hecho.Campos.LONGITUD.ordinal()]);
+                double latitud = Double.parseDouble(fila[Hecho.Campos.LATITUD.ordinal()]);
+                double longitud = Double.parseDouble(fila[Hecho.Campos.LONGITUD.ordinal()]);
                 String fechaString = fila[(Hecho.Campos.FECHADEHECHO.ordinal())];
                 LocalDate fecha = LocalDate.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
@@ -33,7 +32,7 @@ public class FuenteEstatica implements Fuente {
                     .categoria(new Categoria(fila[Hecho.Campos.CATEGORIA.ordinal()]))
                     .lugarAcontecimiento(new Coordenada(latitud, longitud))
                     .fechaHecho(fecha)
-                    .origen(OrigenHecho.DATASET)
+                    .origen(Hecho.Origen.DATASET)
                     .build();
 
                 hechos.add(h);

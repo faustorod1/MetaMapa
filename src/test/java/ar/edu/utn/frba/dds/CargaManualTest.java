@@ -85,9 +85,6 @@ public class CargaManualTest {
   
   @Test
   public void criteriosDePertenencia(){ // 1.2
-    //Hecho hecho0 = unaFuente.getHechos().get(0);
-    //Hecho hecho1 = unaFuente.getHechos().get(1);
-    //Hecho hecho2 = unaFuente.getHechos().get(2);
     List<Hecho> primeros3hechos = unaFuente.getHechos().subList(0,3);
 
     unaColeccion.getCriterioDePertenencia()
