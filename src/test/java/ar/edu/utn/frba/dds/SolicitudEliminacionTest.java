@@ -3,8 +3,11 @@ package ar.edu.utn.frba.dds;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class SolicitudEliminacionTest {
@@ -12,6 +15,7 @@ public class SolicitudEliminacionTest {
     private String justificacionEliminacion = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sodales sit amet felis id mollis. Sed consequat erat finibus dictum interdum. Phasellus dictum tempus dolor, sit amet consectetur ipsum. Fusce in rhoncus ligula, non molestie tellus. Etiam et nulla nisl. Nam et porta massa, id cursus nulla. Sed sed lobortis ligula. Etiam et orci auctor, elementum ipsum et, bibendum nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus luctus vel eros ut dignissim. Integer dui.";
     private SolicitudDeEliminacion solicitud;
     private Hecho hecho;
+    private LocalDateTime fechaActualFake = LocalDateTime.now();
 
     @BeforeEach
     public void init() {
@@ -28,17 +32,19 @@ public class SolicitudEliminacionTest {
 
     @Test
     public void rechazadaTest() {
-        solicitud.rechazar();
+        fechaActualFake = fechaActualFake.plusDays(1);
+        solicitud.rechazar(fechaActualFake);
         Criterio criterio = Criterio.nuevo();
         Coleccion coleccion = new Coleccion("colección de prueba", "para probar", unaFuente, criterio);
 
-        Assertions.assertTrue(coleccion.contiene(hecho));           // Verificando esto, podemos afirmar que la sol. de elim. del hecho fue rechazada!
+        Assertions.assertTrue(coleccion.contiene(hecho)); // Verificando esto, podemos afirmar que la sol. de elim. del hecho fue rechazada!
         Assertions.assertEquals(SolicitudDeEliminacion.Estado.RECHAZADA, solicitud.getEstado());
     }
 
     @Test
     public void aceptadaTest() {
-        solicitud.aceptar();
+        fechaActualFake = fechaActualFake.plusHours(2);
+        solicitud.aceptar(fechaActualFake);
         Criterio criterio = Criterio.nuevo();
         Coleccion coleccion = new Coleccion("colección de prueba", "para probar", unaFuente, criterio);
 

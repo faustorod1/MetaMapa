@@ -58,7 +58,7 @@ public class Hecho {
 
     public SolicitudDeEliminacion solicitarEliminacion(String justificacion) {
         try {
-            SolicitudDeEliminacion solicitud = new SolicitudDeEliminacion(this, justificacion);
+            SolicitudDeEliminacion solicitud = new SolicitudDeEliminacion(this, justificacion, LocalDateTime.now());
             solicitudesDeEliminacion.add(solicitud);
             return solicitud;
         }catch(Exception e){

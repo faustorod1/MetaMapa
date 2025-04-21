@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class ImportarCSVTest {
     @Test
     public void test() {
+        System.out.println(getClass().getClassLoader().getResource("dataset_prueba.csv"));
         // Busca este archivo en la carpeta "resources" del proyecto
         String path = getClass().getClassLoader().getResource("dataset_prueba.csv").getPath();
         FuenteEstatica unaFuente = new FuenteEstatica(path);

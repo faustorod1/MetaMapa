@@ -18,12 +18,12 @@ public class SolicitudDeEliminacion {
     private LocalDateTime fechaDeResolucion;
     private Estado estado;
 
-    public SolicitudDeEliminacion(Hecho hecho, String descripcion) throws Exception {
+    public SolicitudDeEliminacion(Hecho hecho, String descripcion, LocalDateTime fechaDeCarga) throws Exception {
         if(descripcion.length() >= 500) {
             this.descripcion = descripcion;
             this.hecho = hecho;
             this.estado = Estado.PENDIENTE;
-            this.fechaDeCarga = LocalDateTime.now();
+            this.fechaDeCarga = fechaDeCarga;
         }else{
             throw new Exception("La descripcion debe tener al menos de 500 caracteres");
             //TODO: Revisar si es correcto lanzar excepcion
@@ -31,18 +31,18 @@ public class SolicitudDeEliminacion {
     }
 
 
-    public void aceptar() {
+    public void aceptar(LocalDateTime fechaDeResolucion) {
         if (!estaPendiente()) return;
 
-        this.fechaDeResolucion = LocalDateTime.now();
+        this.fechaDeResolucion = fechaDeResolucion;
         this.estado = Estado.ACEPTADA;
         this.hecho.setEliminado(true);
     }
 
-    public void rechazar() {
+    public void rechazar(LocalDateTime fechaDeResolucion) {
         if (!estaPendiente()) return;
 
-        this.fechaDeResolucion = LocalDateTime.now();
+        this.fechaDeResolucion = fechaDeResolucion;
         estado = Estado.RECHAZADA;
     }
 
