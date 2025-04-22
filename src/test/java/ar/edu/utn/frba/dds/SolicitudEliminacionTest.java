@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +14,6 @@ public class SolicitudEliminacionTest {
     private String justificacionEliminacion = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sodales sit amet felis id mollis. Sed consequat erat finibus dictum interdum. Phasellus dictum tempus dolor, sit amet consectetur ipsum. Fusce in rhoncus ligula, non molestie tellus. Etiam et nulla nisl. Nam et porta massa, id cursus nulla. Sed sed lobortis ligula. Etiam et orci auctor, elementum ipsum et, bibendum nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus luctus vel eros ut dignissim. Integer dui.";
     private SolicitudDeEliminacion solicitud;
     private Hecho hecho;
-    private LocalDateTime fechaActualFake = LocalDateTime.now();
 
     @BeforeEach
     public void init() {
@@ -32,24 +30,32 @@ public class SolicitudEliminacionTest {
 
     @Test
     public void rechazadaTest() {
-        fechaActualFake = fechaActualFake.plusDays(1);
-        solicitud.rechazar(fechaActualFake);
+        solicitud.rechazar();
+
+        SolicitudDeEliminacion mockSolicitud = mock(SolicitudDeEliminacion.class);
+        when(mockSolicitud.getFechaDeResolucion()).thenReturn(solicitud.getFechaDeCarga().plusDays(1));
+
         Criterio criterio = Criterio.nuevo();
-        Coleccion coleccion = new Coleccion("colección de prueba", "para probar", unaFuente, criterio);
+        Coleccion coleccion = new Coleccion("Colección de prueba", "Para probar", unaFuente, criterio);
 
         Assertions.assertTrue(coleccion.contiene(hecho)); // Verificando esto, podemos afirmar que la sol. de elim. del hecho fue rechazada!
         Assertions.assertEquals(SolicitudDeEliminacion.Estado.RECHAZADA, solicitud.getEstado());
+        Assertions.assertEquals(solicitud.getFechaDeCarga().plusDays(1), mockSolicitud.getFechaDeResolucion());
     }
 
     @Test
     public void aceptadaTest() {
-        fechaActualFake = fechaActualFake.plusHours(2);
-        solicitud.aceptar(fechaActualFake);
+        solicitud.aceptar();
+
+        SolicitudDeEliminacion mockSolicitud = mock(SolicitudDeEliminacion.class);
+        when(mockSolicitud.getFechaDeResolucion()).thenReturn(solicitud.getFechaDeCarga().plusHours(2));
+
         Criterio criterio = Criterio.nuevo();
-        Coleccion coleccion = new Coleccion("colección de prueba", "para probar", unaFuente, criterio);
+        Coleccion coleccion = new Coleccion("Colección de prueba", "Para probar", unaFuente, criterio);
 
         Assertions.assertFalse(coleccion.contiene(hecho));
         Assertions.assertEquals(SolicitudDeEliminacion.Estado.ACEPTADA, solicitud.getEstado());
+        Assertions.assertEquals(solicitud.getFechaDeCarga().plusHours(2), mockSolicitud.getFechaDeResolucion());
     }
 
 

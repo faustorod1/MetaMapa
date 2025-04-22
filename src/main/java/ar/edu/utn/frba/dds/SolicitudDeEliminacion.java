@@ -31,18 +31,18 @@ public class SolicitudDeEliminacion {
     }
 
 
-    public void aceptar(LocalDateTime fechaDeResolucion) {
+    public void aceptar() {
         if (!estaPendiente()) return;
 
-        this.fechaDeResolucion = fechaDeResolucion;
+        this.fechaDeResolucion = LocalDateTime.now();
         this.estado = Estado.ACEPTADA;
         this.hecho.setEliminado(true);
     }
 
-    public void rechazar(LocalDateTime fechaDeResolucion) {
+    public void rechazar() {
         if (!estaPendiente()) return;
 
-        this.fechaDeResolucion = fechaDeResolucion;
+        this.fechaDeResolucion = LocalDateTime.now();
         estado = Estado.RECHAZADA;
     }
 
