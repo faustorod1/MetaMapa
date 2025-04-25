@@ -17,33 +17,32 @@ public class SolicitudDeEliminacion {
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaDeResolucion;
     private Estado estado;
+    private Contribuyente solicitante;
+    private Administrador administradorQueResolvio;
 
-    public SolicitudDeEliminacion(Hecho hecho, String descripcion, LocalDateTime fechaDeCarga) throws Exception {
+    public SolicitudDeEliminacion(Hecho hecho, String descripcion, Contribuyente solicitante) throws Exception {
         if(descripcion.length() >= 500) {
             this.descripcion = descripcion;
             this.hecho = hecho;
             this.estado = Estado.PENDIENTE;
-            this.fechaDeCarga = fechaDeCarga;
+            this.fechaDeCarga = LocalDateTime.now();
+            this.solicitante = solicitante;
         }else{
-            throw new Exception("La descripcion debe tener al menos de 500 caracteres");
+            throw new Exception("La descripción debe tener al menos de 500 caracteres");
             //TODO: Revisar si es correcto lanzar excepcion
         }
     }
 
 
-    public void aceptar() {
-        if (!estaPendiente()) return;
+    public void resolver(Estado estado, Administrador administrador) {
+        if (this.estado != Estado.PENDIENTE) { return; }
 
         this.fechaDeResolucion = LocalDateTime.now();
-        this.estado = Estado.ACEPTADA;
-        this.hecho.setEliminado(true);
-    }
+        this.estado = estado;
+        this.administradorQueResolvio = administrador;
 
-    public void rechazar() {
-        if (!estaPendiente()) return;
+        if (this.estado == Estado.ACEPTADA) { this.hecho.setEliminado(true); }
 
-        this.fechaDeResolucion = LocalDateTime.now();
-        estado = Estado.RECHAZADA;
     }
 
     public boolean estaPendiente() {

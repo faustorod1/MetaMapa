@@ -1,5 +1,9 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.hechos.Categoria;
+import ar.edu.utn.frba.dds.hechos.Coleccion;
+import ar.edu.utn.frba.dds.hechos.Coordenada;
+import ar.edu.utn.frba.dds.hechos.Hecho;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;

@@ -1,20 +1,20 @@
 @startuml
 
 class Hecho{
-+ enum Origen
-+ enum Campos
 - título: String
 - descripción: String
 - categoría: Categoria
+- contenidoMultimedia: ContenidoMultimedia
 - origen: Origen
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDate
 - fechaDeCarga: LocalDateTime
 - eliminado: boolean
+- contribuyente: Contribuyente
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
-- etiquetas: HashSet<String>
+- etiquetas: HashSet<Etiqueta>
 --
-+ solicitarEliminacion(String justificacion): SolicitudDeEliminacion
++ solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
 + etiquetar(String etiqueta): void
 }
 
@@ -34,6 +34,8 @@ class Coleccion{
 + recalcularHechos(): void
 }
 
+class ContenidoMultimedia{}
+
 class Criterio{
 - filtros: ArrayList<Predicate<Hecho>>
 --
@@ -42,7 +44,6 @@ class Criterio{
 
 
 class SolicitudDeEliminacion{
-+ enum Estado
 - descripcion: String
 - hecho: Hecho
 - fechaDeCarga: LocalDateTime
@@ -59,35 +60,61 @@ interface Fuente{
 }
 
 class FuenteEstatica{
-- archivo: String
+- pathArchivo: String
 --
 + getHechos(): ArrayList<Hecho>
 }
 
 class Coordenada{
-- latitud : double
-- longitud : double
+- latitud: double
+- longitud: double
 --
-+ comoArray() : double[]
++ comoArray(): double[]
 + equals(Coordenada other): boolean
 }
+
+class Administrador{
+- nombre: String
+- apellido: String
+}
+
+class Contribuyente{
+- nombre: String
+- apellido: String
+- edad: int
+}
+
+class CSVReader{
+ + leer(pathArchivo: String): static ArrayList<String[]>
+ + leer(pathArchivo: String): ArrayList<Hecho>
+}
+
+
+
 
 
 
 Hecho --> Categoria
 Hecho --> Coordenada
 Hecho -->"*" SolicitudDeEliminacion
+Hecho --> ContenidoMultimedia
+Hecho --> Origen
+Hecho -->"*" Etiqueta
+Hecho --> Contribuyente
 
 Coleccion -r-> Fuente
 Coleccion --> Criterio
 Coleccion -->"*" Hecho
+
 
 Criterio .r.> Hecho
 
 SolicitudDeEliminacion --> Hecho
 
 FuenteEstatica .u.|> Fuente
-FuenteEstatica .l.> Hecho
+FuenteEstatica ..> CSVReader
+
+CSVReader --> CamposHecho
 
 
 @enduml

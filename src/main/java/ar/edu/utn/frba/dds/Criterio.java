@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.hechos.Categoria;
+import ar.edu.utn.frba.dds.hechos.Hecho;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,6 +68,6 @@ public class Criterio {
   public Criterio conLugar(Coordenada lugar) {
     filtros.add(h -> h.getLugarAcontecimiento().equals(lugar));
     return this;
-    //TODO: quizas dos lugares debemos considerarlos como iguales si estan cerquita (pertenecen a una misma zona) y no si obligatoriamente tienen las mismas coordenadas exactamente
+    //TODO: implementar un algoritmo q filtre por un radio cercano a una coordenada en vez de q sean literalmente iguales
   }
 }

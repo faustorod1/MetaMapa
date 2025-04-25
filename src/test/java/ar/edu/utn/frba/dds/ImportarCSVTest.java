@@ -1,5 +1,7 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.fuentes.FuenteEstatica;
+import ar.edu.utn.frba.dds.hechos.Hecho;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
