@@ -5,7 +5,7 @@ class Hecho{
 - descripción: String
 - categoría: Categoria
 - contenidoMultimedia: ContenidoMultimedia
-- origen: Origen
+- origen: OrigenHecho
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDate
 - fechaDeCarga: LocalDateTime
@@ -17,11 +17,28 @@ class Hecho{
 + solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
 + etiquetar(String etiqueta): void
 }
+enum OrigenHecho{
+CARGA_MANUAL
+CONTRIBUYENTE
+DATASET
+}
+
+enum CamposHecho{
+ TITULO
+ DESCRIPCION
+ CATEGORIA
+ LATITUD
+ LONGITUD
+ FECHADEHECHO
+}
 
 class Categoria{
 - nombre: String
 }
 
+class Etiqueta{
+- nombre: String
+}
 
 class Coleccion{
 - titulo: String
@@ -42,17 +59,22 @@ class Criterio{
 + aplicarA(List<Hecho> listaOriginal): List<Hecho>
 }
 
-
 class SolicitudDeEliminacion{
 - descripcion: String
 - hecho: Hecho
 - fechaDeCarga: LocalDateTime
 - fechaDeResolucion: LocalDateTime
-- estado: Estado
+- estado: EstadoSolicitud
+- contribuyente: Contribuyente
+- administradorQueResolvio: Administrador
 --
-+ aceptar(): void
-+ rechazar(): void
-+ estaPendiente(): boolean
++ resolver(Estado estado, Administrador administrador): void
+}
+
+enum EstadoSolicitud {
+PENDIENTE
+ACEPTADA
+RECHAZADA
 }
 
 interface Fuente{
@@ -98,7 +120,7 @@ Hecho --> Categoria
 Hecho --> Coordenada
 Hecho -->"*" SolicitudDeEliminacion
 Hecho --> ContenidoMultimedia
-Hecho --> Origen
+Hecho --> OrigenHecho
 Hecho -->"*" Etiqueta
 Hecho --> Contribuyente
 
@@ -110,6 +132,9 @@ Coleccion -->"*" Hecho
 Criterio .r.> Hecho
 
 SolicitudDeEliminacion --> Hecho
+SolicitudDeEliminacion --> EstadoSolicitud
+SolicitudDeEliminacion --> Contribuyente
+SolicitudDeEliminacion --> Administrador
 
 FuenteEstatica .u.|> Fuente
 FuenteEstatica ..> CSVReader

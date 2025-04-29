@@ -1,7 +1,5 @@
-package ar.edu.utn.frba.dds.hechos;
+package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.usuarios.Contribuyente;
-import ar.edu.utn.frba.dds.Coordenada;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,8 +1,5 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.hechos.Categoria;
-import ar.edu.utn.frba.dds.hechos.Hecho;
-
 import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.usuarios;
+package ar.edu.utn.frba.dds;
 
 public class Contribuyente  {
     private String nombre;

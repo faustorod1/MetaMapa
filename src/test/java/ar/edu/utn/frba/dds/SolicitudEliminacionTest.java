@@ -1,13 +1,14 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.hechos;
-import ar.edu.utn.frba.dds.hechos.*;
-import ar.edu.utn.frba.dds.usuarios.Contribuyente;
+import ar.edu.utn.frba.dds.*;
 
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static ar.edu.utn.frba.dds.SolicitudDeEliminacion.Estado.ACEPTADA;
+import static ar.edu.utn.frba.dds.SolicitudDeEliminacion.Estado.RECHAZADA;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ public class SolicitudEliminacionTest {
     private String justificacionEliminacion = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sodales sit amet felis id mollis. Sed consequat erat finibus dictum interdum. Phasellus dictum tempus dolor, sit amet consectetur ipsum. Fusce in rhoncus ligula, non molestie tellus. Etiam et nulla nisl. Nam et porta massa, id cursus nulla. Sed sed lobortis ligula. Etiam et orci auctor, elementum ipsum et, bibendum nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus luctus vel eros ut dignissim. Integer dui.";
     private SolicitudDeEliminacion solicitud;
     private Hecho hecho;
+    private Administrador administrador = new Administrador();
 
     @BeforeEach
     public void init() {
@@ -29,12 +31,14 @@ public class SolicitudEliminacionTest {
                 .fechaHecho(LocalDate.parse("05/07/2005", DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
         unaFuente.addHecho(hecho);
-        solicitud = hecho.solicitarEliminacion(justificacionEliminacion);
+        solicitud = hecho.solicitarEliminacion(justificacionEliminacion, Contribuyente.ANONIMO);
+        administrador.setNombre("Esteban");
+        administrador.setApellido("Quito");
     }
 
     @Test
     public void rechazadaTest() {
-        solicitud.rechazar();
+        solicitud.resolver(RECHAZADA, administrador);
 
         SolicitudDeEliminacion mockSolicitud = mock(SolicitudDeEliminacion.class);
         when(mockSolicitud.getFechaDeResolucion()).thenReturn(solicitud.getFechaDeCarga().plusDays(1));
@@ -43,13 +47,13 @@ public class SolicitudEliminacionTest {
         Coleccion coleccion = new Coleccion("Colección de prueba", "Para probar", unaFuente, criterio);
 
         Assertions.assertTrue(coleccion.contiene(hecho)); // Verificando esto, podemos afirmar que la sol. de elim. del hecho fue rechazada!
-        Assertions.assertEquals(SolicitudDeEliminacion.Estado.RECHAZADA, solicitud.getEstado());
+        Assertions.assertEquals(RECHAZADA, solicitud.getEstado());
         Assertions.assertEquals(solicitud.getFechaDeCarga().plusDays(1), mockSolicitud.getFechaDeResolucion());
     }
 
     @Test
     public void aceptadaTest() {
-        solicitud.aceptar();
+        solicitud.resolver(ACEPTADA, administrador);
 
         SolicitudDeEliminacion mockSolicitud = mock(SolicitudDeEliminacion.class);
         when(mockSolicitud.getFechaDeResolucion()).thenReturn(solicitud.getFechaDeCarga().plusHours(2));

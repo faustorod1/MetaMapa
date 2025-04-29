@@ -1,7 +1,6 @@
-package ar.edu.utn.frba.dds.fuentes;
+package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.CSVReader;
-import ar.edu.utn.frba.dds.hechos.Hecho;
 
 import java.util.ArrayList;
 

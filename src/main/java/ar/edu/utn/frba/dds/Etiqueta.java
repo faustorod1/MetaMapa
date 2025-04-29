@@ -1,3 +1,3 @@
-package ar.edu.utn.frba.dds.hechos;
+package ar.edu.utn.frba.dds;
 
 public record Etiqueta(String nombre) {}

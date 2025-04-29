@@ -1,6 +1,4 @@
-package ar.edu.utn.frba.dds.fuentes;
-
-import ar.edu.utn.frba.dds.hechos.Hecho;
+package ar.edu.utn.frba.dds;
 
 import java.util.ArrayList;
 

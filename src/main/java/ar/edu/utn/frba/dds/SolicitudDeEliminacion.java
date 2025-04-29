@@ -1,4 +1,5 @@
 package ar.edu.utn.frba.dds;
+
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
@@ -45,7 +46,4 @@ public class SolicitudDeEliminacion {
 
     }
 
-    public boolean estaPendiente() {
-        return this.estado == Estado.PENDIENTE;
-    }
 }

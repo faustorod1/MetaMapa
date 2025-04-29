@@ -1,9 +1,5 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.hechos.Categoria;
-import ar.edu.utn.frba.dds.hechos.Coleccion;
-import ar.edu.utn.frba.dds.hechos.Coordenada;
-import ar.edu.utn.frba.dds.hechos.Hecho;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -124,11 +120,14 @@ public class CargaManualTest {
     ArrayList<Hecho> hechos = (ArrayList<Hecho>) crit.aplicarA(unaColeccion.getHechos());
     Hecho miHecho = hechos.get(0);
 
-    miHecho.etiquetar("Olavarría");
-    miHecho.etiquetar("Grave");
+    Etiqueta olavarria = new Etiqueta("Olavarría");
+    Etiqueta grave = new Etiqueta("Grave");
 
-    Assertions.assertTrue(miHecho.getEtiquetas().contains("Olavarría"));
-    Assertions.assertTrue(miHecho.getEtiquetas().contains("Grave"));
+    miHecho.etiquetar(olavarria);
+    miHecho.etiquetar(grave);
+
+    Assertions.assertTrue(miHecho.getEtiquetas().contains(olavarria));
+    Assertions.assertTrue(miHecho.getEtiquetas().contains(grave));
 
   }
 }
