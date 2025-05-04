@@ -15,7 +15,7 @@ class Hecho{
 - etiquetas: HashSet<Etiqueta>
 --
 + solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
-+ etiquetar(String etiqueta): void
++ etiquetar(Etiqueta etiqueta): void
 }
 enum OrigenHecho{
 CARGA_MANUAL
@@ -67,6 +67,7 @@ class SolicitudDeEliminacion{
 - estado: EstadoSolicitud
 - contribuyente: Contribuyente
 - administradorQueResolvio: Administrador
+- CANT_MINIMA_DE_CARACTERES: int = 500
 --
 + resolver(Estado estado, Administrador administrador): void
 }
@@ -103,7 +104,9 @@ class Administrador{
 class Contribuyente{
 - nombre: String
 - apellido: String
-- edad: int
+- fechaNacimiento: LocalDate
+
++ getEdad(): int
 }
 
 class CSVReader{

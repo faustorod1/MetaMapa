@@ -12,6 +12,6 @@ public class FuenteDeCargaManual implements Fuente { // Esta es una fuente hecha
 
   public void addHecho(Hecho hecho) {
     hechos.add(hecho);
-    hecho.setOrigen(Hecho.Origen.CARGA_MANUAL);
+    hecho.setOrigen(OrigenHecho.CARGA_MANUAL);
   }
 }

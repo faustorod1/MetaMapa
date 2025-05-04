@@ -7,10 +7,6 @@ import java.util.ArrayList;
 
 public class CSVReader {
 
-    public enum CamposHecho {
-        TITULO, DESCRIPCION, CATEGORIA, LATITUD, LONGITUD, FECHADEHECHO
-    }
-
     public static ArrayList<String[]> leer(String pathArchivo) {        // Lectura de CSV genérico
         ArrayList<String[]> filas = new ArrayList<>();
         try(com.opencsv.CSVReader csvReader = new com.opencsv.CSVReader(new FileReader(pathArchivo))){
@@ -45,7 +41,7 @@ public class CSVReader {
                     .categoria(new Categoria(fila[CamposHecho.CATEGORIA.ordinal()]))
                     .lugarAcontecimiento(new Coordenada(latitud, longitud))
                     .fechaHecho(fecha)
-                    .origen(Hecho.Origen.DATASET)
+                    .origen(OrigenHecho.DATASET)
                     .build();
 
             hechos.add(h);

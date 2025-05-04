@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static ar.edu.utn.frba.dds.SolicitudDeEliminacion.Estado.ACEPTADA;
-import static ar.edu.utn.frba.dds.SolicitudDeEliminacion.Estado.RECHAZADA;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
@@ -38,7 +36,7 @@ public class SolicitudEliminacionTest {
 
     @Test
     public void rechazadaTest() {
-        solicitud.resolver(RECHAZADA, administrador);
+        solicitud.resolver(EstadoSolicitud.RECHAZADA, administrador);
 
         SolicitudDeEliminacion mockSolicitud = mock(SolicitudDeEliminacion.class);
         when(mockSolicitud.getFechaDeResolucion()).thenReturn(solicitud.getFechaDeCarga().plusDays(1));
@@ -47,13 +45,13 @@ public class SolicitudEliminacionTest {
         Coleccion coleccion = new Coleccion("Colección de prueba", "Para probar", unaFuente, criterio);
 
         Assertions.assertTrue(coleccion.contiene(hecho)); // Verificando esto, podemos afirmar que la sol. de elim. del hecho fue rechazada!
-        Assertions.assertEquals(RECHAZADA, solicitud.getEstado());
+        Assertions.assertEquals(EstadoSolicitud.RECHAZADA, solicitud.getEstado());
         Assertions.assertEquals(solicitud.getFechaDeCarga().plusDays(1), mockSolicitud.getFechaDeResolucion());
     }
 
     @Test
     public void aceptadaTest() {
-        solicitud.resolver(ACEPTADA, administrador);
+        solicitud.resolver(EstadoSolicitud.ACEPTADA, administrador);
 
         SolicitudDeEliminacion mockSolicitud = mock(SolicitudDeEliminacion.class);
         when(mockSolicitud.getFechaDeResolucion()).thenReturn(solicitud.getFechaDeCarga().plusHours(2));
@@ -62,7 +60,7 @@ public class SolicitudEliminacionTest {
         Coleccion coleccion = new Coleccion("Colección de prueba", "Para probar", unaFuente, criterio);
 
         Assertions.assertFalse(coleccion.contiene(hecho));
-        Assertions.assertEquals(SolicitudDeEliminacion.Estado.ACEPTADA, solicitud.getEstado());
+        Assertions.assertEquals(EstadoSolicitud.ACEPTADA, solicitud.getEstado());
         Assertions.assertEquals(solicitud.getFechaDeCarga().plusHours(2), mockSolicitud.getFechaDeResolucion());
     }
 

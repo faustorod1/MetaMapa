@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,7 @@ public class Criterio {
   }
 
   public Criterio conTitulo(String titulo) {
-  filtros.add(h -> h.getTitulo().toLowerCase().contains(titulo.toLowerCase()));
+    filtros.add(h -> h.getTitulo().toLowerCase().contains(titulo.toLowerCase()));
     return this;
   }
 

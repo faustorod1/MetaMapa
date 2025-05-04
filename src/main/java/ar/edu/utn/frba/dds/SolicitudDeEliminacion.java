@@ -3,29 +3,26 @@ package ar.edu.utn.frba.dds;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import ar.edu.utn.frba.dds.EstadoSolicitud;
 
 @Getter
 @Setter
 public class SolicitudDeEliminacion {
-    enum Estado {
-        PENDIENTE,
-        ACEPTADA,
-        RECHAZADA
-    };
 
     private String descripcion;
     private Hecho hecho;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaDeResolucion;
-    private Estado estado;
+    private EstadoSolicitud estado;
     private Contribuyente solicitante;
     private Administrador administradorQueResolvio;
+    private final int CANT_MINIMA_DE_CARACTERES = 500;
 
     public SolicitudDeEliminacion(Hecho hecho, String descripcion, Contribuyente solicitante) throws Exception {
-        if(descripcion.length() >= 500) {
+        if(descripcion.length() >= CANT_MINIMA_DE_CARACTERES) {
             this.descripcion = descripcion;
             this.hecho = hecho;
-            this.estado = Estado.PENDIENTE;
+            this.estado = EstadoSolicitud.PENDIENTE;
             this.fechaDeCarga = LocalDateTime.now();
             this.solicitante = solicitante;
         }else{
@@ -35,14 +32,14 @@ public class SolicitudDeEliminacion {
     }
 
 
-    public void resolver(Estado estado, Administrador administrador) {
-        if (this.estado != Estado.PENDIENTE) { return; }
+    public void resolver(EstadoSolicitud estado, Administrador administrador) {
+        if (this.estado != EstadoSolicitud.PENDIENTE) { return; }
 
         this.fechaDeResolucion = LocalDateTime.now();
         this.estado = estado;
         this.administradorQueResolvio = administrador;
 
-        if (this.estado == Estado.ACEPTADA) { this.hecho.setEliminado(true); }
+        if (this.estado == EstadoSolicitud.ACEPTADA) { this.hecho.setEliminado(true); }
 
     }
 
