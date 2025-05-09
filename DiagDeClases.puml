@@ -56,7 +56,56 @@ class ContenidoMultimedia{}
 class Criterio{
 - filtros: ArrayList<Predicate<Hecho>>
 --
++ addFiltro(Filtro filtro): Criterio
 + aplicarA(List<Hecho> listaOriginal): List<Hecho>
+}
+
+abstract class Filtro{
+--
++ aplicar(List<Hecho> lista): List<Hecho>
+}
+
+class FiltroPorEliminados{
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorCategoria{
+- categoria : Categoria
+--
++  aplicar(List<Hecho> hechos): List<Hecho>
+}
+
+class FiltroPorDescripcion{
+- descripcion : String
+--
++  aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorFechaDeCarga{
+- desde : LocalDateTime
+- hasta : LocalDateTime
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorFechaHecho{
+- desde : LocalDate
+- hasta : LocalDate
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorTitulo{
+- titulo : String
+--
++  aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorUbicacion{
+- lugar : Coordenada
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
 }
 
 class SolicitudDeEliminacion{
@@ -119,11 +168,11 @@ class CSVReader{
 
 
 
-Hecho --> Categoria
+Hecho -r-> Categoria
 Hecho --> Coordenada
 Hecho -->"*" SolicitudDeEliminacion
 Hecho --> ContenidoMultimedia
-Hecho --> OrigenHecho
+Hecho -r-> OrigenHecho
 Hecho -->"*" Etiqueta
 Hecho --> Contribuyente
 
@@ -133,16 +182,25 @@ Coleccion -->"*" Hecho
 
 
 Criterio .r.> Hecho
+Criterio -->"*" Filtro
+
+FiltroPorCategoria -u-|> Filtro
+FiltroPorDescripcion -u-|> Filtro
+FiltroPorEliminados -u-|> Filtro
+FiltroPorFechaDeCarga -u-|> Filtro
+FiltroPorFechaHecho -u-|> Filtro
+FiltroPorTitulo -u-|> Filtro
+FiltroPorUbicacion -u-|> Filtro
 
 SolicitudDeEliminacion --> Hecho
-SolicitudDeEliminacion --> EstadoSolicitud
+SolicitudDeEliminacion -d-> EstadoSolicitud
 SolicitudDeEliminacion --> Contribuyente
 SolicitudDeEliminacion --> Administrador
 
 FuenteEstatica .u.|> Fuente
 FuenteEstatica ..> CSVReader
 
-CSVReader --> CamposHecho
+CSVReader -d-> CamposHecho
 
 
 @enduml

@@ -88,14 +88,14 @@ public class CargaManualTest {
     List<Hecho> primeros3hechos = unaFuente.getHechos().subList(0,3);
 
     unaColeccion.getCriterioDePertenencia()
-        .conFechaDesde(LocalDate.parse("01/01/2000", DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-        .conFechaHasta(LocalDate.parse("01/01/2010", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        .addFiltro(new FiltroPorFechaHecho("01/01/2000", "01/01/2010"));
     unaColeccion.recalcularHechos();
 
     Assertions.assertEquals(3, this.unaColeccion.getHechos().size());
     Assertions.assertTrue(unaColeccion.getHechos().containsAll(primeros3hechos));
 
-    unaColeccion.getCriterioDePertenencia().conCategoria(caidaAeronave);
+    unaColeccion.getCriterioDePertenencia()
+        .addFiltro(new FiltroPorCategoria(caidaAeronave));
     unaColeccion.recalcularHechos();
 
     Assertions.assertEquals(2, this.unaColeccion.getHechos().size());
@@ -106,8 +106,8 @@ public class CargaManualTest {
   @Test
   public void filtrosDelVisualizador() { // 1.3
     unaColeccion.getCriterioDePertenencia()
-        .conCategoria(caidaAeronave)
-        .conTitulo("un título");
+        .addFiltro(new FiltroPorCategoria(caidaAeronave))
+        .addFiltro(new FiltroPorTitulo("un titulo"));
     unaColeccion.recalcularHechos();
 
     Assertions.assertTrue(unaColeccion.getHechos().isEmpty());
@@ -116,8 +116,8 @@ public class CargaManualTest {
   @Test
   public void etiquetas(){ // 1.4
     Criterio crit = Criterio.nuevo()
-        .conTitulo("Caída de aeronave impacta en Olavarría");
-    ArrayList<Hecho> hechos = (ArrayList<Hecho>) crit.aplicarA(unaColeccion.getHechos());
+        .addFiltro(new FiltroPorTitulo("Caída de aeronave impacta en Olavarría"));
+    ArrayList<Hecho> hechos = new ArrayList<>(crit.aplicarA(unaColeccion.getHechos()));
     Hecho miHecho = hechos.get(0);
 
     Etiqueta olavarria = new Etiqueta("Olavarría");
