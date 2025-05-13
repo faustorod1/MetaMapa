@@ -4,106 +4,203 @@ class Hecho{
 - título: String
 - descripción: String
 - categoría: Categoria
-- contenidoMultimedia : ???
+- contenidoMultimedia: ContenidoMultimedia
+- origen: OrigenHecho
 - lugarAcontecimiento: Coordenada
-- fechaDeCarga : LocalDateTime
-- fechaAcontecimiento: LocalDate
-- origen: Fuente
-- solicitudesEliminacion: HashSet<SolicitudDeEliminacion>
+- fechaHecho: LocalDate
+- fechaDeCarga: LocalDateTime
 - eliminado: boolean
+- contribuyente: Contribuyente
+- solicitudesDeEliminacion: List<SolicitudDeEliminacion>
+- etiquetas: HashSet<Etiqueta>
+--
++ solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
++ etiquetar(Etiqueta etiqueta): void
+}
+enum OrigenHecho{
+CARGA_MANUAL
+CONTRIBUYENTE
+DATASET
+}
 
-+ print(): void
-+ aniadirSolicitud(SolicitudDeEliminacion solicitud): void
+enum CamposHecho{
+ TITULO
+ DESCRIPCION
+ CATEGORIA
+ LATITUD
+ LONGITUD
+ FECHADEHECHO
 }
 
 class Categoria{
 - nombre: String
---
-+ Categoria(String nombre): void
 }
 
-class Contribuyente{
+class Etiqueta{
 - nombre: String
-- apellido: String
-- edad: Integer
---
-+ solicitarEliminacionDeHecho(Hecho hecho, String descripcion): void
-}
-
-class Administrador {
---
-+ crearColeccion(String titulo, String descripcion, Fuente fuente): Coleccion
-+ importarHechosCSV()
-+ juzgarEliminacionDeHecho(Hecho): void
 }
 
 class Coleccion{
 - titulo: String
 - descripcion: String
-- hechos: HashSet<Hecho>
 - fuente: Fuente
-- criterioDePertenencia: ???
+- criterioDePertenencia: Criterio
+- hechos: List<Hecho>
+--
++ contiene (Hecho hecho): boolean
++ recalcularHechos(): void
+}
 
+class ContenidoMultimedia{}
 
-+ getHechos(): HashSet<Hecho>
-+ agregarHecho(Hecho hecho)): void
-+ navegarHechos(): HashSet<Hecho>
-+ navegarHechosFiltrados(??????): HashSet<Hecho>
-+ eliminarHecho(Hecho hecho): void
+class Criterio{
+- filtros: ArrayList<Predicate<Hecho>>
+--
++ addFiltro(Filtro filtro): Criterio
++ aplicarA(List<Hecho> listaOriginal): List<Hecho>
+}
+
+abstract class Filtro{
+--
++ aplicar(List<Hecho> lista): List<Hecho>
+}
+
+class FiltroPorEliminados{
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorCategoria{
+- categoria : Categoria
+--
++  aplicar(List<Hecho> hechos): List<Hecho>
+}
+
+class FiltroPorDescripcion{
+- descripcion : String
+--
++  aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorFechaDeCarga{
+- desde : LocalDateTime
+- hasta : LocalDateTime
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorFechaHecho{
+- desde : LocalDate
+- hasta : LocalDate
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorTitulo{
+- titulo : String
+--
++  aplicar(List<Hecho> lista) : List<Hecho>
+}
+
+class FiltroPorUbicacion{
+- lugar : Coordenada
+--
++ aplicar(List<Hecho> lista) : List<Hecho>
 }
 
 class SolicitudDeEliminacion{
 - descripcion: String
 - hecho: Hecho
-- estado : boolean
+- fechaDeCarga: LocalDateTime
+- fechaDeResolucion: LocalDateTime
+- estado: EstadoSolicitud
+- contribuyente: Contribuyente
+- administradorQueResolvio: Administrador
+- CANT_MINIMA_DE_CARACTERES: int = 500
 --
-+ aceptar(): void
-+ rechazar(): void
++ resolver(Estado estado, Administrador administrador): void
 }
 
-class Fuente{
-- hechos: HashSet<Hecho>
+enum EstadoSolicitud {
+PENDIENTE
+ACEPTADA
+RECHAZADA
+}
+
+interface Fuente{
++ getHechos(): ArrayList<Hecho>
+}
+
+class FuenteEstatica{
+- pathArchivo: String
 --
-+ verHecho() : Hecho
-}
-
-Object FuenteEstatica{
-
-+ consultarCSV(String archivo): List<Hecho>
-+ setearFechaHecho(String fechaString,Hecho h): void
-}
-
-Object FuenteDinamica{
-}
-
-Object FuenteProxy{
++ getHechos(): ArrayList<Hecho>
 }
 
 class Coordenada{
-- latitud : float
-- longitud : float
+- latitud: double
+- longitud: double
 --
-+ Coordenada(float latitud, float longitud): Coordenada
-+ comoArray() : float[]
++ comoArray(): double[]
++ equals(Coordenada other): boolean
 }
 
-Contribuyente .d.> Fuente
-Administrador .d.> Fuente
+class Administrador{
+- nombre: String
+- apellido: String
+}
 
+class Contribuyente{
+- nombre: String
+- apellido: String
+- fechaNacimiento: LocalDate
+
++ getEdad(): int
+}
+
+class CSVReader{
+ + leer(pathArchivo: String): static ArrayList<String[]>
+ + leer(pathArchivo: String): ArrayList<Hecho>
+}
+
+
+
+
+
+
+Hecho -r-> Categoria
 Hecho --> Coordenada
-Hecho -r->"*" Categoria
-Hecho -d->"*" SolicitudDeEliminacion
+Hecho -->"*" SolicitudDeEliminacion
+Hecho --> ContenidoMultimedia
+Hecho -r-> OrigenHecho
+Hecho -->"*" Etiqueta
+Hecho --> Contribuyente
+
+Coleccion -r-> Fuente
+Coleccion --> Criterio
 Coleccion -->"*" Hecho
 
-Hecho --> Fuente
-Coleccion -r-> Fuente
 
-Fuente -->"*" Hecho
+Criterio .r.> Hecho
+Criterio -->"*" Filtro
 
-FuenteEstatica -u-|> Fuente
-FuenteDinamica -u-|> Fuente
-FuenteProxy -u-|> Fuente
+FiltroPorCategoria -u-|> Filtro
+FiltroPorDescripcion -u-|> Filtro
+FiltroPorEliminados -u-|> Filtro
+FiltroPorFechaDeCarga -u-|> Filtro
+FiltroPorFechaHecho -u-|> Filtro
+FiltroPorTitulo -u-|> Filtro
+FiltroPorUbicacion -u-|> Filtro
 
+SolicitudDeEliminacion --> Hecho
+SolicitudDeEliminacion -d-> EstadoSolicitud
+SolicitudDeEliminacion --> Contribuyente
+SolicitudDeEliminacion --> Administrador
+
+FuenteEstatica .u.|> Fuente
+FuenteEstatica ..> CSVReader
+
+CSVReader -d-> CamposHecho
 
 
 @enduml

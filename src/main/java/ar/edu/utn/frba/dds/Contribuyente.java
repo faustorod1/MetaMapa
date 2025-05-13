@@ -1,14 +1,32 @@
 package ar.edu.utn.frba.dds;
 
-public class Contribuyente{
-  //Como persona contribuyente, deseo poder solicitar la eliminación de un hecho.
+import lombok.Getter;
 
-  void solicitarEliminacionDeHecho(Hecho hecho, String descripcion) {
-    if(descripcion.length() >= 500) {
-      hecho.aniadirSolicitud(new SolicitudDeEliminacion(hecho,descripcion));
-    }else{
-      System.out.println("La descripcion no puede tener menos de 500 carácteres");
+import java.time.LocalDate;
+import java.time.Period;
+
+@Getter
+public class Contribuyente  {
+    private String nombre;
+    private String apellido;
+    private LocalDate fechaNacimiento;
+
+    public static final Contribuyente ANONIMO = new Contribuyente();
+
+    private Contribuyente() {
+        this.nombre = null;
+        this.apellido = null;
+        this.fechaNacimiento = null;
     }
-  }
 
+    public Contribuyente(String nombre, String apellido, LocalDate fechaNacimiento) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.fechaNacimiento = fechaNacimiento;
+    }
+    
+    public int getEdad() {
+        return Period.between(fechaNacimiento, LocalDate.now()).getYears();
+    }
 }
+

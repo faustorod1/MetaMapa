@@ -13,6 +13,7 @@ rectangle MetaMapa{
     (Solicitar Eliminacion)
     (Aceptar Rechazar Solicitudes)
     (Publicar hecho)
+
 }
 
 Administrador --> (Crear Coleccion)

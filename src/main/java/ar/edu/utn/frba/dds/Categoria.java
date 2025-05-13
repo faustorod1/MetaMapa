@@ -1,13 +1,12 @@
 package ar.edu.utn.frba.dds;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class Categoria {
-    private final String nombre;
+    private String nombre;
 
     public Categoria(String nombre) {
         this.nombre = nombre;
     }
-
 }

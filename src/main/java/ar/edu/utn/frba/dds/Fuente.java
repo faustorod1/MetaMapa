@@ -1,12 +1,8 @@
 package ar.edu.utn.frba.dds;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
-public class Fuente {
-  private HashSet<Hecho> hechos;
+public interface Fuente {
 
-  public Hecho verHecho(Hecho hecho){
-
-  }
-
+  ArrayList<Hecho> getHechos();
 }
