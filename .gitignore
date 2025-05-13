@@ -27,4 +27,39 @@ target/**
 
 # IJ files
 *.iml
-.idea/**
+../project/2025-tpa-ma-ma-grupo-15/.idea/**
+
+
+HELP.md
+target/
+!../project/2025-tpa-ma-ma-grupo-15/.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+../project/2025-tpa-ma-ma-grupo-15/.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
