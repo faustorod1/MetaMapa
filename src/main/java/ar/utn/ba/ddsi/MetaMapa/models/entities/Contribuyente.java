@@ -27,4 +27,6 @@ public class Contribuyente  {
     public int getEdad() {
         return Period.between(fechaNacimiento, LocalDate.now()).getYears();
     }
+
+
 }

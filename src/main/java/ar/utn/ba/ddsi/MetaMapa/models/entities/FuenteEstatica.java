@@ -9,6 +9,7 @@ public class FuenteEstatica implements Fuente {
         this.pathArchivo = pathArchivo;
     }
 
+    @Override
     public ArrayList<Hecho> getHechos(){
         return CSVReader.leerHechos(pathArchivo);
     }
