@@ -11,6 +11,7 @@
 	<groupId>ar.utn.ba.ddsi</groupId>
 	<artifactId>MetaMapa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>MetaMapa</name>
 	<description>metamapa</description>
 	<url/>
@@ -20,6 +21,14 @@
 	<developers>
 		<developer/>
 	</developers>
+
+	<modules>
+		<module>agregador</module>
+		<module>fuente-estatica</module>
+		<module>fuente-dinamica</module>
+		<module>fuente-proxy</module>
+	</modules>
+
 	<scm>
 		<connection/>
 		<developerConnection/>
