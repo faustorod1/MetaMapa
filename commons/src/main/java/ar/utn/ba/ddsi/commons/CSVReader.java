@@ -1,9 +1,10 @@
-package ar.utn.ba.ddsi.MetaMapa.models.entities;
+package ar.utn.ba.ddsi.commons;
 
 import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
 
 public class CSVReader {
     public static ArrayList<String[]> leer(String pathArchivo) {        // Lectura de CSV genérico
@@ -20,7 +21,6 @@ public class CSVReader {
         }
         return filas;
     }
-
 
     public static ArrayList<Hecho> leerHechos(String pathArchivo){      // Traducción de filas a <hechos>
         ArrayList<Hecho> hechos = new ArrayList<>();
