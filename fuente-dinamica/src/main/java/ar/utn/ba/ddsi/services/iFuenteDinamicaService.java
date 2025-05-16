@@ -1,6 +1,6 @@
-package ar.utn.ba.ddsi.MetaMapa.services;
+package ar.utn.ba.ddsi.services;
 
-import ar.utn.ba.ddsi.MetaMapa.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.Hecho;
 
 import java.util.List;
 

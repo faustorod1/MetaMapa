@@ -15,8 +15,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="fuente-dinamica" />
-        <module name="fuente-proxy" />
         <module name="agregador" />
+        <module name="fuente-proxy" />
         <module name="fuente-estatica" />
       </profile>
     </annotationProcessing>

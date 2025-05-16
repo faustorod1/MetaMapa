@@ -1,16 +1,18 @@
-package ar.utn.ba.ddsi.MetaMapa.models.repositories.impl;
+package ar.utn.ba.ddsi.models.repositories.impl;
 
-import ar.utn.ba.ddsi.MetaMapa.models.entities.Hecho;
-import ar.utn.ba.ddsi.MetaMapa.models.repositories.iHechosRepository;
+import ar.utn.ba.ddsi.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.repositories.iHechosRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
+import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.PENDIENTE;
 
 @Repository
 public class hechosRepository implements iHechosRepository {
   private List<Hecho> hechos;
   // para que no se repitan hechos en el repositorio podriamos implementar algo del tipo Map<Long, Hecho>
-  //set? {}
 
   @Override
   public void save(Hecho hecho) {
@@ -36,7 +38,13 @@ public class hechosRepository implements iHechosRepository {
 
   @Override
   public List<Hecho>findByPendiente(boolean pendiente){
-    return hechos.stream().filter(hecho-> hecho.isRevisado() == !pendiente ).toList();
+    if(pendiente){
+      return hechos.stream().filter(hecho-> hecho.getSolicitudDeModificacion().getEstado() == PENDIENTE ).toList();
+    }
+    return hechos.stream().filter(hecho-> hecho.getSolicitudDeModificacion().getEstado() == ACEPTADA ).toList();
+
+    //si viene true en pendiente te devuelve los que estan pendientes de revision
+    //si viene false en pendiente te devuelve los que ya se revisaron
   }
 
   @Override

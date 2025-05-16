@@ -1,8 +1,7 @@
-package ar.utn.ba.ddsi.MetaMapa.models.repositories;
+package ar.utn.ba.ddsi.models.repositories;
 
-import ar.utn.ba.ddsi.MetaMapa.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.Hecho;
 import java.util.List;
-import java.util.Optional;
 
 public interface iHechosRepository {
   void save(Hecho hecho);
