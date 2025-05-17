@@ -22,31 +22,4 @@ public class CSVReader {
         return filas;
     }
 
-    public static ArrayList<Hecho> leerHechos(String pathArchivo){      // Traducción de filas a <hechos>
-        ArrayList<Hecho> hechos = new ArrayList<>();
-        ArrayList<String[]> filasStr = leer(pathArchivo);
-
-        // i empieza en 1 porque se saltea la fila de headers.
-        for (int i = 1; i < filasStr.size(); i++) {
-            String[] fila = filasStr.get(i);
-
-            double latitud = Double.parseDouble(fila[CamposHecho.LATITUD.ordinal()]);
-            double longitud = Double.parseDouble(fila[CamposHecho.LONGITUD.ordinal()]);
-            String fechaString = fila[(CamposHecho.FECHADEHECHO.ordinal())];
-            LocalDate fecha = LocalDate.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-            Hecho h = Hecho.builder()
-                    .titulo(fila[CamposHecho.TITULO.ordinal()])
-                    .descripcion(fila[CamposHecho.DESCRIPCION.ordinal()])
-                    .categoria(new Categoria(fila[CamposHecho.CATEGORIA.ordinal()]))
-                    .lugarAcontecimiento(new Coordenada(latitud, longitud))
-                    .fechaHecho(fecha)
-                    .origen(OrigenHecho.DATASET)
-                    .build();
-
-            hechos.add(h);
-        }
-        return hechos;
-    }
-
 }
