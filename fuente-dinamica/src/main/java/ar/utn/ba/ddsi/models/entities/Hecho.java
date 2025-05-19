@@ -28,9 +28,12 @@ public class Hecho {
     private Contribuyente contribuyente;
 
     private Long id;//USO: Identificacion unica para el Repository (futura BD)
-    private SolicitudDeModificacion solicitudDeModificacion; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
-    //TODO actualizar ddc (agregar el boolean revisado y el long id)
 
+    //TODO actualizar ddc (agregar la solicitud de modificacion y el long id)
+
+    @Builder.Default
+    private SolicitudDeModificacion solicitudDeModificacion = null;
+    // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
     @Builder.Default //si el builder no le da el valor, hace esto por defecto

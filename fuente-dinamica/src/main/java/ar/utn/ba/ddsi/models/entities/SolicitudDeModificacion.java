@@ -25,6 +25,7 @@ public class SolicitudDeModificacion {
     if(estado == PENDIENTE){
       this.estado = nuevoEstado;
       this.hechoViejo = hechoNuevo;
+      return;
     }
   }
 

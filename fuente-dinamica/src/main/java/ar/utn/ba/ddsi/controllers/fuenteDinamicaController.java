@@ -1,14 +1,17 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
+import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.services.iFuenteDinamicaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 
@@ -21,20 +24,22 @@ public class fuenteDinamicaController {
     this.fuenteDinamicaService = fuenteDinamicaService;
   }
 
-  //TODO: revisar si es correcto este @PostMapping
   @PostMapping
-  public void crearHecho(@RequestBody Hecho hecho) { //Todo tal vez hacer dtoHecho para cuando llegue del servicio agregador (pero el agregador se tiene q encargar)
-    fuenteDinamicaService.crearHecho(hecho);
+  public HechoOutputDTO crearHecho(@RequestBody HechoInputDTO hecho) { //Todo tal vez hacer dtoHecho para cuando llegue del servicio agregador (pero el agregador se tiene q encargar)
+    return fuenteDinamicaService.crearHecho(hecho);
   }
 
-  @GetMapping
-  public List<Hecho> listarHechos (@RequestParam(required = false) Boolean revisado) {
+  @GetMapping("/listarHechos/{revisado}")
+  public List<HechoOutputDTO> listarHechos (@RequestParam(required = false) Boolean revisado) {
     return fuenteDinamicaService.obtenerHechos(revisado);
   }
 
-  //hacer una funcion que devuelva los hechos de una persona en particular
+  public List<HechoOutputDTO> listarHechosDe (Contribuyente contribuyente) {
+    return fuenteDinamicaService.obtenerHechosDe(contribuyente);
+  }
 
-  public void modificarHecho (@RequestBody Hecho aModificar,Hecho nuevo){//TODO ver si podemos recibir unicamente el id del hecho viejo (aModificar)
+  @PutMapping
+  public HechoOutputDTO modificarHecho (@RequestBody HechoInputDTO aModificar,HechoInputDTO nuevo){//TODO ver si podemos recibir unicamente el id del hecho viejo (aModificar)
     fuenteDinamicaService.modificarHecho(aModificar,nuevo);
   }
 
