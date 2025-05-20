@@ -1,6 +1,5 @@
 package ar.utn.ba.ddsi.models.entities;
 
-import ar.utn.ba.ddsi.MetaMapa.models.entities.Filtro;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,5 @@
 package ar.utn.ba.ddsi.models.entities;
 
-import ar.utn.ba.ddsi.MetaMapa.models.entities.Filtro;
-
 import java.util.ArrayList;
 import java.util.List;
 

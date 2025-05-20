@@ -11,18 +11,21 @@ import java.util.List;
 
 @Service
 public class HechosService implements IHechosService {
-    @Autowired
     private IHechosRepository hechosRepository;
+
+    @Autowired
+    public HechosService(IHechosRepository hechosRepository) {
+        this.hechosRepository = hechosRepository;
+    }
 
     @Override
     public List<HechoOutputDTO> buscarTodos(){
         return hechosRepository
-                .findall()
+                .findAll()
                 .stream()
                 .map(this::hechoOutputDTO)
                 .toList();
     }
-
 
     private HechoOutputDTO hechoOutputDTO(Hecho hecho) {
         HechoOutputDTO dto = new HechoOutputDTO();
@@ -39,7 +42,6 @@ public class HechosService implements IHechosService {
         dto.setEliminado(hecho.isEliminado());
         dto.setSolicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion());
         dto.setEtiquetas(hecho.getEtiquetas());
-
         return dto;
     }
 }

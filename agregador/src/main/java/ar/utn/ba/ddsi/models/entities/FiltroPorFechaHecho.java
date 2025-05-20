@@ -19,8 +19,18 @@ public class FiltroPorFechaHecho extends Filtro {
     }
 
     public FiltroPorFechaHecho(String desde, String hasta) {
-        this.desde = LocalDate.parse(desde, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        this.hasta = LocalDate.parse(hasta, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        if (desde != null) {
+            this.desde = LocalDate.parse(desde, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
+        else {
+            this.desde = null;
+        }
+        if (hasta != null) {
+            this.hasta = LocalDate.parse(hasta, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
+        else {
+            this.hasta = null;
+        }
     }
 
     public static FiltroPorFechaHecho FiltrarDesde(LocalDate desde) {

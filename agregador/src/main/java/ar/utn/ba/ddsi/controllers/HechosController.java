@@ -13,8 +13,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hechos")
 public class HechosController {
-    @Autowired
     private IHechosService hechosService;
+
+    @Autowired
+    public HechosController(IHechosService hechosService) {
+        this.hechosService = hechosService;
+    }
 
     @GetMapping
     public List<HechoOutputDTO> buscarTodos() {

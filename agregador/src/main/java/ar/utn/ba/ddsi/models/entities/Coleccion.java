@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Coleccion {
+    private String identificador;
     private String titulo;
     private String descripcion;
     private Criterio criterioDePertenencia;
@@ -18,11 +19,12 @@ public class Coleccion {
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
 
-    public Coleccion(String titulo, String descripcion, Criterio criterioDePertenencia, List<Hecho> todosLosHechos) {
+    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia) {
+        this.identificador = identificador;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterioDePertenencia = criterioDePertenencia;
-        filtrarHechos(todosLosHechos);
+        hechos = new ArrayList<>();
     }
 
     public List<Hecho> getHechos() {
