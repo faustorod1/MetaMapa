@@ -12,8 +12,8 @@ import java.util.List;
 public class HechosRepository implements IHechosRepository {
     private FuenteEstatica fuente;
 
-    public HechosRepository(@Qualifier("pathFuenteHechos") String path){
-        this.fuente = new FuenteEstatica(path);
+    public HechosRepository(){
+        this.fuente = new FuenteEstatica("src/test/resources/dataset_prueba.csv");
     }
 
 

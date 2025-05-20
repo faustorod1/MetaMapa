@@ -4,6 +4,7 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Service
 public class HechosService implements IHechosService {
 
+    @Autowired
     private IHechosRepository hechosRepository;
 
     @Override

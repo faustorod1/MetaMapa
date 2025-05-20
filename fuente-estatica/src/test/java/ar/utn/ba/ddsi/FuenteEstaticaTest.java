@@ -15,10 +15,18 @@ public class FuenteEstaticaTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testApiHechos() throws Exception {
-        mockMvc.perform(get("/hechos"))
+    public void testApiHechosIsOk() throws Exception {
+        mockMvc.perform(get("/api/hechos")) // Hace una petición mockeada a la API
+                .andExpect(status().isOk()); // Controla que el código de estado sea ~200
+    }
+
+    @Test
+    public void testApiHechosDevuelveHechosDelDataset() throws Exception {
+        mockMvc.perform(get("/api/hechos"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(content().contentType("application/json")) // Controla que haya devuelto un json
+                .andExpect(jsonPath("$").isArray()) // Verifica que el contenido del json sea un array
+                .andExpect(jsonPath("$[0].titulo") // Verifica que el primer hecho devuelto sea el correcto
+                        .value("Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones"));
     }
 }
