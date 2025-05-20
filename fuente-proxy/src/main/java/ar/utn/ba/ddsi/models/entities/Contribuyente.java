@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.models.entities;
 
 import lombok.Getter;
+
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -27,5 +28,6 @@ public class Contribuyente  {
     public int getEdad() {
         return Period.between(fechaNacimiento, LocalDate.now()).getYears();
     }
+
 
 }

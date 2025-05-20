@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/fuenteDinamica")
+@RequestMapping("/api/hechos")
 public class fuenteDinamicaController {
   private iFuenteDinamicaService fuenteDinamicaService;
 
@@ -28,7 +28,7 @@ public class fuenteDinamicaController {
     return fuenteDinamicaService.crearHecho(hecho);
   }
 
-  @GetMapping
+  @GetMapping("/Pendientes={pendiente}")
   public List<HechoOutputDTO> listarHechosPendientes(@RequestParam(required = false) Boolean pendiente) {
     return fuenteDinamicaService.obtenerHechosPendientes(pendiente);
   }
@@ -38,7 +38,7 @@ public class fuenteDinamicaController {
     return fuenteDinamicaService.obtenerTodosHechos();
   }
 
-  @GetMapping
+  @GetMapping("/contribuyente={id}")
   public List<HechoOutputDTO> listarHechosDe (Contribuyente contribuyente) {
     return fuenteDinamicaService.obtenerHechosDe(contribuyente);
   }
