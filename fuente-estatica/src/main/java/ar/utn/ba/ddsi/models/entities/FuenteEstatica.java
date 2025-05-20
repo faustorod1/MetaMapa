@@ -1,30 +1,26 @@
-package ar.utn.ba.ddsi.MetaMapa.models.entities;
+package ar.utn.ba.ddsi.models.entities;
 
-import java.io.FileReader;
+import ar.utn.ba.ddsi.commons.CSVReader;
+import ar.utn.ba.ddsi.commons.Coordenada;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class CSVReader {
-    public static ArrayList<String[]> leer(String pathArchivo) {        // Lectura de CSV genérico
-        ArrayList<String[]> filas = new ArrayList<>();
-        try(com.opencsv.CSVReader csvReader = new com.opencsv.CSVReader(new FileReader(pathArchivo))){
-            String[] fila = csvReader.readNext();
-            while((fila != null)) {
-                filas.add(fila);
-                fila = csvReader.readNext();
-            }
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return filas;
+public class FuenteEstatica {
+    private String pathArchivo;
+
+    public FuenteEstatica(String pathArchivo) {
+        this.pathArchivo = pathArchivo;
     }
 
+    public ArrayList<Hecho> getHechos(){
+        return leerHechosDeCSV();
+    }
 
-    public static ArrayList<Hecho> leerHechos(String pathArchivo){      // Traducción de filas a <hechos>
+    private ArrayList<Hecho> leerHechosDeCSV(){      // Traducción de String[] a List<Hecho>
         ArrayList<Hecho> hechos = new ArrayList<>();
-        ArrayList<String[]> filasStr = leer(pathArchivo);
+        ArrayList<String[]> filasStr = CSVReader.leer(pathArchivo);
 
         // i empieza en 1 porque se saltea la fila de headers.
         for (int i = 1; i < filasStr.size(); i++) {

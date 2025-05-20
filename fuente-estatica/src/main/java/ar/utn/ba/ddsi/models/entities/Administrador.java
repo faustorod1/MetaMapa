@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.MetaMapa.models.entities;
+package ar.utn.ba.ddsi.models.entities;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,4 +8,5 @@ import lombok.Setter;
 public class Administrador {
     private String nombre;
     private String apellido;
+
 }
