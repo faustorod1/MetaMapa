@@ -24,8 +24,6 @@ public class SolicitudDeModificacion {
   public void resolver(EstadoSolicitud nuevoEstado) {
     if(estado == PENDIENTE){
       this.estado = nuevoEstado;
-      this.hechoViejo = hechoNuevo;
-      return;
     }
   }
 

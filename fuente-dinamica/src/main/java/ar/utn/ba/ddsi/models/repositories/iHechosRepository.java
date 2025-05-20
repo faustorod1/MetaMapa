@@ -6,7 +6,7 @@ import ar.utn.ba.ddsi.models.entities.Hecho;
 import java.util.List;
 
 public interface iHechosRepository {
-  HechoInputDTO save(Hecho hecho);
+  Hecho save(Hecho hecho);
   void update(Hecho hechoViejo,Hecho hecho);
   List<Hecho> findAll();
   List<Hecho> findByPendiente(boolean pendiente);

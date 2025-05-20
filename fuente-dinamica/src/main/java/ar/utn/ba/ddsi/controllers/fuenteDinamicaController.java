@@ -3,7 +3,6 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
-import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.services.iFuenteDinamicaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,20 +28,24 @@ public class fuenteDinamicaController {
     return fuenteDinamicaService.crearHecho(hecho);
   }
 
-  @GetMapping("/listarHechos/{revisado}")
-  public List<HechoOutputDTO> listarHechos (@RequestParam(required = false) Boolean revisado) {
-    return fuenteDinamicaService.obtenerHechos(revisado);
+  @GetMapping
+  public List<HechoOutputDTO> listarHechosPendientes(@RequestParam(required = false) Boolean pendiente) {
+    return fuenteDinamicaService.obtenerHechosPendientes(pendiente);
   }
 
+  @GetMapping
+  public List<HechoOutputDTO> listarHechos () {
+    return fuenteDinamicaService.obtenerTodosHechos();
+  }
+
+  @GetMapping
   public List<HechoOutputDTO> listarHechosDe (Contribuyente contribuyente) {
     return fuenteDinamicaService.obtenerHechosDe(contribuyente);
   }
 
   @PutMapping
   public HechoOutputDTO modificarHecho (@RequestBody HechoInputDTO aModificar,HechoInputDTO nuevo){//TODO ver si podemos recibir unicamente el id del hecho viejo (aModificar)
-    fuenteDinamicaService.modificarHecho(aModificar,nuevo);
+    return fuenteDinamicaService.modificarHecho(aModificar,nuevo);
   }
-
-
 
 }

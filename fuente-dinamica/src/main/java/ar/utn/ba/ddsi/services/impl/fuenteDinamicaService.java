@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
+import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADACONSUGERENCIA;
 import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 
 @Service
@@ -31,30 +34,40 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
   }
 
   @Override
-  public void modificarHecho(HechoInputDTO amodificar,HechoInputDTO nuevo){ //Todo ver como llega la request de modificar, si con el hecho nuevo y el id viejo o con dos hechos distintos
-    if(ChronoUnit.DAYS.between(nuevo.getFechaDeCarga(), LocalDateTime.now()) > 7){
-      SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(amodificar,nuevo);
-      amodificar.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
+  public HechoOutputDTO modificarHecho(HechoInputDTO amodificar,HechoInputDTO nuevo){ //Todo cambiar a con el hecho nuevo y el id del viejo
+    Hecho h = DtoToHecho(nuevo);
+    Hecho hvie = DtoToHecho(amodificar);
+    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) > 7){
+      SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hvie,h);
+      hvie.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
+      return hechoToDTO(h);
     }
-    //aqui se podria arrojar una excepcion si el usuario intenta modificar luego de los 7 dias.
-  }
-
-
-  @Override
-  public List<HechoOutputDTO> obtenerHechos(Boolean pendiente) { // true si quiero q me de los pendientes
-    return hechosRepository.findByPendiente(pendiente);
+    return null;
   }
 
   @Override
-  public void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo){
-    Hecho h = hechosRepository.findById(hecho.getId());
-    h.getSolicitudDeModificacion().resolver(estadoNuevo);
+  public List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente) { // true si quiero q me de los pendientes
+    return hechosRepository.findByPendiente(pendiente).stream().map(this::hechoToDTO).collect(Collectors.toList());
   }
 
   @Override
   public List<HechoOutputDTO> obtenerHechosDe(Contribuyente contribuyente){
-    return hechosRepository.findByContribuyente(contribuyente);
+    return hechosRepository.findByContribuyente(contribuyente).stream().map(this::hechoToDTO).collect(Collectors.toList());
   }
+
+  @Override
+  public List<HechoOutputDTO> obtenerTodosHechos(){
+    return hechosRepository.findAll().stream().map(this::hechoToDTO).collect(Collectors.toList());
+  }
+
+  @Override
+  public void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo){ //Todo aca tal vez viene un id
+    Hecho h = hechosRepository.findById(hecho.getId());
+    h.getSolicitudDeModificacion().resolver(estadoNuevo);
+    if(estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
+      hechosRepository.update(h, h.getSolicitudDeModificacion().getHechoNuevo());
+    }
+  }//TODO: capaz esto haya q hacerlo en el repository en vez de en el service
 
   public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){
     return Hecho.builder()
@@ -67,12 +80,12 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .origen(CONTRIBUYENTE)
         .fechaDeCarga(LocalDateTime.now()) //TODO revisar si puede modificarse una vez q ya se creo al hecho. Sino usar fechaDeUltimaModificacion
         .eliminado(false)
-        .contribuyente(hechoInputDTO.getContribuyente()) //TODO A VER
+        .contribuyente(hechoInputDTO.getContribuyente())
         .etiquetas(hechoInputDTO.getEtiquetas())
         .id(null)
         .build();
   }
-  public HechoOutputDTO HechoToDTO (Hecho hecho){
+  public HechoOutputDTO hechoToDTO (Hecho hecho){
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())
@@ -83,9 +96,10 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .fechaDeCarga(hecho.getFechaDeCarga())
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
-        .contribuyente(hecho.getContribuyente()) //TODO A VER
+        .contribuyente(hecho.getContribuyente())
         .solicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion())
         .etiquetas(hecho.getEtiquetas())
+        .id(hecho.getId())
         .build();
   }
 }

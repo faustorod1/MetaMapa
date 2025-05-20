@@ -32,6 +32,7 @@ public class HechoOutputDTO {
   private LocalDateTime fechaDeCarga; //TODO revisar si puede modificarse una vez q ya se creo al hecho. Sino usar fechaDeUltimaModificacion
   private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
   private Contribuyente contribuyente;
+  private Long id;
 
   @Builder.Default
   private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();

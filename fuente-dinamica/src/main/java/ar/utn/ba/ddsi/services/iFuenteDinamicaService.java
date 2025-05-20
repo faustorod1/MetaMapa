@@ -10,8 +10,11 @@ import java.util.List;
 
 public interface iFuenteDinamicaService {
   HechoOutputDTO crearHecho(HechoInputDTO hecho);
-  void modificarHecho(HechoInputDTO hechoAModificar,HechoInputDTO hechoNuevo);
-  List<HechoOutputDTO> obtenerHechos(Boolean pendiente);
+  HechoOutputDTO modificarHecho(HechoInputDTO hechoAModificar,HechoInputDTO hechoNuevo);
+  List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente);
   List<HechoOutputDTO> obtenerHechosDe(Contribuyente contribuyente);
+  List<HechoOutputDTO> obtenerTodosHechos();
   void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo);
+  Hecho DtoToHecho (HechoInputDTO hechoInputDTO);
+  HechoOutputDTO hechoToDTO(Hecho hecho);
 }

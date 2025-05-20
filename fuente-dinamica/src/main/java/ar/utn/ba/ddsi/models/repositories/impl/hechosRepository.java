@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
 import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.PENDIENTE;
@@ -15,36 +16,24 @@ import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.PENDIENTE;
 @Repository
 public class hechosRepository implements iHechosRepository {
   private List<Hecho> hechos;
-  // para que no se repitan hechos en el repositorio podriamos implementar algo del tipo Map<Long, Hecho>
 
   public hechosRepository() {
     hechos = new ArrayList<>();
   }
 
   @Override
-  public HechoInputDTO save(Hecho hecho) {
+  public Hecho save(Hecho hecho) {
     if (hecho.getId() == null) {
       //es un nuevo hecho
       hecho.setId((long) hechos.size());
       hechos.add(hecho);
 
-      //modo de prueba hardcodeado
-
-      HechoInputDTO hechoDTO = new HechoInputDTO();
-      hechoDTO.setTitulo(hecho.getTitulo());
-      hechoDTO.setDescripcion(hecho.getDescripcion());
-
-      return hechoDTO;
+      return hecho;
     } else {
       //es una modificacion
       hechos.set(Math.toIntExact(hecho.getId()), hecho);
 
-      //modo de prueba hardcodeado
-      HechoInputDTO hechoDTO = new HechoInputDTO();
-      hechoDTO.setTitulo(hecho.getTitulo());
-      hechoDTO.setDescripcion(hecho.getDescripcion());
-
-      return hechoDTO;
+      return hecho;
     }
   }
 
@@ -55,7 +44,7 @@ public class hechosRepository implements iHechosRepository {
 
   @Override
   public List<Hecho> findAll() {
-    return this.hechos;
+    return hechos.stream().filter(h-> !h.isEliminado()).collect(Collectors.toList());
   }
 
   @Override
@@ -63,15 +52,12 @@ public class hechosRepository implements iHechosRepository {
 
     if(pendiente){
       return hechos.stream().filter(
-          hecho ->
-              hecho.getSolicitudDeModificacion() != null
-              && hecho.getSolicitudDeModificacion().getEstado() == PENDIENTE
-      ).toList();
+          hecho -> hecho.getSolicitudDeModificacion() != null
+                        && hecho.getSolicitudDeModificacion().getEstado() == PENDIENTE).toList();
     }
     return hechos.stream().filter(hecho->
         hecho.getSolicitudDeModificacion() == null
-        || hecho.getSolicitudDeModificacion().getEstado() == ACEPTADA
-    ).toList();
+        || hecho.getSolicitudDeModificacion().getEstado() == ACEPTADA).toList();
 
     //si viene true en pendiente te devuelve los que estan pendientes de revision
     //si viene false en pendiente te devuelve los que ya se revisaron
