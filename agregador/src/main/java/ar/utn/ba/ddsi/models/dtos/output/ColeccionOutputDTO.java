@@ -14,6 +14,6 @@ public class ColeccionOutputDTO {
     private String identificador;
     private String titulo;
     private String descripcion;
-    private Criterio criterioDePertenencia;
+    private CriterioOutputDTO criterioDePertenencia;
     private List<Hecho> hechos;
 }

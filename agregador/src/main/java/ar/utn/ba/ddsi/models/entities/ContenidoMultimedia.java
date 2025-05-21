@@ -1,5 +1,8 @@
 package ar.utn.ba.ddsi.models.entities;
 
-public class ContenidoMultimedia {
+import lombok.Data;
 
+@Data
+public class ContenidoMultimedia {
+    private String pathImagen;
 }

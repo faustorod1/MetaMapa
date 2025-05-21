@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.models.entities;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
+@Getter
 public class FiltroPorFechaHecho extends Filtro {
 
     private LocalDate desde;

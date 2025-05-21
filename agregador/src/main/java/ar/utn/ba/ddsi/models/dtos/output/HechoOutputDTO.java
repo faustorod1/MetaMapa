@@ -13,14 +13,13 @@ public class HechoOutputDTO {
     private Long id;
     private String titulo;
     private String descripcion;
-    private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
-    private OrigenHecho origen;
-    private Coordenada lugarAcontecimiento;
+    private String categoria;
+    private String contenidoMultimedia;
+    private int origen;
+    private double[] lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private boolean eliminado;
-    private Contribuyente contribuyente;
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
-    private HashSet<Etiqueta> etiquetas;
+    private Long contribuyente;
+    private List<SolicitudDeEliminacion> solicitudesDeEliminacion; //
+    private HashSet<String> etiquetas;
 }

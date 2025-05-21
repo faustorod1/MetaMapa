@@ -1,9 +1,11 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Getter
 public class Criterio {
     private List<Filtro> filtros = new ArrayList<>();
 

@@ -1,9 +1,12 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FiltroPorDescripcion extends Filtro {
+    @Getter
     private String descripcion;
 
     public FiltroPorDescripcion(String descripcion) {

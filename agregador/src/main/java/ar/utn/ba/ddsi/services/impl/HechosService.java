@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.entities.Etiqueta;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Service
 public class HechosService implements IHechosService {
@@ -33,15 +36,20 @@ public class HechosService implements IHechosService {
         dto.setId(hecho.getId());
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
-        dto.setCategoria(hecho.getCategoria());
-        dto.setContenidoMultimedia(hecho.getContenidoMultimedia());
-        dto.setOrigen(hecho.getOrigen());
-        dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
+        if (hecho.getCategoria() != null) dto.setCategoria(hecho.getCategoria().getNombre());
+        if (hecho.getContenidoMultimedia() != null) dto.setContenidoMultimedia(hecho.getContenidoMultimedia().getPathImagen());
+        if (hecho.getOrigen() != null) dto.setOrigen(hecho.getOrigen().ordinal());
+        if (hecho.getLugarAcontecimiento() != null) dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento().comoArray());
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
-        dto.setEliminado(hecho.isEliminado());
+        if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
         dto.setSolicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion());
-        dto.setEtiquetas(hecho.getEtiquetas());
+        dto.setEtiquetas(
+                hecho.getEtiquetas()
+                        .stream()
+                        .map(Etiqueta::nombre)
+                        .collect(Collectors.toCollection(HashSet::new))
+        );
         return dto;
     }
 }

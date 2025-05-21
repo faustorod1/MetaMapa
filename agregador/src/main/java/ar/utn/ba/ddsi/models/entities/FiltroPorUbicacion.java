@@ -1,10 +1,12 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FiltroPorUbicacion extends Filtro {
-
+    @Getter
     private Coordenada lugar;
 
     public FiltroPorUbicacion(Coordenada lugar) {
