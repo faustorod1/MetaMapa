@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
-import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dtos.outputs.HechoFuenteResponseDto;
+import ar.utn.ba.ddsi.models.dtos.outputs.HechoDTO;
 import ar.utn.ba.ddsi.services.ifuenteProxyServices;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,13 +20,23 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   }
 
   @Override
-  public Mono<List<HechoOutputDTO>> getAll() {
+  public Mono<List<HechoDTO>> getAll() {
     return webClient
         .get()
         .uri("/desastres")
         .header("Authorization", "Bearer " + this.token)
         .retrieve()
-        .bodyToMono(HechoOutputDTO.class)
-        .map(HechoOutputDTO::getProducts);
+        .bodyToMono(HechoFuenteResponseDto.class)
+        .map(HechoFuenteResponseDto::getHechos);
+  }
+
+  @Override
+  public Mono<HechoDTO> getById (Long id){
+    return webClient
+        .get()
+        .uri("/desastres/{id}", id)
+        .header("Authorization", "Bearer " + this.token)
+        .retrieve()
+        .bodyToMono(HechoDTO.class);
   }
 }

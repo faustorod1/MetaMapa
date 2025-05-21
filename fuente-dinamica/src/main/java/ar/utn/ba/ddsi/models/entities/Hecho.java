@@ -28,6 +28,7 @@ public class Hecho {
     private Contribuyente contribuyente;
 
     private Long id;//USO: Identificacion unica para el Repository (futura BD)
+    private LocalDateTime lastUpdate;
 
     //TODO actualizar ddc (agregar la solicitud de modificacion y el long id)
 

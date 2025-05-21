@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.iHechosRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ public class hechosRepository implements iHechosRepository {
 
   public void update(Hecho hechoViejo,Hecho hecho) {
     hecho.setId(hechoViejo.getId());
+    hecho.setLastUpdate(LocalDateTime.now());
     hechos.set(Math.toIntExact(hechoViejo.getId()), hecho);
   }
 
