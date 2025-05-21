@@ -24,4 +24,6 @@ public class HechosController {
     public List<HechoOutputDTO> buscarTodos() {
         return this.hechosService.buscarTodos(null);
     }
+
+
 }
