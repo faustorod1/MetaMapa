@@ -1,8 +1,10 @@
 package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.entities.Criterio;
+
 import java.util.List;
 
 public interface IHechosService {
-    public List<HechoOutputDTO> buscarTodos();
+    List<HechoOutputDTO> buscarTodos(Criterio criterio);
 }

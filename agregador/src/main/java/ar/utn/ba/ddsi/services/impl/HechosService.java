@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.models.entities.Etiqueta;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
@@ -22,9 +23,13 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public List<HechoOutputDTO> buscarTodos(){
-        return hechosRepository
-                .findAll()
+    public List<HechoOutputDTO> buscarTodos(Criterio criterio){
+        if (criterio == null) {
+            criterio = new Criterio(); // Por defecto, solo filtra los eliminados
+        }
+        List<Hecho> hechosFiltrados = criterio.aplicarA(hechosRepository.findAll());
+
+        return hechosFiltrados
                 .stream()
                 .map(this::hechoOutputDTO)
                 .toList();

@@ -3,9 +3,11 @@ package ar.utn.ba.ddsi.services.impl;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.CriterioOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.FiltroOutputDTO;
+import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.services.IColeccionesService;
+import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,12 @@ import java.util.List;
 @Service
 public class ColeccionesService implements IColeccionesService {
     private IColeccionesRepository coleccionesRepository;
+    private IHechosService hechosService;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService) {
         this.coleccionesRepository = coleccionesRepository;
+        this.hechosService = hechosService;
     }
 
     @Override
@@ -29,6 +33,13 @@ public class ColeccionesService implements IColeccionesService {
                 .map(this::coleccionOutputDTO)
                 .toList();
     }
+
+    @Override
+    public List<HechoOutputDTO> buscarHechosPorColeccion(String identificador) {
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+        return hechosService.buscarTodos(coleccion.getCriterioDePertenencia());
+    }
+
 
     private ColeccionOutputDTO coleccionOutputDTO(Coleccion coleccion) {
         ColeccionOutputDTO dto = new ColeccionOutputDTO();

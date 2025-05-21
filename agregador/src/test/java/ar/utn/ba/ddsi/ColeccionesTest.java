@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi;
 
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
+import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +23,8 @@ public class ColeccionesTest {
 
     @MockBean
     private IColeccionesRepository coleccionesRepository;
+    @MockBean
+    private IHechosRepository hechosRepository;
 
     @Test
     public void testApiColeccionIsOk() throws Exception {
@@ -42,5 +45,36 @@ public class ColeccionesTest {
                 .andExpect(jsonPath("$[0]").exists()) // Verifica que tenga al menos un hecho
                 .andExpect(jsonPath("$[0].titulo").exists()) // Comprueba que el hecho tenga título
                 .andExpect(jsonPath("$[0].titulo").isNotEmpty()); // Comprueba que el título tenga contenido
+    }
+
+    @Test
+    public void testObtenerHechosDeUnaColeccionIsOk() throws Exception {
+        String idColeccion = "1";
+
+        when(coleccionesRepository.findByIdentificador(idColeccion))
+                .thenReturn(FakeRepository.coleccionPorId(idColeccion));
+
+        mockMvc.perform(get(String.format("/api/colecciones/%s/hechos", idColeccion)))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void testObtenerHechosDeUnaColeccionDevuelveLosHechosDeLaColeccion() throws Exception {
+        String idColeccion = "1";
+
+        when(coleccionesRepository.findByIdentificador(idColeccion))
+                .thenReturn(FakeRepository.coleccionPorId(idColeccion));
+        when(hechosRepository.findAll())
+                .thenReturn(FakeRepository.hechos());
+
+        mockMvc.perform(get(String.format("/api/colecciones/%s/hechos", idColeccion)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json")) // Controla que haya devuelto un json
+                .andExpect(jsonPath("$").isArray()) // Verifica que el contenido del json sea un array
+                .andExpect(jsonPath("$.length()").value(2)) // Verifica que esté la cantidad correcta de hechos
+                .andExpect(jsonPath("$[0].categoria").value("Caída de aeronave")) // Verifica que cumplan el criterio de la colección
+                .andExpect(jsonPath("$[1].categoria").value("Caída de aeronave"));
+
     }
 }

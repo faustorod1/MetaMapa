@@ -28,6 +28,10 @@ public class FakeRepository {
         return colecciones;
     }
 
+    public static Coleccion coleccionPorId(String identificador) {
+        return colecciones().stream().filter(coleccion -> coleccion.getIdentificador().equals(identificador)).findFirst().orElse(null);
+    }
+
     public static List<Hecho> hechos() {
         ArrayList<Hecho> hechos = new ArrayList<>();
         Categoria accidenteMaquinaIndustrial = new Categoria("Accidente con maquinaria industrial");

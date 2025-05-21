@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IColeccionesRepository {
     List<Coleccion> findAll();
+    Coleccion findByIdentificador(String identificador);
 }

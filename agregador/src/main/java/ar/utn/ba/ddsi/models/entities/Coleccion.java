@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Coleccion {
-    private String identificador;
+    private String identificador;       // handle: string alfanumerico (único para cada colección)
     private String titulo;
     private String descripcion;
     private Criterio criterioDePertenencia;

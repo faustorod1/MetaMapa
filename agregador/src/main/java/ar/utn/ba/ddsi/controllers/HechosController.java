@@ -22,6 +22,6 @@ public class HechosController {
 
     @GetMapping
     public List<HechoOutputDTO> buscarTodos() {
-        return this.hechosService.buscarTodos();
+        return this.hechosService.buscarTodos(null);
     }
 }
