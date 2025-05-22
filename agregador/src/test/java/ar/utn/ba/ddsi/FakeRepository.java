@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi;
 
 import ar.utn.ba.ddsi.models.entities.*;
+import ar.utn.ba.ddsi.commons.Coordenada;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

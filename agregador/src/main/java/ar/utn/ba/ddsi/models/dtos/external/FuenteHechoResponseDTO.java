@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class FuenteHechoResponseDTO {
-    List<FuenteHechoDTO> hechos;
+    List<HechoFuenteDTO> hechos;
 }

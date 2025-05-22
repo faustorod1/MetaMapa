@@ -1,14 +1,17 @@
 package ar.utn.ba.ddsi.services.impl;
 
-import ar.utn.ba.ddsi.models.dtos.external.FuenteHechoDTO;
-import ar.utn.ba.ddsi.models.dtos.external.FuenteHechoResponseDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dtos.external.FuenteHechoResponseDTO;
+import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -19,12 +22,15 @@ import java.util.stream.Collectors;
 @Service
 public class HechosService implements IHechosService {
     private IHechosRepository hechosRepository;
-    private WebClient webClient;
+    private WebClient estaticaWebClient;
+
+
 
     @Autowired
-    public HechosService(IHechosRepository hechosRepository) {
+    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl) {
         this.hechosRepository = hechosRepository;
-        this.webClient = WebClient.builder().baseUrl("http://localhost:8081").build();
+        this.estaticaWebClient = WebClient.builder().baseUrl(fuenteEstaticaApiBaseUrl).build();
+        System.out.println("---------" + fuenteEstaticaApiBaseUrl);
     }
 
     @Override
@@ -48,7 +54,7 @@ public class HechosService implements IHechosService {
         dto.setDescripcion(hecho.getDescripcion());
         if (hecho.getCategoria() != null) dto.setCategoria(hecho.getCategoria().getNombre());
         if (hecho.getContenidoMultimedia() != null) dto.setContenidoMultimedia(hecho.getContenidoMultimedia().getPathImagen());
-        if (hecho.getOrigen() != null) dto.setOrigen(hecho.getOrigen().ordinal());
+        if (hecho.getOrigen() != null) dto.setOrigen(hecho.getOrigen());
         if (hecho.getLugarAcontecimiento() != null) dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento().comoArray());
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
@@ -63,41 +69,38 @@ public class HechosService implements IHechosService {
         return dto;
     }
 
-
-    /*
     @Override
-    public Mono<List<FuenteHechoDTO>> actualizarHechos(){
-        return webClient.get()
+    public Mono<Void> actualizarHechos() {
+        return estaticaWebClient.get()
                 .uri("/api/hechos")
                 .retrieve()
-                .bodyToMono(FuenteHechoResponseDTO.class)
-                .map(FuenteHechoResponseDTO::getHechos);
-        // peticion a FE
-        // peticion a FD
-        // peticion a FP
-
+                .bodyToFlux(HechoFuenteDTO.class)
+                .map(this::hechoFromHechoFuenteDTO)
+                .collectList()
+                .doOnNext(hechosRepository::saveAll)
+                .then();
     }
 
 
-
-    private Hecho hechoFromFuenteHechoDTO(FuenteHechoDTO dto) {
+    private Hecho hechoFromHechoFuenteDTO(HechoFuenteDTO dto) {
 
         Hecho hecho = Hecho.builder()
                 .id(dto.getId())
                 .titulo(dto.getTitulo())
                 .descripcion(dto.getDescripcion())
-                .categoria(new Categoria(dto.getCategoria()))
-                .contenidoMultimedia(new ContenidoMultimedia())
-                .origen(OrigenHecho.values()[dto.getOrigen()])
-                .lugarAcontecimiento(new Coordenada(dto.getLugarAcontecimiento()))
+                .categoria(dto.getCategoria())
+                .contenidoMultimedia(dto.getContenidoMultimedia())
+                .origen(dto.getOrigen())
+                .lugarAcontecimiento(dto.getLugarAcontecimiento())
                 .fechaHecho(dto.getFechaHecho())
                 .fechaDeCarga(dto.getFechaDeCarga())
-                .contribuyente(new Contribuyente(dto.getContribuyente(), "", "", LocalDate.now())) // Cambiar
+                .contribuyente(dto.getContribuyente())
                 .solicitudesDeEliminacion(dto.getSolicitudesDeEliminacion()) // Cambiar
                 .build();
-        return hecho;
-    }
 
-     */
+            return hecho;
+        }
+
+
 }
 

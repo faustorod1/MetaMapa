@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.models.entities;
 
 import lombok.Getter;
+import ar.utn.ba.ddsi.commons.Coordenada;
 
 import java.util.ArrayList;
 import java.util.List;

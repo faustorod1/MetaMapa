@@ -10,17 +10,18 @@ import java.util.HashSet;
 import java.util.List;
 
 @Data
-public class FuenteHechoDTO {
+public class HechoFuenteDTO {
     private Long id;
     private String titulo;
     private String descripcion;
-    private String categoria;
-    private String contenidoMultimedia;
-    private int origen;
-    private double[] lugarAcontecimiento;
+    private Categoria categoria;
+    private ContenidoMultimedia contenidoMultimedia;
+    private OrigenHecho origen;
+    private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private Long contribuyente;
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion; //
-    private HashSet<String> etiquetas;
+    private boolean eliminado;
+    private Contribuyente contribuyente;
+    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
+    private HashSet<Etiqueta> etiquetas;
 }

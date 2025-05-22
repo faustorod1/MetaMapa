@@ -15,7 +15,7 @@ public class HechoOutputDTO {
     private String descripcion;
     private String categoria;
     private String contenidoMultimedia;
-    private int origen;
+    private OrigenHecho origen;
     private double[] lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
