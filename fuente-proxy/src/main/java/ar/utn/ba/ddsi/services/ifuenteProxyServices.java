@@ -7,8 +7,10 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface ifuenteProxyServices {
-  Mono<List<HechoDTO>> getAll();
-  Mono<HechoDTO> getById(Long id);
+  List<HechoOutputDTO> getAll();
+  Mono<List<HechoDTO>> buscarTodos();
+  HechoOutputDTO getById(Long id);
+  Mono<HechoDTO> buscarPorId(Long id);
   Mono<List<HechoDTO>> consumirMetamapa(String baseUrl);
   public HechoOutputDTO externalToOutput(HechoDTO hechoDTO);
 }

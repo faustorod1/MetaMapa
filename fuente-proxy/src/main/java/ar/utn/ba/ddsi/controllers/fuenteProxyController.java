@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
+import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.impl.fuenteProxyServices;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -17,23 +18,23 @@ public class fuenteProxyController {
   }
 
   @GetMapping("/getAll")
-  public Mono<List<HechoDTO>> getAllHechos(){
+  public List<HechoOutputDTO> getAllHechos(){
     return fuenteProxyServices.getAll();
   }
+
+  @GetMapping("/{id}")
+  public HechoOutputDTO getById(@PathVariable Long id){
+    return fuenteProxyServices.getById(id);
+  }
+
 /*
   @GetMapping("/sync")
   public List<HechoDTO> getProducts(){
     return this.fuenteProxyServices.getAll().block();
   }
-  */
+*/
 
-
-  @GetMapping("/{id}")
-  public Mono<HechoDTO> getById(@PathVariable Long id){
-    return fuenteProxyServices.getById(id);
-  }
-
-  @GetMapping("/{baseUrl}")
-  public Mono<List<HechoDTO>> getHechosMetampaInstance(@PathVariable String baseUrl){ return fuenteProxyServices.consumirMetamapa(baseUrl); }
+  @GetMapping("/metamapaInstance/{baseUrl}")
+  public Mono<List<HechoDTO>> getHechosMetamapaInstance(@PathVariable String baseUrl){ return fuenteProxyServices.consumirMetamapa(baseUrl); }
 
 }
