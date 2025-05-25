@@ -33,6 +33,7 @@ public class HechoOutputDTO {
   private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
   private Contribuyente contribuyente;
   private Long id;
+  private LocalDateTime lastUpdate;
 
   @Builder.Default
   private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();

@@ -38,7 +38,9 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   }
 
   @Override
-  public HechoOutputDTO getById(Long id){ return externalToOutput(buscarPorId(id).block()); } //TODO contemplar que no recibamos un null al buscar un hecho en particular o al haacer un getAll
+  public HechoOutputDTO getById(Long id){
+    return externalToOutput(buscarPorId(id).block());
+  } //TODO contemplar que no recibamos un null al buscar un hecho en particular o al haacer un getAll
 
   @Override
   public Mono<List<HechoDTO>> consumirMetamapa(String baseUrl) {

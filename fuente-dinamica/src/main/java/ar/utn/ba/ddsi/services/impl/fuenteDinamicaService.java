@@ -65,9 +65,11 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
     Hecho h = hechosRepository.findById(hecho.getId());
     h.getSolicitudDeModificacion().resolver(estadoNuevo);
     if(estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
-      hechosRepository.update(h, h.getSolicitudDeModificacion().getHechoNuevo());
+      Hecho hechoNuevo = h.getSolicitudDeModificacion().getHechoNuevo();
+      hechoNuevo.setLastUpdate(LocalDateTime.now());
+      hechosRepository.update(h, hechoNuevo);
     }
-  }//TODO: capaz esto haya q hacerlo en el repository en vez de en el service
+  }
 
   public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){
     return Hecho.builder()
@@ -82,6 +84,7 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .eliminado(false)
         .contribuyente(hechoInputDTO.getContribuyente())
         .etiquetas(hechoInputDTO.getEtiquetas())
+            .lastUpdate(LocalDateTime.now())
         .id(null)
         .build();
   }
@@ -100,6 +103,7 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .solicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion())
         .etiquetas(hecho.getEtiquetas())
         .id(hecho.getId())
+            .lastUpdate(hecho.getLastUpdate())
         .build();
   }
 }
