@@ -2,8 +2,8 @@ package ar.utn.ba.ddsi.models.repositories;
 
 import java.util.List;
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.PathDataset;
 
 public interface IHechosRepository {
-    public Hecho findById(Long id);
-    public List<Hecho> findAll();
+    List<Hecho> findAllFrom(PathDataset dataset);
 }

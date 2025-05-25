@@ -7,6 +7,8 @@ import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,25 +19,24 @@ public class HechosService implements IHechosService {
     @Autowired
     private PathsService pathsService;
 
-    @Override
-    public List<Hecho> guardarHechos() {
-        hechosRepository.saveAll(pathsService.tomarHechos());
-    }
-
 
     @Override
-    public List<HechoOutputDTO> buscarTodos() {
-        return this.hechosRepository
-                .findAll()
+    public List<HechoOutputDTO> obtenerHechosCargadosDesde(LocalDateTime desde) {
+        List<PathDataset> paths = pathsService.obtenerPathsDesde(desde);
+        List<Hecho> hechos = new ArrayList<>();
+        paths.forEach(path -> {
+            hechos.addAll(hechosRepository.findAllFrom(path));
+        });
+        return hechos
                 .stream()
                 .map(this::hechoOutputDTO)
                 .toList();
     }
 
-    public HechoOutputDTO findById(Long id) {
-        var hecho = this.hechosRepository.findById(id);
-        if(hecho == null) return null;
-        return hechoOutputDTO(hecho);
+
+    @Override
+    public List<HechoOutputDTO> buscarTodos() {
+        return this.obtenerHechosCargadosDesde(LocalDateTime.MIN);
     }
 
 
