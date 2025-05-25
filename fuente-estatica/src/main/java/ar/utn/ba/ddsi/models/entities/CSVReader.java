@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.MetaMapa.models.entities;
+package ar.utn.ba.ddsi.models.entities;
 
 import java.io.FileReader;
 import java.time.LocalDate;

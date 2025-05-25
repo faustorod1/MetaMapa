@@ -31,7 +31,6 @@ public class hechosRepository implements iHechosRepository {
 
       return hecho;
     } else {
-      //es una modificacion
       hechos.set(Math.toIntExact(hecho.getId()), hecho);
 
       return hecho;

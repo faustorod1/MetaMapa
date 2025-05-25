@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class HechosService implements IHechosService {
     private IHechosRepository hechosRepository;
+
     private WebClient estaticaWebClient;
 
 

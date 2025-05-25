@@ -17,17 +17,17 @@ public class HechosController {
     @Autowired
     private IHechosService hechosService;
 
-    @GetMapping
+    @GetMapping("/getAll")
     public List<HechoOutputDTO> buscarTodos() {
         return this.hechosService.buscarTodos();
     }
 
-    /*
+
     @GetMapping("/{id}")
-    public HechoOutputDTO buscarPorId(Long id) {
-        return this.hechosService.buscarPorId(id);
+    public HechoOutputDTO findByIdId(Long id) {
+        return this.hechosService.findById(id);
     }
-     */
+
 
 
 }

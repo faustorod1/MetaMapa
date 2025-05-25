@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IHechosRepository {
     List<Hecho> findAll();
-
+    List<Hecho> guardarHechos();
     List<Hecho> saveAll(List<Hecho> hechos);
 
     void deleteAll();

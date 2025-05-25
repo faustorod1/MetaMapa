@@ -1,21 +1,21 @@
 package ar.utn.ba.ddsi.models.repositories.impl;
 
-import ar.utn.ba.ddsi.models.entities.FuenteEstatica;
+import ar.utn.ba.ddsi.commons.CSVReader;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class HechosRepository implements IHechosRepository {
-    private FuenteEstatica fuente;
+    private List<Hecho> hechos;
+
 
     public HechosRepository(){
-        this.fuente = new FuenteEstatica("src/test/resources/dataset_prueba.csv");
+        this.hechos = CSVReader.leer(pathArchivo);
     }
-
 
     @Override
     public Hecho findById(Long id) {
@@ -25,5 +25,10 @@ public class HechosRepository implements IHechosRepository {
     @Override
     public List<Hecho> findAll() {
         return this.fuente.getHechos();
+    }
+
+    @Override
+    public void addAll(List<Hecho> hechosNuevos){//TODO: esto quizas deberia tener otro nombre
+        this.hechos = hechosNuevos;
     }
 }

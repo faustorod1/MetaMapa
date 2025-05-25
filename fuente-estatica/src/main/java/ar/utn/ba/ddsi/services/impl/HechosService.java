@@ -11,9 +11,17 @@ import java.util.List;
 
 @Service
 public class HechosService implements IHechosService {
-
     @Autowired
     private IHechosRepository hechosRepository;
+
+    @Autowired
+    private PathsService pathsService;
+
+    @Override
+    public List<Hecho> guardarHechos() {
+        hechosRepository.saveAll(pathsService.tomarHechos());
+    }
+
 
     @Override
     public List<HechoOutputDTO> buscarTodos() {
@@ -24,7 +32,7 @@ public class HechosService implements IHechosService {
                 .toList();
     }
 
-    public HechoOutputDTO buscarPorId(Long id) {
+    public HechoOutputDTO findById(Long id) {
         var hecho = this.hechosRepository.findById(id);
         if(hecho == null) return null;
         return hechoOutputDTO(hecho);
