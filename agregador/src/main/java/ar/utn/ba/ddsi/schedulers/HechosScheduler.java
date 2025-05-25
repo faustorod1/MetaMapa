@@ -12,7 +12,7 @@ public class HechosScheduler {
         this.hechosService = hechosService;
     }
 
-    @Scheduled(fixedRate = 50000)        // 5 segundos
+    @Scheduled(fixedRate = 50000) //50 segundos  //TODO: DEBE SER 1HR (60*60*1000)
     public void actualizarHechos(){
         hechosService.actualizarHechos()
                 .doOnSuccess(v -> System.out.println("Actualizados!"))

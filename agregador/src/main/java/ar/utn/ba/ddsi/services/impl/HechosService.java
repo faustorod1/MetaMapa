@@ -15,6 +15,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -22,8 +24,9 @@ import java.util.stream.Collectors;
 @Service
 public class HechosService implements IHechosService {
     private IHechosRepository hechosRepository;
-
     private WebClient estaticaWebClient;
+
+    private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
 
 
@@ -71,9 +74,18 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public Mono<Void> actualizarHechos() {
+    public Mono<Void> actualizarHechos(){
+        String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
+        fechaUltimaActualizacion = LocalDateTime.now();
+
+        System.out.println(fechaUltimaActualizacionStr);
+
         return estaticaWebClient.get()
-                .uri("/api/hechos")
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/hechos")
+                        .queryParam("desde", fechaUltimaActualizacionStr)  // /api/hechos?desde=fecha
+                        .build()
+                )
                 .retrieve()
                 .bodyToFlux(HechoFuenteDTO.class)
                 .map(this::hechoFromHechoFuenteDTO)
