@@ -3,9 +3,11 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.impl.fuenteProxyServices;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,9 +19,14 @@ public class fuenteProxyController {
     this.fuenteProxyServices = fuenteProxyServices;
   }
 
-  @GetMapping("/getAll")
-  public List<HechoOutputDTO> getAllHechos(){
+  @GetMapping
+  public List<HechoOutputDTO> getAll(){
     return fuenteProxyServices.getAll();
+  }
+
+  @GetMapping(params = "desde")
+  public List<HechoOutputDTO> getAllDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
+    return fuenteProxyServices.getAllDesde(desde);
   }
 
   @GetMapping("/{id}")

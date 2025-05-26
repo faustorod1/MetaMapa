@@ -19,12 +19,12 @@ public class HechosController {
     @Autowired
     private IHechosService hechosService;
 
-    @GetMapping("/getAll")
+    @GetMapping
     public List<HechoOutputDTO> buscarTodos() {
         return this.hechosService.buscarTodos();
     }
 
-    @GetMapping
+    @GetMapping(params = "desde")
     public List<HechoOutputDTO> buscarTodosCargadosDesde(
             @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
         return this.hechosService.obtenerHechosCargadosDesde(desde);

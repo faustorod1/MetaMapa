@@ -4,9 +4,11 @@ import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ifuenteProxyServices {
+  List<HechoOutputDTO> getAllDesde(LocalDateTime desde);
   List<HechoOutputDTO> getAll();
   Mono<List<HechoDTO>> buscarTodos();
   HechoOutputDTO getById(Long id);

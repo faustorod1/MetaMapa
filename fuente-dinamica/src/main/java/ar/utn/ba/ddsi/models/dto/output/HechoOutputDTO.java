@@ -29,14 +29,13 @@ public class HechoOutputDTO {
   private OrigenHecho origen;
   private Coordenada lugarAcontecimiento;
   private LocalDate fechaHecho;
-  private LocalDateTime fechaDeCarga; //TODO revisar si puede modificarse una vez q ya se creo al hecho. Sino usar fechaDeUltimaModificacion
-  private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
+  private LocalDateTime fechaDeCarga;
+  private boolean eliminado;
   private Contribuyente contribuyente;
   private Long id;
-  private LocalDateTime lastUpdate;
 
   @Builder.Default
   private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
-  @Builder.Default //si el builder no le da el valor, hace esto por defecto
+  @Builder.Default
   private HashSet<Etiqueta> etiquetas = new HashSet<>();
 }

@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class FuenteEstatica {
+public class LectorDeCSV {
     private String pathArchivo;
 
-    public FuenteEstatica(String pathArchivo) {
+    public LectorDeCSV(String pathArchivo) {
         this.pathArchivo = pathArchivo;
     }
 

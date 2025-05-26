@@ -27,16 +27,35 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
   }
 
   @Override
+  public List<HechoOutputDTO> getAll(){
+    return hechosRepository
+            .findAll()
+            .stream()
+            .map(this::hechoToDTO)
+            .collect(Collectors.toList());
+  }
+
+  public List<HechoOutputDTO> getAllDesde(LocalDateTime desde){       // Según fecha de última actualización
+    return hechosRepository
+            .findAll()
+            .stream()
+            .filter(hecho -> hecho.getLastUpdate().isAfter(desde))
+            .map(this::hechoToDTO)
+            .collect(Collectors.toList());
+  }
+
+  @Override
   public HechoOutputDTO crearHecho(HechoInputDTO hechoInputDTO) {
     Hecho hecho = this.DtoToHecho(hechoInputDTO);
+    hecho.setLastUpdate(hecho.getFechaDeCarga());
     hechosRepository.save(hecho);
     return this.hechoToDTO(hecho);
   }
 
   @Override
-  public HechoOutputDTO modificarHecho(HechoInputDTO amodificar,HechoInputDTO nuevo){ //Todo cambiar a con el hecho nuevo y el id del viejo
-    Hecho h = DtoToHecho(nuevo);
-    Hecho hvie = DtoToHecho(amodificar);
+  public HechoOutputDTO modificarHecho(HechoInputDTO hechoAModificar,HechoInputDTO hechoNuevo){ //Todo cambiar a con el hecho nuevo y el id del viejo
+    Hecho h = DtoToHecho(hechoNuevo);
+    Hecho hvie = DtoToHecho(hechoAModificar);
     if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) > 7){
       SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hvie,h);
       hvie.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
@@ -47,18 +66,23 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
 
   @Override
   public List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente) { // true si quiero q me de los pendientes
-    return hechosRepository.findByPendiente(pendiente).stream().map(this::hechoToDTO).collect(Collectors.toList());
+    return hechosRepository
+            .findByPendiente(pendiente)
+            .stream()
+            .map(this::hechoToDTO)
+            .collect(Collectors.toList());
   }
 
   @Override
   public List<HechoOutputDTO> obtenerHechosDe(Contribuyente contribuyente){
-    return hechosRepository.findByContribuyente(contribuyente).stream().map(this::hechoToDTO).collect(Collectors.toList());
+    return hechosRepository
+            .findByContribuyente(contribuyente)
+            .stream()
+            .map(this::hechoToDTO)
+            .collect(Collectors.toList());
   }
 
-  @Override
-  public List<HechoOutputDTO> obtenerTodosHechos(){
-    return hechosRepository.findAll().stream().map(this::hechoToDTO).collect(Collectors.toList());
-  }
+
 
   @Override
   public void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo){ //Todo aca tal vez viene un id
@@ -71,7 +95,7 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
     }
   }
 
-  public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){
+  public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
     return Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
         .descripcion(hechoInputDTO.getDescripcion())
@@ -80,7 +104,7 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .lugarAcontecimiento(hechoInputDTO.getLugarAcontecimiento())
         .fechaHecho(hechoInputDTO.getFechaHecho())
         .origen(CONTRIBUYENTE)
-        .fechaDeCarga(LocalDateTime.now()) //TODO revisar si puede modificarse una vez q ya se creo al hecho. Sino usar fechaDeUltimaModificacion
+        .fechaDeCarga(LocalDateTime.now())
         .eliminado(false)
         .contribuyente(hechoInputDTO.getContribuyente())
         .etiquetas(hechoInputDTO.getEtiquetas())
@@ -103,7 +127,6 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .solicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion())
         .etiquetas(hecho.getEtiquetas())
         .id(hecho.getId())
-            .lastUpdate(hecho.getLastUpdate())
         .build();
   }
 }

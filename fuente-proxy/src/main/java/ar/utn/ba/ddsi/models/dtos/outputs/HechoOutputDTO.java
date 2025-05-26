@@ -1,14 +1,14 @@
 package ar.utn.ba.ddsi.models.dtos.outputs;
 
-import ar.utn.ba.ddsi.models.entities.Categoria;
-import ar.utn.ba.ddsi.models.entities.Coordenada;
+import ar.utn.ba.ddsi.models.entities.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -19,9 +19,13 @@ public class HechoOutputDTO {
     private String titulo;
     private String descripcion;
     private Categoria categoria;
-    private Coordenada coordenada;
+    private ContenidoMultimedia contenidoMultimedia;
+    private OrigenHecho origen;
+    private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private LocalDateTime lastUpdate;
-
+    private boolean eliminado;
+    private Contribuyente contribuyente;
+    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
+    private HashSet<Etiqueta> etiquetas;
 }

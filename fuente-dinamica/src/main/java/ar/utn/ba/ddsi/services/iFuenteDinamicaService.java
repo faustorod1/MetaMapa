@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface iFuenteDinamicaService {
@@ -13,7 +14,8 @@ public interface iFuenteDinamicaService {
   HechoOutputDTO modificarHecho(HechoInputDTO hechoAModificar,HechoInputDTO hechoNuevo);
   List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente);
   List<HechoOutputDTO> obtenerHechosDe(Contribuyente contribuyente);
-  List<HechoOutputDTO> obtenerTodosHechos();
+  List<HechoOutputDTO> getAll();
+  List<HechoOutputDTO> getAllDesde(LocalDateTime desde);
   void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo);
   Hecho DtoToHecho (HechoInputDTO hechoInputDTO);
   HechoOutputDTO hechoToDTO(Hecho hecho);

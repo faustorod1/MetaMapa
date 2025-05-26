@@ -24,8 +24,8 @@ public class HechoInputDTO {
   private ContenidoMultimedia contenidoMultimedia;
   private Coordenada lugarAcontecimiento;
   private LocalDate fechaHecho;
-  private Contribuyente contribuyente;//USO: Identificacion unica para el Repository (futura BD)
+  private Contribuyente contribuyente;
 
-  @Builder.Default //si el builder no le da el valor, hace esto por defecto
+  @Builder.Default
   private HashSet<Etiqueta> etiquetas = new HashSet<>();
 }

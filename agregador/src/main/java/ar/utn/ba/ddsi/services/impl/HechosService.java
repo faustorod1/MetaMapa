@@ -1,17 +1,14 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.external.FuenteHechoResponseDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -25,16 +22,21 @@ import java.util.stream.Collectors;
 public class HechosService implements IHechosService {
     private IHechosRepository hechosRepository;
     private WebClient estaticaWebClient;
+    private WebClient dinamicaWebClient;
+    private WebClient proxyWebClient;
+
 
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
 
 
     @Autowired
-    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl) {
+    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl, @Value("${fuente.dinamica.api.base-url}") String fuenteDinamicaApiBaseUrl, @Value("${fuente.proxy.api.base-url}") String fuenteProxyApiBaseUrl) {
         this.hechosRepository = hechosRepository;
         this.estaticaWebClient = WebClient.builder().baseUrl(fuenteEstaticaApiBaseUrl).build();
-        System.out.println("---------" + fuenteEstaticaApiBaseUrl);
+        this.dinamicaWebClient = WebClient.builder().baseUrl(fuenteDinamicaApiBaseUrl).build();
+        this.proxyWebClient = WebClient.builder().baseUrl(fuenteProxyApiBaseUrl).build();
+
     }
 
     @Override
@@ -75,25 +77,42 @@ public class HechosService implements IHechosService {
 
     @Override
     public Mono<Void> actualizarHechos(){
-        String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
+        this.dinamicaWebClient.get()
+                .uri("/tu-endpoint") // o la ruta que estés usando
+                .retrieve()
+                .bodyToMono(String.class)
+                .doOnNext(System.out::println)
+                .then();
+
+        Mono<List<Hecho>> monoEstatica = crearMonoPeticionHechos(estaticaWebClient);
+        Mono<List<Hecho>> monoDinamica = crearMonoPeticionHechos(dinamicaWebClient);
+        Mono<List<Hecho>> monoProxy = crearMonoPeticionHechos(proxyWebClient);
+
+        Mono<Void> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
+                .doOnNext(tupla -> {
+                    hechosRepository.saveAll(tupla.getT1());
+                    hechosRepository.saveAll(tupla.getT2());
+                    hechosRepository.saveAll(tupla.getT3());
+                })
+                .then();
+
         fechaUltimaActualizacion = LocalDateTime.now();
+        return mono;
+    }
 
-        System.out.println(fechaUltimaActualizacionStr);
-
-        return estaticaWebClient.get()
+    private Mono<List<Hecho>> crearMonoPeticionHechos(WebClient webClient) {
+        String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/hechos")
-                        .queryParam("desde", fechaUltimaActualizacionStr)  // /api/hechos?desde=fecha
+                        .queryParam("desde", fechaUltimaActualizacionStr)  //    /api/hechos?desde=fecha
                         .build()
                 )
                 .retrieve()
                 .bodyToFlux(HechoFuenteDTO.class)
                 .map(this::hechoFromHechoFuenteDTO)
-                .collectList()
-                .doOnNext(hechosRepository::saveAll)
-                .then();
+                .collectList();
     }
-
 
     private Hecho hechoFromHechoFuenteDTO(HechoFuenteDTO dto) {
 

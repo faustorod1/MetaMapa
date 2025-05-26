@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.Coordenada;
+import ar.utn.ba.ddsi.models.entities.OrigenHecho;
 import ar.utn.ba.ddsi.services.ifuenteProxyServices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -31,10 +34,21 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   @Override
   public List<HechoOutputDTO> getAll(){
     return buscarTodos()
-            .block() // obtenés List<HechoDTO>
+            .block()
             .stream()
             .map(this::externalToOutput)
             .toList();
+  }
+
+  @Override
+  public List<HechoOutputDTO> getAllDesde(LocalDateTime desde){
+     return buscarTodos()
+            .block()
+            .stream()
+            .filter(h-> LocalDateTime.parse(h.getUpdated_at(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))
+                    .isAfter(desde))
+            .map(this::externalToOutput)
+            .toList(); // tal vez puede devolver un puntero a null
   }
 
   @Override
@@ -86,10 +100,14 @@ public class fuenteProxyServices implements ifuenteProxyServices {
             .titulo(hechoDTO.getTitulo())
             .descripcion(hechoDTO.getDescripcion())
             .categoria(new Categoria(hechoDTO.getCategoria()))
-            .coordenada(new Coordenada(hechoDTO.getLatitud(), hechoDTO.getLongitud()))
+            .lugarAcontecimiento(new Coordenada(hechoDTO.getLatitud(), hechoDTO.getLongitud()))
             .fechaHecho(LocalDate.parse(hechoDTO.getFecha_hecho(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
             .fechaDeCarga(LocalDateTime.parse(hechoDTO.getCreated_at(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
-            .lastUpdate(LocalDateTime.parse(hechoDTO.getUpdated_at(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
+            .contenidoMultimedia(null)
+            .origen(OrigenHecho.PROXY)
+            .eliminado(false)
+            .solicitudesDeEliminacion(new ArrayList<>())
+            .etiquetas(new HashSet<>())
             .build();
   }
 }

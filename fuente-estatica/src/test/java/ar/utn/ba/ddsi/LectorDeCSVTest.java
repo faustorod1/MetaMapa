@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = FuenteEstaticaApplication.class)
 @AutoConfigureMockMvc
-public class FuenteEstaticaTest {
+public class LectorDeCSVTest {
     @Autowired
     private MockMvc mockMvc;
 
