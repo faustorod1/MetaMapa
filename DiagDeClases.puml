@@ -11,25 +11,21 @@ class Hecho{
 - fechaDeCarga: LocalDateTime
 - eliminado: boolean
 - contribuyente: Contribuyente
+- id: Long
+- revisado: boolean
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
+- solicitudesDeModificacion: SolicitudDeModificacion
 - etiquetas: HashSet<Etiqueta>
 --
 + solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
 + etiquetar(Etiqueta etiqueta): void
 }
+
 enum OrigenHecho{
 CARGA_MANUAL
 CONTRIBUYENTE
 DATASET
-}
-
-enum CamposHecho{
- TITULO
- DESCRIPCION
- CATEGORIA
- LATITUD
- LONGITUD
- FECHADEHECHO
+PROXY
 }
 
 class Categoria{
@@ -41,20 +37,22 @@ class Etiqueta{
 }
 
 class Coleccion{
+- identificador: String
 - titulo: String
 - descripcion: String
-- fuente: Fuente
 - criterioDePertenencia: Criterio
 - hechos: List<Hecho>
 --
 + contiene (Hecho hecho): boolean
-+ recalcularHechos(): void
++ filtrarHechos(List<Hecho> todosLosHechos)
 }
 
-class ContenidoMultimedia{}
+class ContenidoMultimedia{
+- pathImagen: String
+}
 
 class Criterio{
-- filtros: ArrayList<Predicate<Hecho>>
+- filtros: List<Filtro>
 --
 + addFiltro(Filtro filtro): Criterio
 + aplicarA(List<Hecho> listaOriginal): List<Hecho>
@@ -67,7 +65,7 @@ abstract class Filtro{
 
 class FiltroPorEliminados{
 --
-+ aplicar(List<Hecho> lista) : List<Hecho>
++ aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class FiltroPorCategoria{
@@ -79,33 +77,33 @@ class FiltroPorCategoria{
 class FiltroPorDescripcion{
 - descripcion : String
 --
-+  aplicar(List<Hecho> lista) : List<Hecho>
++  aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class FiltroPorFechaDeCarga{
 - desde : LocalDateTime
 - hasta : LocalDateTime
 --
-+ aplicar(List<Hecho> lista) : List<Hecho>
++ aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class FiltroPorFechaHecho{
 - desde : LocalDate
 - hasta : LocalDate
 --
-+ aplicar(List<Hecho> lista) : List<Hecho>
++ aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class FiltroPorTitulo{
 - titulo : String
 --
-+  aplicar(List<Hecho> lista) : List<Hecho>
++  aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class FiltroPorUbicacion{
 - lugar : Coordenada
 --
-+ aplicar(List<Hecho> lista) : List<Hecho>
++ aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class SolicitudDeEliminacion{
@@ -114,7 +112,7 @@ class SolicitudDeEliminacion{
 - fechaDeCarga: LocalDateTime
 - fechaDeResolucion: LocalDateTime
 - estado: EstadoSolicitud
-- contribuyente: Contribuyente
+- solicitante: Contribuyente
 - administradorQueResolvio: Administrador
 - CANT_MINIMA_DE_CARACTERES: int = 500
 --
@@ -122,27 +120,20 @@ class SolicitudDeEliminacion{
 }
 
 enum EstadoSolicitud {
-PENDIENTE
-ACEPTADA
-RECHAZADA
+    PENDIENTE
+    ACEPTADA
+    SUGERIDOACAMBIO
+    RECHAZADA
+    ACEPTADACONSUGERENCIA
 }
 
-interface Fuente{
-+ getHechos(): ArrayList<Hecho>
-}
-
-class FuenteEstatica{
-- pathArchivo: String
---
-+ getHechos(): ArrayList<Hecho>
-}
 
 class Coordenada{
-- latitud: double
-- longitud: double
+- latitud: Double
+- longitud: Double
 --
-+ comoArray(): double[]
-+ equals(Coordenada other): boolean
++ comoArray(): Double[]
++ equals(other : Coordenada): boolean
 }
 
 class Administrador{
@@ -151,22 +142,19 @@ class Administrador{
 }
 
 class Contribuyente{
+- id: Long
 - nombre: String
 - apellido: String
 - fechaNacimiento: LocalDate
-
-+ getEdad(): int
 }
 
-class CSVReader{
- + leer(pathArchivo: String): static ArrayList<String[]>
- + leer(pathArchivo: String): ArrayList<Hecho>
+class SolicitudDeModificacion {
+- hechoViejo: Hecho;
+- hechoNuevo: Hecho;
+- estado: EstadoSolicitud;
+--
++ resolver(nuevoEstado : EstadoSolicitud): void
 }
-
-
-
-
-
 
 Hecho -r-> Categoria
 Hecho --> Coordenada
@@ -175,11 +163,10 @@ Hecho --> ContenidoMultimedia
 Hecho -r-> OrigenHecho
 Hecho -->"*" Etiqueta
 Hecho --> Contribuyente
+Hecho --> SolicitudDeModificacion
 
-Coleccion -r-> Fuente
 Coleccion --> Criterio
 Coleccion -->"*" Hecho
-
 
 Criterio .r.> Hecho
 Criterio -->"*" Filtro
@@ -197,10 +184,7 @@ SolicitudDeEliminacion -d-> EstadoSolicitud
 SolicitudDeEliminacion --> Contribuyente
 SolicitudDeEliminacion --> Administrador
 
-FuenteEstatica .u.|> Fuente
-FuenteEstatica ..> CSVReader
-
-CSVReader -d-> CamposHecho
-
+SolicitudDeModificacion -->"*" Hecho
+SolicitudDeModificacion --> EstadoSolicitud
 
 @enduml

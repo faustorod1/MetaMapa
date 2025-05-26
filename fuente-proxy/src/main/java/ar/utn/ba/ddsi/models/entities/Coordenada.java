@@ -20,6 +20,6 @@ public class Coordenada {
     }
 
     public boolean equals(Coordenada other){
-        return this.getLatitud() == other.getLatitud() && this.getLongitud() == other.getLongitud();
+        return this.getLatitud().equals(other.getLatitud()) && this.getLongitud().equals(other.getLongitud());
     }
 }

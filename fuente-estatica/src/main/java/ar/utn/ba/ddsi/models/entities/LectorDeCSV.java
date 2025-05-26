@@ -26,8 +26,8 @@ public class LectorDeCSV {
         for (int i = 1; i < filasStr.size(); i++) {
             String[] fila = filasStr.get(i);
 
-            double latitud = Double.parseDouble(fila[CamposHecho.LATITUD.ordinal()]);
-            double longitud = Double.parseDouble(fila[CamposHecho.LONGITUD.ordinal()]);
+            Double latitud = Double.parseDouble(fila[CamposHecho.LATITUD.ordinal()]);
+            Double longitud = Double.parseDouble(fila[CamposHecho.LONGITUD.ordinal()]);
             String fechaString = fila[(CamposHecho.FECHADEHECHO.ordinal())];
             LocalDate fecha = LocalDate.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 

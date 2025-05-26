@@ -7,19 +7,19 @@ import lombok.Setter;
 @Setter
 
 public class Coordenada {
-    private double latitud;
-    private double longitud;
+    private Double latitud;
+    private Double longitud;
 
-    public Coordenada(double latitud, double longitud) {
+    public Coordenada(Double latitud, Double longitud) {
         this.latitud = latitud;
         this.longitud = longitud;
     }
 
-    public double[] comoArray(){
-        return new double[]{latitud, longitud};
+    public Double[] comoArray(){
+        return new Double[]{latitud, longitud};
     }
 
     public boolean equals(Coordenada other){
-        return this.getLatitud() == other.getLatitud() && this.getLongitud() == other.getLongitud();
+        return this.getLatitud().equals(other.getLatitud()) && this.getLongitud().equals(other.getLongitud());
     }
 }
