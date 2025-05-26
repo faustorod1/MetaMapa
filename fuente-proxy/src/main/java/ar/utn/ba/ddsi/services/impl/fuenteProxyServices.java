@@ -1,11 +1,12 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.models.dtos.externals.HechoExternalMetamapa;
 import ar.utn.ba.ddsi.models.dtos.externals.HechoFuenteApiCatedraResponseDto;
 import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
+import ar.utn.ba.ddsi.models.dtos.externals.HechosMetamapaDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.entities.Categoria;
-import ar.utn.ba.ddsi.models.entities.Coordenada;
-import ar.utn.ba.ddsi.models.entities.OrigenHecho;
+import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.services.ifuenteProxyServices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class fuenteProxyServices implements ifuenteProxyServices {
@@ -56,15 +58,22 @@ public class fuenteProxyServices implements ifuenteProxyServices {
     return externalToOutput(buscarPorId(id).block());
   } //TODO contemplar que no recibamos un null al buscar un hecho en particular o al haacer un getAll
 
+
+
   @Override
-  public Mono<List<HechoDTO>> consumirMetamapa(String baseUrl) {
+  public List<HechoOutputDTO> consumirMetamapa(String baseUrl) {
     WebClient metamapa = WebClient.builder().baseUrl(baseUrl).build();
     return metamapa
             .get()
             .uri("/hechos")
             .retrieve()
-            .bodyToMono(HechoFuenteApiCatedraResponseDto.class)
-            .map(HechoFuenteApiCatedraResponseDto::getData);
+            .bodyToMono(HechosMetamapaDTO.class)
+            .map(HechosMetamapaDTO::getHechos)
+            .block()
+            .stream()
+            .map(this::externalMetamapaToHechoOutPut)
+            .toList();
+
   }
 
   @Override
@@ -110,4 +119,23 @@ public class fuenteProxyServices implements ifuenteProxyServices {
             .etiquetas(new HashSet<>())
             .build();
   }
+
+  private HechoOutputDTO externalMetamapaToHechoOutPut(HechoExternalMetamapa metamapaDTO) {
+    HechoOutputDTO hecho = HechoOutputDTO.builder()
+            .id(metamapaDTO.getId())
+            .titulo(metamapaDTO.getTitulo())
+            .descripcion(metamapaDTO.getDescripcion())
+            .categoria(new Categoria(metamapaDTO.getCategoria()))
+            .contenidoMultimedia(new ContenidoMultimedia()) //todo ver como esta implementado el constructor
+            .origen(metamapaDTO.getOrigen())
+            .lugarAcontecimiento(new Coordenada(metamapaDTO.getLugarAcontecimiento()[0],metamapaDTO.getLugarAcontecimiento()[1]))
+            .fechaHecho(metamapaDTO.getFechaHecho())
+            .fechaDeCarga(metamapaDTO.getFechaDeCarga())
+            .contribuyenteId(metamapaDTO.getContribuyenteId())
+            .solicitudesDeEliminacion(metamapaDTO.getSolicitudesDeEliminacion())
+            .etiquetas(metamapaDTO.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toCollection(HashSet::new)))
+            .build();
+    return hecho;
+  }
+
 }

@@ -13,6 +13,6 @@ public interface ifuenteProxyServices {
   Mono<List<HechoDTO>> buscarTodos();
   HechoOutputDTO getById(Long id);
   Mono<HechoDTO> buscarPorId(Long id);
-  Mono<List<HechoDTO>> consumirMetamapa(String baseUrl);
+  List<HechoOutputDTO> consumirMetamapa(String baseUrl);
   public HechoOutputDTO externalToOutput(HechoDTO hechoDTO);
 }

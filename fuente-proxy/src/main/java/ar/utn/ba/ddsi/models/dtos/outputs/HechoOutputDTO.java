@@ -1,5 +1,7 @@
 package ar.utn.ba.ddsi.models.dtos.outputs;
 
+
+import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +27,7 @@ public class HechoOutputDTO {
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
     private boolean eliminado;
-    private Contribuyente contribuyente;
+    private Long contribuyenteId;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private HashSet<Etiqueta> etiquetas;
 }

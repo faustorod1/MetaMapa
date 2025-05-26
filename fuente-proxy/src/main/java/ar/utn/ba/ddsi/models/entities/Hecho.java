@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import ar.utn.ba.ddsi.commons.Coordenada;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

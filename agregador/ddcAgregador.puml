@@ -14,7 +14,6 @@ class Hecho{
 - id: Long
 - revisado: boolean
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
-- solicitudesDeModificacion: SolicitudDeModificacion
 - etiquetas: HashSet<Etiqueta>
 --
 + solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
@@ -71,13 +70,13 @@ class FiltroPorEliminados{
 class FiltroPorCategoria{
 - categoria : Categoria
 --
-+  aplicar(List<Hecho> hechos): List<Hecho>
++ aplicar(List<Hecho> hechos): List<Hecho>
 }
 
 class FiltroPorDescripcion{
 - descripcion : String
 --
-+  aplicar(List<Hecho> lista): List<Hecho>
++ aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class FiltroPorFechaDeCarga{
@@ -147,16 +146,9 @@ class Contribuyente{
 - apellido: String
 - fechaNacimiento: LocalDate
 --
-+ getEdad() : Int
++ getEdad(): int
 }
 
-class SolicitudDeModificacion {
-- hechoViejo: Hecho;
-- hechoNuevo: Hecho;
-- estado: EstadoSolicitud;
---
-+ resolver(nuevoEstado : EstadoSolicitud): void
-}
 
 Hecho -r-> Categoria
 Hecho --> Coordenada
@@ -165,7 +157,6 @@ Hecho --> ContenidoMultimedia
 Hecho -r-> OrigenHecho
 Hecho -->"*" Etiqueta
 Hecho --> Contribuyente
-Hecho --> SolicitudDeModificacion
 
 Coleccion --> Criterio
 Coleccion -->"*" Hecho
@@ -186,7 +177,6 @@ SolicitudDeEliminacion -d-> EstadoSolicitud
 SolicitudDeEliminacion --> Contribuyente
 SolicitudDeEliminacion --> Administrador
 
-SolicitudDeModificacion -->"*" Hecho
-SolicitudDeModificacion --> EstadoSolicitud
+
 
 @enduml

@@ -1,6 +1,7 @@
 @startuml
 
 class Hecho{
+- id: Long
 - título: String
 - descripción: String
 - categoría: Categoria
@@ -11,8 +12,7 @@ class Hecho{
 - fechaDeCarga: LocalDateTime
 - eliminado: boolean
 - contribuyente: Contribuyente
-- id: Long
-- revisado: boolean
+- lastUpdate: LocalDateTime
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
 - solicitudesDeModificacion: SolicitudDeModificacion
 - etiquetas: HashSet<Etiqueta>
@@ -36,74 +36,8 @@ class Etiqueta{
 - nombre: String
 }
 
-class Coleccion{
-- identificador: String
-- titulo: String
-- descripcion: String
-- criterioDePertenencia: Criterio
-- hechos: List<Hecho>
---
-+ contiene (Hecho hecho): boolean
-+ filtrarHechos(List<Hecho> todosLosHechos)
-}
-
 class ContenidoMultimedia{
 - pathImagen: String
-}
-
-class Criterio{
-- filtros: List<Filtro>
---
-+ addFiltro(Filtro filtro): Criterio
-+ aplicarA(List<Hecho> listaOriginal): List<Hecho>
-}
-
-abstract class Filtro{
---
-+ aplicar(List<Hecho> lista): List<Hecho>
-}
-
-class FiltroPorEliminados{
---
-+ aplicar(List<Hecho> lista): List<Hecho>
-}
-
-class FiltroPorCategoria{
-- categoria : Categoria
---
-+  aplicar(List<Hecho> hechos): List<Hecho>
-}
-
-class FiltroPorDescripcion{
-- descripcion : String
---
-+  aplicar(List<Hecho> lista): List<Hecho>
-}
-
-class FiltroPorFechaDeCarga{
-- desde : LocalDateTime
-- hasta : LocalDateTime
---
-+ aplicar(List<Hecho> lista): List<Hecho>
-}
-
-class FiltroPorFechaHecho{
-- desde : LocalDate
-- hasta : LocalDate
---
-+ aplicar(List<Hecho> lista): List<Hecho>
-}
-
-class FiltroPorTitulo{
-- titulo : String
---
-+  aplicar(List<Hecho> lista): List<Hecho>
-}
-
-class FiltroPorUbicacion{
-- lugar : Coordenada
---
-+ aplicar(List<Hecho> lista): List<Hecho>
 }
 
 class SolicitudDeEliminacion{
@@ -133,7 +67,7 @@ class Coordenada{
 - longitud: Double
 --
 + comoArray(): Double[]
-+ equals(other : Coordenada): boolean
++ equals(other: Coordenada): boolean
 }
 
 class Administrador{
@@ -147,7 +81,7 @@ class Contribuyente{
 - apellido: String
 - fechaNacimiento: LocalDate
 --
-+ getEdad() : Int
++ getEdad(): int
 }
 
 class SolicitudDeModificacion {
@@ -158,31 +92,17 @@ class SolicitudDeModificacion {
 + resolver(nuevoEstado : EstadoSolicitud): void
 }
 
-Hecho -r-> Categoria
-Hecho --> Coordenada
-Hecho -->"*" SolicitudDeEliminacion
+Hecho --> Categoria
 Hecho --> ContenidoMultimedia
-Hecho -r-> OrigenHecho
-Hecho -->"*" Etiqueta
+Hecho --> OrigenHecho
+Hecho --> Coordenada
 Hecho --> Contribuyente
-Hecho --> SolicitudDeModificacion
-
-Coleccion --> Criterio
-Coleccion -->"*" Hecho
-
-Criterio .r.> Hecho
-Criterio -->"*" Filtro
-
-FiltroPorCategoria -u-|> Filtro
-FiltroPorDescripcion -u-|> Filtro
-FiltroPorEliminados -u-|> Filtro
-FiltroPorFechaDeCarga -u-|> Filtro
-FiltroPorFechaHecho -u-|> Filtro
-FiltroPorTitulo -u-|> Filtro
-FiltroPorUbicacion -u-|> Filtro
+Hecho -->"*" SolicitudDeEliminacion
+Hecho -->"*" SolicitudDeModificacion
+Hecho -->"*" Etiqueta
 
 SolicitudDeEliminacion --> Hecho
-SolicitudDeEliminacion -d-> EstadoSolicitud
+SolicitudDeEliminacion --> EstadoSolicitud
 SolicitudDeEliminacion --> Contribuyente
 SolicitudDeEliminacion --> Administrador
 

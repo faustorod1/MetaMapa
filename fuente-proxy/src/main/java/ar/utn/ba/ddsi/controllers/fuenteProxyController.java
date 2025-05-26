@@ -42,6 +42,6 @@ public class fuenteProxyController {
 */
 
   @GetMapping("/metamapaInstance/{baseUrl}")
-  public Mono<List<HechoDTO>> getHechosMetamapaInstance(@PathVariable String baseUrl){ return fuenteProxyServices.consumirMetamapa(baseUrl); }
+  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){ return fuenteProxyServices.consumirMetamapa(baseUrl); }
 
 }

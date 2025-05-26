@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.models.entities;
 import ar.utn.ba.ddsi.commons.CSVReader;
 import ar.utn.ba.ddsi.commons.Coordenada;
 
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;

@@ -28,7 +28,6 @@ public class Hecho {
     private LocalDateTime fechaDeCarga;
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
     private Contribuyente contribuyente;
-
     private Long id;        //USO: Identificacion unica para el Repository (futura BD)
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
     //TODO actualizar ddc (agregar el boolean revisado y el long id)
