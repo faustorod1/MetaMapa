@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.dtos.output;
 
+import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.*;
 import lombok.Data;
 
@@ -13,12 +14,13 @@ public class HechoOutputDTO {
     private Long id;
     private String titulo;
     private String descripcion;
-    private String categoria;
-    private String contenidoMultimedia;
+    private Categoria categoria;
+    private ContenidoMultimedia contenidoMultimedia;
     private OrigenHecho origen;
-    private double[] lugarAcontecimiento;
+    private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
+    private String idExterno;
     private Long contribuyente;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion; //
     private HashSet<String> etiquetas;

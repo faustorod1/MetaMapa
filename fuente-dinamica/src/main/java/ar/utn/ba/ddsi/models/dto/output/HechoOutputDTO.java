@@ -32,7 +32,7 @@ public class HechoOutputDTO {
   private LocalDateTime fechaDeCarga;
   private boolean eliminado;
   private Contribuyente contribuyente;
-  private Long id;
+  private String id;
 
   @Builder.Default
   private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();

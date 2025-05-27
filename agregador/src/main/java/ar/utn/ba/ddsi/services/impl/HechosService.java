@@ -58,12 +58,13 @@ public class HechosService implements IHechosService {
         dto.setId(hecho.getId());
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
-        if (hecho.getCategoria() != null) dto.setCategoria(hecho.getCategoria().getNombre());
-        if (hecho.getContenidoMultimedia() != null) dto.setContenidoMultimedia(hecho.getContenidoMultimedia().getPathImagen());
-        if (hecho.getOrigen() != null) dto.setOrigen(hecho.getOrigen());
-        if (hecho.getLugarAcontecimiento() != null) dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento().comoArray());
+        dto.setCategoria(hecho.getCategoria());
+        dto.setContenidoMultimedia(hecho.getContenidoMultimedia());
+        dto.setOrigen(hecho.getOrigen());
+        dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
+        dto.setIdExterno(hecho.getIdExterno());
         if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
         dto.setSolicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion());
         dto.setEtiquetas(
@@ -117,7 +118,7 @@ public class HechosService implements IHechosService {
     private Hecho hechoFromHechoFuenteDTO(HechoFuenteDTO dto) {
 
         Hecho hecho = Hecho.builder()
-                .id(dto.getId())
+                .idExterno(dto.getId())
                 .titulo(dto.getTitulo())
                 .descripcion(dto.getDescripcion())
                 .categoria(dto.getCategoria())

@@ -12,6 +12,7 @@ import java.util.List;
 public class HechosRepository implements IHechosRepository {
 
     private List<Hecho> hechos = new ArrayList<Hecho>();
+    private Long idActual = 0L;
 
     @Override
     public List<Hecho> findAll(){
@@ -21,16 +22,13 @@ public class HechosRepository implements IHechosRepository {
 
     @Override
     public List<Hecho> saveAll(List<Hecho> hechosNuevos) {
-        hechos.addAll(hechosNuevos);
-        return hechos;
-
-        /*
         for (Hecho hecho : hechosNuevos) {
-        //TODO comprobar si el hecho no se modifico => no hace falta actualizarlo
-        hecho
-
+            // TODO: Revisar si ya está en la lista, y en ese caso solo actualizarlo
+            idActual++;
+            hecho.setId(idActual);
+            this.hechos.add(hecho);
         }
-        */
+        return hechos;
     }
 
 

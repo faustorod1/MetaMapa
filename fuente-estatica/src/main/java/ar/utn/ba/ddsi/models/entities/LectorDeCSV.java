@@ -9,9 +9,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class LectorDeCSV {
-    private String pathArchivo;
+    private PathDataset pathArchivo;
 
-    public LectorDeCSV(String pathArchivo) {
+    public LectorDeCSV(PathDataset pathArchivo) {
         this.pathArchivo = pathArchivo;
     }
 
@@ -21,7 +21,7 @@ public class LectorDeCSV {
 
     private ArrayList<Hecho> leerHechosDeCSV(){      // Traducción de String[] a List<Hecho>
         ArrayList<Hecho> hechos = new ArrayList<>();
-        ArrayList<String[]> filasStr = CSVReader.leer(pathArchivo);
+        ArrayList<String[]> filasStr = CSVReader.leer(pathArchivo.getPath());
 
         // i empieza en 1 porque se saltea la fila de headers.
         for (int i = 1; i < filasStr.size(); i++) {
@@ -33,6 +33,8 @@ public class LectorDeCSV {
             LocalDate fecha = LocalDate.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             Hecho h = Hecho.builder()
+                    .id((long) i)
+                    .idDataset(pathArchivo.getId())
                     .titulo(fila[CamposHecho.TITULO.ordinal()])
                     .descripcion(fila[CamposHecho.DESCRIPCION.ordinal()])
                     .categoria(new Categoria(fila[CamposHecho.CATEGORIA.ordinal()]))

@@ -27,6 +27,9 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   private WebClient webClient;
   private String token;
 
+  private int idApiDesastres = 2;
+  private int idApiMetaMapa = 1;
+
   @Autowired
   public fuenteProxyServices(WebClient.Builder webClientBuilder, @Value("${api.desastres-naturales.token}") String apiDesastresNaturalesToken, @Value("${api.desastres-naturales.url}") String apiDesastresNaturalesURL) {
     this.token = apiDesastresNaturalesToken;
@@ -105,7 +108,7 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   @Override
   public HechoOutputDTO externalToOutput (HechoDTO hechoDTO) {
     return HechoOutputDTO.builder()
-            .id(hechoDTO.getId())
+            .id(String.format("proxy:%s:%s", idApiDesastres, hechoDTO.getId())) // Usamos proxy:<id-api>:<id-hecho>, como solo tenemos una API, usamos siempre el mismo
             .titulo(hechoDTO.getTitulo())
             .descripcion(hechoDTO.getDescripcion())
             .categoria(new Categoria(hechoDTO.getCategoria()))
@@ -122,7 +125,7 @@ public class fuenteProxyServices implements ifuenteProxyServices {
 
   private HechoOutputDTO externalMetamapaToHechoOutPut(HechoExternalMetamapa metamapaDTO) {
     HechoOutputDTO hecho = HechoOutputDTO.builder()
-            .id(metamapaDTO.getId())
+            .id(String.format("proxy:%s:%s", idApiMetaMapa, metamapaDTO.getId())) // Usamos proxy:<id-api>:<id-hecho>
             .titulo(metamapaDTO.getTitulo())
             .descripcion(metamapaDTO.getDescripcion())
             .categoria(new Categoria(metamapaDTO.getCategoria()))

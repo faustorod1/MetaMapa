@@ -126,7 +126,7 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .contribuyente(hecho.getContribuyente())
         .solicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion())
         .etiquetas(hecho.getEtiquetas())
-        .id(hecho.getId())
+        .id(String.format("dinamica:%s", hecho.getId()))
         .build();
   }
 }

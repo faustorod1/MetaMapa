@@ -27,7 +27,8 @@ public class Hecho {
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
-    private Long id;    //USO: Identificacion unica para el Repository (futura BD)
+    private Long id; // Identificador dentro del dataset
+    private Long idDataset; // Identificador del dataset
 
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
