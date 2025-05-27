@@ -11,6 +11,14 @@
 
     <artifactId>fuente-dinamica</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>ar.utn.ba.ddsi</groupId>
+            <artifactId>commons</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>

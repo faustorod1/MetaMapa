@@ -26,6 +26,7 @@ public class HechoOutputDTO {
     private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
+    private LocalDateTime fechaUltimaActualizacion;
     private boolean eliminado;
     private Long contribuyenteId;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion;

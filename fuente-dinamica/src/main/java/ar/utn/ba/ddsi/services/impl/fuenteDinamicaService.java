@@ -1,16 +1,19 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.entities.Contribuyente;
-import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
-import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.SolicitudDeModificacion;
+import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.iHechosRepository;
 import ar.utn.ba.ddsi.services.iFuenteDinamicaService;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Formatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,15 +102,16 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
     return Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
         .descripcion(hechoInputDTO.getDescripcion())
-        .categoria(hechoInputDTO.getCategoria())
-        .contenidoMultimedia(hechoInputDTO.getContenidoMultimedia())
-        .lugarAcontecimiento(hechoInputDTO.getLugarAcontecimiento())
-        .fechaHecho(hechoInputDTO.getFechaHecho())
+        .categoria(new Categoria(hechoInputDTO.getCategoria()))
+        //.contenidoMultimedia(new ContenidoMultimedia())
+        .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(),hechoInputDTO.getLongitud()))
+        .fechaHecho(LocalDate.parse(hechoInputDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
         .origen(CONTRIBUYENTE)
         .fechaDeCarga(LocalDateTime.now())
         .eliminado(false)
-        .contribuyente(hechoInputDTO.getContribuyente())
-        .etiquetas(hechoInputDTO.getEtiquetas())
+        .contribuyente(new Contribuyente(hechoInputDTO.getContribuyente().getNombre(), hechoInputDTO.getContribuyente().getApellido(),
+                LocalDate.parse(hechoInputDTO.getContribuyente().getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))
+        .etiquetas(hechoInputDTO.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toCollection(HashSet::new)))
         .lastUpdate(LocalDateTime.now())
         .id(null)
         .build();
@@ -117,10 +121,11 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())
         .categoria(hecho.getCategoria())
-        .contenidoMultimedia(hecho.getContenidoMultimedia())
+        //.contenidoMultimedia(hecho.getContenidoMultimedia())
         .lugarAcontecimiento(hecho.getLugarAcontecimiento())
         .fechaHecho(hecho.getFechaHecho())
         .fechaDeCarga(hecho.getFechaDeCarga())
+        .fechaUltimaActualizacion(hecho.getLastUpdate())
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
         .contribuyente(hecho.getContribuyente())

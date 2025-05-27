@@ -20,6 +20,7 @@ public class HechoExternalMetamapa {
     private Double[] lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
+    private LocalDateTime fechaUltimaActualizacion;
     private Long contribuyenteId;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private HashSet<String> etiquetas;

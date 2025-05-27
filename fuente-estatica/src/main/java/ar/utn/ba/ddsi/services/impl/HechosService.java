@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -47,15 +48,16 @@ public class HechosService implements IHechosService {
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
         dto.setCategoria(hecho.getCategoria());
-        dto.setContenidoMultimedia(hecho.getContenidoMultimedia());
-        dto.setOrigen(hecho.getOrigen());
+        dto.setContenidoMultimedia(null);
+        dto.setOrigen(OrigenHecho.DATASET);
         dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
-        dto.setEliminado(hecho.isEliminado());
-        dto.setSolicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion());
+        dto.setFechaUltimaActualizacion(hecho.getFechaDeCarga());
+        dto.setEliminado(false);
+        dto.setSolicitudesDeEliminacion(new ArrayList<SolicitudDeEliminacion>());
         dto.setContribuyente(null);
-        dto.setEtiquetas(hecho.getEtiquetas());
+        dto.setEtiquetas(new HashSet<Etiqueta>());
 
         return dto;
     }

@@ -23,18 +23,41 @@ public class HechosRepository implements IHechosRepository {
     @Override
     public List<Hecho> saveAll(List<Hecho> hechosNuevos) {
         for (Hecho hecho : hechosNuevos) {
-            // TODO: Revisar si ya está en la lista, y en ese caso solo actualizarlo
-            idActual++;
-            hecho.setId(idActual);
-            this.hechos.add(hecho);
+            Hecho hechoViejo = findByIdExterno(hecho.getIdExterno());
+            if (hechoViejo != null) {
+                actualizarHecho(hechoViejo, hecho);
+            }
+            else {
+                idActual++;
+                hecho.setId(idActual);
+                this.hechos.add(hecho);
+            }
         }
         return hechos;
     }
 
-
-
     @Override
     public void deleteAll(){
         this.hechos.clear();
+    }
+
+    public Hecho findByIdExterno(String idExterno) {
+        return hechos.stream().filter(h -> h.getIdExterno().equals(idExterno)).findFirst().orElse(null);
+    }
+
+    private void actualizarHecho(Hecho hechoAntiguo, Hecho hechoNuevo) {
+        hechoAntiguo.setTitulo(hechoNuevo.getTitulo());
+        hechoAntiguo.setDescripcion(hechoNuevo.getDescripcion());
+        hechoAntiguo.setCategoria(hechoNuevo.getCategoria());
+        hechoAntiguo.setContenidoMultimedia(hechoNuevo.getContenidoMultimedia());
+        hechoAntiguo.setOrigen(hechoNuevo.getOrigen());
+        hechoAntiguo.setLugarAcontecimiento(hechoNuevo.getLugarAcontecimiento());
+        hechoAntiguo.setFechaHecho(hechoNuevo.getFechaHecho());
+        hechoAntiguo.setFechaUltimaActualizacion(hechoNuevo.getFechaUltimaActualizacion());
+        hechoAntiguo.setEliminado(hechoNuevo.isEliminado());
+        hechoAntiguo.setContribuyente(hechoNuevo.getContribuyente());
+        hechoAntiguo.setRevisado(hechoAntiguo.isRevisado());
+        hechoAntiguo.setSolicitudesDeEliminacion(hechoNuevo.getSolicitudesDeEliminacion());
+        hechoAntiguo.setEtiquetas(hechoNuevo.getEtiquetas());
     }
 }
