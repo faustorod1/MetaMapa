@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -26,9 +27,7 @@ public class HechosService implements IHechosService {
     private WebClient dinamicaWebClient;
     private WebClient proxyWebClient;
 
-
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-
 
 
     @Autowired
@@ -37,7 +36,6 @@ public class HechosService implements IHechosService {
         this.estaticaWebClient = WebClient.builder().baseUrl(fuenteEstaticaApiBaseUrl).build();
         this.dinamicaWebClient = WebClient.builder().baseUrl(fuenteDinamicaApiBaseUrl).build();
         this.proxyWebClient = WebClient.builder().baseUrl(fuenteProxyApiBaseUrl).build();
-
     }
 
     @Override
@@ -45,12 +43,23 @@ public class HechosService implements IHechosService {
         if (criterio == null) {
             criterio = new Criterio(); // Por defecto, solo filtra los eliminados
         }
-        List<Hecho> hechosFiltrados = criterio.aplicarA(hechosRepository.findAll());
+        List<Hecho> hechosTotales = new ArrayList<>(hechosRepository.findAll());
+
+        List<Hecho> hechosMetamapa = this.pedirHechosMetamapa().block();
+        hechosTotales.addAll(hechosMetamapa);
+
+
+        List<Hecho> hechosFiltrados = criterio.aplicarA(hechosTotales);
 
         return hechosFiltrados
                 .stream()
                 .map(this::hechoOutputDTO)
                 .toList();
+    }
+
+    @Override
+    public Hecho obtenerPorId(Long id){
+        return hechosRepository.findById(id);
     }
 
     private HechoOutputDTO hechoOutputDTO(Hecho hecho) {
@@ -67,7 +76,13 @@ public class HechosService implements IHechosService {
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setIdExterno(hecho.getIdExterno());
         if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
-        dto.setSolicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion());
+        //dto.setSolicitudesDeEliminacion(new ArrayList<>());
+//        dto.setSolicitudesDeEliminacion(
+//            hecho.getSolicitudesDeEliminacion()
+//                .stream()
+//                .map(ISolicitudesService::solicititudDeEliminacionToDTO)
+//                .toList()
+//        );
         dto.setEtiquetas(
                 hecho.getEtiquetas()
                         .stream()
@@ -141,6 +156,19 @@ public class HechosService implements IHechosService {
 
     private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {
         return new Contribuyente(dto.getId(), dto.getNombre(), dto.getApellido(), LocalDate.parse(dto.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    }
+
+    private Mono<List<Hecho>> pedirHechosMetamapa() {
+        return proxyWebClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/api/hechos/metamapaInstance/a")
+                .build()
+            )
+            .retrieve()
+            .bodyToFlux(HechoFuenteDTO.class)
+            .map(this::hechoFromHechoFuenteDTO)
+            .collectList()
+            .map(ArrayList::new);
     }
 }
 

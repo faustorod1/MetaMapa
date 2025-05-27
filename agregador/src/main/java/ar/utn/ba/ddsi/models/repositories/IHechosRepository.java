@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IHechosRepository {
     List<Hecho> findAll();
+    Hecho findById(Long id);
     List<Hecho> saveAll(List<Hecho> hechos);
 
     void deleteAll();

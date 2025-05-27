@@ -9,6 +9,7 @@ class Hecho{
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDate
 - fechaDeCarga: LocalDateTime
+- fechaUltimaActualizacion: LocalDateTime
 - eliminado: boolean
 - contribuyente: Contribuyente
 - id: Long
@@ -35,7 +36,6 @@ class Etiqueta{
 }
 
 class ContenidoMultimedia{
-- pathImagen: String
 }
 
 class SolicitudDeEliminacion{

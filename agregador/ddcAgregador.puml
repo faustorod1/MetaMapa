@@ -12,6 +12,7 @@ class Hecho{
 - eliminado: boolean
 - contribuyente: Contribuyente
 - id: Long
+- idExterno: String
 - revisado: boolean
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
 - etiquetas: HashSet<Etiqueta>
@@ -106,6 +107,7 @@ class FiltroPorUbicacion{
 }
 
 class SolicitudDeEliminacion{
+- id: Long
 - descripcion: String
 - hecho: Hecho
 - fechaDeCarga: LocalDateTime

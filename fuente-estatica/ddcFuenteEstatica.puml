@@ -20,7 +20,6 @@ class Categoria{
 }
 
 class ContenidoMultimedia{
-- pathImagen: String
 }
 
 
@@ -48,19 +47,11 @@ class Hecho{
 - título: String
 - descripción: String
 - categoría: Categoria
-- contenidoMultimedia: ContenidoMultimedia
-- origen: OrigenHecho
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDate
 - fechaDeCarga: LocalDateTime
-- eliminado: boolean
 - id: Long
 - idDataset: Long
-- solicitudesDeEliminacion: List<SolicitudDeEliminacion>
-- etiquetas: HashSet<Etiqueta>
---
-+ solicitarEliminacion(String justificacion, Contribuyente solicitante): SolicitudDeEliminacion
-+ etiquetar(Etiqueta etiqueta): void
 }
 
 class LectorDeCSV{

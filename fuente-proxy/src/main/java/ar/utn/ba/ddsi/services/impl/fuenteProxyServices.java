@@ -66,6 +66,8 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   @Override
   public List<HechoOutputDTO> consumirMetamapa(String baseUrl) {
     WebClient metamapa = WebClient.builder().baseUrl(baseUrl).build();
+    return new ArrayList<>();
+    /*
     return metamapa
             .get()
             .uri("/hechos")
@@ -76,7 +78,7 @@ public class fuenteProxyServices implements ifuenteProxyServices {
             .stream()
             .map(this::externalMetamapaToHechoOutPut)
             .toList();
-
+      */
   }
 
   @Override

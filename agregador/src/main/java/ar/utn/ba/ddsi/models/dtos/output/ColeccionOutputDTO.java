@@ -15,5 +15,4 @@ public class ColeccionOutputDTO {
     private String titulo;
     private String descripcion;
     private CriterioOutputDTO criterioDePertenencia;
-    private List<Hecho> hechos;
 }

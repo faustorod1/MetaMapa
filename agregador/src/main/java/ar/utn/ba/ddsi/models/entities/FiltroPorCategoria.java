@@ -15,7 +15,7 @@ public class FiltroPorCategoria extends Filtro{
 
     @Override
     public List<Hecho> aplicar(List<Hecho> hechos){
-        return hechos.stream().filter(hecho -> hecho.getCategoria() == categoria).collect(Collectors.toList());
+        return hechos.stream().filter(hecho -> hecho.getCategoria().equals(categoria)).collect(Collectors.toList());
     }
 
 }

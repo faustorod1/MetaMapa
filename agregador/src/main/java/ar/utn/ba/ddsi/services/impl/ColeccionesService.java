@@ -48,7 +48,6 @@ public class ColeccionesService implements IColeccionesService {
         dto.setTitulo(coleccion.getTitulo());
         dto.setDescripcion(coleccion.getDescripcion());
         dto.setCriterioDePertenencia(criterioOutputDTO(coleccion.getCriterioDePertenencia()));
-        dto.setHechos(coleccion.getHechos());
         return dto;
     }
 

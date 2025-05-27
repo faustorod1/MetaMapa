@@ -1,14 +1,12 @@
 package ar.utn.ba.ddsi.models.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 public class SolicitudDeEliminacion {
 
+    private Long id;
     private String descripcion;
     private Hecho hecho;
     private LocalDateTime fechaDeCarga;
@@ -18,7 +16,7 @@ public class SolicitudDeEliminacion {
     private Administrador administradorQueResolvio;
     private final int CANT_MINIMA_DE_CARACTERES = 500;
 
-    public SolicitudDeEliminacion(Hecho hecho, String descripcion, Contribuyente solicitante) throws Exception {
+    public SolicitudDeEliminacion(Hecho hecho, String descripcion, Contribuyente solicitante) throws DescripcionSolicitudException {
         if(descripcion.length() >= CANT_MINIMA_DE_CARACTERES) {
             this.descripcion = descripcion;
             this.hecho = hecho;
@@ -26,7 +24,7 @@ public class SolicitudDeEliminacion {
             this.fechaDeCarga = LocalDateTime.now();
             this.solicitante = solicitante;
         }else{
-            throw new Exception("La descripción debe tener al menos de 500 caracteres");
+            throw new DescripcionSolicitudException("La descripción debe tener al menos de 500 caracteres");
             //TODO: Revisar si es correcto lanzar excepcion
         }
     }
