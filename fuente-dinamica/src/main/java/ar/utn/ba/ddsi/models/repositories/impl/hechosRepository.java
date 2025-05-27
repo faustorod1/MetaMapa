@@ -40,7 +40,7 @@ public class hechosRepository implements iHechosRepository {
   public void update(Hecho hechoViejo,Hecho hecho) {
     hecho.setId(hechoViejo.getId());
     hecho.setLastUpdate(LocalDateTime.now());
-    hechos.set(Math.toIntExact(hechoViejo.getId()), hecho);
+    hechos.set(Math.toIntExact(hecho.getId()), hecho);
   }
 
   @Override

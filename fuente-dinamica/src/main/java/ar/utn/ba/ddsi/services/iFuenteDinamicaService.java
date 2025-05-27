@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface iFuenteDinamicaService {
   HechoOutputDTO crearHecho(HechoInputDTO hecho);
-  HechoOutputDTO modificarHecho(HechoInputDTO hechoAModificar,HechoInputDTO hechoNuevo);
+  HechoOutputDTO modificarHecho(Long id,HechoInputDTO hechoNuevo);
   List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente);
   List<HechoOutputDTO> obtenerHechosDe(Contribuyente contribuyente);
   List<HechoOutputDTO> getAll();
   List<HechoOutputDTO> getAllDesde(LocalDateTime desde);
-  void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo);
+  HechoOutputDTO procesarPendiente(Long id, EstadoSolicitud estadoNuevo);
   Hecho DtoToHecho (HechoInputDTO hechoInputDTO);
   HechoOutputDTO hechoToDTO(Hecho hecho);
 }

@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,10 +56,10 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
   }
 
   @Override
-  public HechoOutputDTO modificarHecho(HechoInputDTO hechoAModificar,HechoInputDTO hechoNuevo){ //Todo cambiar a con el hecho nuevo y el id del viejo
-    Hecho h = DtoToHecho(hechoNuevo);
-    Hecho hvie = DtoToHecho(hechoAModificar);
-    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) > 7){
+  public HechoOutputDTO modificarHecho(Long id, HechoInputDTO hecho){
+    Hecho h = DtoToHecho(hecho);
+    Hecho hvie = this.hechosRepository.findById(id);
+    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7 && hvie.getContribuyente().getId().equals(h.getContribuyente().getId())){
       SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hvie,h);
       hvie.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
       return hechoToDTO(h);
@@ -88,17 +88,20 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
 
 
   @Override
-  public void procesarPendiente(Hecho hecho, EstadoSolicitud estadoNuevo){ //Todo aca tal vez viene un id
-    Hecho h = hechosRepository.findById(hecho.getId());
+  public HechoOutputDTO procesarPendiente(Long id, EstadoSolicitud estadoNuevo){ //Todo aca tal vez viene un id
+    Hecho h = hechosRepository.findById(id);
     h.getSolicitudDeModificacion().resolver(estadoNuevo);
     if(estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
       Hecho hechoNuevo = h.getSolicitudDeModificacion().getHechoNuevo();
       hechoNuevo.setLastUpdate(LocalDateTime.now());
       hechosRepository.update(h, hechoNuevo);
+      return this.hechoToDTO(hechoNuevo);
     }
+    return this.hechoToDTO(h);
   }
 
   public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
+    ContribuyenteDTO contribuyenteDTO = hechoInputDTO.getContribuyente();
     return Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
         .descripcion(hechoInputDTO.getDescripcion())
@@ -109,13 +112,14 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .origen(CONTRIBUYENTE)
         .fechaDeCarga(LocalDateTime.now())
         .eliminado(false)
-        .contribuyente(new Contribuyente(hechoInputDTO.getContribuyente().getNombre(), hechoInputDTO.getContribuyente().getApellido(),
-                LocalDate.parse(hechoInputDTO.getContribuyente().getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))
+        .contribuyente(new Contribuyente(contribuyenteDTO.getId(), contribuyenteDTO.getNombre(), contribuyenteDTO.getApellido(),
+                LocalDate.parse(contribuyenteDTO.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))
         .etiquetas(hechoInputDTO.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toCollection(HashSet::new)))
         .lastUpdate(LocalDateTime.now())
         .id(null)
         .build();
   }
+
   public HechoOutputDTO hechoToDTO (Hecho hecho){
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
@@ -128,10 +132,19 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
         .fechaUltimaActualizacion(hecho.getLastUpdate())
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
-        .contribuyente(hecho.getContribuyente())
+        .contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
         .solicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion())
         .etiquetas(hecho.getEtiquetas())
         .id(String.format("dinamica:%s", hecho.getId()))
         .build();
+  }
+
+  public ContribuyenteDTO contribuyenteToDTO (Contribuyente contribuyente){
+    ContribuyenteDTO c = new ContribuyenteDTO();
+    c.setId(contribuyente.getId());
+    c.setNombre(contribuyente.getNombre());
+    c.setApellido(contribuyente.getApellido());
+    c.setFechaDeNacimiento(contribuyente.getFechaNacimiento().toString());
+    return c;
   }
 }

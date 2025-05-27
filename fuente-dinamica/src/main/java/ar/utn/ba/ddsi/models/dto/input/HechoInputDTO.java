@@ -8,6 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
+
 public class HechoInputDTO {
   private String titulo;
   private String descripcion;

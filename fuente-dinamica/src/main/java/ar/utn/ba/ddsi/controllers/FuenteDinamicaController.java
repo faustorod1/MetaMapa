@@ -3,9 +3,11 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
+import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.services.iFuenteDinamicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,9 +54,14 @@ public class FuenteDinamicaController {
     return fuenteDinamicaService.obtenerHechosDe(contribuyente);
   }
 
-  @PutMapping
-  public HechoOutputDTO modificarHecho (@RequestBody HechoInputDTO aModificar,HechoInputDTO nuevo){
-    return fuenteDinamicaService.modificarHecho(aModificar,nuevo);
+  @PutMapping("/{idHecho}")
+  public HechoOutputDTO modificarHecho (@PathVariable Long idHecho, @RequestBody HechoInputDTO hechoNuevo)   {
+    return fuenteDinamicaService.modificarHecho(idHecho, hechoNuevo);
+  }
+
+  @PutMapping("/{idHecho}/estado")
+  public HechoOutputDTO resolverSolicitud (@PathVariable Long idHecho, @RequestBody EstadoSolicitud estadoNuevo) {
+    return fuenteDinamicaService.procesarPendiente(idHecho,estadoNuevo);
   }
 
 }

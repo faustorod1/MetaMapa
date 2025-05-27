@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.models.dto.output;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.ContenidoMultimedia;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
@@ -21,21 +22,18 @@ import java.util.List;
 @Builder
 @Data
 public class HechoOutputDTO {
+  private String id;
   private String titulo;
   private String descripcion;
   private Categoria categoria;
-  //private ContenidoMultimedia contenidoMultimedia;
+  private ContenidoMultimedia contenidoMultimedia;
   private OrigenHecho origen;
   private Coordenada lugarAcontecimiento;
   private LocalDate fechaHecho;
   private LocalDateTime fechaDeCarga;
   private LocalDateTime fechaUltimaActualizacion;
   private boolean eliminado;
-  private Contribuyente contribuyente;
-  private String id;
-
-  @Builder.Default
-  private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
-  @Builder.Default
-  private HashSet<Etiqueta> etiquetas = new HashSet<>();
+  private ContribuyenteDTO contribuyente;
+  private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
+  private HashSet<Etiqueta> etiquetas;
 }

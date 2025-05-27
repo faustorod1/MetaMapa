@@ -21,7 +21,7 @@ public class HechoFuenteDTO {
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
     private boolean eliminado;
-    private Contribuyente contribuyente;
+    private ContribuyenteDTO contribuyente;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private HashSet<Etiqueta> etiquetas;
 }

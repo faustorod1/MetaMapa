@@ -30,16 +30,4 @@ public class SolicitudDeEliminacion {
         }
     }
 
-
-    public void resolver(EstadoSolicitud estado, Administrador administrador) {
-        if (this.estado != EstadoSolicitud.PENDIENTE) { return; }
-
-        this.fechaDeResolucion = LocalDateTime.now();
-        this.estado = estado;
-        this.administradorQueResolvio = administrador;
-
-        if (this.estado == EstadoSolicitud.ACEPTADA) { this.hecho.setEliminado(true); }
-
-    }
-
 }

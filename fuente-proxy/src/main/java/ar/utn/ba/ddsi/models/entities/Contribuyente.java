@@ -7,6 +7,7 @@ import java.time.Period;
 
 @Getter
 public class Contribuyente  {
+    private Long id;
     private String nombre;
     private String apellido;
     private LocalDate fechaNacimiento;

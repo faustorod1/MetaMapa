@@ -40,7 +40,6 @@ public class LectorDeCSV {
                     .categoria(new Categoria(fila[CamposHecho.CATEGORIA.ordinal()]))
                     .lugarAcontecimiento(new Coordenada(latitud, longitud))
                     .fechaHecho(fecha)
-                    .origen(OrigenHecho.DATASET)
                     .build();
 
             hechos.add(h);

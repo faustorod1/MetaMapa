@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
@@ -116,6 +117,10 @@ public class HechosService implements IHechosService {
     }
 
     private Hecho hechoFromHechoFuenteDTO(HechoFuenteDTO dto) {
+        Contribuyente contribuyente = null;
+        if (dto.getContribuyente() != null) {
+            contribuyente = contribuyenteFromContribuyenteDTO(dto.getContribuyente());
+        }
 
         Hecho hecho = Hecho.builder()
                 .idExterno(dto.getId())
@@ -127,13 +132,15 @@ public class HechosService implements IHechosService {
                 .lugarAcontecimiento(dto.getLugarAcontecimiento())
                 .fechaHecho(dto.getFechaHecho())
                 .fechaDeCarga(dto.getFechaDeCarga())
-                .contribuyente(dto.getContribuyente())
+                .contribuyente(contribuyente)
                 .solicitudesDeEliminacion(dto.getSolicitudesDeEliminacion()) // Cambiar
                 .build();
 
             return hecho;
         }
 
-
+    private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {
+        return new Contribuyente(dto.getId(), dto.getNombre(), dto.getApellido(), LocalDate.parse(dto.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    }
 }
 
