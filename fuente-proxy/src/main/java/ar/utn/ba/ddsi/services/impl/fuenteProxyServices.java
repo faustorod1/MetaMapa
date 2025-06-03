@@ -7,9 +7,10 @@ import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
 import ar.utn.ba.ddsi.models.dtos.externals.HechosMetamapaDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
-import ar.utn.ba.ddsi.services.ifuenteProxyServices;
+import ar.utn.ba.ddsi.services.IFuenteProxyServices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -22,8 +23,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@PropertySource("classpath:keys.properties")
 @Service
-public class fuenteProxyServices implements ifuenteProxyServices {
+public class FuenteProxyServices implements IFuenteProxyServices {
   private WebClient webClient;
   private String token;
 
@@ -31,7 +34,7 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   private int idApiMetaMapa = 1;
 
   @Autowired
-  public fuenteProxyServices(WebClient.Builder webClientBuilder, @Value("${api.desastres-naturales.token}") String apiDesastresNaturalesToken, @Value("${api.desastres-naturales.url}") String apiDesastresNaturalesURL) {
+  public FuenteProxyServices(WebClient.Builder webClientBuilder, @Value("${api.desastres-naturales.token}") String apiDesastresNaturalesToken, @Value("${api.desastres-naturales.url}") String apiDesastresNaturalesURL) {
     this.token = apiDesastresNaturalesToken;
     this.webClient = webClientBuilder.baseUrl(apiDesastresNaturalesURL).build();
   }
@@ -66,8 +69,6 @@ public class fuenteProxyServices implements ifuenteProxyServices {
   @Override
   public List<HechoOutputDTO> consumirMetamapa(String baseUrl) {
     WebClient metamapa = WebClient.builder().baseUrl(baseUrl).build();
-    return new ArrayList<>();
-    /*
     return metamapa
             .get()
             .uri("/hechos")
@@ -78,7 +79,7 @@ public class fuenteProxyServices implements ifuenteProxyServices {
             .stream()
             .map(this::externalMetamapaToHechoOutPut)
             .toList();
-      */
+
   }
 
   @Override
@@ -132,14 +133,11 @@ public class fuenteProxyServices implements ifuenteProxyServices {
             .titulo(metamapaDTO.getTitulo())
             .descripcion(metamapaDTO.getDescripcion())
             .categoria(new Categoria(metamapaDTO.getCategoria()))
-            .contenidoMultimedia(new ContenidoMultimedia()) //todo ver como esta implementado el constructor
-            .origen(metamapaDTO.getOrigen())
-            .lugarAcontecimiento(new Coordenada(metamapaDTO.getLugarAcontecimiento()[0],metamapaDTO.getLugarAcontecimiento()[1]))
-            .fechaHecho(metamapaDTO.getFechaHecho())
-            .fechaDeCarga(metamapaDTO.getFechaDeCarga())
-            .fechaUltimaActualizacion(metamapaDTO.getFechaUltimaActualizacion())
-            .contribuyenteId(metamapaDTO.getContribuyenteId())
-            .solicitudesDeEliminacion(metamapaDTO.getSolicitudesDeEliminacion())
+            .lugarAcontecimiento(new Coordenada(metamapaDTO.getLatitud(), metamapaDTO.getLongitud()))
+            .fechaHecho(LocalDate.parse(metamapaDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
+            .fechaDeCarga(LocalDateTime.parse(metamapaDTO.getFechaDeCarga(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
+            .fechaUltimaActualizacion(LocalDateTime.parse(metamapaDTO.getFechaUltimaActualizacion(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
+            //.contribuyenteId(metamapaDTO.getContribuyenteId())
             .etiquetas(metamapaDTO.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toCollection(HashSet::new)))
             .build();
     return hecho;

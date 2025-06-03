@@ -1,12 +1,14 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
+import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
-import ar.utn.ba.ddsi.services.iFuenteDinamicaService;
+import ar.utn.ba.ddsi.services.IFuenteDinamicaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,9 +24,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hechos")
 public class FuenteDinamicaController {
-  private iFuenteDinamicaService fuenteDinamicaService;
+  private IFuenteDinamicaService fuenteDinamicaService;
 
-  public FuenteDinamicaController(iFuenteDinamicaService fuenteDinamicaService) {
+  public FuenteDinamicaController(IFuenteDinamicaService fuenteDinamicaService) {
     this.fuenteDinamicaService = fuenteDinamicaService;
   }
 
@@ -59,9 +61,9 @@ public class FuenteDinamicaController {
     return fuenteDinamicaService.modificarHecho(idHecho, hechoNuevo);
   }
 
-  @PutMapping("/{idHecho}/estado")
-  public HechoOutputDTO resolverSolicitud (@PathVariable Long idHecho, @RequestBody EstadoSolicitud estadoNuevo) {
-    return fuenteDinamicaService.procesarPendiente(idHecho,estadoNuevo);
+  @PatchMapping("/{idHecho}/estado")
+  public HechoOutputDTO resolverSolicitud (@PathVariable Long idHecho, @RequestBody ResolucionDTO resolucion) {
+    return fuenteDinamicaService.procesarPendiente(idHecho,resolucion);
   }
 
 }

@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ifuenteProxyServices {
+public interface IFuenteProxyServices {
   List<HechoOutputDTO> getAllDesde(LocalDateTime desde);
   List<HechoOutputDTO> getAll();
   Mono<List<HechoDTO>> buscarTodos();

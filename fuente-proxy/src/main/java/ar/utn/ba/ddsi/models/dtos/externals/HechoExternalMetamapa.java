@@ -15,13 +15,13 @@ public class HechoExternalMetamapa {
     private String titulo;
     private String descripcion;
     private String categoria;
-    private String contenidoMultimedia;
-    private OrigenHecho origen;
-    private Double[] lugarAcontecimiento;
-    private LocalDate fechaHecho;
-    private LocalDateTime fechaDeCarga;
-    private LocalDateTime fechaUltimaActualizacion;
-    private Long contribuyenteId;
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
+    //private String contenidoMultimedia;
+    private Double latitud;
+    private Double longitud;
+    private String fechaHecho;
+    private String fechaDeCarga;
+    private String fechaUltimaActualizacion;
+    //private Long contribuyenteId;
+    //private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private HashSet<String> etiquetas;
 }

@@ -3,10 +3,11 @@ package ar.utn.ba.ddsi.services.impl;
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
+import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
-import ar.utn.ba.ddsi.models.repositories.iHechosRepository;
-import ar.utn.ba.ddsi.services.iFuenteDinamicaService;
+import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
+import ar.utn.ba.ddsi.services.IFuenteDinamicaService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,10 +23,10 @@ import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADACONSUGERENC
 import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 
 @Service
-public class fuenteDinamicaService implements iFuenteDinamicaService {
-  private final iHechosRepository hechosRepository;
+public class FuenteDinamicaService implements IFuenteDinamicaService {
+  private final IHechosRepository hechosRepository;
 
-  public fuenteDinamicaService(iHechosRepository hechosRepository) {
+  public FuenteDinamicaService(IHechosRepository hechosRepository) {
     this.hechosRepository = hechosRepository;
   }
 
@@ -58,11 +59,13 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
   @Override
   public HechoOutputDTO modificarHecho(Long id, HechoInputDTO hecho){
     Hecho h = DtoToHecho(hecho);
-    Hecho hvie = this.hechosRepository.findById(id);
-    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7 && hvie.getContribuyente().getId().equals(h.getContribuyente().getId())){
-      SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hvie,h);
-      hvie.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
-      return hechoToDTO(h);
+    Hecho hViejo = this.hechosRepository.findById(id);
+    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7) { // Pasaron menos de 7 días
+      if (hViejo.getContribuyente().getId().equals(h.getContribuyente().getId())) { // El que intenta modificar el hecho es quien lo subió
+        SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hViejo,h);
+        hViejo.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
+        return hechoToDTO(h);
+      }
     }
     return null;
   }
@@ -88,9 +91,10 @@ public class fuenteDinamicaService implements iFuenteDinamicaService {
 
 
   @Override
-  public HechoOutputDTO procesarPendiente(Long id, EstadoSolicitud estadoNuevo){ //Todo aca tal vez viene un id
+  public HechoOutputDTO procesarPendiente(Long id, ResolucionDTO resolucion){
     Hecho h = hechosRepository.findById(id);
-    h.getSolicitudDeModificacion().resolver(estadoNuevo);
+    h.getSolicitudDeModificacion().resolver(resolucion);
+    EstadoSolicitud estadoNuevo = resolucion.getEstadoNuevo();
     if(estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
       Hecho hechoNuevo = h.getSolicitudDeModificacion().getHechoNuevo();
       hechoNuevo.setLastUpdate(LocalDateTime.now());

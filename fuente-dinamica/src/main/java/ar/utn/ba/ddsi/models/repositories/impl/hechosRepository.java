@@ -1,9 +1,8 @@
 package ar.utn.ba.ddsi.models.repositories.impl;
 
-import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.repositories.iHechosRepository;
+import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -15,10 +14,10 @@ import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
 import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.PENDIENTE;
 
 @Repository
-public class hechosRepository implements iHechosRepository {
+public class HechosRepository implements IHechosRepository {
   private List<Hecho> hechos;
 
-  public hechosRepository() {
+  public HechosRepository() {
     hechos = new ArrayList<>();
   }
 
@@ -29,12 +28,10 @@ public class hechosRepository implements iHechosRepository {
       hecho.setId((long) hechos.size());
       hechos.add(hecho);
 
-      return hecho;
     } else {
       hechos.set(Math.toIntExact(hecho.getId()), hecho);
-
-      return hecho;
     }
+    return hecho;
   }
 
   public void update(Hecho hechoViejo,Hecho hecho) {

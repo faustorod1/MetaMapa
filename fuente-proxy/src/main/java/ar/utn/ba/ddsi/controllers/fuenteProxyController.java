@@ -1,21 +1,19 @@
 package ar.utn.ba.ddsi.controllers;
 
-import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
-import ar.utn.ba.ddsi.services.impl.fuenteProxyServices;
+import ar.utn.ba.ddsi.services.impl.FuenteProxyServices;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/hechos")
-public class fuenteProxyController {
-  private fuenteProxyServices fuenteProxyServices;
+public class FuenteProxyController {
+  private FuenteProxyServices fuenteProxyServices;
 
-  public fuenteProxyController(fuenteProxyServices fuenteProxyServices) {
+  public FuenteProxyController(FuenteProxyServices fuenteProxyServices) {
     this.fuenteProxyServices = fuenteProxyServices;
   }
 

@@ -25,7 +25,4 @@ public class HechosController {
         return this.hechosService.buscarTodos(null);
     }
 
-
-
-
 }
