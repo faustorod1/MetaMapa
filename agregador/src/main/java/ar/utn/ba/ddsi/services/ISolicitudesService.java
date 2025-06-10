@@ -6,7 +6,7 @@ import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
 
 public interface ISolicitudesService {
-    boolean crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
+    String crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
     SolicitudDeEliminacion solicitudDeEliminacionFromDTO(SolicitudDeEliminacionInputDTO dto);
     void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
     SolicitudDeEliminacionOutputDTO solicititudDeEliminacionToDTO(SolicitudDeEliminacion solicitud);

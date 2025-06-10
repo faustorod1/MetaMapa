@@ -62,7 +62,7 @@ public class SeederService implements ISeederService {
         //Filtrar hechos según el criterio de la colección
         colNieve.filtrarHechos(hechosRepository.findAll());
 
-        //Registrar en la tabla puente sólo los que quedaron dentro
+        //Registrar en la tabla puente sólo  los que quedaron dentro
         colNieve.getHechos().forEach(
             h -> coleccionesRepository.agregarHechoAColeccion(
                 colNieve.getIdentificador(), h.getId())

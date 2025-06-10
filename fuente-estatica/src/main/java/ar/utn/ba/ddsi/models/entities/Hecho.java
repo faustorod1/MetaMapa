@@ -22,4 +22,5 @@ public class Hecho {
     private LocalDateTime fechaDeCarga;
     private Long id; // Identificador dentro del dataset
     private Long idDataset; // Identificador del dataset
+    private Boolean eliminado;
 }

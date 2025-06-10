@@ -44,7 +44,6 @@ public class HechosService implements IHechosService {
             criterio = new Criterio(); // Por defecto, solo filtra los eliminados
         }
         List<Hecho> hechosTotales = new ArrayList<>(hechosRepository.findAll());
-
         List<Hecho> hechosMetamapa = this.pedirHechosMetamapa().block();
         hechosTotales.addAll(hechosMetamapa);
 

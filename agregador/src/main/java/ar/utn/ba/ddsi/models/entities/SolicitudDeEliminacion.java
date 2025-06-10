@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import ar.utn.ba.ddsi.commons.DetectorDeSpam;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -16,17 +17,18 @@ public class SolicitudDeEliminacion {
     private Administrador administradorQueResolvio;
     private final int CANT_MINIMA_DE_CARACTERES = 500;
 
-    public SolicitudDeEliminacion(Hecho hecho, String descripcion, Contribuyente solicitante) throws DescripcionSolicitudException {
-        if(descripcion.length() >= CANT_MINIMA_DE_CARACTERES) {
-            this.descripcion = descripcion;
-            this.hecho = hecho;
-            this.estado = EstadoSolicitud.PENDIENTE;
-            this.fechaDeCarga = LocalDateTime.now();
-            this.solicitante = solicitante;
-        }else{
-            throw new DescripcionSolicitudException("La descripción debe tener al menos de 500 caracteres");
-            //TODO: Revisar si es correcto lanzar excepcion
+    public SolicitudDeEliminacion(Hecho hecho, String descripcion, Contribuyente solicitante){
+        this.descripcion = descripcion;
+        this.hecho = hecho;
+        this.fechaDeCarga = LocalDateTime.now();
+        this.solicitante = solicitante;
+        if(descripcion.length() < CANT_MINIMA_DE_CARACTERES) {
+            this.estado = EstadoSolicitud.RECHAZADA_POR_FALTA_DE_CARACTERES;
         }
+        if (DetectorDeSpam.esSpam(descripcion)) {
+            this.estado = EstadoSolicitud.RECHAZADA_POR_SPAM;
+        }
+        this.estado = EstadoSolicitud.PENDIENTE;
     }
 
 
@@ -38,7 +40,6 @@ public class SolicitudDeEliminacion {
         this.administradorQueResolvio = administrador;
 
         if (this.estado == EstadoSolicitud.ACEPTADA) { this.hecho.setEliminado(true); }
-
     }
 
 }

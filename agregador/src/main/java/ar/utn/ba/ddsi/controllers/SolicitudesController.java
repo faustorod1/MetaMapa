@@ -22,7 +22,7 @@ public class SolicitudesController {
   }
 
   @PostMapping
-  public boolean crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO solicitud) {
+  public String crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO solicitud) {
     return solicitudesService.crearSolicitud(solicitud);
   }
 

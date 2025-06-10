@@ -13,56 +13,56 @@ import ar.utn.ba.ddsi.services.ISolicitudesService;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+
 
 @Service
 public class SolicitudesService implements ISolicitudesService {
   private final HechosService hechosService;
   private ISolicitudesRepository solicitudesRepository;
 
-  private static final Set<String> PALABRAS_SPAM = Set.of(
-      "gratis", "urgente", "dinero", "oferta", "promoción", "click", "regalo", "ganá", "millón", "suscribite"
-  );
-
   public SolicitudesService(ISolicitudesRepository solicitudesRepository, HechosService hechosService) {
-    this.solicitudesRepository = solicitudesRepository ;
+    this.solicitudesRepository = solicitudesRepository;
     this.hechosService = hechosService;
   }
 
-  private boolean esSpam(String descripcion){
-    String[] palabras = descripcion.toLowerCase().split("\\W+");
-
-    Map<String, Integer> frecuencia = new HashMap<>();
-    int total = 0;
-    int palabrasSpamDetectadas = 0;
-
-    for (String palabra : palabras) {
-      if (palabra.isBlank()) continue;
-      total++;
-      frecuencia.put(palabra, frecuencia.getOrDefault(palabra, 0) + 1);
-      if (PALABRAS_SPAM.contains(palabra)) palabrasSpamDetectadas++;
-    }
-
-    double repeticionMaxima = frecuencia.values().stream().mapToInt(i -> i).max().orElse(0) / (double) total;
-    double promedioPalabrasSpam = palabrasSpamDetectadas / (double) total;
-
-    return repeticionMaxima > 0.4 || promedioPalabrasSpam > 0.25 || frecuencia.size() <= 5;
-  }
-
   @Override
-  public boolean crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
-    if (esSpam(solicitudDto.getDescripcion())) {
-      return false;
+  public String crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
+    SolicitudDeEliminacion solicitud = solicitudDeEliminacionFromDTO(solicitudDto);
+    solicitudesRepository.save(solicitud);
+    return switch (solicitud.getEstado()) {
+      case PENDIENTE -> "Solicitud creada correctamente";
+      case RECHAZADA_POR_SPAM -> "Solicitud rechazada por spam";
+      case RECHAZADA_POR_FALTA_DE_CARACTERES -> "Solicitud rechazada por insuficientes caracteres";
+      default -> "guat? (ㆆ _ ㆆ)";
+    };
+
+    /*
+  @Service
+  public class ElementoService {
+
+    @Autowired
+    private WebClient webClient;
+
+    @Async
+    public void eliminarYNotificar(Long id) {
+        // Lógica local
+        eliminarLocalmente(id);
+
+        // Llamada no bloqueante a otra API
+        webClient.delete()
+                .uri("http://otra-api.com/api/elementos/{id}", id)
+                .retrieve()
+                .toBodilessEntity()
+                .doOnSuccess(response -> System.out.println("Notificación exitosa"))
+                .doOnError(error -> System.err.println("Error notificando: " + error.getMessage()))
+                .subscribe(); // Muy importante: activa la llamada no bloqueante
     }
 
-    try {
-      SolicitudDeEliminacion solicitud = solicitudDeEliminacionFromDTO(solicitudDto);
-      solicitudesRepository.save(solicitud);
-      return true;
-
-    } catch (DescripcionSolicitudException e) {
-      return false;
+    private void eliminarLocalmente(Long id) {
+        System.out.println("Elemento " + id + " eliminado localmente.");
     }
+}
+   */
   }
 
   @Override

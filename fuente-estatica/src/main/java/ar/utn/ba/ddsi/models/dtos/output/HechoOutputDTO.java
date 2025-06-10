@@ -23,6 +23,5 @@ public class HechoOutputDTO {
     private LocalDateTime fechaUltimaActualizacion;
     private boolean eliminado;
     private Contribuyente contribuyente;
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private HashSet<Etiqueta> etiquetas;
 }
