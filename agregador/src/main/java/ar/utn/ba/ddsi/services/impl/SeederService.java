@@ -8,6 +8,7 @@ import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.ISeederService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,8 +17,11 @@ import java.util.List;
 
 @Service
 public class SeederService implements ISeederService {
-  private final IColeccionesRepository coleccionesRepository;
-  private final IHechosRepository hechosRepository;
+
+    @Autowired
+    private final IColeccionesRepository coleccionesRepository;
+    @Autowired
+    private final IHechosRepository hechosRepository;
 
   @Override
   public void init(){
@@ -51,7 +55,7 @@ public class SeederService implements ISeederService {
             .addFiltro(new FiltroPorCategoria(catNieve));
 
         Coleccion colNieve = new Coleccion(
-            "NIEVE-001",
+            "001",
             "Hechos con copiosa caída de nieve",
             "Reúne todos los hechos cuya categoría sea «Copiosa caída de nieve».",
             critNieve
@@ -64,8 +68,7 @@ public class SeederService implements ISeederService {
 
         //Registrar en la tabla puente sólo  los que quedaron dentro
         colNieve.getHechos().forEach(
-            h -> coleccionesRepository.agregarHechoAColeccion(
-                colNieve.getIdentificador(), h.getId())
+            h -> colNieve.agregarHecho(h)
         );
 
   }

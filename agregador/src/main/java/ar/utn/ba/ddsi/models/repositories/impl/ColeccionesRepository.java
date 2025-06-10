@@ -42,4 +42,8 @@ public class ColeccionesRepository implements IColeccionesRepository {
     public Coleccion findByIdentificador(String identificador) {
         return colecciones.stream().filter(coleccion -> coleccion.getIdentificador().equals(identificador)).findFirst().orElse(null);
     }
+
+    public void save(Coleccion coleccion){
+        this.colecciones.add(coleccion);
+    }
 }

@@ -15,6 +15,9 @@ public class Coleccion {
     private String descripcion;
     private Criterio criterioDePertenencia;
 
+    private List<String> fuentes;
+    private List<Hecho> hechosCargadosManualmente;
+
     @Getter(AccessLevel.NONE) // <-
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
@@ -37,6 +40,29 @@ public class Coleccion {
     }
 
     public void filtrarHechos(List<Hecho> todosLosHechos) {
-        this.hechos = criterioDePertenencia.aplicarA(todosLosHechos);
+
+        List<Hecho> hechosAFiltrar = todosLosHechos
+            .stream()
+            .filter( h ->
+                fuentes.stream().anyMatch(h::perteneceALaFuente)
+                || hechosCargadosManualmente.stream().anyMatch(hcm -> h.getId().equals(hcm.getId()))
+            ).toList();
+
+        this.hechos = criterioDePertenencia.aplicarA(hechosAFiltrar);
+    }
+
+
+    // TODO: Cuándo y cómo deberíamos ver qué hechos permanecen en la colección al actualizar?
+    public void agregarHecho(Hecho hecho) {
+        this.hechos.add(hecho);
+        this.hechosCargadosManualmente.add(hecho);
+    }
+    public void quitarHecho(Hecho hecho) {
+        this.hechosCargadosManualmente.remove(hecho);
+        this.hechos.remove(hecho);
+    }
+
+    public void agregarFuente(String fuente) {
+        fuentes.add(fuente);
     }
 }
