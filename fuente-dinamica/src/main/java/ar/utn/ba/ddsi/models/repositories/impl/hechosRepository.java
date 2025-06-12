@@ -72,6 +72,11 @@ public class HechosRepository implements IHechosRepository {
   }
 
   @Override
+  public void marcarComoEliminado(Long id) {
+    findById(id).setEliminado(true);
+  }
+  
+  @Override
   public void delete(Hecho hecho) {
     hechos.remove(hecho);
   }

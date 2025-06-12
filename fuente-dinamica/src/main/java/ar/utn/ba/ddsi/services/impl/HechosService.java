@@ -7,7 +7,7 @@ import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
-import ar.utn.ba.ddsi.services.IFuenteDinamicaService;
+import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,10 +23,10 @@ import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADACONSUGERENC
 import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 
 @Service
-public class FuenteDinamicaService implements IFuenteDinamicaService {
+public class HechosService implements IHechosService {
   private final IHechosRepository hechosRepository;
 
-  public FuenteDinamicaService(IHechosRepository hechosRepository) {
+  public HechosService(IHechosRepository hechosRepository) {
     this.hechosRepository = hechosRepository;
   }
 
@@ -68,6 +68,11 @@ public class FuenteDinamicaService implements IFuenteDinamicaService {
       }
     }
     return null;
+  }
+
+  @Override
+  public void eliminarHecho(Long id) {
+    hechosRepository.marcarComoEliminado(id);
   }
 
   @Override

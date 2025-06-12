@@ -4,13 +4,12 @@ import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
-import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface IFuenteDinamicaService {
+public interface IHechosService {
   HechoOutputDTO crearHecho(HechoInputDTO hecho);
   HechoOutputDTO modificarHecho(Long id,HechoInputDTO hechoNuevo);
   List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente);
@@ -20,4 +19,5 @@ public interface IFuenteDinamicaService {
   HechoOutputDTO procesarPendiente(Long id, ResolucionDTO resolucion);
   Hecho DtoToHecho (HechoInputDTO hechoInputDTO);
   HechoOutputDTO hechoToDTO(Hecho hecho);
+  void eliminarHecho(Long id);
 }

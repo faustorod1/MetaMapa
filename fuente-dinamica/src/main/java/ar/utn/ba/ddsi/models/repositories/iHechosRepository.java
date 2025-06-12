@@ -11,6 +11,7 @@ public interface IHechosRepository {
   List<Hecho> findByPendiente(boolean pendiente);
   Hecho findById(Long id);
   List<Hecho> findByContribuyente(Contribuyente contribuyente);
+  void marcarComoEliminado(Long id);
   void delete(Hecho hecho);
 
 }

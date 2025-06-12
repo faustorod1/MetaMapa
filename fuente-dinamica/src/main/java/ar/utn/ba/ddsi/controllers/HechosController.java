@@ -4,9 +4,9 @@ import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
-import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
-import ar.utn.ba.ddsi.services.IFuenteDinamicaService;
+import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,47 +23,54 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/hechos")
-public class FuenteDinamicaController {
-  private IFuenteDinamicaService fuenteDinamicaService;
+public class HechosController {
+  private IHechosService hechosService;
 
-  public FuenteDinamicaController(IFuenteDinamicaService fuenteDinamicaService) {
-    this.fuenteDinamicaService = fuenteDinamicaService;
+  public HechosController(IHechosService hechosService) {
+    this.hechosService = hechosService;
   }
 
   @GetMapping
   public List<HechoOutputDTO> listarHechos (){
-    return fuenteDinamicaService.getAll();
+    return hechosService.getAll();
   }
 
   @GetMapping(params = "desde") // localhost:8082/api/hechos?desde=algo
   public List<HechoOutputDTO> buscarTodosCargadosDesde(
           @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
-    return this.fuenteDinamicaService.getAllDesde(desde);
+    return this.hechosService.getAllDesde(desde);
   }
 
   @PostMapping
   public HechoOutputDTO crearHecho(@RequestBody HechoInputDTO hecho)   {
-    return fuenteDinamicaService.crearHecho(hecho);
+    return hechosService.crearHecho(hecho);
   }
 
   @GetMapping("/pendientes={pendiente}")
   public List<HechoOutputDTO> listarHechosPendientes(@RequestParam(required = false) Boolean pendiente) {
-    return fuenteDinamicaService.obtenerHechosPendientes(pendiente);
+    return hechosService.obtenerHechosPendientes(pendiente);
+  }
+
+  @DeleteMapping
+  public void eliminarHecho(@RequestParam Long id){
+    hechosService.eliminarHecho(id);
   }
 
   @GetMapping("/contribuyente={id}")
   public List<HechoOutputDTO> listarHechosDe (Contribuyente contribuyente) {
-    return fuenteDinamicaService.obtenerHechosDe(contribuyente);
+    return hechosService.obtenerHechosDe(contribuyente);
   }
 
   @PutMapping("/{idHecho}")
   public HechoOutputDTO modificarHecho (@PathVariable Long idHecho, @RequestBody HechoInputDTO hechoNuevo)   {
-    return fuenteDinamicaService.modificarHecho(idHecho, hechoNuevo);
+    return hechosService.modificarHecho(idHecho, hechoNuevo);
   }
 
   @PatchMapping("/{idHecho}/estado")
   public HechoOutputDTO resolverSolicitud (@PathVariable Long idHecho, @RequestBody ResolucionDTO resolucion) {
-    return fuenteDinamicaService.procesarPendiente(idHecho,resolucion);
+    return hechosService.procesarPendiente(idHecho,resolucion);
   }
+
+
 
 }
