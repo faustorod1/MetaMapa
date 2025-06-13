@@ -30,5 +30,4 @@ public class HechosController {
         return this.hechosService.obtenerHechosCargadosDesde(desde);
     }
 
-
 }

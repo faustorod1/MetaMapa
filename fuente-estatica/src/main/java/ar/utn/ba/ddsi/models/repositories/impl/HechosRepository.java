@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public class HechosRepository implements IHechosRepository {
+    private List<Hecho> hechos;
 
     @Override
     public List<Hecho> findAllFrom(PathDataset dataset) {

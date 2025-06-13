@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-// TODO: repasar DDC (constructores del DDC, flechas, etc...)
 
 public class Hecho {
 
@@ -32,7 +31,6 @@ public class Hecho {
     private Long id;        //USO: Identificacion unica para el Repository (futura BD)
     private String idExterno; // ID que tenía el hecho en la fuente de la que llegó (útil para modificar los hechos)
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
-    //TODO actualizar ddc (agregar el boolean revisado y el long id)
 
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();

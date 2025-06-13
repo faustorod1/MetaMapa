@@ -36,7 +36,7 @@ public class SolicitudesService implements ISolicitudesService {
       default -> "guat? (ㆆ _ ㆆ)";
     };
 
-    /*
+    /* //TODO: revisar si es funcional esto asincronico
   @Service
   public class ElementoService {
 

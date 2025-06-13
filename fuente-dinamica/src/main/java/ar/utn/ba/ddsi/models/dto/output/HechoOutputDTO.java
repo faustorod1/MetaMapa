@@ -4,17 +4,14 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.ContenidoMultimedia;
-import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Etiqueta;
 import ar.utn.ba.ddsi.models.entities.OrigenHecho;
-import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -34,6 +31,5 @@ public class HechoOutputDTO {
   private LocalDateTime fechaUltimaActualizacion;
   private boolean eliminado;
   private ContribuyenteDTO contribuyente;
-  private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
   private HashSet<Etiqueta> etiquetas;
 }

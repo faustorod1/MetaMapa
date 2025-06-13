@@ -16,6 +16,7 @@ import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.PENDIENTE;
 @Repository
 public class HechosRepository implements IHechosRepository {
   private List<Hecho> hechos;
+  private Long idActual = 0L;
 
   public HechosRepository() {
     hechos = new ArrayList<>();
@@ -23,21 +24,12 @@ public class HechosRepository implements IHechosRepository {
 
   @Override
   public Hecho save(Hecho hecho) {
-    if (hecho.getId() == null) {
-      //es un nuevo hecho
-      hecho.setId((long) hechos.size());
-      hechos.add(hecho);
-
-    } else {
-      hechos.set(Math.toIntExact(hecho.getId()), hecho);
-    }
+    idActual++;
+    hecho.setId(idActual);
+    hecho.setFechaDeCarga(LocalDateTime.now());
+    hecho.setLastUpdate(hecho.getFechaDeCarga());
+    this.hechos.add(hecho);
     return hecho;
-  }
-
-  public void update(Hecho hechoViejo,Hecho hecho) {
-    hecho.setId(hechoViejo.getId());
-    hecho.setLastUpdate(LocalDateTime.now());
-    hechos.set(Math.toIntExact(hecho.getId()), hecho);
   }
 
   @Override
@@ -46,38 +38,26 @@ public class HechosRepository implements IHechosRepository {
   }
 
   @Override
-  public List<Hecho>findByPendiente(boolean pendiente){
-
-    if(pendiente){
-      return hechos.stream().filter(
-          hecho -> hecho.getSolicitudDeModificacion() != null
-                        && hecho.getSolicitudDeModificacion().getEstado() == PENDIENTE).toList();
-    }
-    return hechos.stream().filter(hecho->
-        hecho.getSolicitudDeModificacion() == null
-        || hecho.getSolicitudDeModificacion().getEstado() == ACEPTADA).toList();
-
-    //si viene true en pendiente te devuelve los que estan pendientes de revision
-    //si viene false en pendiente te devuelve los que ya se revisaron
-  }
-
-  @Override
   public Hecho findById(Long id) {
     return this.hechos.stream().filter(h -> h.getId().equals(id)).findFirst().orElse(null);
-  }
-
-  @Override
-  public List<Hecho> findByContribuyente(Contribuyente contribuyente){
-    return this.hechos.stream().filter(h -> h.getContribuyente().equals(contribuyente)).toList();
   }
 
   @Override
   public void marcarComoEliminado(Long id) {
     findById(id).setEliminado(true);
   }
-  
+
   @Override
-  public void delete(Hecho hecho) {
-    hechos.remove(hecho);
+  public void update(Hecho hechoViejo, Hecho hecho) {
+    hechoViejo.setTitulo(hecho.getTitulo());
+    hechoViejo.setDescripcion(hecho.getDescripcion());
+    hechoViejo.setCategoria(hecho.getCategoria());
+    hechoViejo.setContenidoMultimedia(hecho.getContenidoMultimedia());
+    hechoViejo.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
+    hechoViejo.setFechaHecho(hecho.getFechaHecho());
+    hechoViejo.setEliminado(hecho.isEliminado());
+    hechoViejo.setEtiquetas(hecho.getEtiquetas());
+
+    hechoViejo.setLastUpdate(LocalDateTime.now());
   }
 }

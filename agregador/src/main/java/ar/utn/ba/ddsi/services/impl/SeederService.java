@@ -23,6 +23,8 @@ public class SeederService implements ISeederService {
     @Autowired
     private final IHechosRepository hechosRepository;
 
+    //TODO
+
   @Override
   public void init(){
         Categoria catNieve = new Categoria("Copiosa caída de nieve");

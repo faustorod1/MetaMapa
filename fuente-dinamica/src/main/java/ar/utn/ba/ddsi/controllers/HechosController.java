@@ -4,6 +4,7 @@ import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
+import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/hechos")
 public class HechosController {
@@ -32,45 +32,23 @@ public class HechosController {
 
   @GetMapping
   public List<HechoOutputDTO> listarHechos (){
-    return hechosService.getAll();
+    return hechosService.getAll_DTO();
   }
 
   @GetMapping(params = "desde") // localhost:8082/api/hechos?desde=algo
   public List<HechoOutputDTO> buscarTodosCargadosDesde(
-          @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
-    return this.hechosService.getAllDesde(desde);
+          @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
+    return this.hechosService.getAllDesde_DTO(desde);
   }
 
   @PostMapping
-  public HechoOutputDTO crearHecho(@RequestBody HechoInputDTO hecho)   {
+  public HechoOutputDTO crearHecho(@RequestBody HechoInputDTO hecho){
     return hechosService.crearHecho(hecho);
   }
 
-  @GetMapping("/pendientes={pendiente}")
-  public List<HechoOutputDTO> listarHechosPendientes(@RequestParam(required = false) Boolean pendiente) {
-    return hechosService.obtenerHechosPendientes(pendiente);
-  }
-
+  // Para que el agregador le avise cuando se elimina un hecho
   @DeleteMapping
   public void eliminarHecho(@RequestParam Long id){
-    hechosService.eliminarHecho(id);
+    hechosService.marcarComoELiminado(id);
   }
-
-  @GetMapping("/contribuyente={id}")
-  public List<HechoOutputDTO> listarHechosDe (Contribuyente contribuyente) {
-    return hechosService.obtenerHechosDe(contribuyente);
-  }
-
-  @PutMapping("/{idHecho}")
-  public HechoOutputDTO modificarHecho (@PathVariable Long idHecho, @RequestBody HechoInputDTO hechoNuevo)   {
-    return hechosService.modificarHecho(idHecho, hechoNuevo);
-  }
-
-  @PatchMapping("/{idHecho}/estado")
-  public HechoOutputDTO resolverSolicitud (@PathVariable Long idHecho, @RequestBody ResolucionDTO resolucion) {
-    return hechosService.procesarPendiente(idHecho,resolucion);
-  }
-
-
-
 }

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-// TODO: repasar DDC (constructores del DDC, flechas, etc...)
 
 public class Hecho {
     private String titulo;

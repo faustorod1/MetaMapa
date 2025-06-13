@@ -32,7 +32,6 @@ public class Coleccion {
 
     public boolean contiene(Hecho hecho){
         return this.hechos.contains(hecho);
-        //TODO: revisar si este metodo es necesario
     }
 
     public void recalcularHechos(){

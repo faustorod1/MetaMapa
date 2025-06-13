@@ -30,85 +30,60 @@ public class HechosService implements IHechosService {
     this.hechosRepository = hechosRepository;
   }
 
+
+  // --- Métodos expuestos al controller -------------------------------------------------------------------------------
+
+
   @Override
-  public List<HechoOutputDTO> getAll(){
+  public List<HechoOutputDTO> getAll_DTO() {
     return hechosRepository
-            .findAll()
-            .stream()
-            .map(this::hechoToDTO)
-            .collect(Collectors.toList());
+        .findAll()
+        .stream()
+        .map(this::hechoToDTO)
+        .toList();
   }
 
-  public List<HechoOutputDTO> getAllDesde(LocalDateTime desde){       // Según fecha de última actualización
+  @Override
+  public List<HechoOutputDTO> getAllDesde_DTO(LocalDateTime desde) {
     return hechosRepository
-            .findAll()
-            .stream()
-            .filter(hecho -> hecho.getLastUpdate().isAfter(desde))
-            .map(this::hechoToDTO)
-            .collect(Collectors.toList());
+        .findAll()
+        .stream()
+        .filter(hecho -> hecho.getLastUpdate().isAfter(desde))
+        .map(this::hechoToDTO)
+        .toList();
   }
 
   @Override
   public HechoOutputDTO crearHecho(HechoInputDTO hechoInputDTO) {
     Hecho hecho = this.DtoToHecho(hechoInputDTO);
-    hecho.setLastUpdate(hecho.getFechaDeCarga());
     hechosRepository.save(hecho);
     return this.hechoToDTO(hecho);
   }
 
   @Override
-  public HechoOutputDTO modificarHecho(Long id, HechoInputDTO hecho){
-    Hecho h = DtoToHecho(hecho);
-    Hecho hViejo = this.hechosRepository.findById(id);
-    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7) { // Pasaron menos de 7 días
-      if (hViejo.getContribuyente().getId().equals(h.getContribuyente().getId())) { // El que intenta modificar el hecho es quien lo subió
-        SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hViejo,h);
-        hViejo.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
-        return hechoToDTO(h);
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public void eliminarHecho(Long id) {
+  public void marcarComoELiminado(Long id) {
     hechosRepository.marcarComoEliminado(id);
   }
 
-  @Override
-  public List<HechoOutputDTO> obtenerHechosPendientes(Boolean pendiente) { // true si quiero q me de los pendientes
-    return hechosRepository
-            .findByPendiente(pendiente)
-            .stream()
-            .map(this::hechoToDTO)
-            .collect(Collectors.toList());
-  }
 
-  @Override
-  public List<HechoOutputDTO> obtenerHechosDe(Contribuyente contribuyente){
-    return hechosRepository
-            .findByContribuyente(contribuyente)
-            .stream()
-            .map(this::hechoToDTO)
-            .collect(Collectors.toList());
-  }
-
+  // --- Métodos para uso interno --------------------------------------------------------------------------------------
 
 
   @Override
-  public HechoOutputDTO procesarPendiente(Long id, ResolucionDTO resolucion){
-    Hecho h = hechosRepository.findById(id);
-    h.getSolicitudDeModificacion().resolver(resolucion);
-    EstadoSolicitud estadoNuevo = resolucion.getEstadoNuevo();
-    if(estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
-      Hecho hechoNuevo = h.getSolicitudDeModificacion().getHechoNuevo();
-      hechoNuevo.setLastUpdate(LocalDateTime.now());
-      hechosRepository.update(h, hechoNuevo);
-      return this.hechoToDTO(hechoNuevo);
-    }
-    return this.hechoToDTO(h);
+  public Hecho getById(Long id){        //TODO: revisar si esta ok q NO devuelva un DTO (esto lo utiliza el SolicitudesService)
+    return hechosRepository.findById(id);
   }
 
+  @Override
+  public void update(Hecho h, Hecho hViejo){
+    hechosRepository.update(h,hViejo);
+  }
+
+
+  // --- Conversiones DTO ----------------------------------------------------------------------------------------------
+
+
+  @Override
   public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
     ContribuyenteDTO contribuyenteDTO = hechoInputDTO.getContribuyente();
     return Hecho.builder()
@@ -118,17 +93,14 @@ public class HechosService implements IHechosService {
         //.contenidoMultimedia(new ContenidoMultimedia())
         .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(),hechoInputDTO.getLongitud()))
         .fechaHecho(LocalDate.parse(hechoInputDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
-        .origen(CONTRIBUYENTE)
-        .fechaDeCarga(LocalDateTime.now())
         .eliminado(false)
         .contribuyente(new Contribuyente(contribuyenteDTO.getId(), contribuyenteDTO.getNombre(), contribuyenteDTO.getApellido(),
                 LocalDate.parse(contribuyenteDTO.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))
         .etiquetas(hechoInputDTO.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toCollection(HashSet::new)))
-        .lastUpdate(LocalDateTime.now())
-        .id(null)
         .build();
   }
 
+  @Override
   public HechoOutputDTO hechoToDTO (Hecho hecho){
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
@@ -142,12 +114,12 @@ public class HechosService implements IHechosService {
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
         .contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
-        .solicitudesDeEliminacion(hecho.getSolicitudesDeEliminacion())
         .etiquetas(hecho.getEtiquetas())
         .id(String.format("dinamica:%s", hecho.getId()))
         .build();
   }
 
+  @Override
   public ContribuyenteDTO contribuyenteToDTO (Contribuyente contribuyente){
     ContribuyenteDTO c = new ContribuyenteDTO();
     c.setId(contribuyente.getId());

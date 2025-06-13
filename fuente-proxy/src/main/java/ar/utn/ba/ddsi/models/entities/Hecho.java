@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-// TODO: repasar DDC (constructores del DDC, flechas, etc...)
 
 public class Hecho {
 
