@@ -7,7 +7,7 @@ import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
 import ar.utn.ba.ddsi.models.dtos.externals.HechosMetamapaDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
-import ar.utn.ba.ddsi.services.IFuenteProxyServices;
+import ar.utn.ba.ddsi.services.IHechosServices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @PropertySource("classpath:keys.properties")
 @Service
-public class FuenteProxyServices implements IFuenteProxyServices {
+public class HechosServices implements IHechosServices {
   private WebClient webClient;
   private String token;
 
@@ -34,7 +34,7 @@ public class FuenteProxyServices implements IFuenteProxyServices {
   private int idApiMetaMapa = 1;
 
   @Autowired
-  public FuenteProxyServices(WebClient.Builder webClientBuilder, @Value("${api.desastres-naturales.token}") String apiDesastresNaturalesToken, @Value("${api.desastres-naturales.url}") String apiDesastresNaturalesURL) {
+  public HechosServices(WebClient.Builder webClientBuilder, @Value("${api.desastres-naturales.token}") String apiDesastresNaturalesToken, @Value("${api.desastres-naturales.url}") String apiDesastresNaturalesURL) {
     this.token = apiDesastresNaturalesToken;
     this.webClient = webClientBuilder.baseUrl(apiDesastresNaturalesURL).build();
   }

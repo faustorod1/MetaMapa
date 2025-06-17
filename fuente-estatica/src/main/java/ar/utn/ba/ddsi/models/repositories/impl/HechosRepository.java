@@ -18,4 +18,13 @@ public class HechosRepository implements IHechosRepository {
         return lectorDeCSV.getHechos();
     }
 
+    @Override
+    public Hecho findById(Long id){
+        return this.hechos.stream().filter(h -> h.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public void marcarComoEliminado(Long id){
+        this.findById(id).setEliminado(true);
+    }
 }

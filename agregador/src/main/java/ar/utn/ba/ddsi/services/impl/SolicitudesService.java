@@ -4,12 +4,10 @@ import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dtos.input.ResolucionSolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dtos.input.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
-import ar.utn.ba.ddsi.models.entities.Contribuyente;
-import ar.utn.ba.ddsi.models.entities.DescripcionSolicitudException;
-import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
+import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.ISolicitudesRepository;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,41 +31,19 @@ public class SolicitudesService implements ISolicitudesService {
       case PENDIENTE -> "Solicitud creada correctamente";
       case RECHAZADA_POR_SPAM -> "Solicitud rechazada por spam";
       case RECHAZADA_POR_FALTA_DE_CARACTERES -> "Solicitud rechazada por insuficientes caracteres";
-      default -> "guat? (ㆆ _ ㆆ)";
+      default -> "guat? (ㆆ _ ㆆ)";   // TODO: sacar esto
     };
-
-    /* //TODO: revisar si es funcional esto asincronico
-  @Service
-  public class ElementoService {
-
-    @Autowired
-    private WebClient webClient;
-
-    @Async
-    public void eliminarYNotificar(Long id) {
-        // Lógica local
-        eliminarLocalmente(id);
-
-        // Llamada no bloqueante a otra API
-        webClient.delete()
-                .uri("http://otra-api.com/api/elementos/{id}", id)
-                .retrieve()
-                .toBodilessEntity()
-                .doOnSuccess(response -> System.out.println("Notificación exitosa"))
-                .doOnError(error -> System.err.println("Error notificando: " + error.getMessage()))
-                .subscribe(); // Muy importante: activa la llamada no bloqueante
-    }
-
-    private void eliminarLocalmente(Long id) {
-        System.out.println("Elemento " + id + " eliminado localmente.");
-    }
-}
-   */
   }
+
+
+
 
   @Override
   public void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto) {
-    solicitudesRepository.resolver(id, resolucionDto.getAdministradorQueResolvio(), resolucionDto.getEstadoSolicitud());
+    SolicitudDeEliminacion solicitud = solicitudesRepository.resolver(id, resolucionDto.getAdministradorQueResolvio(), resolucionDto.getEstadoSolicitud());
+    if (solicitud != null && solicitud.getEstado() == EstadoSolicitud.ACEPTADA) {
+      hechosService.eliminarHechoEnLasFuentes(solicitud.getHecho());
+    }
   }
 
   @Override

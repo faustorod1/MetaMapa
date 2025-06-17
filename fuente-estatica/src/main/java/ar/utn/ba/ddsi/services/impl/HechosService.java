@@ -20,6 +20,7 @@ public class HechosService implements IHechosService {
     @Autowired
     private PathsService pathsService;
 
+    // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
     public List<HechoOutputDTO> obtenerHechosCargadosDesde(LocalDateTime desde) {
@@ -34,12 +35,20 @@ public class HechosService implements IHechosService {
                 .toList();
     }
 
-
     @Override
     public List<HechoOutputDTO> buscarTodos() {
         return this.obtenerHechosCargadosDesde(LocalDateTime.MIN);
     }
 
+    //---- Métodos de trabajo interno -------------------------------------------------------------------------------
+
+    @Override
+    public void marcarComoELiminado(Long id) {
+        hechosRepository.marcarComoEliminado(id);
+    }
+
+
+    //---- Conversiones DTO -------------------------------------------------------------------------------
 
     private HechoOutputDTO hechoOutputDTO(Hecho hecho) {
         HechoOutputDTO dto = new HechoOutputDTO();

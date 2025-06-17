@@ -6,4 +6,6 @@ import ar.utn.ba.ddsi.models.entities.PathDataset;
 
 public interface IHechosRepository {
     List<Hecho> findAllFrom(PathDataset dataset);
+    Hecho findById(Long id);
+    void marcarComoEliminado(Long id);
 }

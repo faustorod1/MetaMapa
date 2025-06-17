@@ -27,4 +27,6 @@ public class ColeccionesController {
     public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador) {
         return this.coleccionesService.buscarHechosPorColeccion(identificador);
     }
+
+
 }

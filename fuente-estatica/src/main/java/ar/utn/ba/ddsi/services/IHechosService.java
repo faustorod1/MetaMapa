@@ -8,4 +8,5 @@ import java.util.List;
 public interface IHechosService {
     List<HechoOutputDTO> buscarTodos();
     List<HechoOutputDTO> obtenerHechosCargadosDesde(LocalDateTime desde);
+    void marcarComoELiminado(Long id);
 }

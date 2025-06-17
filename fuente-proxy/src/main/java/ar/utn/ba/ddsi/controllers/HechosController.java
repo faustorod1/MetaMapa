@@ -1,7 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
-import ar.utn.ba.ddsi.services.impl.FuenteProxyServices;
+import ar.utn.ba.ddsi.services.impl.HechosServices;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,27 +10,27 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/hechos")
-public class FuenteProxyController {
+public class HechosController {
 
-  private FuenteProxyServices fuenteProxyServices;
+  private HechosServices hechosServices;
 
-  public FuenteProxyController(FuenteProxyServices fuenteProxyServices) {
-    this.fuenteProxyServices = fuenteProxyServices;
+  public HechosController(HechosServices hechosServices) {
+    this.hechosServices = hechosServices;
   }
 
   @GetMapping
   public List<HechoOutputDTO> getAll(){
-    return fuenteProxyServices.getAll();
+    return hechosServices.getAll();
   }
 
   @GetMapping(params = "desde")
   public List<HechoOutputDTO> getAllDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
-    return fuenteProxyServices.getAllDesde(desde);
+    return hechosServices.getAllDesde(desde);
   }
 
   @GetMapping("/{id}")
-  public HechoOutputDTO getById(@PathVariable Long id){
-    return fuenteProxyServices.getById(id);
+  public HechoOutputDTO getById(@PathVariable Long id)  {
+    return hechosServices.getById(id);
   }
 
 /*
@@ -41,6 +41,6 @@ public class FuenteProxyController {
 */
 
   @GetMapping("/metamapaInstance/{baseUrl}")
-  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){ return fuenteProxyServices.consumirMetamapa(baseUrl); }
+  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){ return hechosServices.consumirMetamapa(baseUrl); }
 
 }

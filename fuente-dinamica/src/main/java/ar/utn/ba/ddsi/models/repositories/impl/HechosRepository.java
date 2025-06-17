@@ -39,7 +39,7 @@ public class HechosRepository implements IHechosRepository {
   }
 
   @Override
-  public void marcarComoEliminado(Long id) {
+  public void marcarComoEliminado(Long id){
     findById(id).setEliminado(true);
   }
 
