@@ -1,6 +1,5 @@
 package ar.utn.ba.ddsi.models.repositories;
 
-import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import java.util.List;
 

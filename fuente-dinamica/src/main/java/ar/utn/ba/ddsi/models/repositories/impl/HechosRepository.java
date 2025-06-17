@@ -1,6 +1,5 @@
 package ar.utn.ba.ddsi.models.repositories.impl;
 
-import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import org.springframework.stereotype.Repository;
@@ -9,9 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
-import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.PENDIENTE;
 
 @Repository
 public class HechosRepository implements IHechosRepository {
