@@ -1,16 +1,26 @@
 package ar.utn.ba.ddsi.models.entities;
 
-import org.springframework.stereotype.Component;
+import ar.utn.ba.ddsi.models.entities.APIAdapters.IAPIAdapter;
+import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Component
+@Data
 public class API {
     private Long id;
     private String url;
-    // private adapter;     // TODO: ¿tenemos un adapter por tipo de API, o un adapter solo para todo el sistema?
 
-    //public List<Hecho> getHechos() {
-        // return adapter.getHechos(url) //algo así
-    //}
+    private final IAPIAdapter adapter;  // Correcto! Tenemos un adapter para cada tipo de API!
+
+    public List<Hecho> getAll() {
+        List<Hecho> hechos = adapter.getHechos().block();
+        hechos.forEach(h -> h.setAPIid(id));
+        return hechos;
+    }
+
+    public List<Hecho> getAllDesde(LocalDateTime desde){
+        return this.getAll().stream().filter(h -> h.getFechaUltimaActualizacion().isAfter(desde)).collect(Collectors.toList());
+    }
 }

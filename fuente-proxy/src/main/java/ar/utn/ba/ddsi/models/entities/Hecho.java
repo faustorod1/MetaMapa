@@ -16,39 +16,15 @@ import java.util.List;
 @Data
 
 public class Hecho {
-
+    private Long id;
+    private Long APIid;
     private String titulo;
     private String descripcion;
     private Categoria categoria;
     private ContenidoMultimedia contenidoMultimedia;
-    private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaUltimaActualizacion;
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
-    private Contribuyente contribuyente;
-    private Long id;
-
-    // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
-    @Builder.Default
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
-    @Builder.Default //si el builder no le da el valor, hace esto por defecto
-    private HashSet<Etiqueta> etiquetas = new HashSet<>();
-
-    public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Contribuyente contribuyente) {
-        try {
-            SolicitudDeEliminacion solicitud = new SolicitudDeEliminacion(this, justificacion, contribuyente);
-            solicitudesDeEliminacion.add(solicitud);
-            return solicitud;
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void etiquetar(Etiqueta etiqueta){
-        etiquetas.add(etiqueta);
-    }
-
 }

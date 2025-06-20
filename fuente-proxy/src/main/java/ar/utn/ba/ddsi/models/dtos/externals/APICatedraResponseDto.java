@@ -5,9 +5,9 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class HechoFuenteApiCatedraResponseDto {
+public class APICatedraResponseDto {
   private Integer current_page;
-  private List<HechoDTO> data;
+  private List<HechoExternalDTO> data;
   private String first_page_url;
   private Integer from;
   private String last_page;

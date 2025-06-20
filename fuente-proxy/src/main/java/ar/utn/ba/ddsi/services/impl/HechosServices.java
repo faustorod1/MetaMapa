@@ -2,8 +2,8 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dtos.externals.HechoExternalMetamapa;
-import ar.utn.ba.ddsi.models.dtos.externals.HechoFuenteApiCatedraResponseDto;
-import ar.utn.ba.ddsi.models.dtos.externals.HechoDTO;
+import ar.utn.ba.ddsi.models.dtos.externals.APICatedraResponseDto;
+import ar.utn.ba.ddsi.models.dtos.externals.HechoExternalDTO;
 import ar.utn.ba.ddsi.models.dtos.externals.HechosMetamapaDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,7 +82,7 @@ public class HechosServices implements IHechosServices {
   }
 
   @Override
-  public Mono<List<HechoDTO>> buscarTodos(){
+  public Mono<List<HechoExternalDTO>> buscarTodos(){
     return Flux.range(1, 100)
             .flatMap(page -> webClient.get()
                     .uri(uriBuilder -> uriBuilder.path("/desastres")
@@ -92,39 +91,20 @@ public class HechosServices implements IHechosServices {
                             .build())
                     .header("Authorization", "Bearer " + this.token)
                     .retrieve()
-                    .bodyToMono(HechoFuenteApiCatedraResponseDto.class)
-                    .map(HechoFuenteApiCatedraResponseDto::getData))
+                    .bodyToMono(APICatedraResponseDto.class)
+                    .map(APICatedraResponseDto::getData))
             .flatMap(Flux::fromIterable)
             .collectList();
   }
 
   @Override
-  public Mono<HechoDTO> buscarPorId(Long id) {//pedimos un hecho
+  public Mono<HechoExternalDTO> buscarPorId(Long id) {//pedimos un hecho
     return webClient
             .get()
             .uri("/desastres/{id}", id)
             .header("Authorization", "Bearer " + this.token)
             .retrieve()
-            .bodyToMono(HechoDTO.class);
-  }
-
-  @Override
-  public HechoOutputDTO externalToOutput (HechoDTO hechoDTO) {
-    return HechoOutputDTO.builder()
-            .id(String.format("proxy:%s:%s", idApiDesastres, hechoDTO.getId())) // Usamos proxy:<id-api>:<id-hecho>, como solo tenemos una API, usamos siempre el mismo
-            .titulo(hechoDTO.getTitulo())
-            .descripcion(hechoDTO.getDescripcion())
-            .categoria(new Categoria(hechoDTO.getCategoria()))
-            .lugarAcontecimiento(new Coordenada(hechoDTO.getLatitud(), hechoDTO.getLongitud()))
-            .fechaHecho(LocalDate.parse(hechoDTO.getFecha_hecho(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
-            .fechaDeCarga(LocalDateTime.parse(hechoDTO.getCreated_at(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
-            .fechaUltimaActualizacion(LocalDateTime.parse(hechoDTO.getUpdated_at(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
-            .contenidoMultimedia(null)
-            .origen(OrigenHecho.PROXY)
-            .eliminado(false)
-            .solicitudesDeEliminacion(new ArrayList<>())
-            .etiquetas(new HashSet<>())
-            .build();
+            .bodyToMono(HechoExternalDTO.class);
   }
 
   private HechoOutputDTO externalMetamapaToHechoOutPut(HechoExternalMetamapa metamapaDTO) {
@@ -142,5 +122,4 @@ public class HechosServices implements IHechosServices {
             .build();
     return hecho;
   }
-
 }

@@ -5,7 +5,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Data
-public class HechoDTO {
+public class HechoExternalDTO {
   private Long id;
   private String titulo;
   private String descripcion;
