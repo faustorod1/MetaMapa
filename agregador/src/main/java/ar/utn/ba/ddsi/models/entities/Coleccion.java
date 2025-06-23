@@ -38,16 +38,18 @@ public class Coleccion {
         return this.hechos.contains(hecho);
     }
 
+    public List<Hecho> aplicarFiltros(List<Hecho> hechos) {
+        List<Hecho> hechosAFiltrar = hechos
+                .stream()
+                .filter( h ->
+                        fuentes.stream().anyMatch(h::perteneceALaFuente)
+                                || hechosCargadosManualmente.stream().anyMatch(hcm -> h.getId().equals(hcm.getId()))
+                ).toList();
+        return criterioDePertenencia.aplicarA(hechosAFiltrar);
+    }
+
     public void filtrarHechos(List<Hecho> todosLosHechos) {
-
-        List<Hecho> hechosAFiltrar = todosLosHechos
-            .stream()
-            .filter( h ->
-                fuentes.stream().anyMatch(h::perteneceALaFuente)
-                || hechosCargadosManualmente.stream().anyMatch(hcm -> h.getId().equals(hcm.getId()))
-            ).toList();
-
-        this.hechos = criterioDePertenencia.aplicarA(hechosAFiltrar);
+        this.hechos = aplicarFiltros(todosLosHechos);
     }
 
 

@@ -4,6 +4,6 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class HechosMetamapaDTO {
-    List<HechoExternalMetamapa> hechos;
+public class HechosExternalMetamapaDTO {
+    List<HechoExternalMetamapaDTO> hechos;
 }

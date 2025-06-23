@@ -9,8 +9,10 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface IHechosService {
-    List<HechoOutputDTO> buscarTodos(Criterio criterio);
+    Mono<List<HechoOutputDTO>> buscarTodos(Criterio criterio);
+    Mono<List<Hecho>> getFromMetaMapa();
     Hecho obtenerPorId(Long id);
 
     Mono<Void> actualizarHechos();
+    HechoOutputDTO hechoOutputDTO(Hecho hecho);
 }

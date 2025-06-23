@@ -40,21 +40,24 @@ public class HechosService implements IHechosService {
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
-    public List<HechoOutputDTO> buscarTodos(Criterio criterio){
+    public Mono<List<HechoOutputDTO>> buscarTodos(Criterio criterio){
         if (criterio == null) {
             criterio = new Criterio(); // Por defecto, solo filtra los eliminados
         }
-        List<Hecho> hechosTotales = new ArrayList<>(hechosRepository.findAll());
-        List<Hecho> hechosMetamapa = this.pedirHechosMetamapa().block();
-        hechosTotales.addAll(hechosMetamapa);
+        Mono<List<Hecho>> hechosLocales = Mono.fromCallable(() -> hechosRepository.findAll());
+        Mono<List<Hecho>> hechosMetamapa = this.getFromMetaMapa();
 
+        Criterio finalCriterio = criterio;
+        Mono<List<Hecho>> todos = Mono.zip(hechosLocales, hechosMetamapa)
+                .map(tuple -> {
+                    List<Hecho> combinados = new ArrayList<>();
+                    combinados.addAll(tuple.getT1()); // locales
+                    combinados.addAll(tuple.getT2()); // metamapa
+                    combinados = finalCriterio.aplicarA(combinados);
+                    return combinados;
+                });
 
-        List<Hecho> hechosFiltrados = criterio.aplicarA(hechosTotales);
-
-        return hechosFiltrados
-                .stream()
-                .map(this::hechoOutputDTO)
-                .toList();
+        return todos.map(list -> list.stream().map(this::hechoOutputDTO).toList());
     }
 
 
@@ -82,6 +85,22 @@ public class HechosService implements IHechosService {
         fechaUltimaActualizacion = LocalDateTime.now();
         return mono;
     }
+
+
+    @Override
+    public Mono<List<Hecho>> getFromMetaMapa() {
+        return webClients.get(OrigenHecho.PROXY)
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/hechos/metamapaInstance/a")     // TODO: verificar URL (qué significa /a)
+                        .build()
+                )
+                .retrieve()
+                .bodyToFlux(HechoFuenteDTO.class)
+                .map(this::hechoFromHechoFuenteDTO)
+                .collectList();
+    }
+
 
     private Mono<List<Hecho>> crearMonoPeticionHechos(WebClient webClient) {
         String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
@@ -112,24 +131,10 @@ public class HechosService implements IHechosService {
                 .doOnError(error -> System.err.println("Error en la eliminación remota"))
                 .subscribe();
     }
-
-    private Mono<List<Hecho>> pedirHechosMetamapa() {
-        return webClients.get(OrigenHecho.PROXY)
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/api/hechos/metamapaInstance/a")     // TODO: verificar URL (qué significa /a)
-                        .build()
-                )
-                .retrieve()
-                .bodyToFlux(HechoFuenteDTO.class)
-                .map(this::hechoFromHechoFuenteDTO)
-                .collectList()
-                .map(ArrayList::new);
-    }
     
     // ---- Conversiones DTO -------------------------------------------------------------------------------
 
-    private HechoOutputDTO hechoOutputDTO(Hecho hecho) {
+    public HechoOutputDTO hechoOutputDTO(Hecho hecho) {
         HechoOutputDTO dto = new HechoOutputDTO();
 
         dto.setId(hecho.getId());

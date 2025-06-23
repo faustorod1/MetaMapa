@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface IAPIsRepository {
     List<API> findAll();
+    List<API> findAllMetamapa();
     API save(API api);
-    API findById(Long id);
+    API findByAPIid(Long id);
+
 }

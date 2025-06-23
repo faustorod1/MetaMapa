@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 public class API {
     private Long id;
     private String url;
+    private boolean metamapa;
 
-    private final IAPIAdapter adapter;  // Correcto! Tenemos un adapter para cada tipo de API!
+    private final IAPIAdapter adapter;
 
     public List<Hecho> getAll() {
         List<Hecho> hechos = adapter.getHechos().block();

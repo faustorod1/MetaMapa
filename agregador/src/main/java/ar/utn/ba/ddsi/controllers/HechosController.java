@@ -22,7 +22,7 @@ public class HechosController {
 
     @GetMapping
     public List<HechoOutputDTO> buscarTodos() {
-        return this.hechosService.buscarTodos(null);
+        return this.hechosService.buscarTodos(null).block();
     }
 
 }

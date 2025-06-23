@@ -59,7 +59,7 @@ public class APIAdapterFuenteCatedra implements IAPIAdapter {
                 .collectList();
     }
 
-    public Hecho externalToHecho (HechoExternalDTO dto) {
+    private Hecho externalToHecho (HechoExternalDTO dto) {
         return Hecho.builder()
                 .id(dto.getId())
                 .fechaHecho(LocalDate.parse(dto.getFecha_hecho()))

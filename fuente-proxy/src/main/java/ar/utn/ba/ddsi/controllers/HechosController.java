@@ -1,7 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
-import ar.utn.ba.ddsi.services.impl.HechosServices;
+import ar.utn.ba.ddsi.services.impl.HechosService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,25 +12,20 @@ import java.util.List;
 @RequestMapping("/api/hechos")
 public class HechosController {
 
-  private HechosServices hechosServices;
+  private HechosService hechosService;
 
-  public HechosController(HechosServices hechosServices) {
-    this.hechosServices = hechosServices;
+  public HechosController(HechosService hechosService) {
+    this.hechosService = hechosService;
   }
 
   @GetMapping
   public List<HechoOutputDTO> getAll(){
-    return hechosServices.getAll();
+    return hechosService.getAll();
   }
 
   @GetMapping(params = "desde")
   public List<HechoOutputDTO> getAllDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
-    return hechosServices.getAllDesde(desde);
-  }
-
-  @GetMapping("/{id}")
-  public HechoOutputDTO getById(@PathVariable Long id)  {
-    return hechosServices.getById(id);
+    return hechosService.getAllDesde(desde);
   }
 
 /*
@@ -41,6 +36,12 @@ public class HechosController {
 */
 
   @GetMapping("/metamapaInstance/{baseUrl}")
-  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){ return hechosServices.consumirMetamapa(baseUrl); }
+  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){
+    return hechosService.consumirMetamapa(baseUrl);
+  }
+
+  public void eliminarHecho(@RequestParam Long id, @RequestParam Long APIid){
+    hechosService.marcarComoEliminado(id, APIid);
+  }
 
 }

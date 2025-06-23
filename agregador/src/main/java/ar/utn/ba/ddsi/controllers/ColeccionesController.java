@@ -25,7 +25,7 @@ public class ColeccionesController {
 
     @GetMapping("/{identificador}/hechos")
     public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador) {
-        return this.coleccionesService.buscarHechosPorColeccion(identificador);
+        return this.coleccionesService.buscarHechosPorColeccion(identificador).block();
     }
 
 

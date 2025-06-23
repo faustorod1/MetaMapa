@@ -22,8 +22,4 @@ public interface IHechosService {
   Hecho getById(Long id);
   void update(Hecho hnuevo, Hecho hviejo);
 
-  //Conversiones DTO
-  Hecho DtoToHecho (HechoInputDTO hechoInputDTO);
-  HechoOutputDTO hechoToDTO(Hecho hecho);
-  ContribuyenteDTO contribuyenteToDTO (Contribuyente contribuyente);
 }

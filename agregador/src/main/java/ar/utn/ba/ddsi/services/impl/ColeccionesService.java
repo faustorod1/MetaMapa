@@ -6,11 +6,14 @@ import ar.utn.ba.ddsi.models.dtos.output.FiltroOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
+import ar.utn.ba.ddsi.models.repositories.impl.HechosRepository;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,7 +23,7 @@ public class ColeccionesService implements IColeccionesService {
     private IHechosService hechosService;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, HechosRepository hechosRepository) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
     }
@@ -35,9 +38,22 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public List<HechoOutputDTO> buscarHechosPorColeccion(String identificador) {
+    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
-        return hechosService.buscarTodos(coleccion.getCriterioDePertenencia());
+        List<Hecho> hechos = coleccion.getHechos();
+
+        Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
+        Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa().map(list -> coleccion.aplicarFiltros(list));
+
+        Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
+                .map(tuple -> {
+                    List<Hecho> combinados = new ArrayList<>();
+                    combinados.addAll(tuple.getT1()); // locales
+                    combinados.addAll(tuple.getT2()); // metamapa
+                    return combinados;
+                });
+
+        return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
     }
 
 

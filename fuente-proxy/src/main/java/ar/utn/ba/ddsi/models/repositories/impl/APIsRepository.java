@@ -12,6 +12,7 @@ public class APIsRepository implements IAPIsRepository {
     private List<API> APIs;
     private Long APIid = 0L;        // IDs autoincremental
 
+
     public APIsRepository() {
         APIs = new ArrayList<>();
     }
@@ -25,13 +26,17 @@ public class APIsRepository implements IAPIsRepository {
     }
 
     @Override
-    public List<API> findAll() {
-        return this.APIs;
+    public List<API> findAll(){
+        return APIs.stream().filter(api -> !api.isMetamapa()).toList();
+    }
+
+    public List<API> findAllMetamapa(){
+        return APIs.stream().filter(api -> api.isMetamapa()).toList();
     }
 
 
     @Override
-    public API findById(Long id){
+    public API findByAPIid(Long id){
         return this.APIs.stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
     }
 }

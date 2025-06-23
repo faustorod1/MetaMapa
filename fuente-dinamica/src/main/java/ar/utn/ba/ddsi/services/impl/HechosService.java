@@ -83,8 +83,7 @@ public class HechosService implements IHechosService {
   // --- Conversiones DTO ----------------------------------------------------------------------------------------------
 
 
-  @Override
-  public Hecho DtoToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
+  private Hecho DtoToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
     ContribuyenteDTO contribuyenteDTO = hechoInputDTO.getContribuyente();
     return Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
@@ -100,8 +99,7 @@ public class HechosService implements IHechosService {
         .build();
   }
 
-  @Override
-  public HechoOutputDTO hechoToDTO (Hecho hecho){
+  private HechoOutputDTO hechoToDTO (Hecho hecho){
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())
@@ -119,8 +117,7 @@ public class HechosService implements IHechosService {
         .build();
   }
 
-  @Override
-  public ContribuyenteDTO contribuyenteToDTO (Contribuyente contribuyente){
+  private ContribuyenteDTO contribuyenteToDTO (Contribuyente contribuyente){
     ContribuyenteDTO c = new ContribuyenteDTO();
     c.setId(contribuyente.getId());
     c.setNombre(contribuyente.getNombre());
