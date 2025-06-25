@@ -48,7 +48,7 @@ public class Coleccion {
         return criterioDePertenencia.aplicarA(hechosAFiltrar);
     }
 
-    public void filtrarHechos(List<Hecho> todosLosHechos) {
+    public void filtrarHechosPropios(List<Hecho> todosLosHechos) {
         this.hechos = aplicarFiltros(todosLosHechos);
     }
 

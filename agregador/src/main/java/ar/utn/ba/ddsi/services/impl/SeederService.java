@@ -19,9 +19,9 @@ import java.util.List;
 public class SeederService implements ISeederService {
 
     @Autowired
-    private final IColeccionesRepository coleccionesRepository;
+    private IColeccionesRepository coleccionesRepository;
     @Autowired
-    private final IHechosRepository hechosRepository;
+    private IHechosRepository hechosRepository;
 
     //TODO
 
@@ -66,7 +66,7 @@ public class SeederService implements ISeederService {
         coleccionesRepository.save(colNieve);
 
         //Filtrar hechos según el criterio de la colección
-        colNieve.filtrarHechos(hechosRepository.findAll());
+        colNieve.filtrarHechosPropios(hechosRepository.findAll());
 
         //Registrar en la tabla puente sólo  los que quedaron dentro
         colNieve.getHechos().forEach(

@@ -21,5 +21,7 @@ public interface IHechosService {
   //Métodos para uso interno
   Hecho getById(Long id);
   void update(Hecho hnuevo, Hecho hviejo);
+  Hecho DTOToHecho(HechoInputDTO dto);
+  HechoOutputDTO hechoToDTO(Hecho hecho);
 
 }

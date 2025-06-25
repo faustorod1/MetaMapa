@@ -55,7 +55,7 @@ public class HechosService implements IHechosService {
 
   @Override
   public HechoOutputDTO crearHecho(HechoInputDTO hechoInputDTO) {
-    Hecho hecho = this.DtoToHecho(hechoInputDTO);
+    Hecho hecho = this.DTOToHecho(hechoInputDTO);
     hechosRepository.save(hecho);
     return this.hechoToDTO(hecho);
   }
@@ -83,7 +83,7 @@ public class HechosService implements IHechosService {
   // --- Conversiones DTO ----------------------------------------------------------------------------------------------
 
 
-  private Hecho DtoToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
+  public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
     ContribuyenteDTO contribuyenteDTO = hechoInputDTO.getContribuyente();
     return Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
@@ -99,7 +99,7 @@ public class HechosService implements IHechosService {
         .build();
   }
 
-  private HechoOutputDTO hechoToDTO (Hecho hecho){
+  public HechoOutputDTO hechoToDTO (Hecho hecho){
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())

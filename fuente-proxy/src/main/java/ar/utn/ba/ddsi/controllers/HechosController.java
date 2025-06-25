@@ -35,10 +35,15 @@ public class HechosController {
   }
 */
 
-  @GetMapping("/metamapaInstance/{baseUrl}")
-  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){
-    return hechosService.consumirMetamapa(baseUrl);
+  @GetMapping("/metamapaInstance")
+  public List<HechoOutputDTO> getHechosMetamapaInstance() {
+    return hechosService.getAllFromMetamapa();
   }
+
+//  @GetMapping("/metamapaInstance/{baseUrl}")
+//  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){
+//    return hechosService.consumirMetamapa(baseUrl);
+//  }
 
   public void eliminarHecho(@RequestParam Long id, @RequestParam Long APIid){
     hechosService.marcarComoEliminado(id, APIid);

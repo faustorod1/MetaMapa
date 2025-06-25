@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class HechosService implements IHechosService {
@@ -39,23 +40,21 @@ public class HechosService implements IHechosService {
 
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
+    // TODO:
+    // Si en el agregador tenemos siempre los hechos de fuentes MetaMapa, al sumarle los que pedimos en tiempo
+    // real, quedan repetidos
     @Override
     public Mono<List<HechoOutputDTO>> buscarTodos(Criterio criterio){
         if (criterio == null) {
             criterio = new Criterio(); // Por defecto, solo filtra los eliminados
         }
-        Mono<List<Hecho>> hechosLocales = Mono.fromCallable(() -> hechosRepository.findAll());
-        Mono<List<Hecho>> hechosMetamapa = this.getFromMetaMapa();
+        Mono<List<Hecho>> hechosLocales = Mono.fromCallable(hechosRepository::findAll);
+        Mono<List<Hecho>> hechosMetaMapa = this.getFromMetaMapa();
 
-        Criterio finalCriterio = criterio;
-        Mono<List<Hecho>> todos = Mono.zip(hechosLocales, hechosMetamapa)
-                .map(tuple -> {
-                    List<Hecho> combinados = new ArrayList<>();
-                    combinados.addAll(tuple.getT1()); // locales
-                    combinados.addAll(tuple.getT2()); // metamapa
-                    combinados = finalCriterio.aplicarA(combinados);
-                    return combinados;
-                });
+        Mono<List<Hecho>> todos = Mono.zip(hechosLocales, hechosMetaMapa)
+                .map(tuple ->
+                        Stream.concat(tuple.getT1().stream(), tuple.getT2().stream()).toList()
+                ).map(criterio::aplicarA);
 
         return todos.map(list -> list.stream().map(this::hechoOutputDTO).toList());
     }
@@ -92,7 +91,7 @@ public class HechosService implements IHechosService {
         return webClients.get(OrigenHecho.PROXY)
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/api/hechos/metamapaInstance/a")     // TODO: verificar URL (qué significa /a)
+                        .path("/api/hechos/metamapaInstance")     // TODO: Ver si nos conviene pedir una fuente MetaMapa específica
                         .build()
                 )
                 .retrieve()

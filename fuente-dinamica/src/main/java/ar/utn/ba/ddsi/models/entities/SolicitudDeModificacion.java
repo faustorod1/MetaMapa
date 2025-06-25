@@ -2,23 +2,18 @@ package ar.utn.ba.ddsi.models.entities;
 
 
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 
 import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.*;
 
-@Builder
-@Getter
-@Setter
+@Data
 public class SolicitudDeModificacion {
   private Hecho hechoViejo;//este creo q no va
   private Hecho hechoNuevo;
   private EstadoSolicitud estado;
   private String motivoDeEstado;
 
-  @Builder.Default
   private Administrador administrador = null;
 
   public SolicitudDeModificacion(Hecho hechoViejo, Hecho hechoNuevo) {

@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class ColeccionesService implements IColeccionesService {
@@ -40,19 +41,19 @@ public class ColeccionesService implements IColeccionesService {
     @Override
     public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
-        List<Hecho> hechos = coleccion.getHechos();
 
+        // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
         Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
-        Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa().map(list -> coleccion.aplicarFiltros(list));
+        // Trae los hechos de fuentes MetaMapa y los pasa por el filtro de la colección
+        Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa().map(coleccion::aplicarFiltros);
 
+        // Junta los hechos de la colección (ya persistidos localmente) con los MetaMapa obtenidos recién
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
-                .map(tuple -> {
-                    List<Hecho> combinados = new ArrayList<>();
-                    combinados.addAll(tuple.getT1()); // locales
-                    combinados.addAll(tuple.getT2()); // metamapa
-                    return combinados;
-                });
+                .map(tuple ->
+                        Stream.concat(tuple.getT1().stream(), tuple.getT2().stream()).toList()
+                );
 
+        // Falta agregar los hechos a su colección cuando se actualizan
         return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
     }
 

@@ -45,7 +45,7 @@ public class SolicitudesService implements ISolicitudesService {
 
   @Override
   public HechoOutputDTO crearSolModificacion(Long id, HechoInputDTO hecho){
-    Hecho h = hechosService.DtoToHecho(hecho);
+    Hecho h = hechosService.DTOToHecho(hecho);
     Hecho hViejo = this.hechosService.getById(id);
     if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7) { // Pasaron menos de 7 días
       if (hViejo.getContribuyente().getId().equals(h.getContribuyente().getId())) { // El que intenta modificar el hecho es quien lo subió

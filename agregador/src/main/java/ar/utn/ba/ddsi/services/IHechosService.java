@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface IHechosService {
     Mono<List<HechoOutputDTO>> buscarTodos(Criterio criterio);
-    Mono<List<Hecho>> getFromMetaMapa();
     Hecho obtenerPorId(Long id);
 
+    Mono<List<Hecho>> getFromMetaMapa();
     Mono<Void> actualizarHechos();
     HechoOutputDTO hechoOutputDTO(Hecho hecho);
 }

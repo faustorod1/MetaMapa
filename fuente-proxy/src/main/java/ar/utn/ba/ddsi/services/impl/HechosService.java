@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IAPIsRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -13,16 +14,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Stream;
 
-@PropertySource("classpath:keys.properties")
+//@PropertySource("classpath:keys.properties")
 @Service
 public class HechosService implements IHechosService {
+  @Autowired
   private IAPIsRepository apisRepository;
+  @Autowired
   private IHechosRepository hechosRepository;
   private LocalDateTime lastCached;
 
   @Override
   public List<HechoOutputDTO> getAll(){
-    if (ChronoUnit.HOURS.between(lastCached, LocalDateTime.now()) >= 12 || lastCached == null) {
+    if (lastCached == null || ChronoUnit.HOURS.between(lastCached, LocalDateTime.now()) >= 12) {
       List<API> apis = apisRepository.findAll();
       List<Hecho> hechos = apis.stream().flatMap(api -> api.getAll().stream()).toList();
 

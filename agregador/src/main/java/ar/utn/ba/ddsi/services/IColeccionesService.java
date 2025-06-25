@@ -7,7 +7,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface IColeccionesService {
-
     List<ColeccionOutputDTO> buscarTodos();
     Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador);
 }
