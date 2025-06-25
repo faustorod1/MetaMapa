@@ -1,18 +1,11 @@
 package ar.utn.ba.ddsi.models.repositories.impl;
 
-import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.Coleccion;
-import ar.utn.ba.ddsi.models.entities.Criterio;
-import ar.utn.ba.ddsi.models.entities.FiltroPorCategoria;
-import ar.utn.ba.ddsi.models.entities.FiltroPorFechaHecho;
-import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.HechoXColeccion;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ColeccionesRepository implements IColeccionesRepository {

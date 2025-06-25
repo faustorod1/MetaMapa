@@ -7,63 +7,78 @@ import ar.utn.ba.ddsi.models.repositories.IAPIsRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//@PropertySource("classpath:keys.properties")
 @Service
 public class HechosService implements IHechosService {
+
   @Autowired
   private IAPIsRepository apisRepository;
   @Autowired
   private IHechosRepository hechosRepository;
-  private LocalDateTime lastCached;
+  private LocalDateTime lastCachedAPI;
+  private LocalDateTime lastCachedMetamapa;
+
 
   @Override
-  public List<HechoOutputDTO> getAll(){
-    if (lastCached == null || ChronoUnit.HOURS.between(lastCached, LocalDateTime.now()) >= 12) {
-      List<API> apis = apisRepository.findAll();
-      List<Hecho> hechos = apis.stream().flatMap(api -> api.getAll().stream()).toList();
+  public List<HechoOutputDTO> getAll() {
+    List<HechoOutputDTO> hechosAPI = this.getAllAPI();
+    List<HechoOutputDTO> hechosMeta = this.getAllFromMetamapa();
+    return Stream.concat(hechosAPI.stream(), hechosMeta.stream()).collect(Collectors.toList());
+  }
 
-      hechosRepository.saveAll(hechos); // Actualizamos Caché
+  //----------------------------------------------------------------CONSUMIR APIEXT-------------------------------------------------------------//
+  @Override
+  public List<HechoOutputDTO> getAllAPI(){
+    if (lastCachedAPI == null || ChronoUnit.HOURS.between(lastCachedAPI, LocalDateTime.now()) >= 12) {
+      List<Hecho> hechos = apisRepository.findAllAPI().stream().flatMap(api -> api.getAll().stream()).toList();
+
+      hechosRepository.APIsaveAll(hechos); // Actualizamos Caché
+      lastCachedAPI = LocalDateTime.now();
 
       return hechos.stream().map(this::hechoToOutputDTO).toList();
     }
     else {
-      return hechosRepository.findAll().stream().map(this::hechoToOutputDTO).toList();
+      return hechosRepository.findAllAPI().stream().map(this::hechoToOutputDTO).toList();
     }
   }
 
   @Override
-  public List<HechoOutputDTO> getAllDesde(LocalDateTime desde){
-    List<Hecho> hechos = apisRepository.findAll().stream().flatMap(api -> api.getAllDesde(desde).stream()).toList();
+  public List<HechoOutputDTO> getAllAPIDesde(LocalDateTime desde) {
+    if (lastCachedAPI == null || ChronoUnit.HOURS.between(lastCachedAPI, LocalDateTime.now()) >= 12) {
+    List<Hecho> hechos = apisRepository.findAllAPI().stream().flatMap(api -> api.getAllDesde(desde).stream()).toList();
 
-    hechosRepository.saveAll(hechos);  // Actualizamos Caché
+    hechosRepository.APIsaveAll(hechos);  // Actualizamos Caché
+    lastCachedAPI = LocalDateTime.now();
 
     return hechos.stream().map(this::hechoToOutputDTO).toList();
-  }
-
-  @Override
-  public List<HechoOutputDTO> getAllFromAPI(Long APIid){
-    return apisRepository.findByAPIid(APIid).getAll().stream().map(this::hechoToOutputDTO).toList();
-  }
-
-  @Override
-  public List<HechoOutputDTO> getAllDesdeFromAPI(Long APIid,LocalDateTime desde){
-    return apisRepository.findByAPIid(APIid).getAllDesde(desde).stream().map(this::hechoToOutputDTO).toList();
+    }
+    else {
+      return hechosRepository.findAllAfterAPI(desde).stream().map(this::hechoToOutputDTO).toList();
+    }
   }
 
   //----------------------------------------------------------------CONSUMIR METAMAPA----------------------------------------------------------//
 
   @Override
   public List<HechoOutputDTO> getAllFromMetamapa (){
-    Stream<Hecho> hechos = apisRepository.findAllMetamapa().stream().flatMap(api -> api.getAll().stream());
-    return hechos.map(this::hechoToOutputDTO).toList();
+    if (lastCachedMetamapa == null || ChronoUnit.HOURS.between(lastCachedMetamapa, LocalDateTime.now()) >= 12) {
+      List<Hecho> hechos = apisRepository.findAllMetamapa().stream().flatMap(api -> api.getAll().stream()).toList();
+
+      hechosRepository.metaSaveAll(hechos);
+      lastCachedMetamapa = LocalDateTime.now();
+
+      return hechos.stream().map(this::hechoToOutputDTO).toList();
+    }else{
+      return hechosRepository.findAllMetaMapa().stream().map(this::hechoToOutputDTO).toList();
+    }
   }
+
 
   // tal vez getAllFromMetamapaDesde
 

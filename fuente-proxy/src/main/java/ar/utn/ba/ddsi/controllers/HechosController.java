@@ -28,23 +28,12 @@ public class HechosController {
     return hechosService.getAllDesde(desde);
   }
 
-/*
-  @GetMapping("/sync")
-  public List<HechoDTO> getProducts(){
-    return this.fuenteProxyServices.getAll().block();
-  }
-*/
-
   @GetMapping("/metamapaInstance")
   public List<HechoOutputDTO> getHechosMetamapaInstance() {
     return hechosService.getAllFromMetamapa();
   }
 
-//  @GetMapping("/metamapaInstance/{baseUrl}")
-//  public List<HechoOutputDTO> getHechosMetamapaInstance(@PathVariable String baseUrl){
-//    return hechosService.consumirMetamapa(baseUrl);
-//  }
-
+  @PatchMapping
   public void eliminarHecho(@RequestParam Long id, @RequestParam Long APIid){
     hechosService.marcarComoEliminado(id, APIid);
   }

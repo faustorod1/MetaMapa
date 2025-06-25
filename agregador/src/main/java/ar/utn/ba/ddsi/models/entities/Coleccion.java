@@ -22,11 +22,12 @@ public class Coleccion {
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
 
-    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia) {
+    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes) {
         this.identificador = identificador;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterioDePertenencia = criterioDePertenencia;
+        this.fuentes = fuentes;
         hechos = new ArrayList<>();
     }
 
@@ -38,6 +39,11 @@ public class Coleccion {
         return this.hechos.contains(hecho);
     }
 
+    public boolean cumpleFiltros(Hecho hecho){
+        return !aplicarFiltros(List.of(hecho)).isEmpty();
+    }
+
+    // TODO hacer que los hechos manuales pasen aun si no cumplen el criterio
     public List<Hecho> aplicarFiltros(List<Hecho> hechos) {
         List<Hecho> hechosAFiltrar = hechos
                 .stream()
@@ -52,13 +58,31 @@ public class Coleccion {
         this.hechos = aplicarFiltros(todosLosHechos);
     }
 
+    public void agregarTandaDeHechos(List<Hecho> tanda) {
+        List<Hecho> hechosPotables = aplicarFiltros(tanda);
+        List<Hecho> hechosARemover = new ArrayList<>(tanda);
+        hechosPotables.forEach(hechosARemover::remove);
+
+        hechosPotables.forEach(h -> {
+            if (!contiene(h)) hechos.add(h);
+        });
+        hechosARemover.forEach(h -> {
+           if (contiene(h)) hechos.remove(h);
+        });
+    }
+
+    public void removerHecho(Hecho hecho) {
+        hechos.remove(hecho);
+    }
+
 
     // TODO: Cuándo y cómo deberíamos ver qué hechos permanecen en la colección al actualizar?
-    public void agregarHecho(Hecho hecho) {
+    public void agregarHechoManualmente(Hecho hecho) {
         this.hechos.add(hecho);
         this.hechosCargadosManualmente.add(hecho);
     }
-    public void quitarHecho(Hecho hecho) {
+
+    public void quitarHechoManualmente(Hecho hecho) {
         this.hechosCargadosManualmente.remove(hecho);
         this.hechos.remove(hecho);
     }

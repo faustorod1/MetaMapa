@@ -22,6 +22,6 @@ public class API {
     }
 
     public List<Hecho> getAllDesde(LocalDateTime desde){
-        return this.getAll().stream().filter(h -> h.getFechaUltimaActualizacion().isAfter(desde)).collect(Collectors.toList());
+        return this.getAll().stream().filter(h -> h.getFechaDeCarga().isAfter(desde)).collect(Collectors.toList());
     }
 }

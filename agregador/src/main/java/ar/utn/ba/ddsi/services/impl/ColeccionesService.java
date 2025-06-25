@@ -10,6 +10,7 @@ import ar.utn.ba.ddsi.models.repositories.impl.HechosRepository;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -20,14 +21,20 @@ import java.util.stream.Stream;
 
 @Service
 public class ColeccionesService implements IColeccionesService {
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final HechosRepository hechosRepository;
     private IColeccionesRepository coleccionesRepository;
     private IHechosService hechosService;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, HechosRepository hechosRepository) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, HechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher, HechosRepository hechosRepository) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.hechosRepository = hechosRepository;
     }
+
+    // -------------------------------- Métodos expuestos al controller -----------------------------------------
 
     @Override
     public List<ColeccionOutputDTO> buscarTodos() {
@@ -44,6 +51,7 @@ public class ColeccionesService implements IColeccionesService {
 
         // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
         Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
+
         // Trae los hechos de fuentes MetaMapa y los pasa por el filtro de la colección
         Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa().map(coleccion::aplicarFiltros);
 
@@ -56,6 +64,21 @@ public class ColeccionesService implements IColeccionesService {
         // Falta agregar los hechos a su colección cuando se actualizan
         return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
     }
+
+    // TODO: endpoint y ver esto
+    @Override
+    public void crearColeccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes){
+        Coleccion coleccion = new Coleccion(identificador, titulo, descripcion, criterioDePertenencia, fuentes);
+
+        List<Hecho> hechos = hechosRepository.findFromFuentes(fuentes);     // Obtenemos los hechos de las fuentes
+        coleccion.agregarTandaDeHechos(hechos);                             // Agregamos los hechos a la colección
+        coleccion.filtrarHechosPropios(hechos);                             // Tenemos en cuenta su criterio
+
+        coleccionesRepository.save(coleccion);
+        applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccion));
+    }
+
+    //  -------------------------------------------- Métodos de conversión -------------------------------------------------
 
 
     private ColeccionOutputDTO coleccionOutputDTO(Coleccion coleccion) {

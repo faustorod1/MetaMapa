@@ -7,9 +7,8 @@ import java.util.List;
 
 public interface IHechosService {
   List<HechoOutputDTO> getAll();
+  List<HechoOutputDTO> getAllAPI();
+  List<HechoOutputDTO> getAllAPIDesde(LocalDateTime desde);
   List<HechoOutputDTO> getAllFromMetamapa();
-  List<HechoOutputDTO> getAllDesde(LocalDateTime desde);
-  List<HechoOutputDTO> getAllFromAPI(Long APIid);
-  List<HechoOutputDTO> getAllDesdeFromAPI(Long APIid,LocalDateTime desde);
   void marcarComoEliminado(Long id,Long APIid);
 }

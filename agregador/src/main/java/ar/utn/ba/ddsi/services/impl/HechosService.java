@@ -8,6 +8,7 @@ import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 
 @Service
 public class HechosService implements IHechosService {
+    private final ApplicationEventPublisher applicationEventPublisher;
     private IHechosRepository hechosRepository;
 
     private Map<OrigenHecho, WebClient> webClients = new HashMap<OrigenHecho, WebClient>();
@@ -31,11 +33,12 @@ public class HechosService implements IHechosService {
 
 
     @Autowired
-    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl, @Value("${fuente.dinamica.api.base-url}") String fuenteDinamicaApiBaseUrl, @Value("${fuente.proxy.api.base-url}") String fuenteProxyApiBaseUrl) {
+    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl, @Value("${fuente.dinamica.api.base-url}") String fuenteDinamicaApiBaseUrl, @Value("${fuente.proxy.api.base-url}") String fuenteProxyApiBaseUrl, ApplicationEventPublisher applicationEventPublisher) {
         this.hechosRepository = hechosRepository;
         this.webClients.put(OrigenHecho.DATASET, WebClient.builder().baseUrl(fuenteEstaticaApiBaseUrl).build());
         this.webClients.put(OrigenHecho.CONTRIBUYENTE, WebClient.builder().baseUrl(fuenteDinamicaApiBaseUrl).build());
         this.webClients.put(OrigenHecho.PROXY, WebClient.builder().baseUrl(fuenteProxyApiBaseUrl).build());
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
@@ -82,6 +85,15 @@ public class HechosService implements IHechosService {
                 .then();
 
         fechaUltimaActualizacion = LocalDateTime.now();
+
+        
+        // Código necesario para activar el evento
+        List<Hecho> todosLosHechos = Mono.zip(monoEstatica, monoDinamica, monoProxy)
+            .map(tuple -> Stream.of(tuple.getT1(), tuple.getT2(), tuple.getT3())
+                .flatMap(List::stream)
+                .toList()).block();
+        applicationEventPublisher.publishEvent(new HechosModificadosEvent(todosLosHechos));
+
         return mono;
     }
 
@@ -129,6 +141,8 @@ public class HechosService implements IHechosService {
                 .doOnSuccess(response -> System.out.println("Eliminación remota exitosa"))
                 .doOnError(error -> System.err.println("Error en la eliminación remota"))
                 .subscribe();
+        
+        applicationEventPublisher.publishEvent(new HechoEliminadoEvent(hecho));
     }
     
     // ---- Conversiones DTO -------------------------------------------------------------------------------
@@ -189,7 +203,5 @@ public class HechosService implements IHechosService {
     private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {
         return new Contribuyente(dto.getId(), dto.getNombre(), dto.getApellido(), LocalDate.parse(dto.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
-
-
 }
 

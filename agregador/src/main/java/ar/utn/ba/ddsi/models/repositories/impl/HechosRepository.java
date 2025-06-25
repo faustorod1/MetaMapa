@@ -3,7 +3,6 @@ package ar.utn.ba.ddsi.models.repositories.impl;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +21,18 @@ public class HechosRepository implements IHechosRepository {
     @Override
     public Hecho findById(Long id) {
         return findAll().stream().filter(h -> h.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public List<Hecho> findFromFuente(String fuente) {
+        return findAll().stream().filter(h -> h.perteneceALaFuente(fuente)).toList();
+    }
+
+    @Override
+    public List<Hecho> findFromFuentes(List<String> fuentes) {
+        return findAll().stream().filter(h ->
+            fuentes.stream().anyMatch(h::perteneceALaFuente)
+        ).toList();
     }
 
     @Override
