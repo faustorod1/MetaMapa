@@ -2,12 +2,11 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
+import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +27,22 @@ public class ColeccionesController {
         return this.coleccionesService.buscarHechosPorColeccion(identificador).block();
     }
 
+    @PostMapping
+    public ColeccionOutputDTO crearColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
+        return coleccionesService.crearColeccion(coleccionInputDTO);
+    }
 
+    @PutMapping
+    public ColeccionOutputDTO actualizarColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
+        return coleccionesService.updateColeccion(coleccionInputDTO);
+    }
 
+    //TODO: patch de actualizarFuentes
+    //TODO: patch de actualizarCriterio
+
+    @DeleteMapping
+    public void EliminarColeccion(@RequestBody String identificador){
+        coleccionesService.eliminarColeccion(identificador);
+    }
 
 }

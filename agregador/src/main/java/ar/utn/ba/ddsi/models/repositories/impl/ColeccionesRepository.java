@@ -37,6 +37,24 @@ public class ColeccionesRepository implements IColeccionesRepository {
     }
 
     public void save(Coleccion coleccion){
-        this.colecciones.add(coleccion);
+        Coleccion coleccionVieja = findByIdentificador(coleccion.getIdentificador());
+        if (coleccionVieja == null){
+            this.colecciones.add(coleccion);
+        } else {
+            actualizar(coleccionVieja, coleccion);
+        }
+    }
+
+    private void actualizar(Coleccion coleccionVieja, Coleccion coleccionNueva) {
+        coleccionVieja.setTitulo(coleccionNueva.getTitulo());
+        coleccionVieja.setDescripcion(coleccionNueva.getDescripcion());
+        coleccionVieja.setFuentes(coleccionNueva.getFuentes());
+        coleccionVieja.setCriterioDePertenencia(coleccionNueva.getCriterioDePertenencia());
+        coleccionVieja.setHechosCargadosManualmente(coleccionNueva.getHechosCargadosManualmente());
+    }
+
+    public void delete(String identificador){
+        Coleccion coleccion = this.findByIdentificador(identificador);
+        this.colecciones.remove(coleccion);
     }
 }
