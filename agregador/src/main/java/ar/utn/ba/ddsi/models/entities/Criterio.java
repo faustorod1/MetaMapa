@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class Criterio {
+public class Criterio implements ICriterioInmutable {
     private List<Filtro> filtros = new ArrayList<>();
 
     public Criterio(){

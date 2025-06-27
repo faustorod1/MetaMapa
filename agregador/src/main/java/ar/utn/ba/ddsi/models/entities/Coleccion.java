@@ -29,10 +29,15 @@ public class Coleccion {
         this.criterioDePertenencia = criterioDePertenencia;
         this.fuentes = fuentes;
         hechos = new ArrayList<>();
+        hechosCargadosManualmente = new ArrayList<>();
     }
 
     public List<Hecho> getHechos() {
         return new ArrayList<Hecho>(hechos); // Creo uno nuevo para que no rompa el Set original si lo modifican
+    }
+
+    public ICriterioInmutable getCriterio() {
+        return criterioDePertenencia;
     }
 
     public boolean contiene(Hecho hecho){
@@ -71,10 +76,14 @@ public class Coleccion {
         });
     }
 
+    public void removerHechoEliminado(Hecho hecho) {
+        removerHecho(hecho);
+        hechosCargadosManualmente.remove(hecho);
+    }
+
     public void removerHecho(Hecho hecho) {
         hechos.remove(hecho);
     }
-
 
     // TODO: Cuándo y cómo deberíamos ver qué hechos permanecen en la colección al actualizar?
     public void agregarHechoManualmente(Hecho hecho) {
@@ -83,11 +92,15 @@ public class Coleccion {
     }
 
     public void quitarHechoManualmente(Hecho hecho) {
-        this.hechosCargadosManualmente.remove(hecho);
-        this.hechos.remove(hecho);
+        this.removerHecho(hecho);
+        hechosCargadosManualmente.remove(hecho);
     }
 
     public void agregarFuente(String fuente) {
         fuentes.add(fuente);
+    }
+
+    public void quitarFuente(String fuente) {
+        fuentes.remove(fuente);
     }
 }

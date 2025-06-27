@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dtos.output.FiltroOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
+import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.models.repositories.impl.HechosRepository;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
@@ -14,7 +15,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,19 +22,19 @@ import java.util.stream.Stream;
 @Service
 public class ColeccionesService implements IColeccionesService {
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final HechosRepository hechosRepository;
+    private final IHechosRepository hechosRepository;
     private IColeccionesRepository coleccionesRepository;
     private IHechosService hechosService;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, HechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher, HechosRepository hechosRepository) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, IHechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.hechosRepository = hechosRepository;
     }
 
-    // -------------------------------- Métodos expuestos al controller -----------------------------------------
+    // -------------------------------------------- Métodos expuestos al controller ----------------------------------------- //
 
     @Override
     public List<ColeccionOutputDTO> buscarTodos() {
@@ -69,16 +69,13 @@ public class ColeccionesService implements IColeccionesService {
     @Override
     public void crearColeccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes){
         Coleccion coleccion = new Coleccion(identificador, titulo, descripcion, criterioDePertenencia, fuentes);
-
-        List<Hecho> hechos = hechosRepository.findFromFuentes(fuentes);     // Obtenemos los hechos de las fuentes
-        coleccion.agregarTandaDeHechos(hechos);                             // Agregamos los hechos a la colección
-        coleccion.filtrarHechosPropios(hechos);                             // Tenemos en cuenta su criterio
-
-        coleccionesRepository.save(coleccion);
         applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccion));
+        coleccionesRepository.save(coleccion);
     }
 
-    //  -------------------------------------------- Métodos de conversión -------------------------------------------------
+
+
+    //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 
 
     private ColeccionOutputDTO coleccionOutputDTO(Coleccion coleccion) {

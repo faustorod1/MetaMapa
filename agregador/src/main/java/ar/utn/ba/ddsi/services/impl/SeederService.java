@@ -70,7 +70,7 @@ public class SeederService implements ISeederService {
 
         //Registrar en la tabla puente sólo  los que quedaron dentro
         colNieve.getHechos().forEach(
-            h -> colNieve.agregarHecho(h)
+            h -> colNieve.agregarHechoManualmente(h)
         );
 
   }
