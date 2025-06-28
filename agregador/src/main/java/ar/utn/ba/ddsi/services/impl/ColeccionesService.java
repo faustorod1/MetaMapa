@@ -11,7 +11,6 @@ import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
-import ar.utn.ba.ddsi.models.repositories.impl.HechosRepository;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,12 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
 public class ColeccionesService implements IColeccionesService {
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final IHechosRepository hechosRepository;
     private IColeccionesRepository coleccionesRepository;
     private IHechosService hechosService;
 
@@ -37,7 +33,6 @@ public class ColeccionesService implements IColeccionesService {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.hechosRepository = hechosRepository;
     }
 
     // -------------------------------------------- Métodos expuestos al controller ----------------------------------------- //
@@ -52,8 +47,9 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador) {
+    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+        Criterio filtrosDeUsuario = new Criterio(params);
 
         // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
         Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
@@ -65,7 +61,8 @@ public class ColeccionesService implements IColeccionesService {
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
                 .map(tuple ->
                         Stream.concat(tuple.getT1().stream(), tuple.getT2().stream()).toList()
-                );
+                )
+                .map(filtrosDeUsuario::aplicarA);
 
         // Falta agregar los hechos a su colección cuando se actualizan
         return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
@@ -92,12 +89,6 @@ public class ColeccionesService implements IColeccionesService {
         return coleccionOutputDTO(coleccion);
     }
 
-    /*
-    public ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes){
-        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
-    }
-    */
-
 
     @Override
     public ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO){
@@ -111,6 +102,33 @@ public class ColeccionesService implements IColeccionesService {
    }
 
 
+    @Override
+    public ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes){
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+        List<String> fuentesPrevias = coleccion.getFuentes();
+
+        List<String> fuentesCambiadas = calcularDiferenciaFuentes(fuentes, fuentesPrevias);
+
+        coleccion.setFuentes(fuentesCambiadas);
+        applicationEventPublisher.publishEvent(new FuentesCambiadasEnColeccionEvent(coleccion, fuentesCambiadas));
+
+        return coleccionOutputDTO(coleccion);
+    }
+
+    private List<String> calcularDiferenciaFuentes(List<String> actuales, List<String> previas) {
+        Set<String> setActual = new HashSet<>(actuales); // [a,b,c]
+        Set<String> setPrevio = new HashSet<>(previas); // [a,d,e]
+
+        Set<String> diferencia = new HashSet<>(setActual);
+        diferencia.addAll(setPrevio); // [a, a , b, c, d, e]
+
+        Set<String> interseccion = new HashSet<>(setActual);
+        interseccion.retainAll(setPrevio); // [a]
+
+        diferencia.removeAll(interseccion); // [b, c, d, e]
+
+        return new ArrayList<>(diferencia);
+    }
 
     //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 

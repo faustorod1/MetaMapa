@@ -13,6 +13,11 @@ public class Coordenada {
         this.latitud = latitud;
         this.longitud = longitud;
     }
+    public Coordenada(String from) { // Recibe formato "1,2"
+        String[] strCoord = from.split(",");
+        this.latitud = Double.parseDouble(strCoord[0]);
+        this.longitud = Double.parseDouble(strCoord[1]);
+    }
 
     public Double[] comoArray(){
         return new Double[]{latitud, longitud};

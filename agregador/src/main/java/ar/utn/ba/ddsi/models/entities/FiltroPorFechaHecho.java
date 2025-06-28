@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,13 @@ public class FiltroPorFechaHecho extends Filtro {
         else {
             this.hasta = null;
         }
+    }
+
+    public static FiltroPorFechaHecho FiltrarDesde(String desde) {
+        return FiltrarDesde(LocalDate.parse(desde));
+    }
+    public static FiltroPorFechaHecho FiltrarHasta(String hasta) {
+        return FiltrarHasta(LocalDate.parse(hasta));
     }
 
     public static FiltroPorFechaHecho FiltrarDesde(LocalDate desde) {

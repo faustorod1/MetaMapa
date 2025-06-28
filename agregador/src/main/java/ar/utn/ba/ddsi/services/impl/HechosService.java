@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
@@ -47,10 +48,9 @@ public class HechosService implements IHechosService {
     // Si en el agregador tenemos siempre los hechos de fuentes MetaMapa, al sumarle los que pedimos en tiempo
     // real, quedan repetidos
     @Override
-    public Mono<List<HechoOutputDTO>> buscarTodos(Criterio criterio){
-        if (criterio == null) {
-            criterio = new Criterio(); // Por defecto, solo filtra los eliminados
-        }
+    public Mono<List<HechoOutputDTO>> buscarTodos(Map<String, String> params) {
+        ICriterioInmutable criterio = new Criterio(params);
+
         Mono<List<Hecho>> hechosLocales = Mono.fromCallable(hechosRepository::findAll);
         Mono<List<Hecho>> hechosMetaMapa = this.getFromMetaMapa();
 

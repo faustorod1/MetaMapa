@@ -9,12 +9,14 @@ import ar.utn.ba.ddsi.models.entities.Criterio;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IColeccionesService {
     List<ColeccionOutputDTO> buscarTodos();
-    Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador);
+    Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params);
     ColeccionOutputDTO crearColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO);
     void eliminarColeccion (String identificador);
+    ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes);
 }

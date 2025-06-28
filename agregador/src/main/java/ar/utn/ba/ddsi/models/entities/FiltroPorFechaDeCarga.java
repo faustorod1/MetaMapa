@@ -25,6 +25,14 @@ public class FiltroPorFechaDeCarga extends Filtro {
         this.hasta = LocalDateTime.parse(hasta, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
+    public static FiltroPorFechaDeCarga FiltrarDesde(String desde) {
+        return FiltrarDesde(LocalDateTime.parse(desde));
+    }
+    public static FiltroPorFechaDeCarga FiltrarHasta(String hasta) {
+        return FiltrarHasta(LocalDateTime.parse(hasta));
+    }
+
+
     public static FiltroPorFechaDeCarga FiltrarDesde(LocalDateTime desde) {
         return new FiltroPorFechaDeCarga(desde, null);
     }

@@ -1,15 +1,15 @@
 package ar.utn.ba.ddsi.services;
 
-import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.ICriterioInmutable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IHechosService {
-    Mono<List<HechoOutputDTO>> buscarTodos(Criterio criterio);
+    Mono<List<HechoOutputDTO>> buscarTodos(Map<String, String> params);
     Hecho obtenerPorId(Long id);
     Mono<List<Hecho>> getFromMetaMapa();
     Mono<Void> actualizarHechos();

@@ -20,5 +20,7 @@ public class FiltroPorUbicacion extends Filtro {
         filtrados = lista.stream().filter(h -> h.getLugarAcontecimiento().equals(lugar)).toList();
         return filtrados;
     }
+
+
     //TODO: implementar un algoritmo q filtre por un radio cercano a una coordenada en vez de q sean literalmente iguales
 }

@@ -10,8 +10,9 @@ public class FuentesCambiadasEnColeccionEvent {
     @Getter
     public List<String> fuentesCambiadas;
 
-    public FuentesCambiadasEnColeccionEvent(Coleccion coleccion) {
+    public FuentesCambiadasEnColeccionEvent(Coleccion coleccion, List<String> fuentesCambiadas) {
         this.coleccion = coleccion;
+        this.fuentesCambiadas = fuentesCambiadas;
     }
 
 }

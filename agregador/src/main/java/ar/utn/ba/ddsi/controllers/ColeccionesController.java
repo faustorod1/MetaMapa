@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/colecciones")
@@ -18,15 +19,19 @@ public class ColeccionesController {
     @Autowired
     private IColeccionesService coleccionesService;
 
+    // API Pública -----------------------------------------------------------------------------------------------------
+
     @GetMapping
     public List<ColeccionOutputDTO> buscarTodos() {
         return this.coleccionesService.buscarTodos();
     }
 
     @GetMapping("/{identificador}/hechos")
-    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador) {
-        return this.coleccionesService.buscarHechosPorColeccion(identificador).block();
+    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros) {
+        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros).block();
     }
+
+    // API Administrativa ----------------------------------------------------------------------------------------------
 
     @PostMapping
     public ColeccionOutputDTO crearColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
@@ -38,12 +43,10 @@ public class ColeccionesController {
         return coleccionesService.updateColeccion(coleccionInputDTO);
     }
 
-    /*
     @PatchMapping("{identificador}/fuentes")
     public ColeccionOutputDTO actualizarFuentes(@PathVariable String identificador, @RequestBody List<String> fuentes){
         return coleccionesService.updateFuentes(identificador, fuentes);
     }
-    */
 
 
     @PatchMapping("/{identificador}/criterio")
