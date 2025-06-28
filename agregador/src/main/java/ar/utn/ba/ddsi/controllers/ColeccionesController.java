@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
@@ -37,8 +38,18 @@ public class ColeccionesController {
         return coleccionesService.updateColeccion(coleccionInputDTO);
     }
 
-    //TODO: patch de actualizarFuentes
-    //TODO: patch de actualizarCriterio
+    /*
+    @PatchMapping("{identificador}/fuentes")
+    public ColeccionOutputDTO actualizarFuentes(@PathVariable String identificador, @RequestBody List<String> fuentes){
+        return coleccionesService.updateFuentes(identificador, fuentes);
+    }
+    */
+
+
+    @PatchMapping("/{identificador}/criterio")
+    public ColeccionOutputDTO actualizarCriterio(@PathVariable String identificador, @RequestBody CriterioInputDTO criterioInputDTO){
+        return coleccionesService.updateCriterio(identificador, criterioInputDTO);
+    }
 
     @DeleteMapping
     public void EliminarColeccion(@RequestBody String identificador){

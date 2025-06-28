@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -90,6 +91,26 @@ public class ColeccionesService implements IColeccionesService {
         coleccionesRepository.save(coleccion);
         return coleccionOutputDTO(coleccion);
     }
+
+    /*
+    public ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes){
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+    }
+    */
+
+
+    @Override
+    public ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO){
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+        Criterio criterio = inputDTOToCriterio(criterioInputDTO);
+
+        coleccion.setCriterioDePertenencia(criterio);
+
+        applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccion));
+        return coleccionOutputDTO(coleccion);
+   }
+
+
 
     //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 

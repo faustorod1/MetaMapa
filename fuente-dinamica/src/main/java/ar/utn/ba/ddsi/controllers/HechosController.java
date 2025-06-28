@@ -46,7 +46,6 @@ public class HechosController {
     return hechosService.crearHecho(hecho);
   }
 
-
   // Para que el agregador le avise cuando se elimina un hecho
   @DeleteMapping
   public void eliminarHecho(@RequestParam Long id){
