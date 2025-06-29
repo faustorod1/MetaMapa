@@ -23,7 +23,7 @@ public class Criterio implements ICriterioInmutable {
                     this.addFiltro(new FiltroPorCategoria((new Categoria(val))));
                     break;
                case "fecha_reporte_desde":
-                   this.addFiltro(FiltroPorFechaDeCarga.FiltrarDesde(val));
+                    this.addFiltro(FiltroPorFechaDeCarga.FiltrarDesde(val));
                     break;
                 case "fecha_reporte_hasta":
                     this.addFiltro(FiltroPorFechaDeCarga.FiltrarHasta(val));
@@ -36,6 +36,9 @@ public class Criterio implements ICriterioInmutable {
                     break;
                 case "ubicacion":
                     this.addFiltro(new FiltroPorUbicacion(new Coordenada(val)));
+                    break;
+                case "modo":
+                    this.addFiltro(new FiltroPorModo(val));
                     break;
                 default:
                     break;

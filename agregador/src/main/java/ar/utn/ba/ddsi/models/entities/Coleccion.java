@@ -14,9 +14,11 @@ public class Coleccion {
     private String titulo;
     private String descripcion;
     private Criterio criterioDePertenencia;
+    private IAlgoritmoDeConsenso algoritmoDeConsenso;
 
     private List<String> fuentes;
     private List<Hecho> hechosCargadosManualmente;
+    private List<Hecho> hechosConsensuados;
 
     @Getter(AccessLevel.NONE) // <-
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
@@ -30,6 +32,7 @@ public class Coleccion {
         this.fuentes = fuentes;
         hechos = new ArrayList<>();
         hechosCargadosManualmente = new ArrayList<>();
+        hechosConsensuados = new ArrayList<>();
     }
 
     public List<Hecho> getHechos() {
@@ -75,6 +78,14 @@ public class Coleccion {
            if (contiene(h)) hechos.remove(h);
         });
     }
+
+    /*
+    public void consensuarHechos(List<Hecho> hechos){
+        //TODO: flataria ver de no agregar repetidos y limpiar la lista de consensuados por si alguno q estaba antes ahora ya no es consensuado
+        hechosConsensuados.addAll(algoritmoDeConsenso(hechos, fuentes));
+    }
+    */
+
 
     public void removerHechoEliminado(Hecho hecho) {
         removerHecho(hecho);

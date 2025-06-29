@@ -64,7 +64,6 @@ public class ColeccionesService implements IColeccionesService {
                 )
                 .map(filtrosDeUsuario::aplicarA);
 
-        // Falta agregar los hechos a su colección cuando se actualizan
         return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
     }
 
@@ -101,7 +100,6 @@ public class ColeccionesService implements IColeccionesService {
         return coleccionOutputDTO(coleccion);
    }
 
-
     @Override
     public ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes){
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
@@ -109,7 +107,7 @@ public class ColeccionesService implements IColeccionesService {
 
         List<String> fuentesCambiadas = calcularDiferenciaFuentes(fuentes, fuentesPrevias);
 
-        coleccion.setFuentes(fuentesCambiadas);
+        coleccion.setFuentes(fuentes);     // TODO: acá no sería fuentes?
         applicationEventPublisher.publishEvent(new FuentesCambiadasEnColeccionEvent(coleccion, fuentesCambiadas));
 
         return coleccionOutputDTO(coleccion);

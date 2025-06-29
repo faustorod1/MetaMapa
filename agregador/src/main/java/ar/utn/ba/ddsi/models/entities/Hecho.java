@@ -29,7 +29,7 @@ public class Hecho {
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
     private Contribuyente contribuyente;
     private Long id;        //USO: Identificacion unica para el Repository (futura BD)
-    private String idExterno; // ID que tenía el hecho en la fuente de la que llegó (útil para modificar los hechos)
+    private String idExterno; // //proxy/2/5
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
 
     @Builder.Default
