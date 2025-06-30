@@ -5,7 +5,7 @@ import java.util.List;
 public class ModoNavegacionCurada extends ModoDeNavegacion{
 
     public List<Hecho> aplicarA(List<Hecho> lista){
-        //TODO
+
         return lista;
     }
 

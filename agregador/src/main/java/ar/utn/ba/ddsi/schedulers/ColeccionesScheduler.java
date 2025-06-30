@@ -12,7 +12,7 @@ public class ColeccionesScheduler {
     }
 
     @Scheduled(cron = "0 0 4 * * *", zone = "America/Argentina/Buenos_Aires")
-    public void consensuarHechos(){
+    public void consensuarHechosDeColecciones(){
         coleccionesService.consensuarColecciones();
     }
 }

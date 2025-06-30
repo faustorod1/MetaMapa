@@ -47,10 +47,18 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params) {
+    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, String modo, Map<String, String> params) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
         Criterio filtrosDeUsuario = new Criterio(params);
 
+        /*
+        if(modo == "curada"){
+            Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechosConsensuados);
+        }else if(modo == "irrestricta") {
+            // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
+            Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
+        }
+        */
         // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
         Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
 
@@ -64,7 +72,18 @@ public class ColeccionesService implements IColeccionesService {
                 )
                 .map(filtrosDeUsuario::aplicarA);
 
+
+
+        /*
+        if("consensuado") {
+            return todos.intersection(coleccion.getHechosConsenusados())
+        }else{ //irrestricto
+            return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
+        }
+        */
+
         return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
+
     }
 
 
@@ -113,6 +132,13 @@ public class ColeccionesService implements IColeccionesService {
         return coleccionOutputDTO(coleccion);
     }
 
+
+    //  -------------------------------------------- Métodos de internos ------------------------------------------------- //
+
+    public void consensuarColecciones(){
+        this.coleccionesRepository.findAll().forEach(Coleccion::consensuarHechos);
+    }
+
     private List<String> calcularDiferenciaFuentes(List<String> actuales, List<String> previas) {
         Set<String> setActual = new HashSet<>(actuales); // [a,b,c]
         Set<String> setPrevio = new HashSet<>(previas); // [a,d,e]
@@ -126,11 +152,6 @@ public class ColeccionesService implements IColeccionesService {
         diferencia.removeAll(interseccion); // [b, c, d, e]
 
         return new ArrayList<>(diferencia);
-    }
-    //  -------------------------------------------- Métodos de internos ------------------------------------------------- //
-
-    public void consensuarColecciones(){
-        this.coleccionesRepository.findAll().forEach(coleccion -> coleccion.consensuar());
     }
 
     //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //

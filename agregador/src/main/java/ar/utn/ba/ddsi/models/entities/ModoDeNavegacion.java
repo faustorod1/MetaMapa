@@ -11,6 +11,8 @@ public abstract class ModoDeNavegacion {
                 return new ModoNavegacionCurada();
             case "irrestricto":
                 return new ModoNavegacionIrrestricta();
+            /*case null:
+                return new ModoNavegacionCurada();*/
             default:
                 throw new IllegalArgumentException("No existe el modo : " + modo);
         }

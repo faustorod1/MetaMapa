@@ -79,13 +79,6 @@ public class Coleccion {
         });
     }
 
-    /*
-    public void consensuarHechos(List<Hecho> hechos){
-        //TODO: flataria ver de no agregar repetidos y limpiar la lista de consensuados por si alguno q estaba antes ahora ya no es consensuado
-        hechosConsensuados.addAll(algoritmoDeConsenso(hechos, fuentes));
-    }
-    */
-
 
     public void removerHechoEliminado(Hecho hecho) {
         removerHecho(hecho);
@@ -115,8 +108,12 @@ public class Coleccion {
         fuentes.remove(fuente);
     }
 
-    public void consensuar(){
-        this.hechosConsensuados.clear();//nos aseguramos de q no queden hechos q antes estaban consensuados y ya no lo estan
-        this.hechosConsensuados = this.algoritmoDeConsenso.consensuar(this.hechos,this.fuentes);
+    public void consensuarHechos(){
+        this.hechosConsensuados.clear();        //Para asegurar que todos los hechos esten consensuados al día, vaciamos la lista
+        if(this.algoritmoDeConsenso != null){
+            this.hechosConsensuados = this.algoritmoDeConsenso.consensuar(this.hechos, this.fuentes);    // Los volvemos a consensuar
+        }else{
+            this.hechosConsensuados = this.hechos;
+        }
     }
 }

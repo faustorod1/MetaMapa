@@ -37,9 +37,6 @@ public class Criterio implements ICriterioInmutable {
                 case "ubicacion":
                     this.addFiltro(new FiltroPorUbicacion(new Coordenada(val)));
                     break;
-                case "modo":
-                    this.addFiltro(new FiltroPorModo(val));
-                    break;
                 default:
                     break;
             }

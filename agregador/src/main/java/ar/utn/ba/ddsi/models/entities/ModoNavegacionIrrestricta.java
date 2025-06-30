@@ -5,6 +5,6 @@ import java.util.List;
 public class ModoNavegacionIrrestricta extends ModoDeNavegacion{
 
     public List<Hecho> aplicarA(List<Hecho> hechos) {
-        return hechos;       // sin filtros
+        return hechos;// sin filtros
     }
 }

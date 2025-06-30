@@ -36,8 +36,6 @@ public class SolicitudesService implements ISolicitudesService {
   }
 
 
-
-
   @Override
   public void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto) {
     SolicitudDeEliminacion solicitud = solicitudesRepository.resolver(id, resolucionDto.getAdministradorQueResolvio(), resolucionDto.getEstadoSolicitud());

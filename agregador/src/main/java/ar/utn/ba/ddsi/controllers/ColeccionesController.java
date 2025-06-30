@@ -26,9 +26,9 @@ public class ColeccionesController {
         return this.coleccionesService.buscarTodos();
     }
 
-    @GetMapping("/{identificador}/hechos")
-    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros) {
-        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros).block();
+    @GetMapping("/{identificador}/{modo}/hechos")
+    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador,@PathVariable String modo, @RequestParam Map<String, String> parametros) {
+        return this.coleccionesService.buscarHechosPorColeccion(identificador,modo, parametros).block();
     }
 
     // API Administrativa ----------------------------------------------------------------------------------------------

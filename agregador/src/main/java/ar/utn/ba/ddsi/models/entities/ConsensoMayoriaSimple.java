@@ -2,8 +2,6 @@ package ar.utn.ba.ddsi.models.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ConsensoMayoriaSimple implements IAlgoritmoDeConsenso {
 
@@ -22,11 +20,31 @@ public class ConsensoMayoriaSimple implements IAlgoritmoDeConsenso {
                     .distinct()
                     .count();
 
-            if (cantidadFuentesConEsteHecho >= minimoFuentesParaConsenso) {
-                hechosConsensuados.add(hecho);
+            if (cantidadFuentesConEsteHecho < minimoFuentesParaConsenso) {
+                continue;   // el hecho no se menciona en la mayoria de las fuentes --> ya no nos interesa --> analizamos el siguiente hecho
             }
-        }           // ACLARACIÓN: el algoritmo no pide verificar contradicciones
 
-        return hechosConsensuados;
+            // 2. Verificar que en ninguna otra fuente haya un hecho de igual titulo y diferentes atributos
+            boolean hayContradiccion = fuentesColeccion.stream()
+                    .anyMatch(fuente -> hechosColeccion.stream()
+                            .anyMatch(h -> h.mismoTituloDiferentesAtributos(hecho)
+                                    && h.perteneceALaFuente(fuente)));
+
+            if (!hayContradiccion) {
+                hechosConsensuados.add(hecho); // Es consensuado
+            }
+        }
+
+        List<Hecho> sinDuplicados = new ArrayList<>();
+
+        for (Hecho hecho : hechosConsensuados) {
+            boolean yaExiste = sinDuplicados.stream()
+                    .anyMatch(h -> h.hechoIgualA(hecho));
+            if (!yaExiste) {
+                sinDuplicados.add(hecho);
+            }
+        }
+
+        return sinDuplicados;                // Nos aseguramos de no devolver dos hechos "iguales"
     }
 }

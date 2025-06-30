@@ -6,6 +6,7 @@ import java.util.List;
 
 public class ConsensoMultiplesMenciones implements IAlgoritmoDeConsenso {
 
+    @Override
     public List<Hecho> consensuar(List<Hecho> hechosColeccion, List<String> fuentesColeccion) {
 
         List<Hecho> hechosConsensuados = new ArrayList<>();
@@ -34,7 +35,17 @@ public class ConsensoMultiplesMenciones implements IAlgoritmoDeConsenso {
             }
         }
 
-        return hechosConsensuados;
+        List<Hecho> sinDuplicados = new ArrayList<>();
+
+        for (Hecho hecho : hechosConsensuados) {
+            boolean yaExiste = sinDuplicados.stream()
+                    .anyMatch(h -> h.hechoIgualA(hecho));
+            if (!yaExiste) {
+                sinDuplicados.add(hecho);
+            }
+        }
+
+        return sinDuplicados;            // Nos aseguramos de no devolver dos hechos "iguales"
     }
 
 }
