@@ -19,4 +19,5 @@ public interface IColeccionesService {
     ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO);
     void eliminarColeccion (String identificador);
     ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes);
+    public void consensuarColecciones();
 }

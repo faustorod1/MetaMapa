@@ -127,6 +127,11 @@ public class ColeccionesService implements IColeccionesService {
 
         return new ArrayList<>(diferencia);
     }
+    //  -------------------------------------------- Métodos de internos ------------------------------------------------- //
+
+    public void consensuarColecciones(){
+        this.coleccionesRepository.findAll().forEach(coleccion -> coleccion.consensuar());
+    }
 
     //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 

@@ -11,9 +11,8 @@ public class ColeccionesScheduler {
         this.coleccionesService = coleccionesService;
     }
 
-    @Scheduled(cron = "0 0 4 * * *", zone = "America/Argentina/Buenos_Aires") //A las 4am todos los dias
+    @Scheduled(cron = "0 0 4 * * *", zone = "America/Argentina/Buenos_Aires")
     public void consensuarHechos(){
-        //TODO
-        //colecciones.forAll(coleccion -> coleccion.consensuar());
+        coleccionesService.consensuarColecciones();
     }
 }

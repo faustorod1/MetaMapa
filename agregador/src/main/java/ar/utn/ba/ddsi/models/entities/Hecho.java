@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Builder
@@ -67,6 +68,45 @@ public class Hecho {
             }
         }
         return true;
+    }
+
+    /*
+    public Integer aCuantasFuentesPertenece(List<String> fuentes){
+        return (int) fuentes.stream().filter(this::perteneceALaFuente).count();
+    }
+    */
+
+    public boolean hechoIgualA(Hecho otroHecho) {
+        //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS
+        if (otroHecho == null) return false;
+
+        if (!this.titulo.equals(otroHecho.titulo)) {
+            return false;
+        }
+
+        return  Objects.equals(this.titulo, otroHecho.getTitulo()) &&
+                Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
+                Objects.equals(this.categoria, otroHecho.getCategoria()) &&
+                Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) &&
+                Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&
+                Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+    }
+
+
+
+    public boolean mismoTituloDiferentesAtributos(Hecho otroHecho) {
+        //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS
+        if (otroHecho == null) return false;
+
+        if (!this.titulo.equals(otroHecho.titulo)) {
+            return false;
+            }
+
+        return !Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
+                !Objects.equals(this.categoria, otroHecho.getCategoria()) ||
+                !Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) ||
+                !Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
+                !Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
     }
 
 }

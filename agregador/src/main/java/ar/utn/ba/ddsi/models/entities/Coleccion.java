@@ -114,4 +114,9 @@ public class Coleccion {
     public void quitarFuente(String fuente) {
         fuentes.remove(fuente);
     }
+
+    public void consensuar(){
+        this.hechosConsensuados.clear();//nos aseguramos de q no queden hechos q antes estaban consensuados y ya no lo estan
+        this.hechosConsensuados = this.algoritmoDeConsenso.consensuar(this.hechos,this.fuentes);
+    }
 }
