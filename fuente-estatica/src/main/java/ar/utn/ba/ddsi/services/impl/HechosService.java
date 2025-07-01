@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,7 +17,6 @@ import java.util.List;
 public class HechosService implements IHechosService {
     @Autowired
     private IHechosRepository hechosRepository;
-
     @Autowired
     private PathsService pathsService;
 
@@ -25,8 +25,9 @@ public class HechosService implements IHechosService {
     @Override
     public List<HechoOutputDTO> obtenerHechosCargadosDesde(LocalDateTime desde) {
         List<PathDataset> paths = pathsService.obtenerPathsDesde(desde);
-        List<Hecho> hechos = new ArrayList<>();
-        paths.forEach(path -> {
+        List<Hecho> hechos = Collections.synchronizedList(new ArrayList<>());
+
+        paths.parallelStream().forEach(path -> {
             hechos.addAll(hechosRepository.findAllFrom(path));
         });
         return hechos

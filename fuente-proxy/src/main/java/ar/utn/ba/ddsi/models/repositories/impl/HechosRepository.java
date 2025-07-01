@@ -22,7 +22,9 @@ public class HechosRepository implements IHechosRepository {
     //(Hecho; instanteDeCargaEnCache )
 
     @Override
-    public List<Hecho> findAll() {return Stream.concat(hechosMetamapa.stream(), hechosAPI.stream()).map(Cache::getHecho).collect(Collectors.toList());}
+    public List<Hecho> findAll() {
+        return Stream.concat(hechosMetamapa.stream(), hechosAPI.stream()).map(Cache::getHecho).collect(Collectors.toList());
+    }
 
 //-----------------------------------------------------------FINDALL APIsEXTERNAS----------------------------------------------------------
     @Override
@@ -33,7 +35,6 @@ public class HechosRepository implements IHechosRepository {
     @Override
     public List<Hecho> findAllAfterAPI(LocalDateTime desde){
         return this.hechosAPI.stream().map(Cache::getHecho).filter(hecho -> hecho.getFechaDeCarga().isAfter(desde)).collect(Collectors.toList());
-
     }
 
     @Override
@@ -71,7 +72,7 @@ public class HechosRepository implements IHechosRepository {
             if (hechoViejo != null) {
                 actualizarHecho(hechoViejo, hecho);
             } else {
-                if (this.hechosMetamapa.size() >= CacheSize) { // Si alcanzo el tamaño maximo, elimina el más viejo (FIFO)
+                if (this.hechosMetamapa.size() >= MetaCacheSize) { // Si alcanzo el tamaño maximo, elimina el más viejo (FIFO)
                     this.hechosMetamapa.remove(0); // elimina el primero
                 }
 

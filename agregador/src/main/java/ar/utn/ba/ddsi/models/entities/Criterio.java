@@ -35,7 +35,7 @@ public class Criterio implements ICriterioInmutable {
                     this.addFiltro(FiltroPorFechaHecho.FiltrarHasta(val));
                     break;
                 case "ubicacion":
-                    this.addFiltro(new FiltroPorUbicacion(new Coordenada(val)));
+                    this.addFiltro(new FiltroPorUbicacion(Coordenada.fromString(val)));
                     break;
                 default:
                     break;

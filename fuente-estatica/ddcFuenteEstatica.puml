@@ -29,6 +29,7 @@ enum EstadoSolicitud {
     SUGERIDOACAMBIO
     RECHAZADA
     ACEPTADACONSUGERENCIA
+    RECHAZADOPORSPAM
 }
 
 class Etiqueta{
@@ -52,6 +53,7 @@ class Hecho{
 - fechaDeCarga: LocalDateTime
 - id: Long
 - idDataset: Long
+- eliminado: Boolean
 }
 
 class LectorDeCSV{

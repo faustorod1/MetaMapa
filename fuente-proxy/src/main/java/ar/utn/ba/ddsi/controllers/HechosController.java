@@ -33,6 +33,11 @@ public class HechosController {
     return hechosService.getAllFromMetamapa();
   }
 
+  @GetMapping("/metamapaInstanceAfter")
+  public List<HechoOutputDTO> getHechosMetamapaInstanceDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
+    return hechosService.getAllFromMetamapaDesde(desde);
+  }
+
   @PatchMapping
   public void eliminarHecho(@RequestParam Long id, @RequestParam Long APIid){
     hechosService.marcarComoEliminado(id, APIid);

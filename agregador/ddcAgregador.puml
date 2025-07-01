@@ -9,6 +9,7 @@ class Hecho{
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDate
 - fechaDeCarga: LocalDateTime
+- fechaUltimaActualizacion: LocalDateTime
 - eliminado: boolean
 - contribuyente: Contribuyente
 - id: Long
@@ -17,8 +18,11 @@ class Hecho{
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
 - etiquetas: HashSet<Etiqueta>
 --
-+ solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
-+ etiquetar(Etiqueta etiqueta): void
++ solicitarEliminacion (String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
++ etiquetar (Etiqueta etiqueta): void
++ perteneceAlaFuente (String fuente): boolean
++ hechoIgualA (Hecho otroHecho): boolean
++ mismoTituloDiferentesAtributos (Hecho otroHecho): boolean
 }
 
 enum OrigenHecho{
@@ -41,10 +45,18 @@ class Coleccion{
 - titulo: String
 - descripcion: String
 - criterioDePertenencia: Criterio
+- algoritmoDeConsenso: IAlgoritmoDeConsenso
+- fuentes: List<String>
+- hechosCargadosManualmente: List<Hecho>
+- hechosConsensuados: List<Hecho>
 - hechos: List<Hecho>
 --
 + contiene (Hecho hecho): boolean
-+ filtrarHechos(List<Hecho> todosLosHechos)
++ aplicarFiltros(List<Hecho> hechos): List<Hecho>
++ agregarTandaDeHechos(List<Hecho> tanda): void
++ removerHechoEliminado(Hecho hecho): void
++ removerHecho(Hecho hecho): void
++ consensuarHechos(): void
 }
 
 class ContenidoMultimedia{
@@ -55,6 +67,11 @@ class Criterio{
 - filtros: List<Filtro>
 --
 + addFiltro(Filtro filtro): Criterio
++ aplicarA(List<Hecho> listaOriginal): List<Hecho>
+}
+
+interface ICriterioInmutable{
++ getFiltros(): List<Filtro>
 + aplicarA(List<Hecho> listaOriginal): List<Hecho>
 }
 
@@ -123,9 +140,27 @@ class SolicitudDeEliminacion{
 enum EstadoSolicitud {
     PENDIENTE
     ACEPTADA
-    SUGERIDOACAMBIO
+    SUGERIDO_A_CAMBIO
     RECHAZADA
-    ACEPTADACONSUGERENCIA
+    ACEPTADA_CON_SUGERENCIA
+    RECHAZADA_POR_SPAM
+    RECHAZADA_POR_FALTA_DE_CARACTERES
+}
+
+interface IAlgoritmoDeConsenso{
++ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
+}
+
+class ConsensoAbsoluta{
++ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
+}
+
+class ConsensoMayoriaSimple{
++ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
+}
+
+class ConsensoMultiplesMenciones{
++ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
 }
 
 
@@ -151,8 +186,32 @@ class Contribuyente{
 + getEdad(): int
 }
 
+class CriterioCambiadoEvent{
+- coleccion: Coleccion
+}
 
-Hecho -r-> Categoria
+class FuentesCambiadasEnColeccionEvent{
+- coleccion: Coleccion
+- fuentesCambiadas: List<String>
+}
+
+class HechoEliminadoEvent{
+- hechoEliminado: Hecho
+}
+
+class HechosModificadosEvent{
+- hechos: List<Hecho>
+}
+
+
+Coleccion --> CriterioCambiadoEvent
+FuentesCambiadasEnColeccionEvent --> Coleccion
+HechoEliminadoEvent --> Hecho
+HechosModificadosEvent -->"*" Hecho
+
+
+
+Hecho -u-> Categoria
 Hecho --> Coordenada
 Hecho -->"*" SolicitudDeEliminacion
 Hecho --> ContenidoMultimedia
@@ -165,6 +224,7 @@ Coleccion -->"*" Hecho
 
 Criterio .r.> Hecho
 Criterio -->"*" Filtro
+Criterio ..|> ICriterioInmutable
 
 FiltroPorCategoria -u-|> Filtro
 FiltroPorDescripcion -u-|> Filtro
@@ -178,6 +238,11 @@ SolicitudDeEliminacion --> Hecho
 SolicitudDeEliminacion -d-> EstadoSolicitud
 SolicitudDeEliminacion --> Contribuyente
 SolicitudDeEliminacion --> Administrador
+
+Coleccion -u-> IAlgoritmoDeConsenso
+ConsensoAbsoluta .u.|> IAlgoritmoDeConsenso
+ConsensoMayoriaSimple .u.|> IAlgoritmoDeConsenso
+ConsensoMultiplesMenciones .u.|> IAlgoritmoDeConsenso
 
 
 

@@ -7,21 +7,28 @@
 
 rectangle MetaMapa{
     (Crear Coleccion)
+    (Modificar Coleccion)
+    (Eliminar Coleccion)
     (Importar Hechos Desde CSV)
     (Navegar Hechos)
     (Filtrar Hechos)
     (Solicitar Eliminacion)
-    (Aceptar Rechazar Solicitudes)
+    (Aceptar o Rechazar Solicitudes)
     (Publicar hecho)
 
 }
 
 Administrador --> (Crear Coleccion)
+Administrador --> (Modificar Coleccion)
+Administrador --> (Eliminar Coleccion)
 Administrador --> (Importar Hechos Desde CSV)
-Administrador --> (Aceptar Rechazar Solicitudes)
+Administrador --> (Aceptar o Rechazar Solicitudes)
+
 
 Visualizador --> (Navegar Hechos)
+
 (Filtrar Hechos) .u.|> (Navegar Hechos) : extends
+
 Contribuyente --> (Navegar Hechos)
 Contribuyente --> (Solicitar Eliminacion)
 Contribuyente --> (Publicar hecho)

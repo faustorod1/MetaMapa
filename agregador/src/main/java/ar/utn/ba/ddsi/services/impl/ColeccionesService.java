@@ -20,6 +20,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -62,27 +64,23 @@ public class ColeccionesService implements IColeccionesService {
             hechosColeccion = Mono.fromCallable(coleccion::getHechosConsensuados);
         }
 
-        // PASO 2: trae los hechos de fuentes MetaMapa y los pasa por el filtro de la colección
-        Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa().map(coleccion::aplicarFiltros);
+        // PASO 2: trae los hechos de fuentes MetaMapa
+        Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa();
 
-
-        // TODO TODO TODO
-        hechosMetaMapa.map(l -> {
-            l.forEach(hechoEnMetaMapa -> {
-                Mono<Hecho> hechoEnColeccion = hechosColeccion.flatMap(lista ->
-                        Mono.justOrEmpty(
-                                lista.stream()
-                                        .filter(hecho -> hecho.getIdExterno().equals(hechoEnMetaMapa.getIdExterno()))
-                                        .findFirst()
-                        ).switchIfEmpty(Mono.error(new NoSuchElementException("Usuario no encontrado")))
-                );
-            });
-        });
-
-        // Junta los hechos de la colección (ya persistidos localmente) con los MetaMapa obtenidos recién
+        // Reemplaza de la colección (ya persistida localmente) con los MetaMapa obtenidos recién
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
-                .map(tuple ->
-                        Stream.concat(tuple.getT1().stream(), tuple.getT2().stream()).toList()
+                .map(tuple -> {
+                        List<Hecho> listaMetaMapa = tuple.getT2();
+                        Map<String, Hecho> hechosPorId = tuple.getT1().stream()
+                            .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
+
+                        for (Hecho hechoMetaMapa : listaMetaMapa) {
+                            if (hechosPorId.containsKey(hechoMetaMapa.getIdExterno())) {
+                                hechosPorId.put(hechoMetaMapa.getIdExterno(), hechoMetaMapa);
+                            }
+                        }
+                        return new ArrayList<>(hechosPorId.values());
+                    }
                 )
                 .map(filtrosDeUsuario::aplicarA);
 
@@ -177,6 +175,7 @@ public class ColeccionesService implements IColeccionesService {
         dto.setIdentificador(coleccion.getIdentificador());
         dto.setTitulo(coleccion.getTitulo());
         dto.setDescripcion(coleccion.getDescripcion());
+        dto.setFuentes(coleccion.getFuentes());
         dto.setCriterioDePertenencia(criterioOutputDTO(coleccion.getCriterioDePertenencia()));
         return dto;
     }
@@ -259,7 +258,7 @@ public class ColeccionesService implements IColeccionesService {
         }else if(input.getTipoDeFiltro().equals("descripcion")){
             return new FiltroPorDescripcion((String) input.getParametros().get("descripcion"));
         }else if(input.getTipoDeFiltro().equals("categoria")){
-            return new FiltroPorCategoria(new Categoria((String) input.getParametros().get("categoria")));
+            return new FiltroPorCategoria(new Categoria((String) input.getParametros().get("nombre")));
         }else if(input.getTipoDeFiltro().equals("ubicacion")){
             Double latitud = (Double) input.getParametros().get("latitud");
             Double longitud = (Double) input.getParametros().get("longitud");

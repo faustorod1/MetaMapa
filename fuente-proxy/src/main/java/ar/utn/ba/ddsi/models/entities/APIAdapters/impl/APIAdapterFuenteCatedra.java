@@ -1,8 +1,10 @@
 package ar.utn.ba.ddsi.models.entities.APIAdapters.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
-import ar.utn.ba.ddsi.models.dtos.externals.HechoExternalDTO;
-import ar.utn.ba.ddsi.models.dtos.externals.APICatedraResponseDto;
+import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraLogInDTO;
+import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraLoginDataDTO;
+import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraHechoDTO;
+import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraResponseDto;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.entities.APIAdapters.IAPIAdapter;
@@ -11,7 +13,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,26 +22,36 @@ public class APIAdapterFuenteCatedra implements IAPIAdapter {
     private String email;
     private String password;
 
-
-    public APIAdapterFuenteCatedra(String url){
-        email = "ddsi@gmail.com";
-        password = "password";
-        webClient = WebClient.builder().baseUrl(url).build();
-
-        this.token = this.iniciarSesion();
+    public APIAdapterFuenteCatedra(String email, String password){
+        this.email = email;
+        this.password = password;
+        webClient = WebClient.builder().baseUrl("https://api-ddsi.disilab.ar/public/api").build();
     }
 
-    private String iniciarSesion(){
-        return webClient.post().uri(uriBuilder -> uriBuilder.path("/login")
-                .queryParam("email", email)
-                .queryParam("password", password)
-                .build())
-                .retrieve()
-                .toString();
+//    @PostConstruct
+//    public void inicializar(){
+//        this.token = this.iniciarSesion();
+//        System.out.println("TOKEN: " + this.token);
+//    }
+
+
+    private void iniciarSesion(){
+        this.token = webClient.post().uri(uriBuilder -> uriBuilder.path("/login")
+        .queryParam("email", email)
+        .queryParam("password", password)
+        .build())
+        .retrieve()
+        .bodyToMono(APICatedraLogInDTO.class)
+        .map(APICatedraLogInDTO::getData)
+        .map(APICatedraLoginDataDTO::getAccess_token)
+        .block();
     }
 
     @Override
     public Mono<List<Hecho>> getHechos() {
+        if (token == null) {
+            iniciarSesion();
+        }
         return Flux.range(1, 100)
                 .parallel()
                 .runOn(Schedulers.parallel())
@@ -59,15 +70,15 @@ public class APIAdapterFuenteCatedra implements IAPIAdapter {
                 .collectList();
     }
 
-    private Hecho externalToHecho (HechoExternalDTO dto) {
+    private Hecho externalToHecho (APICatedraHechoDTO dto) {
         return Hecho.builder()
                 .id(dto.getId())
-                .fechaHecho(LocalDate.parse(dto.getFecha_hecho()))
-                .fechaDeCarga(LocalDateTime.parse(dto.getCreated_at()))
+                .fechaHecho(dto.getFecha_hecho())
+                .fechaDeCarga(dto.getCreated_at())
                 .categoria(new Categoria(dto.getCategoria()))
                 .descripcion(dto.getDescripcion())
                 .titulo(dto.getTitulo())
-                .fechaUltimaActualizacion(LocalDateTime.parse(dto.getUpdated_at()))
+                .fechaUltimaActualizacion(dto.getUpdated_at())
                 .lugarAcontecimiento(new Coordenada(dto.getLatitud(), dto.getLongitud()))
                 .build();
     }

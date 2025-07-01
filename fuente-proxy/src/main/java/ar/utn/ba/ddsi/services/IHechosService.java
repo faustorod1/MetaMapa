@@ -11,4 +11,5 @@ public interface IHechosService {
   List<HechoOutputDTO> getAllAPIDesde(LocalDateTime desde);
   List<HechoOutputDTO> getAllFromMetamapa();
   void marcarComoEliminado(Long id,Long APIid);
+  List<HechoOutputDTO> getAllDesde(LocalDateTime desde);
 }

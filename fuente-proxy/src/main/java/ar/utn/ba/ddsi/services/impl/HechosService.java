@@ -32,6 +32,13 @@ public class HechosService implements IHechosService {
     return Stream.concat(hechosAPI.stream(), hechosMeta.stream()).collect(Collectors.toList());
   }
 
+  @Override
+  public List<HechoOutputDTO> getAllDesde(LocalDateTime desde){
+    List<HechoOutputDTO> hechosAPI = this.getAllAPIDesde(desde);
+    List<HechoOutputDTO> hechosMeta = this.getAllFromMetamapaDesde(desde);
+    return Stream.concat(hechosAPI.stream(), hechosMeta.stream()).collect(Collectors.toList());
+  }
+
   //----------------------------------------------------------------CONSUMIR APIEXT-------------------------------------------------------------//
   @Override
   public List<HechoOutputDTO> getAllAPI(){
@@ -79,8 +86,19 @@ public class HechosService implements IHechosService {
     }
   }
 
+  public List<HechoOutputDTO> getAllFromMetamapaDesde(LocalDateTime desde){
+    if (lastCachedMetamapa == null || ChronoUnit.HOURS.between(lastCachedMetamapa, LocalDateTime.now()) >= 12) {
+      List<Hecho> hechos = apisRepository.findAllMetamapa().stream().flatMap(api -> api.getAllDesde(desde).stream()).toList();
 
-  // tal vez getAllFromMetamapaDesde
+      hechosRepository.metaSaveAll(hechos);  // Actualizamos Caché
+      lastCachedAPI = LocalDateTime.now();
+
+      return hechos.stream().map(this::hechoToOutputDTO).toList();
+    }
+    else {
+      return hechosRepository.findAllAfterMetamapa(desde).stream().map(this::hechoToOutputDTO).toList();
+    }
+  }
 
   @Override
   public void marcarComoEliminado(Long id,Long APIid){

@@ -15,6 +15,11 @@ public class API {
 
     private final IAPIAdapter adapter;
 
+    public API(IAPIAdapter adapter, boolean metamapa) {
+        this.adapter = adapter;
+        this.metamapa = metamapa;
+    }
+
     public List<Hecho> getAll() {
         List<Hecho> hechos = adapter.getHechos().block();
         hechos.forEach(h -> h.setAPIid(id));

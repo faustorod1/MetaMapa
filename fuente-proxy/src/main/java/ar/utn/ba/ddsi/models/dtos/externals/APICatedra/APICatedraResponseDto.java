@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.models.dtos.externals;
+package ar.utn.ba.ddsi.models.dtos.externals.APICatedra;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class APICatedraResponseDto {
   private Integer current_page;
-  private List<HechoExternalDTO> data;
+  private List<APICatedraHechoDTO> data;
   private String first_page_url;
   private Integer from;
   private String last_page;

@@ -1,7 +1,10 @@
 package ar.utn.ba.ddsi.models.repositories.impl;
 
 import ar.utn.ba.ddsi.models.entities.API;
+import ar.utn.ba.ddsi.models.entities.APIAdapters.impl.APIAdapterFuenteCatedra;
+import ar.utn.ba.ddsi.models.entities.APIAdapters.impl.APIAdapterFuenteMetamapa;
 import ar.utn.ba.ddsi.models.repositories.IAPIsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,12 +12,17 @@ import java.util.List;
 
 @Repository
 public class APIsRepository implements IAPIsRepository {
+    public static final String URL = "https://ea2de35b-6c73-47a1-9713-018101775833.mock.pstmn.io";
     private List<API> APIs;
     private Long APIid = 0L;        // IDs autoincremental
 
-
     public APIsRepository() {
         APIs = new ArrayList<>();
+        API apiDesastres = new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false);
+        //API apiMetamapa = new API(new APIAdapterFuenteMetamapa(URL),
+        //    true);
+        //save(apiMetamapa);
+        save(apiDesastres);
     }
 
     @Override

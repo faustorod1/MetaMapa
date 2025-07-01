@@ -1,24 +1,19 @@
 @startuml
 
 class Hecho{
-- id: Long
-- título: String
-- descripción: String
-- categoría: Categoria
-- contenidoMultimedia: ContenidoMultimedia
-- origen: OrigenHecho
-- lugarAcontecimiento: Coordenada
-- fechaHecho: LocalDate
-- fechaDeCarga: LocalDateTime
-- eliminado: boolean
-- contribuyente: Contribuyente
-- lastUpdate: LocalDateTime
-- solicitudesDeEliminacion: List<SolicitudDeEliminacion>
-- solicitudesDeModificacion: SolicitudDeModificacion
-- etiquetas: HashSet<Etiqueta>
---
-+ solicitarEliminacion(String justificacion, Contribuyente contribuyente): SolicitudDeEliminacion
-+ etiquetar(Etiqueta etiqueta): void
+private Long id;
+    - titulo: String
+    - descripcion: String
+    - categoria: Categoria
+    - contenidoMultimedia: ContenidoMultimedia
+    - lugarAcontecimiento: Coordenada
+    - fechaHecho: LocalDate
+    - fechaDeCarga: LocalDateTime
+    - eliminado: boolean
+    - Contribuyente contribuyente;
+    - lastUpdate: LocalDateTime
+    - solicitudDeModificacion : SolicitudDeModificacion
+    - etiquetas: HashSet<Etiqueta>
 }
 
 enum OrigenHecho{
@@ -37,20 +32,6 @@ class Etiqueta{
 }
 
 class ContenidoMultimedia{
-- pathImagen: String
-}
-
-class SolicitudDeEliminacion{
-- descripcion: String
-- hecho: Hecho
-- fechaDeCarga: LocalDateTime
-- fechaDeResolucion: LocalDateTime
-- estado: EstadoSolicitud
-- solicitante: Contribuyente
-- administradorQueResolvio: Administrador
-- CANT_MINIMA_DE_CARACTERES: int = 500
---
-+ resolver(Estado estado, Administrador administrador): void
 }
 
 enum EstadoSolicitud {
@@ -59,6 +40,7 @@ enum EstadoSolicitud {
     SUGERIDOACAMBIO
     RECHAZADA
     ACEPTADACONSUGERENCIA
+    RECHAZADOPORSPAM
 }
 
 
@@ -88,8 +70,9 @@ class SolicitudDeModificacion {
 - hechoViejo: Hecho;
 - hechoNuevo: Hecho;
 - estado: EstadoSolicitud;
+- motivoDeEstado: String;
 --
-+ resolver(nuevoEstado : EstadoSolicitud): void
++ resolver(ResolucionDTO resolucion): void
 }
 
 Hecho --> Categoria
@@ -97,16 +80,11 @@ Hecho --> ContenidoMultimedia
 Hecho --> OrigenHecho
 Hecho --> Coordenada
 Hecho --> Contribuyente
-Hecho -->"*" SolicitudDeEliminacion
-Hecho -->"*" SolicitudDeModificacion
+Hecho --> SolicitudDeModificacion
 Hecho -->"*" Etiqueta
 
-SolicitudDeEliminacion --> Hecho
-SolicitudDeEliminacion --> EstadoSolicitud
-SolicitudDeEliminacion --> Contribuyente
-SolicitudDeEliminacion --> Administrador
-
-SolicitudDeModificacion -->"*" Hecho
+SolicitudDeModificacion --> Hecho
 SolicitudDeModificacion --> EstadoSolicitud
+SolicitudDeModificacion --> Administrador
 
 @enduml
