@@ -47,23 +47,37 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, String modo, Map<String, String> params) {
+    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
         Criterio filtrosDeUsuario = new Criterio(params);
 
-        /*
-        if(modo == "curada"){
-            Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechosConsensuados);
-        }else if(modo == "irrestricta") {
-            // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
-            Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
-        }
-        */
-        // Esto convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
-        Mono<List<Hecho>> hechosColeccion = Mono.fromCallable(coleccion::getHechos);
+        Mono<List<Hecho>> hechosColeccion;
+        String modo = params.getOrDefault("modo", "curada");
 
-        // Trae los hechos de fuentes MetaMapa y los pasa por el filtro de la colección
+        // PASO 1: segun el modo, convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
+        if("irrestricta".equalsIgnoreCase(modo)){
+            hechosColeccion = Mono.fromCallable(coleccion::getHechos);
+        }else {
+            // Si no es irrestricta, se toma como curada
+            hechosColeccion = Mono.fromCallable(coleccion::getHechosConsensuados);
+        }
+
+        // PASO 2: trae los hechos de fuentes MetaMapa y los pasa por el filtro de la colección
         Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa().map(coleccion::aplicarFiltros);
+
+
+        // TODO TODO TODO
+        hechosMetaMapa.map(l -> {
+            l.forEach(hechoEnMetaMapa -> {
+                Mono<Hecho> hechoEnColeccion = hechosColeccion.flatMap(lista ->
+                        Mono.justOrEmpty(
+                                lista.stream()
+                                        .filter(hecho -> hecho.getIdExterno().equals(hechoEnMetaMapa.getIdExterno()))
+                                        .findFirst()
+                        ).switchIfEmpty(Mono.error(new NoSuchElementException("Usuario no encontrado")))
+                );
+            });
+        });
 
         // Junta los hechos de la colección (ya persistidos localmente) con los MetaMapa obtenidos recién
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
@@ -72,18 +86,8 @@ public class ColeccionesService implements IColeccionesService {
                 )
                 .map(filtrosDeUsuario::aplicarA);
 
-
-
-        /*
-        if("consensuado") {
-            return todos.intersection(coleccion.getHechosConsenusados())
-        }else{ //irrestricto
-            return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
-        }
-        */
-
+        // PASO 3: convertir
         return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
-
     }
 
 
@@ -128,6 +132,16 @@ public class ColeccionesService implements IColeccionesService {
 
         coleccion.setFuentes(fuentes);     // TODO: acá no sería fuentes?
         applicationEventPublisher.publishEvent(new FuentesCambiadasEnColeccionEvent(coleccion, fuentesCambiadas));
+
+        return coleccionOutputDTO(coleccion);
+    }
+
+    @Override
+    public ColeccionOutputDTO updateConsenso (String identificador, String tipoDeConsenso){
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+
+        IAlgoritmoDeConsenso algoritmoDeConsenso = obtenerAlgoritmoDeConsenso(tipoDeConsenso);
+        coleccion.setAlgoritmoDeConsenso(algoritmoDeConsenso);
 
         return coleccionOutputDTO(coleccion);
     }
@@ -185,7 +199,8 @@ public class ColeccionesService implements IColeccionesService {
                 input.getTitulo(),
                 input.getDescripcion(),
                 inputDTOToCriterio(input.getCriterioDePertenencia()),
-                input.getFuentes()
+                input.getFuentes(),
+                obtenerAlgoritmoDeConsenso(input.getAlgoritmoDeConsenso())
         );
     }
 
@@ -259,5 +274,19 @@ public class ColeccionesService implements IColeccionesService {
             throw new RuntimeException("Tipo de filtro no encontrado (╯°□°)╯︵ ┻━┻");
         }
     }
+
+    private IAlgoritmoDeConsenso obtenerAlgoritmoDeConsenso(String algoritmoDeConsenso){         // no devuelve una interfaz OJO
+        if("absoluta".equalsIgnoreCase(algoritmoDeConsenso)){
+            return new ConsensoAbsoluta();
+        }else if("mayoriaSimple".equalsIgnoreCase(algoritmoDeConsenso)){
+            return new ConsensoMayoriaSimple();
+        }else if("multiplesMenciones".equalsIgnoreCase(algoritmoDeConsenso)){
+            return new ConsensoMultiplesMenciones();
+        }else{
+            return null;        // Tanto el enunciado, como nuestro código, contempla este caso
+        }
+    }
+
+
 
 }

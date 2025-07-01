@@ -24,12 +24,13 @@ public class Coleccion {
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
 
-    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes) {
+    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes, IAlgoritmoDeConsenso algoritmoDeConsenso) {
         this.identificador = identificador;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterioDePertenencia = criterioDePertenencia;
         this.fuentes = fuentes;
+        this.algoritmoDeConsenso = algoritmoDeConsenso;     // Si, tambien se específica al crear la coleccion
         hechos = new ArrayList<>();
         hechosCargadosManualmente = new ArrayList<>();
         hechosConsensuados = new ArrayList<>();
@@ -37,6 +38,9 @@ public class Coleccion {
 
     public List<Hecho> getHechos() {
         return new ArrayList<Hecho>(hechos); // Creo uno nuevo para que no rompa el Set original si lo modifican
+    }
+    public List<Hecho> getHechosConsensuados() {
+        return new ArrayList<>(hechosConsensuados);
     }
 
     public ICriterioInmutable getCriterio() {
@@ -109,11 +113,11 @@ public class Coleccion {
     }
 
     public void consensuarHechos(){
-        this.hechosConsensuados.clear();        //Para asegurar que todos los hechos esten consensuados al día, vaciamos la lista
+        this.hechosConsensuados.clear();        // Para asegurar que todos los hechos esten consensuados al día, vaciamos la lista
         if(this.algoritmoDeConsenso != null){
             this.hechosConsensuados = this.algoritmoDeConsenso.consensuar(this.hechos, this.fuentes);    // Los volvemos a consensuar
         }else{
-            this.hechosConsensuados = this.hechos;
+            this.hechosConsensuados = this.hechos;      // En caso de que no se aclare un algoritmo de consenso, todos sus hechos catalogarán como "consensuados"
         }
     }
 }

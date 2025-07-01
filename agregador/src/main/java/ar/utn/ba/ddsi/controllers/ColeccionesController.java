@@ -26,9 +26,11 @@ public class ColeccionesController {
         return this.coleccionesService.buscarTodos();
     }
 
+    // 1  https://metamapa-avengers.com/api/colecciones/1/hechos?categoria=caida%20aeronave&modo=curado&ubicacion=23,56
+    // 2  https://metamapa-avengers.com/api/colecciones/1/curado/hechos?categoria=caida%20aeronave&ubicacion=23,56
     @GetMapping("/{identificador}/{modo}/hechos")
-    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador,@PathVariable String modo, @RequestParam Map<String, String> parametros) {
-        return this.coleccionesService.buscarHechosPorColeccion(identificador,modo, parametros).block();
+    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros) {
+        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros).block();
     }
 
     // API Administrativa ----------------------------------------------------------------------------------------------
@@ -52,6 +54,11 @@ public class ColeccionesController {
     @PatchMapping("/{identificador}/criterio")
     public ColeccionOutputDTO actualizarCriterio(@PathVariable String identificador, @RequestBody CriterioInputDTO criterioInputDTO){
         return coleccionesService.updateCriterio(identificador, criterioInputDTO);
+    }
+
+    @PatchMapping("/{identificador}/tipoDeConsenso")
+    public ColeccionOutputDTO actualizarConsenso(@PathVariable String identificador, @RequestBody String tipoDeConsenso){
+        return coleccionesService.updateConsenso(identificador, tipoDeConsenso);
     }
 
     @DeleteMapping

@@ -41,10 +41,19 @@ class Coleccion{
 - titulo: String
 - descripcion: String
 - criterioDePertenencia: Criterio
+- algoritmoDeConsenso: IAlgoritmoDeConsenso
+- fuentes: List<String>
+- hechosCargadosManualmente: List<Hecho>
+- hechosConsensuados: List<Hecho>
 - hechos: List<Hecho>
 --
 + contiene (Hecho hecho): boolean
-+ filtrarHechos(List<Hecho> todosLosHechos)
++ aplicarFiltros(List<Hecho> hechos): List<Hecho>
++ agregarTandaDeHechos(List<Hecho> tanda): void
++ removerHechoEliminado(Hecho hecho): void
++ removerHecho(Hecho hecho): void
++ consensuarHechos(): void
+
 }
 
 class ContenidoMultimedia{
@@ -158,6 +167,22 @@ class SolicitudDeModificacion {
 + resolver(nuevoEstado : EstadoSolicitud): void
 }
 
+interface IAlgoritmoDeConsenso{
++ consensuar(List<Hecho> hechos, List<String> fuentes)
+}
+
+class ConsensoAbsoluta{
++ consensuar(List<Hecho> hechos, List<String> fuentes)
+}
+
+class ConsensoMayoriaSimple{
++ consensuar(List<Hecho> hechos, List<String> fuentes)
+}
+
+class ConsensoMultiplesMenciones{
++ consensuar(List<Hecho> hechos, List<String> fuentes)
+}
+
 Hecho -r-> Categoria
 Hecho --> Coordenada
 Hecho -->"*" SolicitudDeEliminacion
@@ -189,4 +214,8 @@ SolicitudDeEliminacion --> Administrador
 SolicitudDeModificacion -->"*" Hecho
 SolicitudDeModificacion --> EstadoSolicitud
 
+Coleccion --> IAlgoritmoDeConsenso
+ConsensoAbsoluta ..|> IAlgoritmoDeConsenso
+ConsensoMayoriaSimple ..|> IAlgoritmoDeConsenso
+ConsensoMultiplesMenciones ..|> IAlgoritmoDeConsenso
 @enduml
