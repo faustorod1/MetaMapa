@@ -12,16 +12,14 @@ import java.util.List;
 
 @Repository
 public class APIsRepository implements IAPIsRepository {
-    public static final String URL = "https://ea2de35b-6c73-47a1-9713-018101775833.mock.pstmn.io";
     private List<API> APIs;
     private Long APIid = 0L;        // IDs autoincremental
 
     public APIsRepository() {
         APIs = new ArrayList<>();
         API apiDesastres = new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false);
-        //API apiMetamapa = new API(new APIAdapterFuenteMetamapa(URL),
-        //    true);
-        //save(apiMetamapa);
+        API apiMetamapa = new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true);
+        save(apiMetamapa);
         save(apiDesastres);
     }
 

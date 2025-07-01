@@ -4,7 +4,9 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dtos.externals.HechoExternalMetamapaDTO;
 import ar.utn.ba.ddsi.models.dtos.externals.HechosExternalMetamapaDTO;
 import ar.utn.ba.ddsi.models.entities.APIAdapters.IAPIAdapter;
+import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -25,8 +27,8 @@ public class APIAdapterFuenteMetamapa implements IAPIAdapter{
                 .get()
                 .uri("/hechos")
                 .retrieve()
-                .bodyToMono(HechosExternalMetamapaDTO.class)
-                .map(HechosExternalMetamapaDTO::getHechos)
+                .bodyToMono(new ParameterizedTypeReference<List<HechoExternalMetamapaDTO>>() {})
+                //.map(HechosExternalMetamapaDTO::getHechos)
                 .map(list -> list.stream().map(this::externalMetamapaToHecho).toList());
     }
 
@@ -35,10 +37,11 @@ public class APIAdapterFuenteMetamapa implements IAPIAdapter{
                 .id(dto.getId())
                 .titulo(dto.getTitulo())
                 .descripcion(dto.getDescripcion())
-                .fechaDeCarga(LocalDateTime.parse(dto.getFechaDeCarga()))
-                .fechaHecho(LocalDate.parse(dto.getFechaHecho()))
+                .categoria(new Categoria(dto.getCategoria()))
+                .fechaDeCarga(dto.getFechaDeCarga())
+                .fechaHecho(dto.getFechaHecho())
                 .lugarAcontecimiento(new Coordenada(dto.getLatitud(), dto.getLongitud()))
-                .fechaUltimaActualizacion(LocalDateTime.parse(dto.getFechaUltimaActualizacion()))
+                .fechaUltimaActualizacion(dto.getFechaUltimaActualizacion())
                 .build();
     }
 }

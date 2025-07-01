@@ -1,6 +1,10 @@
 package ar.utn.ba.ddsi.models.dtos.externals;
 
+import ar.utn.ba.ddsi.models.entities.Categoria;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class HechoExternalMetamapaDTO {
@@ -11,7 +15,7 @@ public class HechoExternalMetamapaDTO {
     //private String contenidoMultimedia;
     private Double latitud;
     private Double longitud;
-    private String fechaHecho;
-    private String fechaDeCarga;
-    private String fechaUltimaActualizacion;
+    private LocalDate fechaHecho;
+    private LocalDateTime fechaDeCarga;
+    private LocalDateTime fechaUltimaActualizacion;
 }

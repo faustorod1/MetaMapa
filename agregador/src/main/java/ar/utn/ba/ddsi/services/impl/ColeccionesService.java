@@ -76,6 +76,7 @@ public class ColeccionesService implements IColeccionesService {
 
                         for (Hecho hechoMetaMapa : listaMetaMapa) {
                             if (hechosPorId.containsKey(hechoMetaMapa.getIdExterno())) {
+                                hechoMetaMapa.setId(hechosPorId.get(hechoMetaMapa.getIdExterno()).getId());
                                 hechosPorId.put(hechoMetaMapa.getIdExterno(), hechoMetaMapa);
                             }
                         }
