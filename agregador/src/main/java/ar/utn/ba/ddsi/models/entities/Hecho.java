@@ -71,6 +71,19 @@ public class Hecho {
     }
 
     /*
+    idHecho: estatica:1:5
+    fuente: estatica
+
+    public boolean perteneceALaFuente(String fuente) {
+        return idExterno.startsWith(fuente + ":");
+        proxy:1
+
+        proxy:11:2
+}
+    */
+
+
+    /*
     public Integer aCuantasFuentesPertenece(List<String> fuentes){
         return (int) fuentes.stream().filter(this::perteneceALaFuente).count();
     }

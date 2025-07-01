@@ -19,32 +19,10 @@ public class ConsensoAbsoluta implements IAlgoritmoDeConsenso {
 
       for (Hecho hecho : hechosColeccion) {
 
-
-        /*Map<String, Hecho> hechosPorFuente = new HashMap<>();
-        fuentesColeccion.forEach(fuente -> {
-          hechosColeccion.stream().filter(h -> h.hechoIgualA(hecho) && )
-          hechosPorFuente.put(fuente, )
-        });*/
-
-        // Contar en cuántas fuentes aparece exactamente igual este hecho
-
-//        boolean enTodas = fuentesColeccion.stream().allMatch(f ->
-//            hechosColeccion.stream().anyMatch(h ->
-//                h.hechoIgualA(hecho) && h.perteneceALaFuente(f)
-//            )
-//        );
           boolean estaEnTodas = fuentesColeccion.stream().allMatch(fuente ->
               hechosColeccion.stream().filter(h -> h.perteneceALaFuente(fuente))
                   .anyMatch(hechoDeFuente -> hechoDeFuente.hechoIgualA(hecho)));
 
-
-//            long cantidadFuentesConEsteHecho = fuentesColeccion.stream()
-//                    .filter(fuente -> hechosColeccion.stream()
-//                            .anyMatch(h -> h.hechoIgualA(hecho) && h.perteneceALaFuente(fuente)))
-//                    .distinct()
-//                    .count();
-
-        System.out.println(estaEnTodas);
 
         if (!estaEnTodas) {
           continue;   // el hecho no se menciona en todas las fuentes --> ya no nos interesa --> analizamos el siguiente hecho
@@ -60,21 +38,17 @@ public class ConsensoAbsoluta implements IAlgoritmoDeConsenso {
           hechosConsensuados.add(hecho); // Es consensuado
         }
       }
-      return hechosConsensuados;
-        /*
-        List<Hecho> sinDuplicados = new ArrayList<>();
 
-        for (Hecho hecho : hechosConsensuados) {
-            boolean yaExiste = sinDuplicados.stream()
-                    .anyMatch(h -> h.hechoIgualA(hecho));
-            if (!yaExiste) {
-                sinDuplicados.add(hecho);
-            }
-        }
+      List<Hecho> sinDuplicados = new ArrayList<>();
 
-        return sinDuplicados;           // Nos aseguramos de no devolver dos hechos "iguales"
+      for (Hecho hecho : hechosConsensuados) {
+          boolean yaExiste = sinDuplicados.stream()
+                  .anyMatch(h -> h.hechoIgualA(hecho));
+          if (!yaExiste) {
+              sinDuplicados.add(hecho);
+          }
+      }
+
+      return sinDuplicados;           // Nos aseguramos de no devolver dos hechos "iguales"
     }
-    */
-    }
-
 }

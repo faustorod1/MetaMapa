@@ -1,10 +1,10 @@
 package ar.utn.ba.ddsi.commons;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class Coordenada {
     private Double latitud;
     private Double longitud;
@@ -25,7 +25,4 @@ public class Coordenada {
         return new Double[]{latitud, longitud};
     }
 
-    public boolean equals(Coordenada other){
-        return this.getLatitud().equals(other.getLatitud()) && this.getLongitud().equals(other.getLongitud());
-    }
 }

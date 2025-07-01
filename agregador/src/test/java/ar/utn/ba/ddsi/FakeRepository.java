@@ -19,12 +19,12 @@ public class FakeRepository {
         Criterio crit2 = Criterio.nuevo()
                         .addFiltro(new FiltroPorFechaHecho(null, "31/12/2010"));
 
-        colecciones.add(
-                new Coleccion("1", "Caídas de aeronaves", "Hechos cuya categoría es 'Caída de aeronave'.", crit1)
-        );
-        colecciones.add(
-                new Coleccion("2", "Hechos viejos", "Hechos anteriores al 2011", crit2)
-        );
+//        colecciones.add(
+//                new Coleccion("1", "Caídas de aeronaves", "Hechos cuya categoría es 'Caída de aeronave'.", crit1)
+//        );
+//        colecciones.add(
+//                new Coleccion("2", "Hechos viejos", "Hechos anteriores al 2011", crit2)
+//        );
 
         return colecciones;
     }
