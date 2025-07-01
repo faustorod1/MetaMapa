@@ -80,12 +80,11 @@ public class Hecho {
         //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS
         if (otroHecho == null) return false;
 
-        if (!this.titulo.equals(otroHecho.titulo)) {
+        if (!this.titulo.equals(otroHecho.getTitulo())) {
             return false;
         }
 
-        return  Objects.equals(this.titulo, otroHecho.getTitulo()) &&
-                Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
+        return  Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
                 Objects.equals(this.categoria, otroHecho.getCategoria()) &&
                 Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) &&
                 Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&

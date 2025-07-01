@@ -18,8 +18,8 @@ public class APIsRepository implements IAPIsRepository {
     public APIsRepository() {
         APIs = new ArrayList<>();
         API apiDesastres = new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false);
-        API apiMetamapa = new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true);
-        save(apiMetamapa);
+        //API apiMetamapa = new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true);
+        //save(apiMetamapa);
         save(apiDesastres);
     }
 

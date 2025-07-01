@@ -22,7 +22,7 @@ public class PathsRepository implements IPathsRepository {
         this.paths.add(
             new PathDataset(
                 1L,
-                "src/test/resources/dataset_prueba.csv",
+                "fuente-estatica/src/test/resources/dataset_prueba.csv",
                      LocalDate.parse("05/07/2005", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay()
             )
         );

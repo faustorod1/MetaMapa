@@ -2,7 +2,10 @@ package ar.utn.ba.ddsi.models.entities;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConsensoAbsoluta implements IAlgoritmoDeConsenso {
 
@@ -10,32 +13,55 @@ public class ConsensoAbsoluta implements IAlgoritmoDeConsenso {
     @Override
     public List<Hecho> consensuar(List<Hecho> hechosColeccion, List<String> fuentesColeccion) {
 
-        List<Hecho> hechosConsensuados = new ArrayList<>();
-        int minimoFuentesParaConsenso = fuentesColeccion.size();
+      List<Hecho> hechosConsensuados = new ArrayList<>();
+      int minimoFuentesParaConsenso = fuentesColeccion.size();
+      System.out.println("--------Cantidad de fuentes: " + minimoFuentesParaConsenso);
 
-        for (Hecho hecho : hechosColeccion) {
-            // Contar en cuántas fuentes aparece exactamente igual este hecho
-            long cantidadFuentesConEsteHecho = fuentesColeccion.stream()
-                    .filter(fuente -> hechosColeccion.stream()
-                            .anyMatch(h -> h.hechoIgualA(hecho) && h.perteneceALaFuente(fuente)))
-                    .distinct()
-                    .count();
+      for (Hecho hecho : hechosColeccion) {
 
-            if (cantidadFuentesConEsteHecho != minimoFuentesParaConsenso) {
-                continue;   // el hecho no se menciona en todas las fuentes --> ya no nos interesa --> analizamos el siguiente hecho
-            }
 
-            // 2. Verificar que en ninguna otra fuente haya un hecho de igual titulo y diferentes atributos
-            boolean hayContradiccion = fuentesColeccion.stream()
-                    .anyMatch(fuente -> hechosColeccion.stream()
-                            .anyMatch(h -> h.mismoTituloDiferentesAtributos(hecho)
-                                    && h.perteneceALaFuente(fuente)));
+        /*Map<String, Hecho> hechosPorFuente = new HashMap<>();
+        fuentesColeccion.forEach(fuente -> {
+          hechosColeccion.stream().filter(h -> h.hechoIgualA(hecho) && )
+          hechosPorFuente.put(fuente, )
+        });*/
 
-            if (!hayContradiccion) {
-                hechosConsensuados.add(hecho); // Es consensuado
-            }
+        // Contar en cuántas fuentes aparece exactamente igual este hecho
+
+//        boolean enTodas = fuentesColeccion.stream().allMatch(f ->
+//            hechosColeccion.stream().anyMatch(h ->
+//                h.hechoIgualA(hecho) && h.perteneceALaFuente(f)
+//            )
+//        );
+          boolean estaEnTodas = fuentesColeccion.stream().allMatch(fuente ->
+              hechosColeccion.stream().filter(h -> h.perteneceALaFuente(fuente))
+                  .anyMatch(hechoDeFuente -> hechoDeFuente.hechoIgualA(hecho)));
+
+
+//            long cantidadFuentesConEsteHecho = fuentesColeccion.stream()
+//                    .filter(fuente -> hechosColeccion.stream()
+//                            .anyMatch(h -> h.hechoIgualA(hecho) && h.perteneceALaFuente(fuente)))
+//                    .distinct()
+//                    .count();
+
+        System.out.println(estaEnTodas);
+
+        if (!estaEnTodas) {
+          continue;   // el hecho no se menciona en todas las fuentes --> ya no nos interesa --> analizamos el siguiente hecho
         }
 
+        // 2. Verificar que en ninguna otra fuente haya un hecho de igual titulo y diferentes atributos
+        boolean hayContradiccion = fuentesColeccion.stream()
+            .anyMatch(fuente -> hechosColeccion.stream()
+                .anyMatch(h -> h.mismoTituloDiferentesAtributos(hecho)
+                    && h.perteneceALaFuente(fuente)));
+
+        if (!hayContradiccion) {
+          hechosConsensuados.add(hecho); // Es consensuado
+        }
+      }
+      return hechosConsensuados;
+        /*
         List<Hecho> sinDuplicados = new ArrayList<>();
 
         for (Hecho hecho : hechosConsensuados) {
@@ -47,6 +73,8 @@ public class ConsensoAbsoluta implements IAlgoritmoDeConsenso {
         }
 
         return sinDuplicados;           // Nos aseguramos de no devolver dos hechos "iguales"
+    }
+    */
     }
 
 }
