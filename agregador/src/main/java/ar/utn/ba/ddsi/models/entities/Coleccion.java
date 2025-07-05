@@ -16,7 +16,7 @@ public class Coleccion {
     private Criterio criterioDePertenencia;
     private IAlgoritmoDeConsenso algoritmoDeConsenso;
 
-    private List<String> fuentes;
+    private List<String> fuentes; //TODO convertir a enum? (correccion)
     private List<Hecho> hechosCargadosManualmente;
     private List<Hecho> hechosConsensuados;
 

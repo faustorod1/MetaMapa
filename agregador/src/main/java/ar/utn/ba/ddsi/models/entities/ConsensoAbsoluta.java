@@ -28,7 +28,7 @@ public class ConsensoAbsoluta implements IAlgoritmoDeConsenso {
           continue;   // el hecho no se menciona en todas las fuentes --> ya no nos interesa --> analizamos el siguiente hecho
         }
 
-        // 2. Verificar que en ninguna otra fuente haya un hecho de igual titulo y diferentes atributos
+        // 2. Verificar que en ninguna otra fuente haya un hecho de igual titulo y diferentes atributos //TODO usar clase abrtracta para evitar logica repetida
         boolean hayContradiccion = fuentesColeccion.stream()
             .anyMatch(fuente -> hechosColeccion.stream()
                 .anyMatch(h -> h.mismoTituloDiferentesAtributos(hecho)

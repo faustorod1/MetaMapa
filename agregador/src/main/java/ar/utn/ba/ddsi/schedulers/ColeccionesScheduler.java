@@ -14,8 +14,8 @@ public class ColeccionesScheduler {
     }
 
    // @Scheduled(fixedRate = 30000)
-    //@Scheduled(cron = "0 00 4 * * *", zone = "America/Argentina/Buenos_Aires")
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(cron = "0 00 4 * * *", zone = "America/Argentina/Buenos_Aires")
+    //@Scheduled(fixedRate = 30000)
     public void consensuarHechosDeColecciones(){
         coleccionesService.consensuarColecciones();
         System.out.println("Hechos consensuados!!");

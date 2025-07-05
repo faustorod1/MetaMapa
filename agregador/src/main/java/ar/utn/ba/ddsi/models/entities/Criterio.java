@@ -45,7 +45,7 @@ public class Criterio implements ICriterioInmutable {
 
     public static Criterio nuevo() {
         return new Criterio();
-    }
+    }//TODO remover si quedo viejo
 
     public Criterio addFiltro(Filtro filtro) {
         filtros.add(filtro);

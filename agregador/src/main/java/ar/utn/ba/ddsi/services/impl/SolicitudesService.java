@@ -27,7 +27,7 @@ public class SolicitudesService implements ISolicitudesService {
   public String crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
     SolicitudDeEliminacion solicitud = solicitudDeEliminacionFromDTO(solicitudDto);
     solicitudesRepository.save(solicitud);
-    return switch (solicitud.getEstado()) {
+    return switch (solicitud.getEstado()) { //TODO refactorizar
       case PENDIENTE -> "Solicitud creada correctamente";
       case RECHAZADA_POR_SPAM -> "Solicitud rechazada por spam";
       case RECHAZADA_POR_FALTA_DE_CARACTERES -> "Solicitud rechazada por insuficientes caracteres";
