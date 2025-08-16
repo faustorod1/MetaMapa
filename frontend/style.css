@@ -1,0 +1,60 @@
+* {
+    margin: 0; /*saca un margen blanco feo*/
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-family: sans-serif;
+    --color-main: #1d24ca;
+    --color-secondary: #edf6fa;
+    --color-accent: #6bd3ff;
+    --color-main-2: #4bf022;
+    --color-secondary-2: #f2fce8;
+    --color-accent-2: #9ff035;
+    --color-main-hover: #5c61cb;
+    --color-secondary-hover: #ededed;
+    --color-accent-hover: #99e1ff;
+    --color-main-2-hover: #8ee877;
+    --color-secondary-2-hover: #ededed;
+    --color-accent-2-hover: #b9ef72;
+}
+/*vh es una unidad relativa de lo q se ve en la pantalla del 0 al 100*/
+
+header {
+    width: 100vw; /*idem a vh pero horizontal*/
+    padding: 0.5em;
+
+    display: flex; /*lo hace mas responsive*/
+    gap: 0.5em; /*espacios entre cosas del header*/
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.header-btn {           /* .algo significa las cosas de la clase algo*/
+    text-decoration: none;
+    padding: 0.5em; /*em es una unidad relativa al tamaño de letra*/
+    border-radius: 0.25em;
+    color: var(--color-secondary);
+    font-weight: bold;
+    transition: background-color 0.2s linear;
+}
+#header-btn-login {
+    background-color: var(--color-main);
+}
+#header-btn-register {
+    background-color: var(--color-accent);
+}
+#header-btn-login:hover {
+    background-color: var(--color-main-hover);
+}
+#header-btn-register:hover {
+    background-color: var(--color-accent-hover);
+}
+
+
+h1 {
+    font-family: 'Londrina Solid', sans-serif;
+    font-weight: bolder;
+    font-size: 100px;
+}
