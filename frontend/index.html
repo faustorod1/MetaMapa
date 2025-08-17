@@ -7,28 +7,129 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
     <style>
+        body {
+            background-image: url('fondoLevementeCargado.png');
+            background-size: cover;                 /* Que cubra toda la pantalla */
+            background-repeat: no-repeat;           /* Que no se repita */
+            background-attachment: fixed;           /* Fijo */
+            background-position: center center;     /* Que esté centrada */
+            margin-top:4rem;
+        }
+
         main {
-            width: 100vw;
+            width: 100%;
             display: flex;
+            min-height: 100vh;
             flex-direction: column;
             align-items: center;
         }
+        footer{
+
+            margin-top:auto;
+            display:flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--color-accent-hover);
+        }
+
+        .container-proposito{
+            margin-left: 2rem;
+            margin-right: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            justify-content: center;
+
+        }
+
+        .container-objetivos{
+            margin-left: 2rem;
+            margin-right: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            justify-content: center;
+        }
+
+
+        .container-contacto{
+            display:flex;
+            flex-direction: column;
+            /*margin: 0rem;*/
+            padding: 0.5rem;
+        }
+        .container-informacion{
+           display: flex;
+            /*margin: 0rem;*/
+            padding: 0.5rem;
+
+        }
+
+        ul{
+            list-style-type: none;
+        }
+
+        .justificado{
+            text-align: justify;
+        }
+
+        ol{
+            text-align:justify;
+        }
+
+
+
+
     </style>
 </head>
+
 <body>
 <header>
     <a href="" style="color: blue">Continue as guest</a>
-    <a href="" id="header-btn-login" class="header-btn">Log in</a>
-    <a href="" id="header-btn-register" class="header-btn">Sign Up</a>
+    <a href="login.html" id="header-btn-login" class="header-btn">Log in</a>
+    <a href="register.html" id="header-btn-register" class="header-btn">Sign Up</a>
 </header>
-<main>
-<h1>METAmapa</h1>
 
+<main>
+    <h1 class="app-logo">METAmapa</h1>
+
+    <div class="container-proposito">
+        <h2 style="text-align: center; font-weight: bolder">Propósito</h2>
+        <p>METAmapa tiene la intención de funcionar como una plataforma colaborativa, que permita recolectar, verificar y mostrar reportes de la comunidad, para la resolución de problemas</p>
+    </div>
+
+    <div class="container-objetivos">
+        <h2 style="text-align: center; font-weight: bolder">Objetivos</h2>
+        <ol>
+            <li>Proveer información previamente verificada, para evitar la difusión incorrecta de la misma</li>
+            <li>Permitir que cualquier ciudadano pueda aportar a la plataforma</li>
+            <li>Proteger la identidad de sus usuarios</li>
+            <li>Georreferenciar cada uno de los aportes, para su simple visualización</li>
+
+
+        </ol>
+        <p></p>
+    </div>
 
 </main>
+
 <footer>
     <!-- contacto e info legal y privacidad-->
+    <div class="container-contacto">
+        <h4>Contacto</h4>
+        <ul>
+            <li>metaMapa@gmail.com</li>
+            <li>+5491112345678</li>
+        </ul>
+    </div>
+
+    <div class="container-informacion">
+        <a href="informacionLegalYPrivacidad.html" style="color:black">Informacion Legal y Privacidad</a>
+    </div>
 </footer>
+
 </body>
+
 </html>

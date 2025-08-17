@@ -22,19 +22,21 @@
 /*vh es una unidad relativa de lo q se ve en la pantalla del 0 al 100*/
 
 header {
-    width: 100vw; /*idem a vh pero horizontal*/
+    width: 100%; /*idem a vh pero horizontal*/
     padding: 0.5em;
-
+    position:fixed;
     display: flex; /*lo hace mas responsive*/
     gap: 0.5em; /*espacios entre cosas del header*/
+    top: 0  ;
     justify-content: flex-end;
     align-items: center;
+    background-color: var(--color-secondary);
 }
 
 .header-btn {           /* .algo significa las cosas de la clase algo*/
     text-decoration: none;
     padding: 0.5em; /*em es una unidad relativa al tamaño de letra*/
-    border-radius: 0.25em;
+    border-radius: 2em;
     color: var(--color-secondary);
     font-weight: bold;
     transition: background-color 0.2s linear;
@@ -52,9 +54,38 @@ header {
     background-color: var(--color-accent-hover);
 }
 
+#btn-back-page {
+    position: fixed;
+    top: 1em;
+    left: 1em;
+
+    text-decoration: none;
+    font-weight: bolder;
+    color: black;
+    cursor: pointer;
+}
+#btn-back-page:hover {
+    color: grey;
+}
+
+#fixed-logo {
+    position: fixed;
+    right: 1rem;
+    top: 1rem;
+    cursor: default;
+    font-size: 2rem;
+    user-select: none;
+    font-family: 'Londrina Solid', sans-serif;
+}
+#fixed-logo::after {
+    content: 'METAmapa';
+}
+
+.app-logo {
+    font-family: 'Londrina Solid', sans-serif;
+}
 
 h1 {
-    font-family: 'Londrina Solid', sans-serif;
     font-weight: bolder;
-    font-size: 100px;
+    font-size: 5rem;
 }
