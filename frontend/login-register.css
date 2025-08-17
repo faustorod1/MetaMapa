@@ -1,0 +1,70 @@
+body {
+    min-height: 100vh;
+}
+
+.login-form {
+    margin: 3rem auto;
+
+    background-color: var(--color-main);
+    padding: 1.5em;
+    border-radius: 1em;
+    color: var(--color-secondary);
+    width: 30vw;
+    min-width: 300px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+}
+.input-container > label {
+    font-size: smaller;
+}
+.input-container input {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-radius: 2em;
+    padding: 0.5em 1em;
+}
+.input-container span {
+    position: relative;
+}
+.input-container .password-show {
+    position: absolute;
+    color: black;
+    right: 1em;
+    font-size: small;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+.input-container .password-show:hover {
+    color: gray;
+}
+
+.btn-submit {
+    color: white;
+    background-color: var(--color-main-2);
+    padding: 0.5em;
+    border-radius: 2em;
+    border: none;
+    cursor: pointer;
+    margin-top: 1.5em;
+}
+.btn-submit:hover {
+    background-color: var(--color-main-2-hover);
+}
+
+#go-to-login {
+    font-size: smaller;
+    color: var(--color-secondary);
+}
+#go-to-login > a {
+    color: inherit;
+}
