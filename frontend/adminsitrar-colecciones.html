@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar Colecciones</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+  <style>
+    html{
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: white;
+      display: flex;
+    }
+
+    .main-container {
+      align-self: flex-end;
+      height: 95%;
+      width: 95%;
+      background: var(--color-secondary);
+      border-radius: 6px;
+    }
+
+
+    .main-container h2{
+      align-self: self-start;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--color-secondary-2);
+      padding: 0.5rem;
+      border-radius: 20px;
+      align-self: center;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 1rem;
+      margin-left: 0.5rem;
+    }
+
+    .separator{
+      border: none;
+      border-top: 2px solid #444;
+      margin: 10px 0;
+      width: 100%;
+      align-self: center;
+    }
+
+
+  </style>
+</head>
+<body>
+<div class="main-container">
+<h2>Colecciones</h2>
+  <div class="search-bar">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Buscar Hechos...">
+  </div>
+  <hr class="separator">
+</div>
+</body>
+</html>
