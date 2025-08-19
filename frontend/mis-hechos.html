@@ -26,6 +26,12 @@
             box-shadow: 10px 0px 20px 0px rgba(126, 124, 124, 0.07) inset;
         }
 
+        .sidebar h2{
+            align-self: center;
+            font-family: "Londrina Solid"; /*Todo cambiar el tipo de letra como el de metamapa */
+            font-weight: bolder;
+        }
+
         .separator{
             border: none;
             border-top: 2px solid #444;
@@ -51,6 +57,19 @@
         }
 
         .aplicar-filtros-button{
+            align-content: center;
+            align-self: flex-end;
+            display: inline;
+            padding: 6px;
+            background: var(--color-main-2);
+            border: none;
+            border-radius: 4px;
+            font-size: large;
+            font-weight: bold;
+        }
+
+        .aplicar-filtros-button:hover{
+            background: var(--color-secondary-2-hover);
         }
 
         .main {
@@ -104,13 +123,15 @@
 
         .card h3 {
             margin: 0;
-            font-size: 1rem;
+            font-size: 1.5rem;
             font-weight: bold;
+            font-family: "sans-serif";
         }
 
         .card p {
             font-size: 14px;
             margin: 5px 0;
+            font-family: "Droid Serif";
         }
 
         .icon-button {
@@ -124,6 +145,10 @@
 
         .icon-button i {
             pointer-events: none;
+        }
+
+        .icon-button:hover{
+            color: gray;
         }
 
 
@@ -140,7 +165,7 @@
             <h5><i class="fa-solid fa-filter" style="margin-right: 0.5rem"></i>Filtros Recientes</h5>
             <div class="filtro-container">
                 <button class="filtro">
-                    Título: algo
+                    unTítulo: Valor
                 </button>
             </div>
         </div>
@@ -150,11 +175,11 @@
 
         <div class="filtro-container">
             <div class="filtro">
-
+                unFiltro: Valor
             </div>
-            <div class="aplicar-filtros-button">
-                Aplicar filtros
-            </div>
+            <button class="aplicar-filtros-button">
+                Aplicar Filtros
+            </button>
         </div>
 
     </aside>
