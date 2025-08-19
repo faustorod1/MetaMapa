@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            background: black;
+        }
+        nav {
+            width: 4em;
+            background: var(--color-secondary);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .nav-button{
+            position: relative;
+            aspect-ratio: 1;
+            width: 100%;
+            background: transparent;
+            border: none;
+            font-size: 2em;
+            outline: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            color: dimgrey;
+        }
+        .nav-button.selected:hover {
+            color: #1b4018;
+        }
+        .nav-button-selection {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1.5em;
+            width: 0;
+            border-radius: 0 0.5em 0.5em 0;
+            background: var(--color-main-2);
+            transition: width 0.2s ease-out;
+        }
+        .nav-button.selected > .nav-button-selection {
+            width: 1.8em;
+        }
+        .nav-button > i {
+            position: relative;
+        }
+        main {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        main > iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="nav-button-container">
+        <button class="nav-button selected" view="./mapa.html" id="nav-button-home">
+            <div class="nav-button-selection"></div>
+            <i class="fa-solid fa-house"></i>
+        </button>
+
+        <button class="nav-button" view="./mis-hechos.html" id="nav-button-mis-hechos">
+            <div class="nav-button-selection"></div>
+            <i class="fa-solid fa-folder"></i>
+        </button>
+
+        <button class="nav-button">
+            <div class="nav-button-selection"></div>
+            <i class="fa-solid fa-toggle-on"></i>
+            <i class="fa-solid fa-toggle-off"></i>
+        </button>
+
+    </div>
+    <div class="nav-button-container">
+        <button class="nav-button" id="nav-button-cuenta">
+            <div class="nav-button-selection"></div>
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </div>
+</nav>
+<main>
+    <iframe
+            id="main-iframe"
+            src="./mapa.html"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+</main>
+</body>
+
+<script>
+    document.querySelectorAll('.nav-button').forEach(button => {
+        button.addEventListener('click', onNavButtonClick);
+    });
+
+    function onNavButtonClick(e) {
+        const button = e.currentTarget;
+        console.log(button);
+        document.querySelector('.nav-button.selected').classList.remove('selected');
+        button.classList.add('selected');
+        document.getElementById('main-iframe').src = button.getAttribute('view');
+    }
+</script>
+</html>

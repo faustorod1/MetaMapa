@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis-Hechos</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <style>
+        html{
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: white;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 20%;
+            display: flex;
+            flex-direction: column;
+            background: var(--color-secondary);
+            padding: 10px;
+            box-shadow: 10px 0px 20px 0px rgba(126, 124, 124, 0.07) inset;
+        }
+
+        .separator{
+            border: none;
+            border-top: 2px solid #444;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .filtro-container{
+            width: 100%;
+            height: 100%;
+            padding: 1em;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        .filtro{
+            background: var(--color-secondary-2);
+            border: none;
+            border-radius: 20px;
+            padding: 0.5em;
+            font-size: medium;
+        }
+
+        .aplicar-filtros-button{
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--color-secondary-2);
+            padding: 0.5rem;
+            border-radius: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .card-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            background: var(--color-secondary);
+            height: 100%;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 10px 10px 30px 30px rgba(126, 124, 124, 0.07) inset;
+        }
+
+        .card {
+            background: var(--color-accent-2);
+            border-radius: 4px;
+            padding: 1rem;
+            width: 20%;
+            height: 20%;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 3px 3px 20px 20px rgba(126, 124, 124, 0.07);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .card p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .icon-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            align-self: flex-end;
+            font-size: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .icon-button i {
+            pointer-events: none;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>Mis hechos</h2>
+
+        <hr class="separator">
+
+        <div>
+            <h5><i class="fa-solid fa-filter" style="margin-right: 0.5rem"></i>Filtros Recientes</h5>
+            <div class="filtro-container">
+                <button class="filtro">
+                    Título: algo
+                </button>
+            </div>
+        </div>
+
+        <hr class="separator">
+
+
+        <div class="filtro-container">
+            <div class="filtro">
+
+            </div>
+            <div class="aplicar-filtros-button">
+                Aplicar filtros
+            </div>
+        </div>
+
+    </aside>
+<main class="main">
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar Hechos...">
+    </div>
+
+
+
+    <div class="card-container">
+        <div class="card">
+            <h3>“Titular Destacado”</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
+            <button class="icon-button"><i class="fa-regular fa-pen-to-square"></i></button>
+        </div>
+        <div class="card">
+            <h3>“Titular Destacado”</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
+            <button class="icon-button"><i class="fa-regular fa-pen-to-square"></i></button>
+        </div>
+    </div>
+</main>
+</body>
+</html>
