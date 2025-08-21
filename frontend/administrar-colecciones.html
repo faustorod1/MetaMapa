@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar Colecciones</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+  <style>
+    html{
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      display: flex;
+      background-image: url('fondoLevementeCargado.png');
+      background-attachment: fixed;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .main-container {
+      padding: 1rem;
+      height: 95%;
+      width: 95%;
+      background: var(--color-secondary);
+      border-radius: 6px;
+      margin: auto;
+    }
+
+
+    .main-container h2{
+      align-self: self-start;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--color-secondary-2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      height: 2.2rem;
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 1rem;
+      margin-left: 0.5rem;
+      color: var(--color-main-2);
+      height: 100%;
+    }
+
+    .collection {
+      background: var(--color-accent-2);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .collection-info {
+      flex: 1;
+      color: black;
+    }
+
+    .collection-info h3 {
+      margin: 0 0 0.5rem;
+    }
+
+    .collection-info p {
+      margin: 0.25rem 0;
+      color: var(--color-secondary);
+    }
+
+    .hechos-container {
+      display: flex;
+      gap: 1rem;
+      flex: 2;
+    }
+
+    .hecho-card {
+      background: var(--color-accent);
+      border-radius: 12px;
+      padding: 0.5rem;
+      flex: 1;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    }
+
+    .hecho-card:hover {
+      background: var(--color-main-hover);
+      border-radius: 6px;
+      padding: 0.5rem;
+      flex: 1;
+      text-align: center;
+    }
+
+    .collection-actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--color-accent);
+      padding: 0.5rem;
+      border-radius: 12px;
+    }
+
+    .collection-actions button {
+      border: none;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .collection-actions button:hover {
+      color: var(--color-main-hover);
+    }
+
+    .separator{
+      border: none;
+      border-top: 2px solid #444;
+      margin: 10px;
+      width: 100%;
+      align-self: center;
+    }
+
+    .btn-add {
+      border-radius: 2em;
+      font-size: 2rem;
+      font-weight: 900;
+      background: var(--color-accent);
+      color: white;
+      width: 2em;
+      height: 2em;
+      aspect-ratio: 1;
+      border: none;
+    }
+    .btn-add:hover {
+      background-color: var(--color-accent-hover);
+      cursor: pointer;
+    }
+    #btn-add {
+      position: fixed;
+      right: 4rem;
+      bottom: 2rem;
+      z-index: 1000;
+    }
+
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <div class="header">
+    <h2>Colecciones</h2>
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar Colección">
+    </div>
+  </div>
+  <hr class="separator">
+  <div class="collection">
+    <div class="collection-info">
+      <h3>Nombre de Colección</h3>
+      <p><strong>Descripción:</strong> Texto de descripción </p>
+      <p><strong>Fuentes:</strong> Proxy y estática</p>
+      <p><strong>Algoritmo de Consenso:</strong> ***** </p>
+    </div>
+
+    <div class="hechos-container">
+      <button class="hecho-card">“Título”<br>Lorem ipsum</button>
+      <button class="hecho-card">“Título”<br>Lorem ipsum</button>
+      <button class="hecho-card">“Título”<br>Lorem ipsum</button>
+    </div>
+
+    <div class="collection-actions">
+      <button><i class="fa-solid fa-pen-to-square"></i></button>
+      <button><i class="fa-solid fa-trash"></i></button>
+      <button><i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+  <button class="btn-add" id="btn-add">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+</div>
+</body>
+</html>
