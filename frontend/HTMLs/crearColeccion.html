@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Crear Colección | METAmapa</title>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+<style>
+    body{
+        background-image: url('../fondoLevementeCargado.png');
+        background-size: cover;                 /* Que cubra toda la pantalla */
+        background-repeat: no-repeat;           /* Que no se repita */
+        background-attachment: fixed;           /* Fijo */
+        background-position: center center;     /* Que esté centrada */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container{
+        background-color: #d9d9d9;     /* CAMBIAR */
+        border-radius: 1rem;
+        padding: 0.8rem;
+        padding-bottom: 0;
+        width: 50vw;
+    }
+
+    .input-crearColeccion{
+        padding: 0.3rem;
+        margin: 0.5rem 0.2rem 0rem 0.5rem;
+        text-align: left;
+    }
+
+    input[type=text]{
+        background-color: #bdbcbc;
+        border-radius: 0.3rem;
+        width: 20vw;
+        height: 4vh;
+    }
+
+    select{
+        width: 20vw;
+        heigth: 0.5vh;
+        padding: 0.4rem;
+        border-radius: 0.3rem;
+        border: 1px solid black;
+        font-size:0.9rem;
+        background-color: #bdbcbc;
+        margin-top:0.1rem;
+        cursor: pointer;
+    }
+
+
+    textarea{
+        margin-top:0.2em;
+        background-color: #bdbcbc;
+        width: 100%;
+        height: 7rem;
+        margin-bottom:0;
+        padding: 0;
+        resize: none;
+        border-radius: 0.3rem;
+    }
+
+    #input-descripcion{
+        margin-right:5rem;
+        margin-bottom: 0.5rem;
+    }
+
+
+    .footer-container{
+        justify-content: flex-end;
+        display: flex;
+        padding:0;
+        margin-top:0.2rem;
+    }
+
+    .btn-submit{
+        font-size: 1.1rem;
+        text-decoration: none;
+        padding: 0.5em; /*em es una unidad relativa al tamaño de letra*/
+        margin-bottom: 0.5rem;
+        border-radius: 2em;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        background-color: #bdbcbc;
+    }
+
+    .btn-submit:hover {
+        background-color: var(--color-container);
+    }
+
+
+</style>
+
+
+</head>
+<body>
+    <main>
+    <!--Supongo que habría que (practicamente) duplicar esta página para "Editar coleccion" -->
+
+    <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <div id="fixed-logo"></div>
+
+    <form class="cargar-coleccion-form" action="" method="post">
+        <div class="container">
+            <h2 id="titulo-cargarColeccion">Crear coleccion</h2>
+
+            <div class="input-crearColeccion">
+            <h4>Título</h4>
+            <label for="tituloColeccion"></label>
+            <input type="text" id="tituloColeccion" name="tituloColeccion" required oninvalid="this.setCustomValidity('Ingresa un título')">
+            </div>
+
+            <div class="input-crearColeccion">
+            <h4>Fuentes</h4>
+                <select id="fuentes" name="fuentes[]" required oninvalid="this.setCustomValidity('Selecciona al menos una fuente')">
+                    <option value="" disabled selected>Seleccione una fuente</option>         <!-- Ver cada opción despues -->
+                    <option value="estatica">Estática</option>
+                    <option value="dinamica">Dinámica</option>
+                    <option value="proxy">Proxy</option>
+                </select>
+            </div>
+
+            <div class="input-crearColeccion">
+            <h4>Algoritmo de consenso</h4>
+                <select id="algoritmo" name="algoritmo" required oninvalid="this.setCustomValidity('Selecciona un algoritmo')">
+                    <option value="" disabled selected>Selecciona un algoritmo</option>
+                    <option value="multiples">Múltiples menciones </option>
+                    <option value="mayoria">Mayoría simple</option>
+                    <option value="absoluta">Absoluta</option>
+                </select>
+            </div>
+
+            <div class="input-crearColeccion" id="input-descripcion">
+            <h4>Descripción</h4>
+            <label for ="descripcion"></label>
+            <textarea id="descripcion" placeholder="Escribe una descripcion..."></textarea>
+            </div>
+
+            <div class="footer-container">
+            <button class="btn-submit" type="submit">Crear</button>
+            </div>
+        </div>
+
+
+
+
+
+
+        </div>
+
+
+    </form>
+    </main>
+</body>
+</html>
