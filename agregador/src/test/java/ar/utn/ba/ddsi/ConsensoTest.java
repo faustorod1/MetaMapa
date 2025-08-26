@@ -2,12 +2,11 @@ package ar.utn.ba.ddsi;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.Categoria;
-import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.ConsensoAbsoluta;
 import ar.utn.ba.ddsi.models.entities.ConsensoMayoriaSimple;
 import ar.utn.ba.ddsi.models.entities.ConsensoMultiplesMenciones;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.IAlgoritmoDeConsenso;
+import ar.utn.ba.ddsi.models.entities.AlgoritmoDeConsenso;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ConsensoTest {
 
@@ -150,7 +148,7 @@ public class ConsensoTest {
 
   @Test
   public void absoluta() throws Exception {
-    IAlgoritmoDeConsenso algoritmoAbs = new ConsensoAbsoluta();
+    AlgoritmoDeConsenso algoritmoAbs = new ConsensoAbsoluta();
 
     List<Hecho> hechosConsensuados = algoritmoAbs.consensuar(listaHechos, listaFuentes);
 
@@ -162,7 +160,7 @@ public class ConsensoTest {
 
   @Test
   public void mayoriaSimple() throws Exception {
-    IAlgoritmoDeConsenso algoritmoMaySimple = new ConsensoMayoriaSimple();
+    AlgoritmoDeConsenso algoritmoMaySimple = new ConsensoMayoriaSimple();
 
     List<Hecho> hechosConsensuados = algoritmoMaySimple.consensuar(listaHechos, listaFuentes);
     System.out.println(hechosConsensuados.size());
@@ -176,7 +174,7 @@ public class ConsensoTest {
 
   @Test
   public void multiplesMenciones() throws Exception{
-    IAlgoritmoDeConsenso algoritmoMultiplesMenciones = new ConsensoMultiplesMenciones();
+    AlgoritmoDeConsenso algoritmoMultiplesMenciones = new ConsensoMultiplesMenciones();
 
     List<Hecho> hechosConsensuados = algoritmoMultiplesMenciones.consensuar(listaHechos, listaFuentes);
     System.out.println(hechosConsensuados.size());
@@ -204,7 +202,7 @@ public class ConsensoTest {
   @Test
   public void absolutaConDistintos() throws Exception {
     cambiarUltimoHechoParaQueNoCoincida();
-    IAlgoritmoDeConsenso algoritmoAbs = new ConsensoAbsoluta();
+    AlgoritmoDeConsenso algoritmoAbs = new ConsensoAbsoluta();
 
     List<Hecho> hechosConsensuados = algoritmoAbs.consensuar(listaHechos, listaFuentes);
     System.out.println(hechosConsensuados.size());
@@ -215,7 +213,7 @@ public class ConsensoTest {
   @Test
   public void mayoriaSimpleConDistintos() throws Exception {
     cambiarUltimoHechoParaQueNoCoincida();
-    IAlgoritmoDeConsenso algoritmoMay = new ConsensoMayoriaSimple();
+    AlgoritmoDeConsenso algoritmoMay = new ConsensoMayoriaSimple();
 
     List<Hecho> hechosConsensuados = algoritmoMay.consensuar(listaHechos, listaFuentes);
     System.out.println(hechosConsensuados.size());
@@ -227,7 +225,7 @@ public class ConsensoTest {
   @Test
   public void multiplesMencionesConDistintos() throws Exception {
     cambiarUltimoHechoParaQueNoCoincida();
-    IAlgoritmoDeConsenso algoritmoMult = new ConsensoMultiplesMenciones();
+    AlgoritmoDeConsenso algoritmoMult = new ConsensoMultiplesMenciones();
 
     List<Hecho> hechosConsensuados = algoritmoMult.consensuar(listaHechos, listaFuentes);
     System.out.println(hechosConsensuados.size());

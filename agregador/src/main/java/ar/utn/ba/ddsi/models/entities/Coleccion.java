@@ -14,7 +14,7 @@ public class Coleccion {
     private String titulo;
     private String descripcion;
     private Criterio criterioDePertenencia;
-    private IAlgoritmoDeConsenso algoritmoDeConsenso;
+    private AlgoritmoDeConsenso algoritmoDeConsenso;
 
     private List<String> fuentes; //TODO convertir a enum? (correccion)
     private List<Hecho> hechosCargadosManualmente;
@@ -24,7 +24,7 @@ public class Coleccion {
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
 
-    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes, IAlgoritmoDeConsenso algoritmoDeConsenso) {
+    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes, AlgoritmoDeConsenso algoritmoDeConsenso) {
         this.identificador = identificador;
         this.titulo = titulo;
         this.descripcion = descripcion;

@@ -20,9 +20,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ColeccionesService implements IColeccionesService {
@@ -68,6 +66,9 @@ public class ColeccionesService implements IColeccionesService {
         Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa();
 
         // Reemplaza de la colección (ya persistida localmente) con los MetaMapa obtenidos recién
+        // Si hay algún hecho de fuente MetaMapa que NO teníamos en el agregador (porque se agregó a esa
+        // fuente MetaMapa después de la última actualización), ese hecho NO se incluye entre los hechos
+        // que devolvemos acá, ya que no sabemos si debería pertenecer a la colección.
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
                 .map(tuple -> {
                         List<Hecho> listaMetaMapa = tuple.getT2();
@@ -139,7 +140,7 @@ public class ColeccionesService implements IColeccionesService {
     public ColeccionOutputDTO updateConsenso (String identificador, String tipoDeConsenso){
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
 
-        IAlgoritmoDeConsenso algoritmoDeConsenso = obtenerAlgoritmoDeConsenso(tipoDeConsenso);
+        AlgoritmoDeConsenso algoritmoDeConsenso = obtenerAlgoritmoDeConsenso(tipoDeConsenso);
         coleccion.setAlgoritmoDeConsenso(algoritmoDeConsenso);
 
         return coleccionOutputDTO(coleccion);
@@ -275,7 +276,7 @@ public class ColeccionesService implements IColeccionesService {
         }
     }
 
-    private IAlgoritmoDeConsenso obtenerAlgoritmoDeConsenso(String algoritmoDeConsenso){         // no devuelve una interfaz OJO
+    private AlgoritmoDeConsenso obtenerAlgoritmoDeConsenso(String algoritmoDeConsenso){         // no devuelve una interfaz OJO
         if("absoluta".equalsIgnoreCase(algoritmoDeConsenso)){
             return new ConsensoAbsoluta();
         }else if("mayoriaSimple".equalsIgnoreCase(algoritmoDeConsenso)){

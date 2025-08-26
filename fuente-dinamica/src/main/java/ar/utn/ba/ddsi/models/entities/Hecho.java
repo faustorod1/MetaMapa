@@ -23,7 +23,7 @@ public class Hecho {
     private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
+    private boolean eliminado; // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
     private Contribuyente contribuyente;
     private LocalDateTime lastUpdate;
 
@@ -31,4 +31,11 @@ public class Hecho {
     private SolicitudDeModificacion solicitudDeModificacion = null;
     @Builder.Default
     private HashSet<Etiqueta> etiquetas = new HashSet<>();
+    @Builder.Default
+    private List<HechoSnapshot> snapshots = new ArrayList<>();
+
+    public void agregarSnapshot(HechoSnapshot snap){
+        snapshots.add(snap);
+    }
+
 }

@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.HechoSnapshot;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeModificacion;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
@@ -36,6 +37,10 @@ public class SolicitudesService implements ISolicitudesService {
     EstadoSolicitud estadoNuevo = resolucion.getEstadoNuevo();
     if (estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
       Hecho hechoNuevo = h.getSolicitudDeModificacion().getHechoNuevo();
+
+      HechoSnapshot snapshot = new HechoSnapshot(h);
+      h.agregarSnapshot(snapshot);
+
       hechoNuevo.setLastUpdate(LocalDateTime.now());
       hechosService.update(h, hechoNuevo);
       return hechosService.hechoToDTO(hechoNuevo);

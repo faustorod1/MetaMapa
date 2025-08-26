@@ -40,7 +40,13 @@ public class Hecho {
 
     public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Contribuyente contribuyente) {
         try {
-            SolicitudDeEliminacion solicitud = new SolicitudDeEliminacion(this, justificacion, contribuyente);
+
+            SolicitudDeEliminacion solicitud = SolicitudDeEliminacion.builder()
+                    .hecho(this)
+                    .solicitante(contribuyente)
+                    .descripcion(justificacion)
+                    .build();
+
             solicitudesDeEliminacion.add(solicitud);
             return solicitud;
         }catch(Exception e){

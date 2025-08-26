@@ -7,6 +7,7 @@ import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.ISolicitudesRepository;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -23,15 +24,16 @@ public class SolicitudesService implements ISolicitudesService {
     this.hechosService = hechosService;
   }
 
+  //ResponseEntity.ok(cuerpo);
   @Override
-  public String crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
+  public ResponseEntity<String> crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
     SolicitudDeEliminacion solicitud = solicitudDeEliminacionFromDTO(solicitudDto);
     solicitudesRepository.save(solicitud);
-    return switch (solicitud.getEstado()) { //TODO refactorizar
-      case PENDIENTE -> "Solicitud creada correctamente";
-      case RECHAZADA_POR_SPAM -> "Solicitud rechazada por spam";
-      case RECHAZADA_POR_FALTA_DE_CARACTERES -> "Solicitud rechazada por insuficientes caracteres";
-      default -> "guat? (ㆆ _ ㆆ)";   // TODO: sacar esto
+    return switch (solicitud.getEstado()) {
+      case PENDIENTE -> ResponseEntity.ok("Solicitud creada con éxito");
+      case RECHAZADA_POR_SPAM -> ResponseEntity.status(422).body("Solicitud rechazada por spam");
+      case RECHAZADA_POR_FALTA_DE_CARACTERES -> ResponseEntity.status(422).body("Solicitud rechazada por insuficientes carácteres");
+      default -> ResponseEntity.internalServerError().body("Error del servidor (ㆆ _ ㆆ)");
     };
   }
 
@@ -47,7 +49,12 @@ public class SolicitudesService implements ISolicitudesService {
   @Override
   public SolicitudDeEliminacion solicitudDeEliminacionFromDTO(SolicitudDeEliminacionInputDTO dto) throws DescripcionSolicitudException {
     Hecho hecho = hechosService.obtenerPorId(dto.getHechoId());
-    return new SolicitudDeEliminacion(hecho, dto.getDescripcion(), contribuyenteFromContribuyenteDTO(dto.getSolicitante()));
+    return SolicitudDeEliminacion.builder()
+            .descripcion(dto.getDescripcion())
+            .hecho(hecho)
+            .solicitante(contribuyenteFromContribuyenteDTO(dto.getSolicitante()))
+            .build();
+     //new SolicitudDeEliminacion(hecho, dto.getDescripcion(), contribuyenteFromContribuyenteDTO(dto.getSolicitante()));
   }
 
   private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {
