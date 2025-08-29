@@ -28,7 +28,8 @@
 		<module>fuente-dinamica</module>
 		<module>fuente-proxy</module>
 		<module>commons</module>
-	</modules>
+        <module>servicio-de-estadisticas</module>
+    </modules>
 
 	<scm>
 		<connection/>

@@ -1,16 +1,13 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import ar.utn.ba.ddsi.commons.Coordenada;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import ar.utn.ba.ddsi.commons.Coordenada;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @AllArgsConstructor
 @Builder
@@ -18,6 +15,23 @@ import java.util.Objects;
 
 public class Hecho {
 
+//    public class HechoOutputDTO {
+//        private Long id;
+//        private String titulo;
+//        private String descripcion;
+//        private Categoria categoria;
+//        private ContenidoMultimedia contenidoMultimedia;
+//        private OrigenHecho origen;
+//        private Coordenada lugarAcontecimiento;
+//        private LocalDate fechaHecho;
+//        private LocalDateTime fechaDeCarga;
+//        private String idExterno;
+//        private Long contribuyente;
+//        private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion; //
+//        private HashSet<String> etiquetas;
+//    }
+
+    private Long id;
     private String titulo;
     private String descripcion;
     private Categoria categoria;
@@ -26,38 +40,14 @@ public class Hecho {
     private Coordenada lugarAcontecimiento;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private LocalDateTime fechaUltimaActualizacion;
-    private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
-    private Contribuyente contribuyente;
-    private Long id;        // USO: Identificacion unica para el Repository (futura BD)
-    private String idExterno; // //proxy/2/5
-    private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
+    private String idExterno;
+    private Long contribuyente;
 
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
-    @Builder.Default // si el builder no le da el valor, hace esto por defecto
-    private HashSet<Etiqueta> etiquetas = new HashSet<>();
+    @Builder.Default
+    private Set<Etiqueta> etiquetas = new HashSet<>();
 
-    public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Contribuyente contribuyente) {
-        try {
-
-            SolicitudDeEliminacion solicitud = SolicitudDeEliminacion.builder()
-                    .hecho(this)
-                    .solicitante(contribuyente)
-                    .descripcion(justificacion)
-                    .build();
-
-            solicitudesDeEliminacion.add(solicitud);
-            return solicitud;
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void etiquetar(Etiqueta etiqueta){
-        etiquetas.add(etiqueta);
-    }
 
 
     public boolean perteneceALaFuente(OrigenHecho fuente) {
@@ -75,25 +65,6 @@ public class Hecho {
         }
         return true;
     }
-
-    /*
-    idHecho: estatica:1:5
-    fuente: estatica
-
-    public boolean perteneceALaFuente(String fuente) {
-        return idExterno.startsWith(fuente + ":");
-        proxy:1
-
-        proxy:11:2
-}
-    */
-
-
-    /*
-    public Integer aCuantasFuentesPertenece(List<String> fuentes){
-        return (int) fuentes.stream().filter(this::perteneceALaFuente).count();
-    }
-    */
 
     public boolean hechoIgualA(Hecho otroHecho) {
         //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS

@@ -4,6 +4,7 @@ import ar.utn.ba.ddsi.models.dtos.input.ResolucionSolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dtos.input.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,8 @@ public class SolicitudesController {
     this.solicitudesService = solicitudesService;
   }
 
-  @PostMapping
-  public String crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO solicitud) {
+  @PostMapping      // Devuelve status code HTTP
+  public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO solicitud) {
     return solicitudesService.crearSolicitud(solicitud);
   }
 

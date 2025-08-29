@@ -11,10 +11,8 @@ public abstract class AlgoritmoDeConsenso {
         hechosAManejar = sinContradiccion(hechosAManejar,fuentes);
         List<Hecho> hechosConsensuados = sinDuplicados(hechosAManejar);
         return hechosConsensuados;
-        
+
     }
-
-
 
     public abstract List<Hecho> aplicarA(List<Hecho> hechos, List<String> fuentes);
 
