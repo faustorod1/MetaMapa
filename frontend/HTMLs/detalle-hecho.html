@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Hecho</title>
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        body {
+            background-image: url('../fondoLevementeCargado.png');
+            background-size: cover;                 /* Que cubra toda la pantalla */
+            background-repeat: no-repeat;           /* Que no se repita */
+            background-attachment: fixed;           /* Fijo */
+            background-position: center center;     /* Que esté centrada */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: #d9d9d9;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 70rem;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .titulo {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .categoria {
+            color: #444;
+            font-weight: normal;
+            margin-left: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .detalles {
+            margin: 0.75rem 0;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .direccion {
+            font-size: 1.125rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .imagenes {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .imagen {
+            flex: 1;
+            height: 9rem;
+            background: #bdbcbc;
+            border-radius: 0.5rem;
+        }
+
+        .descripcion {
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .descripcion textarea {
+            background: #bdbcbc;
+            width: 98%;
+            min-height: 10rem;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 1.125rem;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+
+        .editar {
+            background: #333;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            float: right;
+        }
+
+        .editar:hover {
+            background: #555;
+        }
+
+        .menu {
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            line-height: 1;
+            transition: background 0.2s ease;
+        }
+
+        .menu:hover {
+            background: #bdbcbc;
+        }
+
+
+
+        .flecha {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            cursor: pointer;
+            background: #fff;
+            border-radius: 50%;
+            padding: 0.5rem;
+            user-select: none;
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.2);
+            transition: font-weight 0.2s ease, background 0.2s ease;
+        }
+
+        .flecha:hover {
+            font-weight: bold;
+            background: #bdbcbc;
+        }
+
+
+        .flecha.izquierda { left: -3rem; }
+        .flecha.derecha { right: -3rem; }
+
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <span class="flecha izquierda">&#10094;</span>
+    <span class="flecha derecha">&#10095;</span>
+
+    <div class="header">
+        <div>
+            <span class="titulo">Título del Hecho</span>
+            <span class="categoria">Caídas de aeronave</span>
+            <div class="detalles">DD/MM/AAAA</div>
+            <div class="direccion">Una Dirección 1234</div>
+        </div>
+        <div class="menu">⋮</div>
+    </div>
+
+    <div class="imagenes">
+        <div class="imagen"></div>
+        <div class="imagen"></div>
+        <div class="imagen"></div>
+        <div class="imagen"></div>
+        <div class="imagen"></div>
+    </div>
+
+    <div class="descripcion">
+        <textarea placeholder="Escribe aquí la descripción..."></textarea>
+    </div>
+
+
+    <button class="editar">Editar</button>
+</div>
+
+</body>
+</html>
