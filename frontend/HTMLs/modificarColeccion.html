@@ -44,6 +44,56 @@
             padding: 0.2rem;
         }
 
+        /* Estilos para el dropdown multiselección */
+        .dropdown-multiselect {
+            position: relative;
+            width: 20vw;
+            user-select: none;
+        }
+
+        .dropdown-multiselect button {
+            width: 100%;
+            background-color: #bdbcbc;
+            border: 1px solid black;
+            border-radius: 0.3rem;
+            padding: 0.4rem;
+            font-size: 0.9rem;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-multiselect ul {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #bdbcbc;
+            border: 1px solid black;
+            border-radius: 0.3rem;
+            margin: 0;
+            padding: 0.3rem 0;
+            list-style: none;
+            z-index: 10;
+        }
+
+        .dropdown-multiselect ul li {
+            padding: 0.2rem 0.5rem;
+        }
+
+        .dropdown-multiselect ul li label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dropdown-multiselect ul li:hover {
+            background-color: #a9a9a9;
+        }
+
         select{
             width: 20vw;
             heigth: 0.5vh;
@@ -70,7 +120,7 @@
         }
 
         #input-descripcion{
-            margin-right: 5rem;
+            margin-right:5rem;
             margin-bottom: 0.5rem;
         }
 
@@ -105,37 +155,47 @@
 </head>
 <body>
 <main>
-    <!--Supongo que habría que (practicamente) duplicar esta página para "Editar coleccion" -->
-
     <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
-    <form class="cargar-coleccion-form" action="" method="post">
+    <form class="cargar-coleccion-form" action="" method="post" novalidate>
         <div class="container">
             <h2 id="titulo-cargarColeccion">Modificar coleccion</h2>
 
             <div class="input-crearColeccion">
                 <h4>Título</h4>
                 <label for="tituloColeccion"></label>
-                <input type="text" id="tituloColeccion" name="tituloColeccion" value="Colección de accidentes aéreos"required oninvalid="this.setCustomValidity('Ingresa un título')">
+                <input type="text" id="tituloColeccion" name="tituloColeccion" value="Colección de accidentes aéreos" required oninvalid="this.setCustomValidity('Ingresa un título')" oninput="this.setCustomValidity('')">
             </div>
 
             <div class="input-crearColeccion">
                 <h4>Fuentes</h4>
-                <select id="fuentes" name="fuentes[]" multiple required oninvalid="this.setCustomValidity('Selecciona al menos una fuente')">
-                    <option value="" disabled selected>Seleccione una o mas fuentes</option>         <!-- Ver cada opción despues -->
-                    <option value="estatica" selected>Estática</option>
-                    <option value="dinamica">Dinámica</option>
-                    <option value="proxy"selected>Proxy</option>
-                </select>
+                <div class="dropdown-multiselect" tabindex="0">
+                    <button type="button" id="dropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+                        Seleccione una o más fuentes
+                        <i class="fa-solid fa-chevron-down" style="margin-left: 0.5rem;"></i>
+                    </button>
+                    <ul id="dropdownList" role="listbox" aria-multiselectable="true" hidden>
+                        <li>
+                            <label><input type="checkbox" name="fuentes[]" value="estatica"> Estática</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="fuentes[]" value="dinamica"> Dinámica</label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" name="fuentes[]" value="proxy"> Proxy</label>
+                        </li>
+                    </ul>
+                </div>
+                <div id="fuentesError" style="color: red; font-size: 0.9rem; display:none;">Selecciona al menos una fuente</div>
             </div>
 
             <div class="input-crearColeccion">
                 <h4>Algoritmo de consenso</h4>
-                <select id="algoritmo" name="algoritmo" required oninvalid="this.setCustomValidity('Selecciona un algoritmo')">
-                    <option value="" disabled selected>Selecciona un algoritmo</option>
+                <select id="algoritmo" name="algoritmo" required oninvalid="this.setCustomValidity('Selecciona un algoritmo')" oninput="this.setCustomValidity('')">
+                    <option value="" disabled>Selecciona un algoritmo</option>
                     <option value="multiples">Múltiples menciones </option>
-                    <option value="mayoria" selected>Mayoría simple</option>
+                    <option value="mayoria">Mayoría simple</option>
                     <option value="absoluta">Absoluta</option>
                 </select>
             </div>
@@ -143,26 +203,96 @@
             <div class="input-crearColeccion" id="input-descripcion">
                 <h4>Descripción</h4>
                 <label for ="descripcion"></label>
-                <textarea id="descripcion">Los accidentes aéreos cada vez son mas frecuentes. En esta colección, recapitularemos algunos de los casos más populares.</textarea>
+                <textarea id="descripcion" name="descripcion">Los accidentes aéreos cada vez son mas frecuentes. En esta colección, recapitularemos algunos de los casos más populares.</textarea>
             </div>
 
             <div class="footer-container">
                 <button class="btn-submit" type="submit">Modificar</button>
             </div>
         </div>
-
-        </div>
-
-
-
-
     </form>
 </main>
 <script>
-    const fuentesSelect = document.getElementById('fuentes');
-    fuentesSelect.addEventListener('change', function() {
-        const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
-        console.log('Fuentes seleccionadas:', selectedOptions);
+    const dropdown = document.querySelector('.dropdown-multiselect');
+    const dropdownBtn = document.getElementById('dropdownBtn');
+    const dropdownList = document.getElementById('dropdownList');
+    const checkboxes = dropdownList.querySelectorAll('input[type="checkbox"]');
+    const fuentesError = document.getElementById('fuentesError');
+    const algoritmoSelect = document.getElementById('algoritmo');
+
+    // Valores precargados para fuentes y algoritmo
+    const precargadasFuentes = ['estatica', 'proxy'];
+    const precargadoAlgoritmo = 'mayoria';
+
+    // Marcar checkboxes según valores precargados
+    checkboxes.forEach(chk => {
+        if (precargadasFuentes.includes(chk.value)) {
+            chk.checked = true;
+        }
+    });
+
+    // Marcar opción del select algoritmo
+    for (let option of algoritmoSelect.options) {
+        option.selected = option.value === precargadoAlgoritmo;
+    }
+
+    // Función para crear el icono de flecha
+    function createIcon() {
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-chevron-down';
+        icon.style.marginLeft = '0.5rem';
+        return icon;
+    }
+
+    // Actualiza el texto del botón según las opciones seleccionadas
+    function updateButtonLabel() {
+        const selected = Array.from(checkboxes)
+            .filter(chk => chk.checked)
+            .map(chk => chk.parentElement.textContent.trim());
+
+        if (selected.length === 0) {
+            dropdownBtn.textContent = 'Seleccione una o más fuentes';
+            dropdownBtn.appendChild(createIcon());
+            fuentesError.style.display = 'block';
+        } else {
+            dropdownBtn.textContent = selected.join(', ');
+            dropdownBtn.appendChild(createIcon());
+            fuentesError.style.display = 'none';
+        }
+    }
+
+    // Mostrar/ocultar dropdown al hacer clic en el botón
+    dropdownBtn.addEventListener('click', () => {
+        const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+        dropdownBtn.setAttribute('aria-expanded', String(!expanded));
+        dropdownList.hidden = expanded;
+    });
+
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', (event) => {
+        if (!dropdown.contains(event.target)) {
+            dropdownBtn.setAttribute('aria-expanded', 'false');
+            dropdownList.hidden = true;
+        }
+    });
+
+    // Actualizar etiqueta cuando cambian los checkboxes
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateButtonLabel);
+    });
+
+    // Inicializar texto del botón con valores precargados
+    updateButtonLabel();
+
+    // Validación personalizada al enviar el formulario
+    const form = document.querySelector('.cargar-coleccion-form');
+    form.addEventListener('submit', (e) => {
+        const anyChecked = Array.from(checkboxes).some(chk => chk.checked);
+        if (!anyChecked) {
+            e.preventDefault();
+            fuentesError.style.display = 'block';
+            dropdownBtn.focus();
+        }
     });
 </script>
 </body>
