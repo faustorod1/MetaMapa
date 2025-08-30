@@ -6,9 +6,12 @@ import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface ISolicitudesService {
     ResponseEntity<String> crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
     SolicitudDeEliminacion solicitudDeEliminacionFromDTO(SolicitudDeEliminacionInputDTO dto);
     void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
-    SolicitudDeEliminacionOutputDTO solicititudDeEliminacionToDTO(SolicitudDeEliminacion solicitud);
+    List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes();
+
 }

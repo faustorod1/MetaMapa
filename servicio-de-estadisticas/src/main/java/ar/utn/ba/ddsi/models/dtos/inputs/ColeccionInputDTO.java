@@ -1,19 +1,14 @@
-package ar.utn.ba.ddsi.models.dtos.output;
+package ar.utn.ba.ddsi.models.dtos.inputs;
 
-import ar.utn.ba.ddsi.models.entities.Criterio;
-import ar.utn.ba.ddsi.models.entities.Hecho;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Data
-public class ColeccionOutputDTO {
+public class ColeccionInputDTO {
     private String identificador;
     private String titulo;
     private String descripcion;
-    private CriterioOutputDTO criterioDePertenencia;
+    private CriterioInputDTO criterioDePertenencia;
     private List<String> fuentes;
 }

@@ -8,11 +8,10 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.ISolicitudesRepository;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
+import java.util.List;
 
 @Service
 public class SolicitudesService implements ISolicitudesService {
@@ -37,13 +36,22 @@ public class SolicitudesService implements ISolicitudesService {
     };
   }
 
-
   @Override
   public void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto) {
     SolicitudDeEliminacion solicitud = solicitudesRepository.resolver(id, resolucionDto.getAdministradorQueResolvio(), resolucionDto.getEstadoSolicitud());
     if (solicitud != null && solicitud.getEstado() == EstadoSolicitud.ACEPTADA) {
       hechosService.eliminarHechoEnLasFuentes(solicitud.getHecho());
     }
+  }
+
+  @Override
+  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes(){
+      return solicitudesRepository.
+          findAll()
+          .stream()
+          .map(this::solicititudDeEliminacionToDTO)
+          .toList();
+
   }
 
   @Override
@@ -69,8 +77,7 @@ public class SolicitudesService implements ISolicitudesService {
     return dto;
   }
 
-  @Override
-  public SolicitudDeEliminacionOutputDTO solicititudDeEliminacionToDTO(SolicitudDeEliminacion solicitud) {
+  private SolicitudDeEliminacionOutputDTO solicititudDeEliminacionToDTO(SolicitudDeEliminacion solicitud) {
     SolicitudDeEliminacionOutputDTO dto = new SolicitudDeEliminacionOutputDTO();
     dto.setId(solicitud.getId());
     dto.setDescripcion(solicitud.getDescripcion());

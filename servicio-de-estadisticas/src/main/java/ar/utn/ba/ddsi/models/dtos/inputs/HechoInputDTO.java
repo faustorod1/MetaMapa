@@ -1,7 +1,6 @@
-package ar.utn.ba.ddsi.models.dtos.input;
+package ar.utn.ba.ddsi.models.dtos.inputs;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
-import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.ContenidoMultimedia;
 import ar.utn.ba.ddsi.models.entities.OrigenHecho;
@@ -9,7 +8,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

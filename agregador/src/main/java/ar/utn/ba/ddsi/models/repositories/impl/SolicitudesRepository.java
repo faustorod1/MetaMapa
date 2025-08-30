@@ -33,4 +33,9 @@ public class SolicitudesRepository implements ISolicitudesRepository {
     solicitud.resolver(estado, administradorQueResolvio);
     return solicitud;
   }
+
+  @Override
+  public List<SolicitudDeEliminacion> findAll(){
+      return this.solicitudes;
+  }
 }

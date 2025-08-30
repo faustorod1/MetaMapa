@@ -17,6 +17,7 @@ import java.time.LocalTime;
 
 @RestController
 @RequestMapping("/api")
+
 public class EstadisticasController {
     @Autowired
     private IEstadisticasService estadisticasService;
@@ -43,7 +44,6 @@ public class EstadisticasController {
     public ResponseEntity<LocalTime> horarioConMasHechosPorCategoria(@PathVariable Categoria categoria){
         LocalTime horario = estadisticasService.horarioConMasHechosDeCiertaCategoria(categoria);
         return ResponseEntity.ok(horario);
-
     }
 
     @GetMapping("/solicitudes/cantidad-spam")
@@ -51,16 +51,4 @@ public class EstadisticasController {
         Long cantidad = estadisticasService.solicitudesSpam();
         return ResponseEntity.ok(cantidad);
     }
-
-
-    /*
-De una colección, ¿en qué provincia se agrupan la mayor cantidad de hechos reportados?
-¿Cuál es la categoría con mayor cantidad de hechos reportados?
-¿En qué provincia se presenta la mayor cantidad de hechos de una cierta categoría?
-¿A qué hora del día ocurren la mayor cantidad de hechos de una cierta categoría?
-¿Cuántas solicitudes de eliminación son spam?
-
-El Servicio de Estadísticas deberá soportar la exportación de los datos generados mediante formato CSV.
-*/
-
 }

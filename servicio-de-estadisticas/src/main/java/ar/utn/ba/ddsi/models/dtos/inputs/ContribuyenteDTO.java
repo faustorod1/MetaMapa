@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.models.dtos.input;
+package ar.utn.ba.ddsi.models.dtos.inputs;
 
 import lombok.Data;
 

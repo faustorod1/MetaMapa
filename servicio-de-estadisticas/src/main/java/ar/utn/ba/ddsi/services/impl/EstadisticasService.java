@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dtos.inputs.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.services.IEstadisticasService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
@@ -15,15 +16,15 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Service
 public class EstadisticasService implements IEstadisticasService {
-
     private WebClient servicioAgregador;
 
     public EstadisticasService(@Value("${agregador.api.base-url}") String apiAgregadorURL) {
         this.servicioAgregador = WebClient.builder().baseUrl(apiAgregadorURL).build();
     }
 
-    // ------------------------
+    // ----------------------------------------------------------------------------
 
     public String provinciaConMasHechosDeColeccion(String coleccion_id) {
         List<Hecho> hechos = getHechosDeColeccionFromAgregador(coleccion_id);
@@ -44,7 +45,7 @@ public class EstadisticasService implements IEstadisticasService {
     }
 
 
-    public LocalTime horarioConMasHechosDeCiertaCategoria(Categoria categoria){
+    public LocalTime horarioConMasHechosDeCiertaCategoria(Categoria categoria) {
         List<Hecho> hechos = getHechosFromAgregador();
         List<Hecho> hechosDeCategoriaParticular = hechos.stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria.getNombre())).toList();
 
@@ -52,12 +53,12 @@ public class EstadisticasService implements IEstadisticasService {
         return LocalTime.of(hora, 0);
     }
 
-    public Long solicitudesSpam(){
+    public Long solicitudesSpam() {
         List<SolicitudDeEliminacion> solicitudes = getSolicitudesFromAgregador();
         return solicitudes
-                .stream().
-                filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.RECHAZADA_POR_SPAM))
-                .count();
+            .stream().
+            filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.RECHAZADA_POR_SPAM))
+            .count();
     }
 
 
@@ -80,12 +81,12 @@ public class EstadisticasService implements IEstadisticasService {
 
     private List<Hecho> getHechosFromAgregador() {
         return servicioAgregador.get()
-                .uri("/api/hechos")
-                .retrieve()
-                .bodyToFlux(HechoInputDTO.class)
-                .map(this::HechoDtoToHecho)
-                .collectList()
-                .block();
+            .uri("/api/hechos")
+            .retrieve()
+            .bodyToFlux(HechoInputDTO.class)
+            .map(this::HechoDtoToHecho)
+            .collectList()
+            .block();
     }
 
     private List<Hecho> getHechosDeColeccionFromAgregador(String coleccion_id) {
@@ -109,39 +110,30 @@ public class EstadisticasService implements IEstadisticasService {
     }
 
 
-    private Hecho HechoDtoToHecho(HechoInputDTO h){
+    private Hecho HechoDtoToHecho(HechoInputDTO h) {
         Set<Etiqueta> hashDeEtiquteas = h.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toSet());
         List<SolicitudDeEliminacion> solicitudesDeEliminacion = h.getSolicitudesDeEliminacion().stream()
             .map(this::solicitudDTOtoSolicitud)
             .toList();
 
         return Hecho.builder()
-                .id(h.getId())
-                .titulo(h.getTitulo())
-                .descripcion(h.getDescripcion())
-                .origen(h.getOrigen())
-                .lugarAcontecimiento(h.getLugarAcontecimiento())
-                .fechaHecho(h.getFechaHecho())
-                .fechaDeCarga(h.getFechaDeCarga())
-                .etiquetas(hashDeEtiquteas)
-                .contenidoMultimedia(h.getContenidoMultimedia())
-                .contribuyente(h.getContribuyente())
-                .build();
+            .id(h.getId())
+            .titulo(h.getTitulo())
+            .descripcion(h.getDescripcion())
+            .origen(h.getOrigen())
+            .lugarAcontecimiento(h.getLugarAcontecimiento())
+            .fechaHecho(h.getFechaHecho())
+            .fechaDeCarga(h.getFechaDeCarga())
+            .etiquetas(hashDeEtiquteas)
+            .contenidoMultimedia(h.getContenidoMultimedia())
+            .contribuyente(h.getContribuyente())
+            .build();
     }
 
-    private Contribuyente ContribuyenteDtoToContribuyente(ContribuyenteDTO dto){
-        return new Contribuyente(
-            dto.getId(),
-            dto.getNombre(),
-            dto.getApellido(),
-            LocalDate.parse(dto.getFechaDeNacimiento(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        );
-    }
-
-    private SolicitudDeEliminacion solicitudDTOtoSolicitud(SolicitudDeEliminacionInputDTO solicitud){
-        SolicitudDeEliminacion.builder()
+    private SolicitudDeEliminacion solicitudDTOtoSolicitud(SolicitudDeEliminacionInputDTO solicitud) {
+        return SolicitudDeEliminacion.builder()
             .id(solicitud.getId())
-            .solicitante(ContribuyenteDtoToContribuyente(solicitud.getSolicitante()))
+            .solicitante(solicitud.getSolicitante())
             .hechoId(solicitud.getHechoId())
             .descripcion(solicitud.getDescripcion())
             .estado(solicitud.getEstado())
@@ -151,8 +143,8 @@ public class EstadisticasService implements IEstadisticasService {
             .build();
     }
 
-
 }
+
 
 
 

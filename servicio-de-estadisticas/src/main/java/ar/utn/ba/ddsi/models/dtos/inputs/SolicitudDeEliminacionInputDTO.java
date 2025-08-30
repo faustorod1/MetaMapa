@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.models.dtos.input;
+package ar.utn.ba.ddsi.models.dtos.inputs;
 
 import ar.utn.ba.ddsi.models.entities.Administrador;
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
@@ -14,6 +14,6 @@ public class SolicitudDeEliminacionInputDTO {
   private LocalDateTime fechaDeCarga;
   private LocalDateTime fechaDeResolucion;
   private EstadoSolicitud estado;
-  private ContribuyenteDTO solicitante;
+  private Long solicitante;
   private Administrador administradorQueResolvio;
 }
