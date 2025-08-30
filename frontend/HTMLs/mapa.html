@@ -11,6 +11,7 @@
 
 </head>
 <body>
+    <div id="top-curtain"></div>
     <aside id="hecho-preview">
         <button class="btn-close" onclick="toggleHechoPreview(false)">
             <i class="fa-solid fa-xmark"></i>
@@ -32,7 +33,7 @@
         <div id="map"></div>
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Buscar...">
+            <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
         </div>
         <button class="btn-add" id="btn-add" onclick="onBtnAddClick(event)">
             <i class="fa-solid fa-plus"></i>
@@ -143,6 +144,13 @@ function onBtnAddClick(e) {
             btn.style.setProperty('--translation', `${-(i + 1) * 110}%`);
         });
     }
+}
+
+function openBuscador() {
+    document.getElementById('top-curtain').classList.add('active');
+    setTimeout(() => {
+        window.location.replace('buscador.html');
+    }, 600);
 }
 
 </script>
