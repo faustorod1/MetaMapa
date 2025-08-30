@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fuente-dinamica</artifactId>
+    <artifactId>servicio-de-estadisticas</artifactId>
 
     <dependencies>
         <dependency>

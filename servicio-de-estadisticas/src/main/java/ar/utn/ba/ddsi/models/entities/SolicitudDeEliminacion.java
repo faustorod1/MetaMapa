@@ -9,7 +9,7 @@ public class SolicitudDeEliminacion {
 
     private Long id;
     private String descripcion;
-    private Hecho hecho;
+    private Long hechoId;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaDeResolucion;
     private EstadoSolicitud estado;
@@ -19,7 +19,7 @@ public class SolicitudDeEliminacion {
 
     public SolicitudDeEliminacion(SolicitudDeEliminacionBuilder builder){
         descripcion = builder.getDescripcion();
-        hecho = builder.getHecho();
+        hechoId = builder.getHechoId();
         solicitante = builder.getSolicitante();
         fechaDeCarga = builder.getFechaDeCarga();
         estado = builder.getEstado();

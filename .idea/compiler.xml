@@ -18,9 +18,10 @@
         <module name="servicio-de-estadisticas" />
         <module name="fuente-dinamica" />
         <module name="agregador" />
+        <module name="fuente-estatica" />
         <module name="fuente-proxy" />
         <module name="commons" />
-        <module name="fuente-estatica" />
+        <module name="fuente-dinamica (1)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -35,6 +36,7 @@
       <module name="commons" options="-parameters" />
       <module name="ejercicio" options="-parameters" />
       <module name="fuente-dinamica" options="-parameters" />
+      <module name="fuente-dinamica (1)" options="-parameters" />
       <module name="fuente-estatica" options="-parameters" />
       <module name="fuente-proxy" options="-parameters" />
       <module name="fuenteEstatica" options="-parameters" />

@@ -38,6 +38,8 @@ public class Hecho {
     private ContenidoMultimedia contenidoMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
+    private String provincia;
+    private String municipio;
     private LocalDate fechaHecho;
     private LocalDateTime fechaDeCarga;
     private String idExterno;

@@ -26,6 +26,6 @@ public class HechoInputDTO {
     private LocalDateTime fechaDeCarga;
     private String idExterno;
     private Long contribuyente;
-    private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion; //
+    private List<SolicitudDeEliminacionInputDTO> solicitudesDeEliminacion; //
     private Set<String> etiquetas;
 }
