@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Importar CSV | METAmapa</title>
+
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet"> <!-- tipografia logo -->
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script> <!-- para la flechita de volver a la pag anterior-->
+
+    <style>
+      body {
+        min-height: 100%;
+        margin: 5rem;
+        background-image: url('../fondoLevementeCargado.png');
+        background-attachment: fixed;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+      }
+
+      .csv-import-container {
+        width: 400px;
+        margin: auto;
+        padding: 20px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+
+      .drop-zone {
+        border: 2px dashed #aaa;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 10px;
+        background-color: #fff;
+      }
+
+      .file-list {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 10px;
+      }
+
+      .file-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #eee;
+        margin: 5px 0;
+        padding: 5px 10px;
+        border-radius: 4px;
+        position: relative;
+      }
+
+      .file-list li span {
+        flex-grow: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .file-list li button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        visibility: hidden;
+        transition: visibility 0.2s ease-in-out;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .file-list li:hover button {
+        visibility: visible;
+      }
+
+      .file-list li button:hover svg path {
+        fill: #a00;
+      }
+
+      .file-list li svg {
+        pointer-events: none;
+        width: 16px;
+        height: 16px;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+      }
+    </style>
+</head>
+<body>
+<main>
+  <a href=".." id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+  <div id="fixed-logo"></div>
+
+  <div class="csv-import-container">
+    <h2>Importar Archivo CSV</h2>
+
+    <div class="drop-zone" id="dropZone">
+      <p>Arrastrá tus archivos aquí o</p>
+      <input type="file" id="fileInput" multiple accept=".csv" hidden />
+      <button onclick="document.getElementById('fileInput').click()">Buscar</button>
+    </div>
+
+    <ul id="fileList" class="file-list"></ul>
+
+    <div class="actions">
+      <button onclick="cancelar()">Cancelar</button>
+      <button onclick="confirmar()">OK</button>
+    </div>
+  </div>
+</main>
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    let archivos = [];
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = '#e0f7fa';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.backgroundColor = '#fff';
+    });
+
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = '#fff';
+      manejarArchivos(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', () => {
+      manejarArchivos(fileInput.files);
+    });
+
+    function manejarArchivos(files) {
+      for (let file of files) {
+        if (file.name.endsWith('.csv')) {
+          archivos.push(file);
+        }
+      }
+      actualizarLista();
+    }
+
+    function actualizarLista() {
+      fileList.innerHTML = '';
+      archivos.forEach((file, index) => {
+        const li = document.createElement('li');
+
+        const spanNombre = document.createElement('span');
+        spanNombre.textContent = file.name;
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+            <path fill="#d00" d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        `;
+        btnEliminar.title = "Eliminar archivo";
+        btnEliminar.onclick = () => {
+          archivos.splice(index, 1);
+          actualizarLista();
+        };
+
+        li.appendChild(spanNombre);
+        li.appendChild(btnEliminar);
+        fileList.appendChild(li);
+      });
+    }
+
+    function cancelar() {
+      archivos = [];
+      actualizarLista();
+      alert('Importación cancelada.');
+    }
+
+    function confirmar() {
+      if (archivos.length === 0) {
+        alert('No hay archivos para importar.');
+        return;
+      }
+
+      // Acá podrías enviar los archivos al backend con fetch/FormData
+      alert(`Importando ${archivos.length} archivo(s)...`);
+    }
+  </script>
+</body>
+</html>
