@@ -9,8 +9,7 @@ public abstract class AlgoritmoDeConsenso {
 
         List<Hecho> hechosAManejar = aplicarA(hechos, fuentes);
         hechosAManejar = sinContradiccion(hechosAManejar,fuentes);
-        List<Hecho> hechosConsensuados = sinDuplicados(hechosAManejar);
-        return hechosConsensuados;
+        return sinDuplicados(hechosAManejar);
 
     }
 

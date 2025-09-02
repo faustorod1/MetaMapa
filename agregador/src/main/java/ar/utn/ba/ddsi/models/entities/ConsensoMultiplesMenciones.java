@@ -26,8 +26,3 @@ public class ConsensoMultiplesMenciones extends AlgoritmoDeConsenso {
         return hechosConsensuados;
     }
 }
-
-
-
-
-

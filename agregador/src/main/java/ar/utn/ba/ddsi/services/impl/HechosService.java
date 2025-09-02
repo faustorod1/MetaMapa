@@ -78,6 +78,11 @@ public class HechosService implements IHechosService {
 
         Mono<Void> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
                 .doOnNext(tupla -> {
+
+                    //normalizar(tupla.getT1());        categoria y ubicacion
+                    //normalizar(tupla.getT2());        categoria y ubicacion
+                    //normalizar(tupla.getT3());        categoria y ubicacion
+
                     hechosRepository.saveAll(tupla.getT1());
                     hechosRepository.saveAll(tupla.getT2());
                     hechosRepository.saveAll(tupla.getT3());
