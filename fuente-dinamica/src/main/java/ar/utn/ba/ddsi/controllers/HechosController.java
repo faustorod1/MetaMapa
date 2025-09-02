@@ -31,13 +31,12 @@ public class HechosController {
   }
 
   @GetMapping
-  public List<HechoOutputDTO> listarHechos (){
+  public List<HechoOutputDTO> listarHechos(){
     return hechosService.getAll_DTO();
   }
 
   @GetMapping(params = "desde") // localhost:8082/api/hechos?desde=algo
-  public List<HechoOutputDTO> buscarTodosCargadosDesde(
-          @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
+  public List<HechoOutputDTO> buscarTodosCargadosDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
     return this.hechosService.getAllDesde_DTO(desde);
   }
 

@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -30,7 +31,7 @@ public class LectorDeCSV {
             Double latitud = Double.parseDouble(fila[CamposHecho.LATITUD.ordinal()]);
             Double longitud = Double.parseDouble(fila[CamposHecho.LONGITUD.ordinal()]);
             String fechaString = fila[(CamposHecho.FECHADEHECHO.ordinal())];
-            LocalDate fecha = LocalDate.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            LocalDateTime fecha = LocalDateTime.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             Hecho h = Hecho.builder()
                     .id((long) i)

@@ -9,6 +9,11 @@ public interface IEstadisticasService {
     String provinciaConMasHechosDeColeccion(String coleccion_id);
     String categoriaConMasHechos();
     String provinciaConMasHechosDeCategoria(String categoria);
-    LocalTime horarioConMasHechosDeCiertaCategoria(Categoria categoria);
+    LocalTime horarioConMasHechosDeCiertaCategoria(String categoria);
     Long solicitudesSpam();
+    String provinciaConMasHechosDeColeccionCSV(String coleccion_id);
+    String categoriaConMasHechosCSV();
+    String provinciaConMasHechosDeCategoriaCSV(String categoria);
+    String horarioConMasHechosPorCategoriaCSV(String categoria);
+    String solicitudesSpamCSV();
 }

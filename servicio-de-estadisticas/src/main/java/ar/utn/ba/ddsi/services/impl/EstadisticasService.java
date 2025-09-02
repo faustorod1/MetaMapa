@@ -1,6 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
-import ar.utn.ba.ddsi.models.dtos.inputs.ContribuyenteDTO;
+import ar.utn.ba.ddsi.commons.CSVReader;
 import ar.utn.ba.ddsi.models.dtos.inputs.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dtos.inputs.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
@@ -9,9 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ public class EstadisticasService implements IEstadisticasService {
     public String provinciaConMasHechosDeCategoria(String categoria) {
         List<Hecho> hechos = getHechosFromAgregador();
         List<Hecho> hechosDeCategoria = hechos.stream()
-            .filter(h -> h.getCategoria().equals(categoria))
+            .filter(h -> h.getCategoria().getNombre().equals(categoria))
             .collect(Collectors.toList());
         return provinciaConMasHechos(hechosDeCategoria);
     }
@@ -45,9 +44,9 @@ public class EstadisticasService implements IEstadisticasService {
     }
 
 
-    public LocalTime horarioConMasHechosDeCiertaCategoria(Categoria categoria) {
+    public LocalTime horarioConMasHechosDeCiertaCategoria(String categoria) {
         List<Hecho> hechos = getHechosFromAgregador();
-        List<Hecho> hechosDeCategoriaParticular = hechos.stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria.getNombre())).toList();
+        List<Hecho> hechosDeCategoriaParticular = hechos.stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria)).toList();
 
         int hora = masHechosSegunParametro(hechosDeCategoriaParticular, hecho -> hecho.getFechaHecho().getHour());
         return LocalTime.of(hora, 0);
@@ -56,23 +55,97 @@ public class EstadisticasService implements IEstadisticasService {
     public Long solicitudesSpam() {
         List<SolicitudDeEliminacion> solicitudes = getSolicitudesFromAgregador();
         return solicitudes
-            .stream().
-            filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.RECHAZADA_POR_SPAM))
-            .count();
+                .stream()
+                .filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.RECHAZADA_POR_SPAM))
+                .count();
     }
 
+    //--------------------------------------------------------- CSV --------------------------------------------------------------//
+
+    public String provinciaConMasHechosDeColeccionCSV(String coleccion_id) {
+        List<Hecho> hechos = getHechosDeColeccionFromAgregador(coleccion_id);
+        List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, Hecho::getProvincia);
+        return generarCSV(leaderboard, "Provincia");
+    }
+
+    public String categoriaConMasHechosCSV(){
+        List<Hecho> hechos = getHechosFromAgregador();
+
+        List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, hecho -> hecho.getCategoria().getNombre());
+        return generarCSV(leaderboard, "Categoria");
+    }
+
+    public String provinciaConMasHechosDeCategoriaCSV(String categoria){
+        List<Hecho> hechos = getHechosFromAgregador().stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria)).toList();
+
+        List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, Hecho::getProvincia);
+        return generarCSV(leaderboard, "Provincia");
+    }
+
+    public String horarioConMasHechosPorCategoriaCSV(String categoria){
+        List<Hecho> hechos = getHechosFromAgregador().stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria)).toList();
+        List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, hecho -> String.valueOf(hecho.getFechaHecho().getHour()));
+        return generarCSV(leaderboard, "Horario");
+    }
+
+    public String solicitudesSpamCSV(){
+        List<SolicitudDeEliminacion> solicitudes = getSolicitudesFromAgregador();
+        Integer cantTotal = solicitudes.size();
+        Long cantSpam = solicitudes
+            .stream()
+            .filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.RECHAZADA_POR_SPAM))
+            .count();
+
+        String[] headers = {"Cantidad total", "Spam"};
+        String[] data = { cantTotal.toString(), cantSpam.toString() };
+
+        ArrayList<String[]> arr = new ArrayList<>();
+        arr.add(headers);
+        arr.add(data);
+
+        String path = "../%s-stat.csv".formatted(LocalDateTime.now());
+        CSVReader.crear(path, arr);
+        return path;
+    }
 
     //--------------------------------------------------------- privados ---------------------------------------------------------//
 
+    private <TipoKey> String generarCSV(List<Map.Entry<TipoKey, Long>> data, String headerName) {
+        ArrayList<String[]> leaderboardStr = entryListToStringArray(data);
+        String[] headers = { headerName, "Cantidad de hechos" };
+        leaderboardStr.add(0, headers);
+        String path = "../%s-stat.csv".formatted(LocalDateTime.now());
+        CSVReader.crear(path, leaderboardStr);
+        return path;
+    }
+    
+    private <TipoKey> ArrayList<String[]> entryListToStringArray(List<Map.Entry<TipoKey, Long>> entryList) {
+        ArrayList<String[]> arrayList = new ArrayList<>();
+        entryList.forEach(entry -> {
+            String[] str = new String[2];
+            str[0] = entry.getKey().toString();
+            str[1] = entry.getValue().toString();
+            arrayList.add(str);
+        });
+        return arrayList;
+    }
+
+    private <TipoRetorno> List<Map.Entry<TipoRetorno, Long>> cantidadHechosSegunParametro(List <Hecho> hechos, Function<Hecho, TipoRetorno> criterio) {
+        return hechos.stream()
+                .collect(Collectors.groupingBy(criterio, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .toList();
+    }
+
 
     private <TipoRetorno> TipoRetorno masHechosSegunParametro(List<Hecho> hechos, Function<Hecho, TipoRetorno> criterio) {
-        return hechos.stream()
-            .collect(Collectors.groupingBy(criterio, Collectors.counting()))
-            .entrySet()
-            .stream()
-            .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey)
-            .orElse(null);
+        return cantidadHechosSegunParametro(hechos, criterio)
+                .stream()
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     private String provinciaConMasHechos(List<Hecho> hechos) {
@@ -133,7 +206,7 @@ public class EstadisticasService implements IEstadisticasService {
     private SolicitudDeEliminacion solicitudDTOtoSolicitud(SolicitudDeEliminacionInputDTO solicitud) {
         return SolicitudDeEliminacion.builder()
             .id(solicitud.getId())
-            .solicitante(solicitud.getSolicitante())
+            .solicitante(solicitud.getSolicitante())        // En este servicio, el solicitante se maneja con un Long
             .hechoId(solicitud.getHechoId())
             .descripcion(solicitud.getDescripcion())
             .estado(solicitud.getEstado())
@@ -144,7 +217,3 @@ public class EstadisticasService implements IEstadisticasService {
     }
 
 }
-
-
-
-

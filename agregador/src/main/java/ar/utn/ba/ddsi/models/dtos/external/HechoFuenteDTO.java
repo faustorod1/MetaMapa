@@ -18,7 +18,7 @@ public class HechoFuenteDTO {
     private ContenidoMultimedia contenidoMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
-    private LocalDate fechaHecho;
+    private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private boolean eliminado;
     private ContribuyenteDTO contribuyente;

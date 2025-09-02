@@ -24,7 +24,7 @@ public class Hecho {
     private ContenidoMultimedia contenidoMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
-    private LocalDate fechaHecho;
+    private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaUltimaActualizacion;
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.

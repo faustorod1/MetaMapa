@@ -91,7 +91,7 @@ public class HechosService implements IHechosService {
         .categoria(new Categoria(hechoInputDTO.getCategoria()))
         //.contenidoMultimedia(new ContenidoMultimedia())
         .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(),hechoInputDTO.getLongitud()))
-        .fechaHecho(LocalDate.parse(hechoInputDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
+        .fechaHecho(LocalDateTime.parse(hechoInputDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
         .eliminado(false)
         .contribuyente(new Contribuyente(contribuyenteDTO.getId(), contribuyenteDTO.getNombre(), contribuyenteDTO.getApellido(),
                 LocalDate.parse(contribuyenteDTO.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))

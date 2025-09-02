@@ -15,7 +15,7 @@ public class HechoExternalMetamapaDTO {
     //private String contenidoMultimedia;
     private Double latitud;
     private Double longitud;
-    private LocalDate fechaHecho;
+    private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaUltimaActualizacion;
 }

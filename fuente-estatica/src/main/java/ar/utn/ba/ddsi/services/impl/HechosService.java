@@ -65,7 +65,7 @@ public class HechosService implements IHechosService {
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setFechaUltimaActualizacion(hecho.getFechaDeCarga());
         dto.setEliminado(false);
-        dto.setContribuyente(null);
+        dto.setContribuyenteId(null);
         dto.setEtiquetas(new HashSet<Etiqueta>());
 
         return dto;

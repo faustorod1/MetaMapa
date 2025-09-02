@@ -24,7 +24,7 @@ public class HechoOutputDTO {
     private ContenidoMultimedia contenidoMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
-    private LocalDate fechaHecho;
+    private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaUltimaActualizacion;
     private boolean eliminado;

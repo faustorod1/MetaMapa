@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalTime;
 
 
-
 @RestController
 @RequestMapping("/api")
 
@@ -41,7 +40,7 @@ public class EstadisticasController {
     }
 
     @GetMapping("/categorias/{categoria}/horarios/top")
-    public ResponseEntity<LocalTime> horarioConMasHechosPorCategoria(@PathVariable Categoria categoria){
+    public ResponseEntity<LocalTime> horarioConMasHechosPorCategoria(@PathVariable String categoria){
         LocalTime horario = estadisticasService.horarioConMasHechosDeCiertaCategoria(categoria);
         return ResponseEntity.ok(horario);
     }
@@ -50,5 +49,37 @@ public class EstadisticasController {
     public ResponseEntity<Long> cuantasSonSpam (){
         Long cantidad = estadisticasService.solicitudesSpam();
         return ResponseEntity.ok(cantidad);
+    }
+
+    //------------------------Estadísticas CSV----------------------------//
+
+    @GetMapping("/colecciones/{id}/provincias/top/csv")
+    public ResponseEntity<String> provinciaConMasHechosDeColeccionCSV(@PathVariable String id) {
+        String path = estadisticasService.provinciaConMasHechosDeColeccionCSV(id);
+        return ResponseEntity.ok(path);
+    }
+
+    @GetMapping("/colecciones/top/csv")
+    public ResponseEntity<String> categoriaConMasHechosCSV(){
+        String path = estadisticasService.categoriaConMasHechosCSV();
+        return ResponseEntity.ok(path);
+    }
+
+    @GetMapping("/categorias/{categoria}/provincias/top/csv")
+    public ResponseEntity<String> provinciaConMasHechosDeCategoriaCSV(@PathVariable String categoria){
+        String path = estadisticasService.provinciaConMasHechosDeCategoriaCSV(categoria);
+        return ResponseEntity.ok(path);
+    }
+
+    @GetMapping("categorias/{categoria}/horarios/top/csv")
+    public ResponseEntity<String> horarioConMasHechosPorCategoriaCSV(@PathVariable String categoria){
+        String path = estadisticasService.horarioConMasHechosPorCategoriaCSV(categoria);
+        return ResponseEntity.ok(path);
+    }
+
+    @GetMapping("/solicitudes/cantidad-spam/csv")
+    public ResponseEntity<String> cuantasSonSpamCSV(){
+        String path = estadisticasService.solicitudesSpamCSV();
+        return ResponseEntity.ok(path);
     }
 }

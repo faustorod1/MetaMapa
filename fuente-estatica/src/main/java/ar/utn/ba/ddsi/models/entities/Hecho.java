@@ -17,7 +17,7 @@ public class Hecho {
     private String descripcion;
     private Categoria categoria;
     private Coordenada lugarAcontecimiento;
-    private LocalDate fechaHecho;
+    private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private Long id; // Identificador dentro del dataset
     private Long idDataset; // Identificador del dataset
