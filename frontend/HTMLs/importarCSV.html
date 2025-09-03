@@ -10,8 +10,8 @@
 
     <style>
       body {
-        min-height: 100%;
-        margin: 5rem;
+        height: 100vh;
+          margin:0;
         background-image: url('../fondoLevementeCargado.png');
         background-attachment: fixed;
         background-position: center center;
@@ -23,23 +23,32 @@
         font-family: sans-serif;
       }
 
+      h2{
+          margin-bottom:0.2rem;
+      }
+
       .csv-import-container {
-        width: 400px;
+        width: 50rem;
         margin: auto;
-        padding: 20px;
+        padding: 0.8rem;
         border: 2px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
+        border-radius: 1rem;
+        background-color: #d9d9d9;
       }
 
       .drop-zone {
-        border: 2px dashed #aaa;
-        padding: 20px;
-        text-align: center;
+            border: 0.1rem dashed #aaa;
+          display:flex;
+          border-radius: 0.5rem;
+            padding: 2rem;
+            align-items: center;
+          justify-content: center;
+          gap:0.5rem;
+          text-align: center;
         cursor: pointer;
-        margin-bottom: 10px;
-        background-color: #fff;
+        background-color: #f0eded;
       }
+
 
       .file-list {
         list-style: none;
@@ -97,6 +106,36 @@
         display: flex;
         justify-content: space-between;
       }
+
+      .btn-submit{
+          font-size: 1rem;
+          text-decoration: none;
+          padding: 0.5em;
+          border-radius: 2em;
+          color: black;
+          font-weight: bold;
+          cursor: pointer;
+          background-color: #bdbcbc;
+      }
+
+      #btn-ok{
+          width:4rem;
+      }
+
+      .btn-buscar{
+          font-size: 1rem;
+          padding:0.2rem;
+          border-radius:0.3rem;
+      }
+
+      .btn-submit:hover {
+          background-color: var(--color-container);
+      }
+
+      .btn-buscar:hover {
+          background-color: var(--color-container);
+      }
+
     </style>
 </head>
 <body>
@@ -105,19 +144,19 @@
   <div id="fixed-logo"></div>
 
   <div class="csv-import-container">
-    <h2>Importar Archivo CSV</h2>
+    <h2>Importar archivo CSV</h2>
 
     <div class="drop-zone" id="dropZone">
       <p>Arrastrá tus archivos aquí o</p>
       <input type="file" id="fileInput" multiple accept=".csv" hidden />
-      <button onclick="document.getElementById('fileInput').click()">Buscar</button>
+      <button class="btn-buscar" onclick="document.getElementById('fileInput').click()">Buscar</button>
     </div>
 
     <ul id="fileList" class="file-list"></ul>
 
     <div class="actions">
-      <button onclick="cancelar()">Cancelar</button>
-      <button onclick="confirmar()">OK</button>
+      <button class="btn-submit" onclick="cancelar()">Cancelar</button>
+      <button class="btn-submit" id="btn-ok" onclick="confirmar()">OK</button>
     </div>
   </div>
 </main>
