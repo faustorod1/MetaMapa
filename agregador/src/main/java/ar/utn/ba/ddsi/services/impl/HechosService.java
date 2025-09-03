@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
+import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ public class HechosService implements IHechosService {
 
     private Map<OrigenHecho, WebClient> webClients = new HashMap<OrigenHecho, WebClient>();
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
+
+    private ICategoriaRepository categoriaRepository;
 
 
     @Autowired
@@ -78,14 +81,13 @@ public class HechosService implements IHechosService {
 
         Mono<Void> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
                 .doOnNext(tupla -> {
+                    List<Hecho> hechos = new ArrayList<>(tupla.getT1());
+                    hechos.addAll(tupla.getT2());
+                    hechos.addAll(tupla.getT3());
 
-                    //normalizar(tupla.getT1());        categoria y ubicacion
-                    //normalizar(tupla.getT2());        categoria y ubicacion
-                    //normalizar(tupla.getT3());        categoria y ubicacion
+                    normalizarCategoria(hechos);
 
-                    hechosRepository.saveAll(tupla.getT1());
-                    hechosRepository.saveAll(tupla.getT2());
-                    hechosRepository.saveAll(tupla.getT3());
+                    hechosRepository.saveAll(hechos);
                 })
                 .then();
 
@@ -100,6 +102,25 @@ public class HechosService implements IHechosService {
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(todosLosHechos));
 
         return mono;
+    }
+
+    @Override
+    public void normalizarCategoria(List<Hecho> hechos){
+        List<Categoria> listaDeCategorias = categoriaRepository.findAll();
+
+        hechos.forEach(hecho -> {
+            String categoriaOriginal = hecho.getCategoria().getNombre();
+            Boolean coincidioConUna = false;
+
+            for (Categoria categoria : listaDeCategorias) {
+                if (categoria.esLaMisma(categoriaOriginal)) {
+                    hecho.setCategoria(categoria);
+                    return;
+                }
+            }
+
+            hecho.setCategoria(null);
+        });
     }
 
 
@@ -149,7 +170,7 @@ public class HechosService implements IHechosService {
         
         applicationEventPublisher.publishEvent(new HechoEliminadoEvent(hecho));
     }
-    
+
     // ---- Conversiones DTO -------------------------------------------------------------------------------
 
     public HechoOutputDTO hechoOutputDTO(Hecho hecho) {

@@ -16,7 +16,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="servicio-de-estadisticas" />
-        <module name="fuente-dinamica (1)" />
       </profile>
       <profile name="Annotation profile for agregador" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -67,6 +66,16 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="fuente-proxy" />
+      </profile>
+      <profile name="Annotation profile for fuente-dinamica (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="fuente-dinamica (1)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

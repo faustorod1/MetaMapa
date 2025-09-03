@@ -35,7 +35,7 @@ public class Categoria {
     public Boolean esSimilarSegunLevenshtein(String b) {
         LevenshteinDistance dist = new LevenshteinDistance();
         int d = dist.apply(this.nombre, b);
-        double ratio = 1     - (double) d / Math.max(this.nombre.length(), b.length());
+        double ratio = 1 - (double) d / Math.max(this.nombre.length(), b.length());
         return ratio > 0.8;
     }
 }

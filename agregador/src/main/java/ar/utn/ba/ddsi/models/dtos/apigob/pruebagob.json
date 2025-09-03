@@ -1,0 +1,21 @@
+[
+    {
+        "ubicacion": {
+            "departamento": {
+              "id": "82084",
+              "nombre": "Rosario"
+            },
+            "provincia": {
+              "id": "82",
+              "nombre": "Santa Fe"
+            },
+            "municipio": {
+              "id": "820196",
+              "nombre": "Granadero Baigorria"
+            },
+            "lat": -32.8551545,
+            "lon": -60.697636
+        },
+        "parametros": {}
+    }
+]
