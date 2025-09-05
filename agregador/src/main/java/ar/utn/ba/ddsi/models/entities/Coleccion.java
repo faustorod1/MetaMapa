@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

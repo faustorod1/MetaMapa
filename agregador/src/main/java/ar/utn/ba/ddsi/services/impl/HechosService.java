@@ -1,12 +1,18 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.models.dtos.apigob.GeorrefRequestDTO;
+import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
+import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
+import ar.utn.ba.ddsi.models.dtos.apigob.UbicacionDTO;
 import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
+import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
 import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
+import ar.utn.ba.ddsi.models.repositories.IMunicipiosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Service
@@ -34,6 +41,7 @@ public class HechosService implements IHechosService {
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
     private ICategoriaRepository categoriaRepository;
+    private IMunicipiosRepository municipiosRepository;
 
 
     @Autowired
@@ -87,6 +95,7 @@ public class HechosService implements IHechosService {
 
                     normalizarCategoria(hechos);
 
+
                     hechosRepository.saveAll(hechos);
                 })
                 .then();
@@ -121,6 +130,61 @@ public class HechosService implements IHechosService {
 
             hecho.setCategoria(null);
         });
+    }
+
+    @Override
+    public void normalizarUbicacion(List<Hecho> hechos){
+        List<Hecho> requierenGeorref = new ArrayList<>();
+        hechos.forEach(hecho -> {
+            if (hecho.getLugarAcontecimiento() != null) {
+                requierenGeorref.add(hecho);
+            }
+            else {
+                // TODO Normalización tipo categoría
+            }
+
+        });
+
+        Map<Coordenada, List<Hecho>> hechosPorCoordenada = requierenGeorref.stream()
+                .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
+        List<Coordenada> coordenadas = hechosPorCoordenada.keySet().stream().toList();
+
+        georreferenciacionInversa(coordenadas).subscribe(municipiosPorCoordenada -> {
+            municipiosPorCoordenada.forEach((coordenada, municipio) -> {
+                hechosPorCoordenada.get(coordenada).forEach(hechoAModificar -> {
+                    hechoAModificar.setMunicipio(municipio);
+                });
+            });
+        });
+    }
+
+    public Mono<Map<Coordenada, Municipio>> georreferenciacionInversa(List<Coordenada> coordenadas){
+
+        List<GeorrefRequestDTO> coordFormat = coordenadas.stream().map(this::coordToGeorrefRequestDto).toList();
+        List<Municipio> municipios = municipiosRepository.findAll();
+
+        return webClients.get(OrigenHecho.PROXY)
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("https://apis.datos.gob.ar/georef/api/ubicacion")
+                        .queryParam("Ubicaciones", coordFormat)
+                        .build())
+                .retrieve()
+                .bodyToMono(GeorreferenciacionDTO.class)
+                .map(dto -> Optional.ofNullable(dto.getResultados()).orElse(Collections.emptyList()))
+                .map(listaRes -> listaRes.stream().map(ResultadoGeoDTO::getUbicacion).toList())
+                .map(ubicaciones -> {
+                    Map<Coordenada, Municipio> municipiosPorCoordenada = new HashMap<>();
+                    ubicaciones.forEach(ubicacion -> {
+                        Municipio municipio = municipios.stream().filter(m ->
+                                        m.getNombre().equals(ubicacion.getMunicipio_nombre()) &&
+                                                m.getProvincia().getNombre().equals(ubicacion.getProvinicia_nombre()))
+                                .findFirst().orElse(null);
+                        Coordenada coord = new Coordenada(ubicacion.getLat(), ubicacion.getLon());
+                        municipiosPorCoordenada.put(coord, municipio);
+                    });
+                    return municipiosPorCoordenada;
+                });
     }
 
 
@@ -171,7 +235,18 @@ public class HechosService implements IHechosService {
         applicationEventPublisher.publishEvent(new HechoEliminadoEvent(hecho));
     }
 
+
+
     // ---- Conversiones DTO -------------------------------------------------------------------------------
+
+    private GeorrefRequestDTO coordToGeorrefRequestDto(Coordenada c){
+    return GeorrefRequestDTO.builder()
+            .lat(c.getLatitud())
+            .lon(c.getLongitud())
+            .aplanar(true)
+            .campo("municipio.nombre,provincia.nombre")
+            .build();
+    }
 
     public HechoOutputDTO hechoOutputDTO(Hecho hecho) {
         HechoOutputDTO dto = new HechoOutputDTO();

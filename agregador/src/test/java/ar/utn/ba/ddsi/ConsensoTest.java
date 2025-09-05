@@ -2,11 +2,11 @@ package ar.utn.ba.ddsi;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.Categoria;
-import ar.utn.ba.ddsi.models.entities.ConsensoAbsoluta;
-import ar.utn.ba.ddsi.models.entities.ConsensoMayoriaSimple;
-import ar.utn.ba.ddsi.models.entities.ConsensoMultiplesMenciones;
+import ar.utn.ba.ddsi.models.entities.consenso.ConsensoAbsoluta;
+import ar.utn.ba.ddsi.models.entities.consenso.ConsensoMayoriaSimple;
+import ar.utn.ba.ddsi.models.entities.consenso.ConsensoMultiplesMenciones;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.AlgoritmoDeConsenso;
+import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

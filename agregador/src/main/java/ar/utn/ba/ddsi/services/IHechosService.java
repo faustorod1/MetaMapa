@@ -14,4 +14,6 @@ public interface IHechosService {
     Mono<List<Hecho>> getFromMetaMapa();
     Mono<Void> actualizarHechos();
     HechoOutputDTO hechoOutputDTO(Hecho hecho);
+    void normalizarCategoria(List<Hecho> hechos);
+    void normalizarUbicacion(List<Hecho> hechos);
 }

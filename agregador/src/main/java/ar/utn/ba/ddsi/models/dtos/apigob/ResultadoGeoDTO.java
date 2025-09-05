@@ -1,8 +1,8 @@
 package ar.utn.ba.ddsi.models.dtos.apigob;
 
-import java.util.List;
+import lombok.Data;
 
+@Data
 public class ResultadoGeoDTO {
-  private List<UbicacionDTO> ubicacion;
-  private List<ParametroDTO> parametros;
+  private UbicacionDTO ubicacion;
 }

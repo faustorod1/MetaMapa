@@ -2,6 +2,8 @@ package ar.utn.ba.ddsi;
 
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.models.entities.filtros.FiltroPorCategoria;
+import ar.utn.ba.ddsi.models.entities.filtros.FiltroPorFechaHecho;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

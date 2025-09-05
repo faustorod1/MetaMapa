@@ -1,11 +1,13 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
+import ar.utn.ba.ddsi.models.entities.ubicacion.Provincia;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,6 +34,7 @@ public class Hecho {
     private Long id;        // USO: Identificacion unica para el Repository (futura BD)
     private String idExterno; // //proxy/2/5
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
+    private Municipio municipio;
 
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
@@ -125,6 +128,10 @@ public class Hecho {
                 !Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) ||
                 !Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
                 !Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+    }
+
+    public Provincia getProvincia(){
+       return this.municipio.getProvincia();
     }
 
 }

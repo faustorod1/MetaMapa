@@ -1,5 +1,7 @@
-package ar.utn.ba.ddsi.models.entities;
+package ar.utn.ba.ddsi.models.entities.consenso;
 
+
+import ar.utn.ba.ddsi.models.entities.Hecho;
 
 import java.util.ArrayList;
 import java.util.List;

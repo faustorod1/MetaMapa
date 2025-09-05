@@ -1,11 +1,13 @@
 package ar.utn.ba.ddsi.models.dtos.apigob;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class UbicacionDTO{
-  private List<IdYNombreDTO> departamento;
-  private List<IdYNombreDTO> provinicia;
-  private List<IdYNombreDTO> municipio;
-  private Double latitud;
-  private Double longitud;
+  private String provinicia_nombre;
+  private String municipio_nombre;
+  private Double lat;
+  private Double lon;
 }

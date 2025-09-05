@@ -1,5 +1,6 @@
-package ar.utn.ba.ddsi.models.entities;
+package ar.utn.ba.ddsi.models.entities.filtros;
 
+import ar.utn.ba.ddsi.models.entities.Hecho;
 import lombok.Getter;
 import ar.utn.ba.ddsi.commons.Coordenada;
 

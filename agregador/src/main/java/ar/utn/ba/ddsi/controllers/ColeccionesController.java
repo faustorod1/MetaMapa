@@ -4,7 +4,6 @@ import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
-import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
