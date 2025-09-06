@@ -1,11 +1,14 @@
 package ar.utn.ba.ddsi.models.repositories;
 
 import ar.utn.ba.ddsi.models.entities.Coleccion;
+import ar.utn.ba.ddsi.models.entities.Hecho;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-public interface IColeccionesRepository {
-    List<Coleccion> findAll();
+@Repository
+public interface IColeccionesRepository extends JpaRepository<Coleccion, Long> {
     Coleccion findByIdentificador(String identificador);
-    void save(Coleccion coleccion);
     void delete(String identificador);
 }

@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
@@ -10,9 +11,6 @@ import ar.utn.ba.ddsi.models.dtos.output.FiltroOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
-import ar.utn.ba.ddsi.models.entities.consenso.ConsensoAbsoluta;
-import ar.utn.ba.ddsi.models.entities.consenso.ConsensoMayoriaSimple;
-import ar.utn.ba.ddsi.models.entities.consenso.ConsensoMultiplesMenciones;
 import ar.utn.ba.ddsi.models.entities.filtros.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
@@ -23,7 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -271,8 +269,8 @@ public class ColeccionesService implements IColeccionesService {
             Double longitud = (Double) input.getParametros().get("longitud");
             return new FiltroPorUbicacion(new Coordenada(latitud, longitud));
         }else if(input.getTipoDeFiltro().equals("fechaHecho")){
-            LocalDate desde = LocalDate.parse((String) input.getParametros().get("desde"));
-            LocalDate hasta = LocalDate.parse((String) input.getParametros().get("hasta"));
+            LocalDateTime desde = LocalDateTime.parse((String) input.getParametros().get("desde"));
+            LocalDateTime hasta = LocalDateTime.parse((String) input.getParametros().get("hasta"));
             return new FiltroPorFechaHecho(desde,hasta);
         }else if(input.getTipoDeFiltro().equals("fechaDeCarga")){
             return new FiltroPorFechaDeCarga((String) input.getParametros().get("desde"),(String) input.getParametros().get("hasta"));
@@ -282,17 +280,6 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     private AlgoritmoDeConsenso obtenerAlgoritmoDeConsenso(String algoritmoDeConsenso){         // no devuelve una interfaz OJO
-        if("absoluta".equalsIgnoreCase(algoritmoDeConsenso)){
-            return new ConsensoAbsoluta();
-        }else if("mayoriaSimple".equalsIgnoreCase(algoritmoDeConsenso)){
-            return new ConsensoMayoriaSimple();
-        }else if("multiplesMenciones".equalsIgnoreCase(algoritmoDeConsenso)){
-            return new ConsensoMultiplesMenciones();
-        }else{
-            return null;        // Tanto el enunciado, como nuestro código, contempla este caso
-        }
+        return new AlgoritmoDeConsensoConverter().convertToEntityAttribute(algoritmoDeConsenso);
     }
-
-
-
 }

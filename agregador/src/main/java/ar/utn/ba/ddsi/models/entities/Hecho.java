@@ -2,6 +2,20 @@ package ar.utn.ba.ddsi.models.entities;
 
 import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Provincia;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,29 +31,70 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Data
-
+@Entity
+@Table(name = "hechos")
 public class Hecho {
-
-    private String titulo;
-    private String descripcion;
-    private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
-    private OrigenHecho origen;
-    private Coordenada lugarAcontecimiento;
-    private LocalDateTime fechaHecho;
-    private LocalDateTime fechaDeCarga;
-    private LocalDateTime fechaUltimaActualizacion;
-    private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
-    private Contribuyente contribuyente;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;        // USO: Identificacion unica para el Repository (futura BD)
+
+    @Column(name = "titulo", columnDefinition = "VARCHAR(100)", nullable = false)
+    private String titulo;
+
+    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = false)
+    private String descripcion;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)
+    private Categoria categoria;
+
+    private ContenidoMultimedia contenidoMultimedia;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "origen")
+    private OrigenHecho origen;
+
+    @Embedded
+    private Coordenada lugarAcontecimiento;
+
+    @Column(name = "fecha_del_hecho", columnDefinition = "DATETIME", nullable = false)
+    private LocalDateTime fechaHecho;
+
+    @Column(name = "fecha_de_carga", columnDefinition = "DATETIME", nullable = false)
+    private LocalDateTime fechaDeCarga;
+
+    @Column(name = "fecha_de_ultima_actualizacion", columnDefinition = "DATETIME", nullable = false)
+    private LocalDateTime fechaUltimaActualizacion;
+
+    @Column(name = "eliminado", nullable = false)
+    private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.}
+
+    @ManyToOne
+    @JoinColumn(name = "contribuyente_id", referencedColumnName = "id", nullable = true)
+    private Contribuyente contribuyente;
+
+    @Column(name = "id_externo", columnDefinition = "VARCHAR(20)", nullable = false)
     private String idExterno; // //proxy/2/5
+
+    @Column(name = "revisado", nullable = false)
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
+
+    @ManyToOne
+    @JoinColumn(name = "municipio_id", referencedColumnName = "id", nullable = false)
     private Municipio municipio;
 
+    @OneToMany(mappedBy = "solicitudes_de_eliminacion")
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "etiquetas_por_hecho",
+        joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name ="etiqueta_id", referencedColumnName = "id"))
     @Builder.Default // si el builder no le da el valor, hace esto por defecto
     private HashSet<Etiqueta> etiquetas = new HashSet<>();
+
+    protected Hecho() {}
 
     public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Contribuyente contribuyente) {
         try {

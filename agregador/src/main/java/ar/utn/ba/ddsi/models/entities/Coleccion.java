@@ -1,6 +1,22 @@
 package ar.utn.ba.ddsi.models.entities;
 
+import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,20 +26,60 @@ import java.util.List;
 
 @Getter
 @Setter
+
+@Entity
+@Table(name = "colecciones")
 public class Coleccion {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String identificador;       // handle: string alfanumerico (único para cada colección)
+
+    @Column(name = "titulo", columnDefinition = "VARCHAR(40)", nullable = false)
     private String titulo;
+
+    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = true)
     private String descripcion;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "criterio_id", referencedColumnName = "id")
     private Criterio criterioDePertenencia;
+
+    @Convert(converter = AlgoritmoDeConsensoConverter.class)
+    @Column(name = "algoritmo_de_consenso")
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
+    @ElementCollection
+    @CollectionTable(name = "coleccion_fuentes", joinColumns = @JoinColumn(name = "fuente_id"))
+    @Column(name = "fuentes")
     private List<String> fuentes; //TODO convertir a enum? (correccion)
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "hechos_en_coleccion_cargados_manualmente",
+            joinColumns = @JoinColumn(name = "coleccion_id",
+            referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     private List<Hecho> hechosCargadosManualmente;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "hechos_en_coleccion_consensuados",
+        joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name ="hecho_id", referencedColumnName = "id"))
     private List<Hecho> hechosConsensuados;
 
-    @Getter(AccessLevel.NONE) // <-
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "coleccion_hechos",
+        joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
+    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
+
+    protected Coleccion() {} //Para el ORM
 
     public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes, AlgoritmoDeConsenso algoritmoDeConsenso) {
         this.identificador = identificador;
@@ -44,7 +100,7 @@ public class Coleccion {
         return new ArrayList<>(hechosConsensuados);
     }
 
-    public ICriterioInmutable getCriterio() {
+    public Criterio getCriterio() {
         return criterioDePertenencia;
     }
 

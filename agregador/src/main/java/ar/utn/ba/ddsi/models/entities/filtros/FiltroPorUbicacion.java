@@ -1,15 +1,24 @@
 package ar.utn.ba.ddsi.models.entities.filtros;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import lombok.Getter;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import lombok.Data;
 import ar.utn.ba.ddsi.commons.Coordenada;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@Entity @DiscriminatorColumn(name = "ubicacion")
 public class FiltroPorUbicacion extends Filtro {
-    @Getter
+
+    @Embedded
     private Coordenada lugar;
+
+    public FiltroPorUbicacion() {}
 
     public FiltroPorUbicacion(Coordenada lugar) {
         this.lugar = lugar;

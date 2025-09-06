@@ -1,35 +1,45 @@
 package ar.utn.ba.ddsi.models.entities.filtros;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Builder
-@Getter
+@Entity
+@DiscriminatorColumn(name = "fecha_hecho")
 public class FiltroPorFechaHecho extends Filtro {
 
-    private LocalDate desde;
-    private LocalDate hasta;
+    @Column(name = "desde", columnDefinition = "DATETIME", nullable = true)
+    private LocalDateTime desde;
 
-    public FiltroPorFechaHecho(LocalDate desde, LocalDate hasta) {
+    @Column(name = "hasta", columnDefinition = "DATETIME", nullable = true)
+    private LocalDateTime hasta;
+
+    public FiltroPorFechaHecho() {}
+
+    public FiltroPorFechaHecho(LocalDateTime desde, LocalDateTime hasta) {
         this.desde = desde;
         this.hasta = hasta;
     }
 
     public FiltroPorFechaHecho(String desde, String hasta) {
         if (desde != null) {
-            this.desde = LocalDate.parse(desde, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.desde = LocalDateTime.parse(desde, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
         else {
             this.desde = null;
         }
         if (hasta != null) {
-            this.hasta = LocalDate.parse(hasta, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.hasta = LocalDateTime.parse(hasta, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
         else {
             this.hasta = null;
@@ -37,16 +47,16 @@ public class FiltroPorFechaHecho extends Filtro {
     }
 
     public static FiltroPorFechaHecho FiltrarDesde(String desde) {
-        return FiltrarDesde(LocalDate.parse(desde));
+        return FiltrarDesde(LocalDateTime.parse(desde));
     }
     public static FiltroPorFechaHecho FiltrarHasta(String hasta) {
-        return FiltrarHasta(LocalDate.parse(hasta));
+        return FiltrarHasta(LocalDateTime.parse(hasta));
     }
 
-    public static FiltroPorFechaHecho FiltrarDesde(LocalDate desde) {
+    public static FiltroPorFechaHecho FiltrarDesde(LocalDateTime desde) {
         return new FiltroPorFechaHecho(desde, null);
     }
-    public static FiltroPorFechaHecho FiltrarHasta(LocalDate hasta) {
+    public static FiltroPorFechaHecho FiltrarHasta(LocalDateTime hasta) {
         return new FiltroPorFechaHecho(null, hasta);
     }
 

@@ -1,8 +1,12 @@
 package ar.utn.ba.ddsi.models.entities.filtros;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import jakarta.persistence.DiscriminatorColumn;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,10 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-@Getter
+@Data
+@Entity @DiscriminatorColumn(name = "fecha_de_carga")
 public class FiltroPorFechaDeCarga extends Filtro {
 
+    @Column(name = "desde", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime desde;
+    @Column(name = "hasta", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime hasta;
 
     public FiltroPorFechaDeCarga(LocalDateTime desde, LocalDateTime hasta) {

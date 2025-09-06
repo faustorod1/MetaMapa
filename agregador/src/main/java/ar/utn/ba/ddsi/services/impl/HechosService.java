@@ -4,7 +4,6 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorrefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
-import ar.utn.ba.ddsi.models.dtos.apigob.UbicacionDTO;
 import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
@@ -29,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Service
@@ -37,7 +35,7 @@ public class HechosService implements IHechosService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private IHechosRepository hechosRepository;
 
-    private Map<OrigenHecho, WebClient> webClients = new HashMap<OrigenHecho, WebClient>();
+    private final Map<OrigenHecho, WebClient> webClients = new HashMap<OrigenHecho, WebClient>();
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
     private ICategoriaRepository categoriaRepository;
@@ -60,7 +58,7 @@ public class HechosService implements IHechosService {
     // real, quedan repetidos
     @Override
     public Mono<List<HechoOutputDTO>> buscarTodos(Map<String, String> params) {
-        ICriterioInmutable criterio = new Criterio(params);
+        Criterio criterio = new Criterio(params);
 
         Mono<List<Hecho>> hechosLocales = Mono.fromCallable(hechosRepository::findAll);
         Mono<List<Hecho>> hechosMetaMapa = this.getFromMetaMapa();
@@ -78,7 +76,7 @@ public class HechosService implements IHechosService {
 
     @Override
     public Hecho obtenerPorId(Long id){
-        return hechosRepository.findById(id);
+        return hechosRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -94,9 +92,9 @@ public class HechosService implements IHechosService {
                     hechos.addAll(tupla.getT3());
 
                     normalizarCategoria(hechos);
-
-
-                    hechosRepository.saveAll(hechos);
+                    normalizarUbicacion(hechos).subscribe(hechosNormalizados ->
+                        hechosRepository.saveAll(hechosNormalizados)
+                    );
                 })
                 .then();
 
@@ -107,7 +105,8 @@ public class HechosService implements IHechosService {
         List<Hecho> todosLosHechos = Mono.zip(monoEstatica, monoDinamica, monoProxy)
             .map(tuple -> Stream.of(tuple.getT1(), tuple.getT2(), tuple.getT3())
                 .flatMap(List::stream)
-                .toList()).block();
+                .toList())
+                .block();
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(todosLosHechos));
 
         return mono;
@@ -119,7 +118,6 @@ public class HechosService implements IHechosService {
 
         hechos.forEach(hecho -> {
             String categoriaOriginal = hecho.getCategoria().getNombre();
-            Boolean coincidioConUna = false;
 
             for (Categoria categoria : listaDeCategorias) {
                 if (categoria.esLaMisma(categoriaOriginal)) {
@@ -133,7 +131,7 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public void normalizarUbicacion(List<Hecho> hechos){
+    public Mono<List<Hecho>> normalizarUbicacion(List<Hecho> hechos){
         List<Hecho> requierenGeorref = new ArrayList<>();
         hechos.forEach(hecho -> {
             if (hecho.getLugarAcontecimiento() != null) {
@@ -142,20 +140,20 @@ public class HechosService implements IHechosService {
             else {
                 // TODO Normalización tipo categoría
             }
-
         });
 
         Map<Coordenada, List<Hecho>> hechosPorCoordenada = requierenGeorref.stream()
                 .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
         List<Coordenada> coordenadas = hechosPorCoordenada.keySet().stream().toList();
 
-        georreferenciacionInversa(coordenadas).subscribe(municipiosPorCoordenada -> {
-            municipiosPorCoordenada.forEach((coordenada, municipio) -> {
-                hechosPorCoordenada.get(coordenada).forEach(hechoAModificar -> {
-                    hechoAModificar.setMunicipio(municipio);
-                });
-            });
-        });
+      return georreferenciacionInversa(coordenadas).map(municipiosPorCoordenada -> {
+          municipiosPorCoordenada.forEach((coordenada, municipio) ->
+              hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
+                  hechoAModificar.setMunicipio(municipio)
+              )
+          );
+          return hechos;
+      });
     }
 
     public Mono<Map<Coordenada, Municipio>> georreferenciacionInversa(List<Coordenada> coordenadas){
@@ -272,7 +270,7 @@ public class HechosService implements IHechosService {
         dto.setEtiquetas(
                 hecho.getEtiquetas()
                         .stream()
-                        .map(Etiqueta::nombre)
+                        .map(Etiqueta::getNombre)
                         .collect(Collectors.toCollection(HashSet::new))
         );
         return dto;
@@ -284,21 +282,21 @@ public class HechosService implements IHechosService {
             contribuyente = contribuyenteFromContribuyenteDTO(dto.getContribuyente());
         }
 
-        Hecho hecho = Hecho.builder()
-                .idExterno(dto.getId())
-                .titulo(dto.getTitulo())
-                .descripcion(dto.getDescripcion())
-                .categoria(dto.getCategoria())
-                .contenidoMultimedia(dto.getContenidoMultimedia())
-                .origen(dto.getOrigen())
-                .lugarAcontecimiento(dto.getLugarAcontecimiento())
-                .fechaHecho(dto.getFechaHecho())
-                .fechaDeCarga(dto.getFechaDeCarga())
-                .contribuyente(contribuyente)
-                .solicitudesDeEliminacion(dto.getSolicitudesDeEliminacion()) // Cambiar
-                .build();
+      // Cambiar
 
-        return hecho;
+      return Hecho.builder()
+              .idExterno(dto.getId())
+              .titulo(dto.getTitulo())
+              .descripcion(dto.getDescripcion())
+              .categoria(dto.getCategoria())
+              .contenidoMultimedia(dto.getContenidoMultimedia())
+              .origen(dto.getOrigen())
+              .lugarAcontecimiento(dto.getLugarAcontecimiento())
+              .fechaHecho(dto.getFechaHecho())
+              .fechaDeCarga(dto.getFechaDeCarga())
+              .contribuyente(contribuyente)
+              .solicitudesDeEliminacion(dto.getSolicitudesDeEliminacion()) // Cambiar
+              .build();
     }
 
     private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {

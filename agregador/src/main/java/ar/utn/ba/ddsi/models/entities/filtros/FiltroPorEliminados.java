@@ -1,9 +1,12 @@
 package ar.utn.ba.ddsi.models.entities.filtros;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
 
 import java.util.List;
 
+@Entity @DiscriminatorColumn(name = "eliminados")
 public class FiltroPorEliminados extends Filtro {
 
     @Override

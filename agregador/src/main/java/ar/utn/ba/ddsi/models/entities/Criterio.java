@@ -2,6 +2,14 @@ package ar.utn.ba.ddsi.models.entities;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.filtros.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -9,7 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class Criterio implements ICriterioInmutable {
+
+@Entity
+@Table(name = "criterios")
+public class Criterio {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToMany(mappedBy = "filtros")
+    @JoinColumn(name="filtro_id", referencedColumnName = "id", nullable=false)
     private List<Filtro> filtros = new ArrayList<>();
 
     public Criterio(){

@@ -2,7 +2,6 @@ package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.ICriterioInmutable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -15,5 +14,5 @@ public interface IHechosService {
     Mono<Void> actualizarHechos();
     HechoOutputDTO hechoOutputDTO(Hecho hecho);
     void normalizarCategoria(List<Hecho> hechos);
-    void normalizarUbicacion(List<Hecho> hechos);
+    Mono<List<Hecho>> normalizarUbicacion(List<Hecho> hechos);
 }

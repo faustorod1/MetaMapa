@@ -1,13 +1,20 @@
 package ar.utn.ba.ddsi.commons;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Data
+@Embeddable
 public class Coordenada {
+    @Column(name = "latitud")
     private Double latitud;
+    @Column(name = "longitud")
     private Double longitud;
+
+    protected Coordenada() {}
 
     public Coordenada(Double latitud, Double longitud) {
         this.latitud = latitud;
