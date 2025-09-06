@@ -23,6 +23,12 @@
             justify-content: center;
             display: flex;
         }
+
+        a{
+            align-items: center;
+            justify-content: center;
+        }
+
     </style>
 </head>
 
@@ -47,7 +53,9 @@
             </span>
         </div>
 
-        <button class="btn-submit" type="submit">Iniciar sesión</button>
+
+        <button class="btn-submit" type="submit" id="btn-login">Iniciar sesión</button>
+
 
         <div id="go-to-login">
             ¿Todavía no tiene una cuenta? <a href="register.html">Crear cuenta</a>
@@ -55,4 +63,14 @@
     </form>
 
 </body>
+<script>
+    document.querySelector('.login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (this.checkValidity()) {
+            window.location.href = 'main.html';
+        } else {
+            this.reportValidity();
+        }
+    });
+</script>
 </html>
