@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Panel de control | METAmapa</title>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
+    <style>
+        body{
+            background-image: url('../fondoLevementeCargado.png');
+            background-size: cover;                 /* Que cubra toda la pantalla */
+            background-repeat: no-repeat;           /* Que no se repita */
+            background-attachment: fixed;           /* Fijo */
+            background-position: center center;     /* Que esté centrada */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .contenedor{
+            height: 85vh;
+            min-width:90vw;
+            margin:auto;
+            background-color: #1d24ca;
+            border-radius:0.5rem;
+            padding:0.5rem;
+        }
+
+        .contenedor-hechos{
+            margin: 0 0.2rem 1rem 0.2rem;
+            padding:0.5rem;
+        }
+
+        .resumen-act-hechos{
+            background-color: #edf6fa;
+            border-radius:0.2rem;
+            padding:0.5rem;
+            margin:0 1rem 1rem 0;
+            display:flex;
+            width:100%;
+            height:20vh;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        h3{
+            color: white;
+        }
+
+        .hecho-particular   {
+            display: flex;
+            border-radius: 0.2rem;
+            padding:0;
+            justify-content: space-between;
+            cursor: default;
+            margin-left:0.5rem;
+        }
+
+        .iconos{
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: black;
+            margin-right: 0.5rem;
+            margin-left:0.1rem;
+        }
+
+        p{
+            margin:0;
+
+        }
+
+
+        .fuente-particular{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 0.2rem;
+            margin-left:0.5rem;
+            cursor: default;
+        }
+
+        .btn-config{
+            cursor: pointer;
+            background-color: #edf6fa;
+            border-color:transparent;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="contenedor">
+    <div class="contenedor-hechos">
+        <h3>Hechos</h3>
+        <div class="resumen-act-hechos">
+            <p><strong>Hechos creados</strong>: 7</p>
+
+            <div class="hechos-particulares">
+            <div class="hecho-particular">
+                <p>Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones</p>
+                <span class="iconos">
+                    <i class="fa-solid fa-calendar"></i>21/12/2007
+                    <button class="btn-config">
+                    <i class="fa-solid fa-gear"></i>
+                        </button>
+                </span>
+            </div>
+
+                <div class="hecho-particular">
+                    <p>Incendio forestal</p>
+                    <span class="iconos">
+                        <i class="fa-solid fa-calendar"></i>9/10/2011
+                        <button class="btn-config">
+                        <i class="fa-solid fa-gear"></i>
+                            </button>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <h3>Fuentes</h3>
+        <div class="resumen-act-hechos">
+            <p><strong>Fuentes utilizadas</strong>: 2</p>
+            <div class="fuentes-particulares" id="particular">
+                <div class="fuente-particular">
+                    <p>Estática</p>
+                </div>
+                <div class="fuente-particular">
+                    <p>Dinámica</p>
+                </div>
+            </div>
+        </div>
+        <h3>Solicitudes de eliminación</h3>
+        <div class="resumen-act-hechos">
+            <p><strong>Solicitudes pedidas</strong>: 6</p>
+            <p><strong>Solicitudes aceptadas</strong>: 3</p>
+        </div>
+    </div>
+</div>
+<main>
+
+</main>
+</body>

@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles de Hecho | METAmapa</title>
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+
+
     <style>
         :root {
             font-size: 16px;
@@ -26,8 +32,9 @@
             background: #d9d9d9;
             border-radius: 1rem;
             padding: 2rem;
+            height:100vh;
             max-width: 70rem;
-            width: 90%;
+            width: 80%;
             position: relative;
         }
 
@@ -57,7 +64,7 @@
 
         .direccion {
             font-size: 1.125rem;
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.8rem;
         }
 
         .imagenes {
@@ -90,7 +97,7 @@
         }
 
         .descripcion {
-            padding: 1.25rem;
+            padding: 0rem;
             margin-bottom: 1.5rem;
         }
 
@@ -100,7 +107,7 @@
             min-height: 10rem;
             border: none;
             border-radius: 0.5rem;
-            padding: 1rem;
+            padding: 0.5rem;
             font-size: 1.125rem;
             resize: vertical;
             font-family: inherit;
@@ -109,6 +116,7 @@
 
         .editar {
             background: #333;
+            margin-top:0.1rem;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 2rem;
@@ -209,9 +217,25 @@
             color: #000;
         }
 
+        #btn-back-page {
+            position: fixed;
+            top: 1em;
+            left: 1em;
+
+            text-decoration: none;
+            font-weight: bolder;
+            color: black;
+            cursor: pointer;
+        }
+        #btn-back-page:hover {
+            color: grey;
+        }
+
+
     </style>
 </head>
 <body>
+    <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
 
 <div class="card">
     <span class="flecha izquierda">&#10094;</span>
