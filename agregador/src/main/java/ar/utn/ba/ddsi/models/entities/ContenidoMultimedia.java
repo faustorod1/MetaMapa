@@ -7,9 +7,15 @@ import lombok.Data;
 @Entity
 @Table(name = "contenidos_multimedia")
 public class ContenidoMultimedia {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "path_imagen", columnDefinition = "VARCHAR(255)", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "path_imagen", columnDefinition = "VARCHAR(300)", nullable = false)
     private String pathImagen;
+
+    public ContenidoMultimedia(String pathImagen) {
+        this.pathImagen = pathImagen;
+    }
+
+    protected ContenidoMultimedia() {}
 }

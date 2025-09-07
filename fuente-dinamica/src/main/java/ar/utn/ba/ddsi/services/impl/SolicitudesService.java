@@ -7,7 +7,6 @@ import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.entities.HechoSnapshot;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeModificacion;
-import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class SolicitudesService implements ISolicitudesService {
       HechoSnapshot snapshot = new HechoSnapshot(h);
       h.agregarSnapshot(snapshot);
 
-      hechoNuevo.setLastUpdate(LocalDateTime.now());
+      hechoNuevo.setFechaUltimaActualizacion(LocalDateTime.now());
       hechosService.update(h, hechoNuevo);
       return hechosService.hechoToDTO(hechoNuevo);
     }

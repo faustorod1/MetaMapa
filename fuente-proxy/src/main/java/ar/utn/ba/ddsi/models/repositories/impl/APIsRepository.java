@@ -41,7 +41,6 @@ public class APIsRepository implements IAPIsRepository {
         return APIs.stream().filter(api -> api.isMetamapa()).toList();
     }
 
-
     @Override
     public API findByAPIid(Long id){
         return this.APIs.stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);

@@ -1,13 +1,22 @@
 package ar.utn.ba.ddsi.models.repositories;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-public interface IHechosRepository {
-  Hecho save(Hecho hecho);
-  void update(Hecho hechoViejo,Hecho hecho);
-  List<Hecho> findAll();
-  Hecho findById(Long id);
-  void marcarComoEliminado(Long id);
+@Repository
+public interface IHechosRepository extends JpaRepository<Hecho, Long> {
+  void update(Hecho hechoViejo,Hecho hechoNuevo);
 
+  @Modifying
+  @Query("""
+        UPDATE Hecho h 
+        SET h.eliminado = true 
+        WHERE h.id = :id
+    """)
+  void marcarComoEliminado(Long id);
 }

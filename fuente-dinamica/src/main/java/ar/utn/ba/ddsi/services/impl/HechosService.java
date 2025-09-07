@@ -3,7 +3,6 @@ package ar.utn.ba.ddsi.services.impl;
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
-import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
@@ -13,13 +12,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
-import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADACONSUGERENCIA;
 import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 
 @Service
@@ -48,7 +44,7 @@ public class HechosService implements IHechosService {
     return hechosRepository
         .findAll()
         .stream()
-        .filter(hecho -> hecho.getLastUpdate().isAfter(desde))
+        .filter(hecho -> hecho.getFechaUltimaActualizacion().isAfter(desde))
         .map(this::hechoToDTO)
         .toList();
   }
@@ -70,9 +66,7 @@ public class HechosService implements IHechosService {
 
 
   @Override
-  public Hecho getById(Long id){        //TODO: revisar si esta ok q NO devuelva un DTO (esto lo utiliza el SolicitudesService)
-    return hechosRepository.findById(id);
-  }
+  public Hecho getById(Long id){return hechosRepository.findById(id).orElse(null);}
 
   @Override
   public void update(Hecho h, Hecho hViejo){
@@ -89,14 +83,14 @@ public class HechosService implements IHechosService {
         .titulo(hechoInputDTO.getTitulo())
         .descripcion(hechoInputDTO.getDescripcion())
         .categoria(new Categoria(hechoInputDTO.getCategoria()))
-        //.contenidoMultimedia(new ContenidoMultimedia())
+            .contenidosMultimedia(hechoInputDTO.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).collect(Collectors.toList()))
         .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(),hechoInputDTO.getLongitud()))
         .fechaHecho(LocalDateTime.parse(hechoInputDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
         .eliminado(false)
         .contribuyente(new Contribuyente(contribuyenteDTO.getId(), contribuyenteDTO.getNombre(), contribuyenteDTO.getApellido(),
                 LocalDate.parse(contribuyenteDTO.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))
-        .etiquetas(hechoInputDTO.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toCollection(HashSet::new)))
-        .build();
+        .etiquetas(hechoInputDTO.getEtiquetas())
+                .build();
   }
 
   public HechoOutputDTO hechoToDTO (Hecho hecho){
@@ -104,11 +98,11 @@ public class HechosService implements IHechosService {
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())
         .categoria(hecho.getCategoria())
-        //.contenidoMultimedia(hecho.getContenidoMultimedia())
+        .contenidosMultimedia(hecho.getContenidosMultimedia().stream().map(ContenidoMultimedia::getPath).toList())
         .lugarAcontecimiento(hecho.getLugarAcontecimiento())
         .fechaHecho(hecho.getFechaHecho())
         .fechaDeCarga(hecho.getFechaDeCarga())
-        .fechaUltimaActualizacion(hecho.getLastUpdate())
+        .fechaUltimaActualizacion(hecho.getFechaUltimaActualizacion())
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
         .contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))

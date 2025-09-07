@@ -1,5 +1,21 @@
 package ar.utn.ba.ddsi.models.entities;
 
-public record Etiqueta(String nombre) {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "etiquetas")
+public class Etiqueta{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "nombre", columnDefinition = "VARCHAR(50)", nullable = false)
+    private String nombre;
+
+    protected Etiqueta() {}
+
+   public Etiqueta(String nombre) {
+       this.nombre = nombre;
+   }
 
 }
