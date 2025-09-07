@@ -31,6 +31,8 @@ public class SolicitudDeModificacion {
   @Column(name = "motivo_de_estado", columnDefinition = "VARCHAR(80)", nullable = false)
   private String motivoDeEstado;
 
+  @ManyToOne
+  @JoinColumn(name = "administrador_id", referencedColumnName = "id", nullable = false)
   private Administrador administrador = null;
 
   protected SolicitudDeModificacion() {}

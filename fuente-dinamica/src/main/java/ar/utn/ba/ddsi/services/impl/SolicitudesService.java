@@ -41,7 +41,7 @@ public class SolicitudesService implements ISolicitudesService {
       h.agregarSnapshot(snapshot);
 
       hechoNuevo.setFechaUltimaActualizacion(LocalDateTime.now());
-      hechosService.update(h, hechoNuevo);
+      hechosService.update(hechoNuevo,h);
       return hechosService.hechoToDTO(hechoNuevo);
     }
     return hechosService.hechoToDTO(h);

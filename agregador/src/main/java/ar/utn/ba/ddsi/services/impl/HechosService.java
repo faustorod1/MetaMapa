@@ -265,13 +265,7 @@ public class HechosService implements IHechosService {
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setIdExterno(hecho.getIdExterno());
         if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
-        //dto.setSolicitudesDeEliminacion(new ArrayList<>());
-//        dto.setSolicitudesDeEliminacion(
-//            hecho.getSolicitudesDeEliminacion()
-//                .stream()
-//                .map(ISolicitudesService::solicititudDeEliminacionToDTO)
-//                .toList()
-//        );
+
         dto.setEtiquetas(
                 hecho.getEtiquetas()
                         .stream()
@@ -294,7 +288,7 @@ public class HechosService implements IHechosService {
               .titulo(dto.getTitulo())
               .descripcion(dto.getDescripcion())
               .categoria(dto.getCategoria())
-              .contenidosMultimedia(dto.getContenidosMultimedia())
+              .contenidosMultimedia(dto.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList())
               .origen(dto.getOrigen())
               .lugarAcontecimiento(dto.getLugarAcontecimiento())
               .fechaHecho(dto.getFechaHecho())

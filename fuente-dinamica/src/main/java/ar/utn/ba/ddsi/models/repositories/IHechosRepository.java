@@ -10,7 +10,6 @@ import java.util.List;
 
 @Repository
 public interface IHechosRepository extends JpaRepository<Hecho, Long> {
-  void update(Hecho hechoViejo,Hecho hechoNuevo);
 
   @Modifying
   @Query("""

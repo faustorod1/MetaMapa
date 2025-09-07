@@ -70,7 +70,16 @@ public class HechosService implements IHechosService {
 
   @Override
   public void update(Hecho h, Hecho hViejo){
-    hechosRepository.update(h,hViejo);
+    hViejo.setFechaUltimaActualizacion(h.getFechaUltimaActualizacion());
+    hViejo.setFechaDeCarga(h.getFechaDeCarga());
+    hViejo.setFechaHecho(h.getFechaHecho());
+    hViejo.setLugarAcontecimiento(h.getLugarAcontecimiento());
+    hViejo.setDescripcion(h.getDescripcion());
+    hViejo.setCategoria(h.getCategoria());
+    hViejo.setEtiquetas(h.getEtiquetas());
+    hViejo.setTitulo(h.getTitulo());
+    hViejo.setContenidosMultimedia(h.getContenidosMultimedia());
+    hechosRepository.save(hViejo);
   }
 
 
