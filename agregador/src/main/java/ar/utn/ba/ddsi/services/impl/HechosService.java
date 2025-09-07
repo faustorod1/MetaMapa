@@ -215,6 +215,11 @@ public class HechosService implements IHechosService {
                 .collectList();
     }
 
+    // TODO: Está bien esto?
+    public void guardarCambios(Hecho hecho) {
+        hechosRepository.save(hecho);
+    }
+
     //TODO: revisar si es funcional esto asincronico
     @Async
     public void eliminarHechoEnLasFuentes(Hecho hecho){ // Llamada no bloqueante a otra API
@@ -253,7 +258,7 @@ public class HechosService implements IHechosService {
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
         dto.setCategoria(hecho.getCategoria());
-        dto.setContenidoMultimedia(hecho.getContenidoMultimedia());
+        dto.setContenidosMultimedia(hecho.getContenidosMultimedia());
         dto.setOrigen(hecho.getOrigen());
         dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
         dto.setFechaHecho(hecho.getFechaHecho());
@@ -289,7 +294,7 @@ public class HechosService implements IHechosService {
               .titulo(dto.getTitulo())
               .descripcion(dto.getDescripcion())
               .categoria(dto.getCategoria())
-              .contenidoMultimedia(dto.getContenidoMultimedia())
+              .contenidosMultimedia(dto.getContenidosMultimedia())
               .origen(dto.getOrigen())
               .lugarAcontecimiento(dto.getLugarAcontecimiento())
               .fechaHecho(dto.getFechaHecho())

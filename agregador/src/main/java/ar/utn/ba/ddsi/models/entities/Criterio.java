@@ -24,8 +24,8 @@ public class Criterio {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "filtros")
-    @JoinColumn(name="filtro_id", referencedColumnName = "id", nullable=false)
+    @OneToMany
+    @JoinColumn(name="criterio_id", referencedColumnName = "id", nullable=false)
     private List<Filtro> filtros = new ArrayList<>();
 
     public Criterio(){

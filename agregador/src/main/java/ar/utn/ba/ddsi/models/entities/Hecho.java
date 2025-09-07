@@ -47,7 +47,9 @@ public class Hecho {
     @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)
     private Categoria categoria;
 
-    private ContenidoMultimedia contenidoMultimedia;
+    @OneToMany
+    @JoinColumn(name = "hecho_id", referencedColumnName = "id")
+    private List<ContenidoMultimedia> contenidosMultimedia;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "origen")
@@ -82,7 +84,7 @@ public class Hecho {
     @JoinColumn(name = "municipio_id", referencedColumnName = "id", nullable = false)
     private Municipio municipio;
 
-    @OneToMany(mappedBy = "solicitudes_de_eliminacion")
+    @OneToMany(mappedBy = "hecho")
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
 
@@ -163,7 +165,7 @@ public class Hecho {
 
         return  Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
                 Objects.equals(this.categoria, otroHecho.getCategoria()) &&
-                Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) &&
+                Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) &&
                 Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&
                 Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
     }
@@ -180,7 +182,7 @@ public class Hecho {
 
         return !Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
                 !Objects.equals(this.categoria, otroHecho.getCategoria()) ||
-                !Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) ||
+                !Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) ||
                 !Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
                 !Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
     }

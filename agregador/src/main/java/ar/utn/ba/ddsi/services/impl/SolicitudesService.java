@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class SolicitudesService implements ISolicitudesService {
   private final HechosService hechosService;
-  private ISolicitudesRepository solicitudesRepository;
+  private final ISolicitudesRepository solicitudesRepository;
 
   public SolicitudesService(ISolicitudesRepository solicitudesRepository, HechosService hechosService) {
     this.solicitudesRepository = solicitudesRepository;
@@ -38,10 +38,12 @@ public class SolicitudesService implements ISolicitudesService {
 
   @Override
   public void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto) {
-    SolicitudDeEliminacion solicitud = solicitudesRepository.resolver(id, resolucionDto.getAdministradorQueResolvio(), resolucionDto.getEstadoSolicitud());
-    if (solicitud != null && solicitud.getEstado() == EstadoSolicitud.ACEPTADA) {
-      hechosService.eliminarHechoEnLasFuentes(solicitud.getHecho());
-    }
+    solicitudesRepository.findById(id).ifPresent(solicitudDeEliminacion -> {
+      solicitudDeEliminacion.resolver(resolucionDto.getEstadoSolicitud(), resolucionDto.getAdministradorQueResolvio());
+      solicitudesRepository.save(solicitudDeEliminacion);
+      hechosService.guardarCambios(solicitudDeEliminacion.getHecho());
+      hechosService.eliminarHechoEnLasFuentes(solicitudDeEliminacion.getHecho());
+    });
   }
 
   @Override

@@ -34,6 +34,7 @@ public class Coleccion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "identificador", columnDefinition = "VARCHAR(255)", nullable = false)
     private String identificador;       // handle: string alfanumerico (único para cada colección)
 
     @Column(name = "titulo", columnDefinition = "VARCHAR(40)", nullable = false)

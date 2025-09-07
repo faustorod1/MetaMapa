@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface IMunicipiosRepository extends JpaRepository<Municipio, Long> {
     List<Municipio> findAll();
-    void delete(Long id);
 }

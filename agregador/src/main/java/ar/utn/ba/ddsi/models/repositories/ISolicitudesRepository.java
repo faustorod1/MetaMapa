@@ -11,7 +11,4 @@ import java.util.List;
 
 @Repository
 public interface ISolicitudesRepository extends JpaRepository<SolicitudDeEliminacion, Long> {
-  SolicitudDeEliminacion save(SolicitudDeEliminacion solicitudDeEliminacion);
-  SolicitudDeEliminacion resolver(Long id, Administrador administradorQueResolvio, EstadoSolicitud estado);
-  List<SolicitudDeEliminacion> findAll();
 }

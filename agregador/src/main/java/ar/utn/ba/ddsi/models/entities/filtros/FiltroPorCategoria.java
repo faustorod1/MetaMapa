@@ -2,12 +2,7 @@ package ar.utn.ba.ddsi.models.entities.filtros;
 
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 
@@ -15,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-@Entity @DiscriminatorColumn(name = "categoria")
+@Entity @DiscriminatorValue("categoria")
 public class FiltroPorCategoria extends Filtro{
     @ManyToOne
     @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)

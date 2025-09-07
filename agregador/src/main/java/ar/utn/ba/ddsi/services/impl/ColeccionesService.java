@@ -104,7 +104,7 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public void eliminarColeccion(String identificador){
-        coleccionesRepository.delete(identificador);
+        coleccionesRepository.deleteByIdentificador(identificador);
     }
 
     @Override

@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface IProvinciasRepository extends JpaRepository<Provincia, Long> {
     List<Provincia> findAll();
-    void delete(Long id);
 }

@@ -15,7 +15,7 @@ public class HechoFuenteDTO {
     private String titulo;
     private String descripcion;
     private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
+    private List<ContenidoMultimedia> contenidosMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;

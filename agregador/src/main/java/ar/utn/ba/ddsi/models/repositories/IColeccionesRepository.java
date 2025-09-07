@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface IColeccionesRepository extends JpaRepository<Coleccion, Long> {
     Coleccion findByIdentificador(String identificador);
-    void delete(String identificador);
+    void deleteByIdentificador(String identificador);
 }

@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.models.entities.filtros;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +15,7 @@ import java.util.List;
 
 @Data
 @Builder
-@Entity
-@DiscriminatorColumn(name = "fecha_hecho")
+@Entity @DiscriminatorValue("fecha_hecho")
 public class FiltroPorFechaHecho extends Filtro {
 
     @Column(name = "desde", columnDefinition = "DATETIME", nullable = true)
