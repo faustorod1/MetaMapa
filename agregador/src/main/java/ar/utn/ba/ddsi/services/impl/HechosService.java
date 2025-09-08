@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestMultipleDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorrefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
@@ -16,10 +17,13 @@ import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -36,18 +40,22 @@ public class HechosService implements IHechosService {
     private IHechosRepository hechosRepository;
 
     private final Map<OrigenHecho, WebClient> webClients = new HashMap<OrigenHecho, WebClient>();
+    private final WebClient webClientGeoref;
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
+    @Autowired
     private ICategoriaRepository categoriaRepository;
+    @Autowired
     private IMunicipiosRepository municipiosRepository;
 
 
     @Autowired
-    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl, @Value("${fuente.dinamica.api.base-url}") String fuenteDinamicaApiBaseUrl, @Value("${fuente.proxy.api.base-url}") String fuenteProxyApiBaseUrl, ApplicationEventPublisher applicationEventPublisher) {
+    public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl, @Value("${fuente.dinamica.api.base-url}") String fuenteDinamicaApiBaseUrl, @Value("${fuente.proxy.api.base-url}") String fuenteProxyApiBaseUrl, @Value("${georef.api.base-url}") String georefApiBaseUrl, ApplicationEventPublisher applicationEventPublisher) {
         this.hechosRepository = hechosRepository;
         this.webClients.put(OrigenHecho.DATASET, WebClient.builder().baseUrl(fuenteEstaticaApiBaseUrl).build());
         this.webClients.put(OrigenHecho.CONTRIBUYENTE, WebClient.builder().baseUrl(fuenteDinamicaApiBaseUrl).build());
         this.webClients.put(OrigenHecho.PROXY, WebClient.builder().baseUrl(fuenteProxyApiBaseUrl).build());
+        this.webClientGeoref = WebClient.builder().baseUrl(georefApiBaseUrl).build();
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -106,8 +114,11 @@ public class HechosService implements IHechosService {
                                     if (viejo != null) {
                                         modificarHecho(viejo, hechoNormalizado);
                                         hechosNormalizados.set(i, viejo);
+                                    } else {
+                                        hechoNormalizado.setFechaUltimaActualizacion(LocalDateTime.now());
                                     }
                                 }
+                                // Hasta acá anda. Falta persistir las categorías/provincias/municipios de antemano
                                 hechosRepository.saveAll(hechosNormalizados);
                             }
                     );
@@ -162,14 +173,23 @@ public class HechosService implements IHechosService {
                 .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
         List<Coordenada> coordenadas = hechosPorCoordenada.keySet().stream().toList();
 
-      return georreferenciacionInversa(coordenadas).map(municipiosPorCoordenada -> {
-          municipiosPorCoordenada.forEach((coordenada, municipio) ->
-              hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
-                  hechoAModificar.setMunicipio(municipio)
-              )
-          );
-          return hechos;
-      });
+        List<List<Coordenada>> lotes = dividirEnLotes(coordenadas, 300);
+
+        return Flux.fromIterable(lotes)
+                .concatMap(this::georreferenciacionInversa)
+                .collectList()
+                .map(listaDeMapas -> {
+                    // Junta las respuestas de las peticiones en un solo Map
+                    Map<Coordenada, Municipio> combinados = new HashMap<>();
+                    listaDeMapas.forEach(combinados::putAll);
+
+                    combinados.forEach((coordenada, municipio) ->
+                            hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
+                                    hechoAModificar.setMunicipio(municipio)
+                            )
+                    );
+                    return hechos;
+            });
     }
 
     public Mono<Map<Coordenada, Municipio>> georreferenciacionInversa(List<Coordenada> coordenadas){
@@ -177,13 +197,20 @@ public class HechosService implements IHechosService {
         List<GeorrefRequestDTO> coordFormat = coordenadas.stream().map(this::coordToGeorrefRequestDto).toList();
         List<Municipio> municipios = municipiosRepository.findAll();
 
-        return webClients.get(OrigenHecho.PROXY)
+        GeorefRequestMultipleDTO reqBody = new GeorefRequestMultipleDTO();
+        reqBody.setUbicaciones(coordFormat);
+
+        return webClientGeoref
                 .post()
-                .uri(uriBuilder -> uriBuilder
-                        .path("https://apis.datos.gob.ar/georef/api/ubicacion")
-                        .queryParam("Ubicaciones", coordFormat)
-                        .build())
+                .uri("/ubicacion")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(reqBody)
                 .retrieve()
+                .onStatus(
+                        HttpStatusCode::isError,
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .map(body -> new RuntimeException("Error en API Georef: " + body))
+                )
                 .bodyToMono(GeorreferenciacionDTO.class)
                 .map(dto -> Optional.ofNullable(dto.getResultados()).orElse(Collections.emptyList()))
                 .map(listaRes -> listaRes.stream().map(ResultadoGeoDTO::getUbicacion).toList())
@@ -268,6 +295,19 @@ public class HechosService implements IHechosService {
     }
 
 
+    private <T> List<List<T>> dividirEnLotes(List <T> lista, Integer tamLote) {
+        List<List<T>> lotes = new ArrayList<>();
+        final int tamLista = lista.size();
+        int contador = 0;
+        while (contador < tamLista) {
+            int fin = Math.min(contador + tamLote, tamLista);
+            List<T> lote = lista.subList(contador, fin);
+            lotes.add(lote);
+            contador += tamLote;
+        }
+        return lotes;
+    }
+
 
     // ---- Conversiones DTO -------------------------------------------------------------------------------
 
@@ -276,7 +316,7 @@ public class HechosService implements IHechosService {
             .lat(c.getLatitud())
             .lon(c.getLongitud())
             .aplanar(true)
-            .campo("municipio.nombre,provincia.nombre")
+            .campos("municipio.nombre,provincia.nombre")
             .build();
     }
 
@@ -312,12 +352,11 @@ public class HechosService implements IHechosService {
 
       // Cambiar
 
-      return Hecho.builder()
+      Hecho hecho = Hecho.builder()
               .idExterno(dto.getId())
               .titulo(dto.getTitulo())
               .descripcion(dto.getDescripcion())
               .categoria(dto.getCategoria())
-              .contenidosMultimedia(dto.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList())
               .origen(dto.getOrigen())
               .lugarAcontecimiento(dto.getLugarAcontecimiento())
               .fechaHecho(dto.getFechaHecho())
@@ -325,6 +364,10 @@ public class HechosService implements IHechosService {
               .contribuyente(contribuyente)
               .solicitudesDeEliminacion(dto.getSolicitudesDeEliminacion()) // Cambiar
               .build();
+        if (dto.getContenidosMultimedia() != null) {
+            hecho.setContenidosMultimedia(dto.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
+        }
+        return hecho;
     }
 
     private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {

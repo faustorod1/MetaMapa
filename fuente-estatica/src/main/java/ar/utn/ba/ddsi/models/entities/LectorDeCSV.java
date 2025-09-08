@@ -31,7 +31,7 @@ public class LectorDeCSV {
             Double latitud = Double.parseDouble(fila[CamposHecho.LATITUD.ordinal()]);
             Double longitud = Double.parseDouble(fila[CamposHecho.LONGITUD.ordinal()]);
             String fechaString = fila[(CamposHecho.FECHADEHECHO.ordinal())];
-            LocalDateTime fecha = LocalDateTime.parse(fechaString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            LocalDateTime fecha = LocalDate.parse(fechaString.trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
             Hecho h = Hecho.builder()
                     .id((long) i)

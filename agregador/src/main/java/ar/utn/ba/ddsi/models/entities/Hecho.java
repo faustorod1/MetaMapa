@@ -2,31 +2,13 @@ package ar.utn.ba.ddsi.models.entities;
 
 import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Provincia;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @AllArgsConstructor
 @Builder
@@ -37,14 +19,14 @@ public class Hecho {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;        // USO: Identificacion unica para el Repository (futura BD)
 
-    @Column(name = "titulo", columnDefinition = "VARCHAR(100)", nullable = false)
+    @Column(name = "titulo", columnDefinition = "TEXT", nullable = false)
     private String titulo;
 
-    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = false)
+    @Column(name = "descripcion", columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
     private Categoria categoria;
 
     @OneToMany
@@ -67,7 +49,7 @@ public class Hecho {
     @Column(name = "fecha_de_ultima_actualizacion", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime fechaUltimaActualizacion;
 
-    @Column(name = "eliminado", columnDefinition = "bool", nullable = false)
+    @Column(name = "eliminado", nullable = false)
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.}
 
     @ManyToOne
@@ -77,24 +59,26 @@ public class Hecho {
     @Column(name = "id_externo", columnDefinition = "VARCHAR(20)", nullable = false)
     private String idExterno; // //proxy/2/5
 
-    @Column(name = "revisado", columnDefinition = "bool", nullable = false)
+    @Column(name = "revisado", nullable = false)
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
 
     @ManyToOne
-    @JoinColumn(name = "municipio_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "municipio_id", referencedColumnName = "id", nullable = true)
     private Municipio municipio;
 
     @OneToMany(mappedBy = "hecho")
     @Builder.Default
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
 
+    @Access(AccessType.FIELD)
+    @Setter(AccessLevel.NONE)
     @ManyToMany
     @JoinTable(
-        name = "etiquetas_por_hecho",
-        joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name ="etiqueta_id", referencedColumnName = "id"))
+            name = "etiquetas_por_hecho",
+            joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name ="etiqueta_id", referencedColumnName = "id"))
     @Builder.Default // si el builder no le da el valor, hace esto por defecto
-    private HashSet<Etiqueta> etiquetas = new HashSet<>();
+    private Set<Etiqueta> etiquetas = new HashSet<>();
 
     protected Hecho() {}
 
@@ -136,25 +120,6 @@ public class Hecho {
         return true;
     }
 
-    /*
-    idHecho: estatica:1:5
-    fuente: estatica
-
-    public boolean perteneceALaFuente(String fuente) {
-        return idExterno.startsWith(fuente + ":");
-        proxy:1
-
-        proxy:11:2
-}
-    */
-
-
-    /*
-    public Integer aCuantasFuentesPertenece(List<String> fuentes){
-        return (int) fuentes.stream().filter(this::perteneceALaFuente).count();
-    }
-    */
-
     public boolean hechoIgualA(Hecho otroHecho) {
         //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS
         if (otroHecho == null) return false;
@@ -178,7 +143,7 @@ public class Hecho {
 
         if (!this.titulo.equals(otroHecho.titulo)) {
             return false;
-            }
+        }
 
         return !Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
                 !Objects.equals(this.categoria, otroHecho.getCategoria()) ||
@@ -188,7 +153,7 @@ public class Hecho {
     }
 
     public Provincia getProvincia(){
-       return this.municipio.getProvincia();
+        return this.municipio.getProvincia();
     }
 
 }
