@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Estadísticas | METAmapa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="stylesheet" type="text/css" href="../login-register.css" />
+    <script src="../script.js"></script>
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('../fondoLevementeCargado.png');
+            background-attachment: fixed;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+        }
+
+        .contenedor {
+            background-color: #d9d9d9;
+            border-radius: 30px;
+            opacity: 0.9;
+            display: flex;
+            width: 80vw;
+            height: 85vh;
+            margin: 3rem;
+            flex-direction: column;
+            justify-content: flex-start; /* título arriba */
+            align-items: center;
+            position: relative; /* para posicionar el botón dentro */
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .contenedor h1 {
+            color: black;
+            font-family: 'Londrina Solid', cursive;
+            font-size: 2rem;
+            margin: 0 0 2rem 0; /* espacio abajo */
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Contenedor para centrar el gráfico */
+        .grafico-contenedor {
+            flex-grow: 1; /* ocupa espacio restante */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        button.descargar-csv {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: #bdbcbc;
+            color: black;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: 'Londrina Solid', cursive;
+            transition: background-color 0.3s ease;
+        }
+
+        button.descargar-csv:hover {
+            background-color: #555;
+            color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+<a href="./index.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+<div id="fixed-logo"></div>
+
+<div class="contenedor">
+    <h1>Estadísticas</h1>
+
+    <div class="grafico-contenedor">
+        <canvas id="miGrafico"></canvas>
+    </div>
+
+    <button class="descargar-csv">Descargar csv</button>
+</div>
+
+
+</body>
+</html>
