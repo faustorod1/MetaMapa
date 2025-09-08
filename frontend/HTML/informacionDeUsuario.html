@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Información del usuario | METAmapa</title>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="stylesheet" type="text/css" href="../CSS/cargarHecho.css">
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
+
+    <style>
+        body{
+            background-image: url('../fondoLevementeCargado.png');
+            background-size: cover;                 /* Que cubra toda la pantalla */
+            background-repeat: no-repeat;           /* Que no se repita */
+            background-attachment: fixed;           /* Fijo */
+            background-position: center center;     /* Que esté centrada */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .contenedor{
+            background-color: #d9d9d9;
+            border-radius: 30px;
+            opacity: 90%;
+            display: flex;
+            width:80vw;
+            height:85vh;
+            margin: 3rem;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+
+        }
+
+        .contenedor-datosPrincipales{
+            margin:0;
+            padding:0;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+
+        .contenedor h1{
+            color: black;
+            font-family: 'Londrina Solid', cursive;
+            font-size: 2rem;
+            top: 0;
+            margin:0.3rem;
+        }
+
+        .titulo{
+            border-bottom: 1px solid black;
+        }
+
+    </style>
+</head>
+
+<body>
+    <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <div id="fixed-logo"></div>
+
+    <div class="contenedor">
+    <h1>Información del usuario</h1>
+
+        <div class="contenedor-datosPrincipales">
+            <ol>
+                <li>Nombre: Pedro</li>
+                <li>Apellido: Hernández</li>
+                <li>Hechos creados: 42</li>
+                <li>Hechos modificados: 11</li>
+                <li>Hechos borrados: 4</li>
+            </ol>
+
+            <button class="cambiar contraseña">Quiero cambiar mi contraseña</button>
+        </div>
+    </div>
+<main>
+</main>
+</body>

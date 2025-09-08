@@ -57,8 +57,10 @@ public class Hecho {
     private SolicitudDeModificacion solicitudDeModificacion = null;
 
     @ManyToMany
-    @JoinTable(name = "etiquetas_por_hecho", joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "etiqueta_id",referencedColumnName = "id"))
+    @JoinTable(
+            name = "etiquetas_por_hecho",
+            joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "etiqueta_id", referencedColumnName = "id"))
     @Builder.Default
     private HashSet<Etiqueta> etiquetas = new HashSet<>();
 

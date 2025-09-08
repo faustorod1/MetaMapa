@@ -79,8 +79,15 @@
     </form>
 
 </body>
-
 <script>
+    document.querySelector('.login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (this.checkValidity()) {
+            window.location.href = 'main.html';
+        } else {
+            this.reportValidity();
+        }
+    });
 </script>
 
 </html>
