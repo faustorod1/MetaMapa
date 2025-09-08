@@ -1,10 +1,5 @@
 @startuml
 
-class Administrador{
-- nombre: String
-- apellido: String
-}
-
 enum CamposHecho{
     TITULO
     DESCRIPCION
@@ -14,26 +9,12 @@ enum CamposHecho{
     FECHADEHECHO
 }
 
-
 class Categoria{
 - nombre: String
 }
 
 class ContenidoMultimedia{
-}
-
-
-enum EstadoSolicitud {
-    PENDIENTE
-    ACEPTADA
-    SUGERIDOACAMBIO
-    RECHAZADA
-    ACEPTADACONSUGERENCIA
-    RECHAZADOPORSPAM
-}
-
-class Etiqueta{
-- nombre: String
+- path: String
 }
 
 class Coordenada{
@@ -41,7 +22,6 @@ class Coordenada{
 - longitud: Double
 --
 + comoArray(): Double[]
-+ equals(other: Coordenada): boolean
 }
 
 class Hecho{
@@ -49,7 +29,7 @@ class Hecho{
 - descripción: String
 - categoría: Categoria
 - lugarAcontecimiento: Coordenada
-- fechaHecho: LocalDate
+- fechaHecho: LocalDateTime
 - fechaDeCarga: LocalDateTime
 - id: Long
 - idDataset: Long
@@ -70,48 +50,21 @@ DATASET
 PROXY
 }
 
-
-class Contribuyente{
-- id: Long
-- nombre: String
-- apellido: String
-- fechaNacimiento: LocalDate
---
-+ getEdad(): int
-}
-
 class PathDataset{
 - id: Long
 - path: String
 - fechaCarga: LocalDateTime
 }
 
-class SolicitudDeEliminacion{
-- descripción: String
-- hecho: Hecho
-- fechaCarga: LocalDateTime
-- fechaDeResolucion: LocalDateTime
-- estado: EstadoSolicitud
-- solicitante: Contribuyente
-- administradorQueResolvio: Administrador
-- CANT_MINIMA_DE_CARACTERES: int = 500
-}
 
 Hecho --> Categoria
 Hecho --> ContenidoMultimedia
 Hecho --> OrigenHecho
 Hecho --> Coordenada
-Hecho -->"*" SolicitudDeEliminacion
-Hecho -->"*" Etiqueta
-Hecho ..> Contribuyente
 
 LectorDeCSV *--> Hecho
 LectorDeCSV ..> CamposHecho
 LectorDeCSV --> PathDataset
 
-SolicitudDeEliminacion --> Hecho
-SolicitudDeEliminacion --> EstadoSolicitud
-SolicitudDeEliminacion --> Contribuyente
-SolicitudDeEliminacion --> Administrador
 
 @enduml

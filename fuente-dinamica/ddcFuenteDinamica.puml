@@ -1,19 +1,33 @@
 @startuml
 
 class Hecho{
-private Long id;
-    - titulo: String
-    - descripcion: String
-    - categoria: Categoria
-    - contenidoMultimedia: ContenidoMultimedia
-    - lugarAcontecimiento: Coordenada
-    - fechaHecho: LocalDate
-    - fechaDeCarga: LocalDateTime
-    - eliminado: boolean
-    - Contribuyente contribuyente;
-    - lastUpdate: LocalDateTime
-    - solicitudDeModificacion : SolicitudDeModificacion
-    - etiquetas: HashSet<Etiqueta>
+- Long id;
+- titulo: String
+- descripcion: String
+- categoria: Categoria
+- contenidoMultimedia: List<ContenidoMultimedia>
+- lugarAcontecimiento: Coordenada
+- fechaHecho: LocalDate
+- fechaDeCarga: LocalDateTime
+- eliminado: boolean
+- Contribuyente contribuyente;
+- fechaUltimaActualizacion: LocalDateTime
+- solicitudDeModificacion : SolicitudDeModificacion
+- etiquetas: HashSet<Etiqueta>
+- snapshots: List<HechoSnapshot>
+--
++ agregarSnapshot(HechoSnapshot snap): void
+}
+
+class HechoSnapshot{
+- id: Long
+- titulo: String
+- descripcion: String
+- categoria: Categoria
+- contenidosMultimedia: List<ContenidoMultimedia>
+- lugarAcontecimiento: Coordenada
+- fechaHecho: LocalDateTime
+- fechaSnapshot: LocalDateTime
 }
 
 enum OrigenHecho{
@@ -24,14 +38,18 @@ PROXY
 }
 
 class Categoria{
+- id: Long
 - nombre: String
 }
 
 class Etiqueta{
+- id: Long
 - nombre: String
 }
 
 class ContenidoMultimedia{
+- id: Long
+- path: String
 }
 
 enum EstadoSolicitud {
@@ -49,10 +67,10 @@ class Coordenada{
 - longitud: Double
 --
 + comoArray(): Double[]
-+ equals(other: Coordenada): boolean
 }
 
 class Administrador{
+- id: Long
 - nombre: String
 - apellido: String
 }
@@ -67,14 +85,17 @@ class Contribuyente{
 }
 
 class SolicitudDeModificacion {
+- id: Long
 - hechoViejo: Hecho;
 - hechoNuevo: Hecho;
 - estado: EstadoSolicitud;
 - motivoDeEstado: String;
+- administrador: Administrador
 --
 + resolver(ResolucionDTO resolucion): void
 }
 
+Hecho -->"*" HechoSnapshot
 Hecho --> Categoria
 Hecho --> ContenidoMultimedia
 Hecho --> OrigenHecho

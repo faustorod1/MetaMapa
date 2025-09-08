@@ -13,7 +13,7 @@ import lombok.Data;
 @Table(name = "etiquetas")
 public class Etiqueta{
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
   @Column(name = "nombre", columnDefinition = "VARCHAR(50)", nullable = false)
   private String nombre;

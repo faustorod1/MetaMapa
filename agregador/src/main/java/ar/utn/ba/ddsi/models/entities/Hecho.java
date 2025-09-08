@@ -52,7 +52,7 @@ public class Hecho {
     private List<ContenidoMultimedia> contenidosMultimedia;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "origen")
+    @Column(name = "origen", columnDefinition = "varchar(20)")
     private OrigenHecho origen;
 
     @Embedded
@@ -67,7 +67,7 @@ public class Hecho {
     @Column(name = "fecha_de_ultima_actualizacion", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime fechaUltimaActualizacion;
 
-    @Column(name = "eliminado", nullable = false)
+    @Column(name = "eliminado", columnDefinition = "bool", nullable = false)
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.}
 
     @ManyToOne
@@ -77,7 +77,7 @@ public class Hecho {
     @Column(name = "id_externo", columnDefinition = "VARCHAR(20)", nullable = false)
     private String idExterno; // //proxy/2/5
 
-    @Column(name = "revisado", nullable = false)
+    @Column(name = "revisado", columnDefinition = "bool", nullable = false)
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
 
     @ManyToOne

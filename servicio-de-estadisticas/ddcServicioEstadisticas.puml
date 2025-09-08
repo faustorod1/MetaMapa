@@ -1,0 +1,98 @@
+@startuml
+class Administrador {
+- nombre: String
+- apellido: String
+}
+
+class Categoria {
+- nombre: String
+}
+
+class ContenidoMultimedia {
+- pathImagen: String
+}
+
+class Contribuyente {
+- id: Long
+- nombre: String
+- apellido: String
+- fechaNacimiento: LocalDate
+--
++ getEdad(): int
+}
+
+enum EstadoSolicitud {
+PENDIENTE
+ACEPTADA
+SUGERIDO_A_CAMBIO
+RECHAZADA
+ACEPTADA_CON_SUGERENCIA
+RECHAZADA_POR_SPAM
+RECHAZADA_POR_FALTA_DE_CARACTERES
+}
+
+class Etiqueta{
+- nombre: String
+}
+
+class Coordenada {
+- latitud: Double
+- longitud: Double
+--
++ comoArray(): Double[]
+}
+
+
+class Hecho {
+- id: Long
+- titulo: String
+- descripcion: String
+- categoria: Categoria
+- contenidoMultimedia: List<ContenidoMultimedia>
+- origen: OrigenHecho
+- lugarAcontecimiento: Coordenada
+- provincia: String
+- municipio: String
+- fechaHecho: LocalDateTime
+- fechaDeCarga: LocalDateTime
+- idExterno: String
+- contribuyente: Long
+- solicitudesDeEliminacion: List<SolicitudDeEliminacion>
+- etiquetas: Set<Etiqueta>
+--
++ perteneceALaFuente(OrigenHecho fuente): boolean
++ perteneceALaFuente(String fuente): boolean
++ hechoIgualA(Hecho otroHecho): boolean
++ mismoTituloDiferentesAtributos(Hecho otroHecho): boolean
+}
+
+enum OrigenHecho {
+CARGA_MANUAL
+CONTRIBUYENTE
+DATASET
+PROXY
+}
+
+class SolicitudDeEliminacion {
+- id: Long
+- descripcion: String
+- hechoId: Long
+- fechaDeCarga: LocalDateTime
+- fechaDeResolucion: LocalDateTime
+- estado: EstadoSolicitud
+- solicitante: Long
+- administradorQueResolvio: Administrador
+}
+
+Hecho --> Contribuyente
+Hecho --> Categoria
+Hecho -->"*" ContenidoMultimedia
+Hecho -> OrigenHecho
+Hecho -> Coordenada
+Hecho -->"*" SolicitudDeEliminacion
+Hecho -->"*" Etiqueta
+
+SolicitudDeEliminacion --> EstadoSolicitud
+SolicitudDeEliminacion --> Administrador
+
+@enduml

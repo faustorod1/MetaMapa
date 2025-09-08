@@ -14,6 +14,6 @@ import lombok.Data;
 public class Provincia {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "nombre", columnDefinition = "VARCHAR(30)")
+    @Column(name = "nombre", columnDefinition = "VARCHAR(30)", nullable = false)
     private String nombre;
 }

@@ -27,7 +27,7 @@ public class Categoria {
 
     @ElementCollection
     @CollectionTable(name = "categoria_sinonimos", joinColumns = @JoinColumn(name = "categoria_id"))
-    @Column(name = "sinonimos")
+    @Column(name = "sinonimo", columnDefinition = "VARCHAR(30)", nullable = false)
     private List<String> sinonimos;
 
 

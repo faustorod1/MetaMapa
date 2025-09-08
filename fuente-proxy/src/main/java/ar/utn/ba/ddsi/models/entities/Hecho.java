@@ -21,7 +21,7 @@ public class Hecho {
     private String titulo;
     private String descripcion;
     private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
+    private List<ContenidoMultimedia> contenidoMultimedia;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;

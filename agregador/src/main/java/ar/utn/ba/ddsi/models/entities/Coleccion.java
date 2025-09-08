@@ -48,12 +48,12 @@ public class Coleccion {
     private Criterio criterioDePertenencia;
 
     @Convert(converter = AlgoritmoDeConsensoConverter.class)
-    @Column(name = "algoritmo_de_consenso")
+    @Column(name = "algoritmo_de_consenso", columnDefinition = "VARCHAR(40)")
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
     @ElementCollection
-    @CollectionTable(name = "coleccion_fuentes", joinColumns = @JoinColumn(name = "fuente_id"))
-    @Column(name = "fuentes")
+    @CollectionTable(name = "coleccion_fuentes", joinColumns = @JoinColumn(name = "coleccion_id"))
+    @Column(name = "fuente", columnDefinition = "varchar(30)", nullable = false)
     private List<String> fuentes; //TODO convertir a enum? (correccion)
 
     @ManyToMany(cascade = CascadeType.ALL)

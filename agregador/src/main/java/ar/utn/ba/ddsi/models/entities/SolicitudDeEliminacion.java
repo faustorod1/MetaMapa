@@ -23,7 +23,7 @@ public class SolicitudDeEliminacion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "TEXT",  nullable = false)
     private String descripcion;
 
     @ManyToOne
@@ -32,10 +32,12 @@ public class SolicitudDeEliminacion {
 
     @Column(name = "fecha_carga", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime fechaDeCarga;
+
+    @Column(name = "fecha_resolucion", columnDefinition = "DATETIME")
     private LocalDateTime fechaDeResolucion;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado")
+    @Column(name = "estado", columnDefinition = "varchar(50)", nullable = false)
     private EstadoSolicitud estado;
 
     @ManyToOne

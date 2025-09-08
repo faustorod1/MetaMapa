@@ -4,10 +4,10 @@ class Hecho{
 - título: String
 - descripción: String
 - categoría: Categoria
-- contenidoMultimedia: ContenidoMultimedia
+- contenidoMultimedia: List<ContenidoMultimedia>
 - origen: OrigenHecho
 - lugarAcontecimiento: Coordenada
-- fechaHecho: LocalDate
+- fechaHecho: LocalDateTime
 - fechaDeCarga: LocalDateTime
 - fechaUltimaActualizacion: LocalDateTime
 - eliminado: boolean
@@ -15,6 +15,7 @@ class Hecho{
 - id: Long
 - idExterno: String
 - revisado: boolean
+- municipio: Municipio
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
 - etiquetas: HashSet<Etiqueta>
 --
@@ -33,24 +34,28 @@ PROXY
 }
 
 class Categoria{
+- id: Long
 - nombre: String
 }
 
 class Etiqueta{
+- id: Long
 - nombre: String
 }
 
 class Coleccion{
+- id: Long
 - identificador: String
 - titulo: String
 - descripcion: String
 - criterioDePertenencia: Criterio
-- algoritmoDeConsenso: IAlgoritmoDeConsenso
+- algoritmoDeConsenso: AlgoritmoDeConsenso
 - fuentes: List<String>
 - hechosCargadosManualmente: List<Hecho>
 - hechosConsensuados: List<Hecho>
 - hechos: List<Hecho>
 --
++ cumpleFiltros(Hecho hecho): boolean
 + contiene (Hecho hecho): boolean
 + aplicarFiltros(List<Hecho> hechos): List<Hecho>
 + agregarTandaDeHechos(List<Hecho> tanda): void
@@ -60,22 +65,20 @@ class Coleccion{
 }
 
 class ContenidoMultimedia{
+- id: Long
 - pathImagen: String
 }
 
 class Criterio{
+- id: Long
 - filtros: List<Filtro>
 --
 + addFiltro(Filtro filtro): Criterio
 + aplicarA(List<Hecho> listaOriginal): List<Hecho>
 }
 
-interface ICriterioInmutable{
-+ getFiltros(): List<Filtro>
-+ aplicarA(List<Hecho> listaOriginal): List<Hecho>
-}
-
 abstract class Filtro{
+- id: Long
 --
 + aplicar(List<Hecho> lista): List<Hecho>
 }
@@ -147,20 +150,23 @@ enum EstadoSolicitud {
     RECHAZADA_POR_FALTA_DE_CARACTERES
 }
 
-interface IAlgoritmoDeConsenso{
+abstract class AlgoritmoDeConsenso{
++ abstract aplicarA(List<Hecho> hechos, List<String> fuentes): List<Hecho>
++ sinDuplicados(List<Hecho> hechos): List<Hecho>
++ sinContradiccion(List<Hecho> hechos, List<String> fuentes): List<Hecho>
 + consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
 }
 
 class ConsensoAbsoluta{
-+ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
++ aplicarA(List<Hecho> hechosColeccion, List<String> fuentesColeccion): List<Hecho>
 }
 
 class ConsensoMayoriaSimple{
-+ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
++ aplicarA(List<Hecho> hechosColeccion, List<String> fuentesColeccion): List<Hecho>
 }
 
 class ConsensoMultiplesMenciones{
-+ consensuar(List<Hecho> hechos, List<String> fuentes): List<Hecho>
++ aplicarA(List<Hecho> hechosColeccion, List<String> fuentesColeccion) : List<Hecho>
 }
 
 
@@ -169,10 +175,10 @@ class Coordenada{
 - longitud: Double
 --
 + comoArray(): Double[]
-+ equals(other : Coordenada): boolean
 }
 
 class Administrador{
+- id: Long
 - nombre: String
 - apellido: String
 }
@@ -222,9 +228,8 @@ Hecho --> Contribuyente
 Coleccion --> Criterio
 Coleccion -->"*" Hecho
 
-Criterio .r.> Hecho
+Criterio ..> Hecho
 Criterio -->"*" Filtro
-Criterio ..|> ICriterioInmutable
 
 FiltroPorCategoria -u-|> Filtro
 FiltroPorDescripcion -u-|> Filtro
@@ -239,10 +244,10 @@ SolicitudDeEliminacion -d-> EstadoSolicitud
 SolicitudDeEliminacion --> Contribuyente
 SolicitudDeEliminacion --> Administrador
 
-Coleccion -u-> IAlgoritmoDeConsenso
-ConsensoAbsoluta .u.|> IAlgoritmoDeConsenso
-ConsensoMayoriaSimple .u.|> IAlgoritmoDeConsenso
-ConsensoMultiplesMenciones .u.|> IAlgoritmoDeConsenso
+Coleccion -u-> AlgoritmoDeConsenso
+ConsensoAbsoluta -u-|> AlgoritmoDeConsenso
+ConsensoMayoriaSimple -u-|> AlgoritmoDeConsenso
+ConsensoMultiplesMenciones -u-|> AlgoritmoDeConsenso
 
 
 
