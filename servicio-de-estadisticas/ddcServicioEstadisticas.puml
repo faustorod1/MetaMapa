@@ -59,6 +59,8 @@ class Hecho {
 - contribuyente: Long
 - solicitudesDeEliminacion: List<SolicitudDeEliminacion>
 - etiquetas: Set<Etiqueta>
+-- municipio: String
+-- provinicia: String
 --
 + perteneceALaFuente(OrigenHecho fuente): boolean
 + perteneceALaFuente(String fuente): boolean

@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.models.dtos.output;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.*;
+import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class HechoOutputDTO {
     private LocalDateTime fechaDeCarga;
     private String idExterno;
     private Long contribuyente;
-    private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion; //
+    private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion;
     private HashSet<String> etiquetas;
+    private Municipio municipio;
 }

@@ -333,6 +333,7 @@ public class HechosService implements IHechosService {
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setIdExterno(hecho.getIdExterno());
+        dto.setMunicipio(hecho.getMunicipio());
         if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
 
         dto.setEtiquetas(

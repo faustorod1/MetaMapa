@@ -26,10 +26,11 @@ public class Hecho {
     private String descripcion;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
     private Categoria categoria;
+
     @OneToMany
-    @JoinColumn(name = "contenido_multimedia_id", referencedColumnName = "id")
+    @JoinColumn(name = "hecho_id", referencedColumnName = "id")
     private List<ContenidoMultimedia> contenidosMultimedia;
 
     @Embedded
@@ -62,7 +63,7 @@ public class Hecho {
     private HashSet<Etiqueta> etiquetas = new HashSet<>();
 
     @OneToMany
-    @JoinColumn(name = "snapshot_id", referencedColumnName = "id")
+    @JoinColumn(name = "hecho_id", referencedColumnName = "id")
     @Builder.Default
     private List<HechoSnapshot> snapshots = new ArrayList<>();
 

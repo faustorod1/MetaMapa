@@ -6,6 +6,7 @@ import java.time.LocalTime;
 
 
 public interface IEstadisticasService {
+    void updateEstadisticas();
     String provinciaConMasHechosDeColeccion(String coleccion_id);
     String categoriaConMasHechos();
     String provinciaConMasHechosDeCategoria(String categoria);

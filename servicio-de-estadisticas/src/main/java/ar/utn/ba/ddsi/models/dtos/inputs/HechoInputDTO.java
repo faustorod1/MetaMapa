@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.models.dtos.inputs;
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.ContenidoMultimedia;
+import ar.utn.ba.ddsi.models.entities.Municipio;
 import ar.utn.ba.ddsi.models.entities.OrigenHecho;
 import lombok.Data;
 
@@ -17,13 +18,14 @@ public class HechoInputDTO {
     private String titulo;
     private String descripcion;
     private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
+    private List<ContenidoMultimedia> contenidosMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private String idExterno;
     private Long contribuyente;
-    private List<SolicitudDeEliminacionInputDTO> solicitudesDeEliminacion; //
+    private List<SolicitudDeEliminacionInputDTO> solicitudesDeEliminacion;
     private Set<String> etiquetas;
+    private Municipio municipio;
 }

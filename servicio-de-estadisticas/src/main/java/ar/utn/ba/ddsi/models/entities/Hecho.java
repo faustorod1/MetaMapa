@@ -35,7 +35,7 @@ public class Hecho {
     private String titulo;
     private String descripcion;
     private Categoria categoria;
-    private List<ContenidoMultimedia> contenidoMultimedia;
+    private List<ContenidoMultimedia> contenidosMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private String provincia;
@@ -78,7 +78,7 @@ public class Hecho {
 
         return  Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
                 Objects.equals(this.categoria, otroHecho.getCategoria()) &&
-                Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) &&
+                Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) &&
                 Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&
                 Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
     }
@@ -95,7 +95,7 @@ public class Hecho {
 
         return !Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
                 !Objects.equals(this.categoria, otroHecho.getCategoria()) ||
-                !Objects.equals(this.contenidoMultimedia, otroHecho.getContenidoMultimedia()) ||
+                !Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) ||
                 !Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
                 !Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
     }

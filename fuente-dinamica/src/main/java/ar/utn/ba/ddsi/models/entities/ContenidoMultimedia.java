@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "contenido_multimedia")
+@Table(name = "contenidos_multimedia")
 public class ContenidoMultimedia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,11 +5,11 @@ import ar.utn.ba.ddsi.models.dtos.inputs.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dtos.inputs.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.services.IEstadisticasService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
@@ -19,11 +19,21 @@ import java.util.stream.Collectors;
 public class EstadisticasService implements IEstadisticasService {
     private WebClient servicioAgregador;
 
-    public EstadisticasService(@Value("${agregador.api.base-url}") String apiAgregadorURL) {
+    private String[] csvs = {"provincia_con_mas_hechos_de_coleccion.csv","provincia_con_mas_hechos_de_categoria", "categoria_con_mas_hechos.csv", "horario_con_mas_hechos_de_cierta_categoria.csv", "solicitudes_spam.csv"};
+
+    @Autowired
+    public EstadisticasService(@Value("${servicio.agregador.api.base-url}") String apiAgregadorURL) {
         this.servicioAgregador = WebClient.builder().baseUrl(apiAgregadorURL).build();
     }
 
-    // ----------------------------------------------------------------------------
+    public void updateEstadisticas(){
+        //provinciaConMasHechosDeColeccionCSV("1");
+        categoriaConMasHechosCSV();
+        //String provinciaConMasHechosDeCategoriaCSV(String categoria);
+        solicitudesSpamCSV();
+        //horarioConMasHechosPorCategoriaCSV(String categoria);
+    }
+
 
     public String provinciaConMasHechosDeColeccion(String coleccion_id) {
         List<Hecho> hechos = getHechosDeColeccionFromAgregador(coleccion_id);
@@ -42,7 +52,6 @@ public class EstadisticasService implements IEstadisticasService {
         List<Hecho> hechos = getHechosFromAgregador();
         return masHechosSegunParametro(hechos, hecho -> hecho.getCategoria().getNombre());
     }
-
 
     public LocalTime horarioConMasHechosDeCiertaCategoria(String categoria) {
         List<Hecho> hechos = getHechosFromAgregador();
@@ -65,27 +74,26 @@ public class EstadisticasService implements IEstadisticasService {
     public String provinciaConMasHechosDeColeccionCSV(String coleccion_id) {
         List<Hecho> hechos = getHechosDeColeccionFromAgregador(coleccion_id);
         List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, Hecho::getProvincia);
-        return generarCSV(leaderboard, "Provincia");
+        return escribirCSV(leaderboard, "Provincia", csvs[0] );
     }
 
     public String categoriaConMasHechosCSV(){
         List<Hecho> hechos = getHechosFromAgregador();
-
         List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, hecho -> hecho.getCategoria().getNombre());
-        return generarCSV(leaderboard, "Categoria");
+        return escribirCSV(leaderboard, "Categoria", csvs[2]);
     }
 
     public String provinciaConMasHechosDeCategoriaCSV(String categoria){
         List<Hecho> hechos = getHechosFromAgregador().stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria)).toList();
-
         List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, Hecho::getProvincia);
-        return generarCSV(leaderboard, "Provincia");
+        return escribirCSV(leaderboard, "Provincia",csvs[1]);
+
     }
 
     public String horarioConMasHechosPorCategoriaCSV(String categoria){
         List<Hecho> hechos = getHechosFromAgregador().stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria)).toList();
         List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, hecho -> String.valueOf(hecho.getFechaHecho().getHour()));
-        return generarCSV(leaderboard, "Horario");
+        return escribirCSV(leaderboard, "Horario", csvs[3]);
     }
 
     public String solicitudesSpamCSV(){
@@ -103,19 +111,18 @@ public class EstadisticasService implements IEstadisticasService {
         arr.add(headers);
         arr.add(data);
 
-        String path = "../%s-stat.csv".formatted(LocalDateTime.now());
+        String path ="../" + csvs[4];
         CSVReader.crear(path, arr);
         return path;
     }
 
     //--------------------------------------------------------- privados ---------------------------------------------------------//
 
-    private <TipoKey> String generarCSV(List<Map.Entry<TipoKey, Long>> data, String headerName) {
+    private <TipoKey> String escribirCSV(List<Map.Entry<TipoKey, Long>> data, String headerName, String path) {
         ArrayList<String[]> leaderboardStr = entryListToStringArray(data);
         String[] headers = { headerName, "Cantidad de hechos" };
         leaderboardStr.add(0, headers);
-        String path = "../%s-stat.csv".formatted(LocalDateTime.now());
-        CSVReader.crear(path, leaderboardStr);
+        CSVReader.crear( "../" + path, leaderboardStr);
         return path;
     }
     
@@ -192,13 +199,16 @@ public class EstadisticasService implements IEstadisticasService {
         return Hecho.builder()
             .id(h.getId())
             .titulo(h.getTitulo())
+            .categoria(h.getCategoria())
+            .provincia(h.getMunicipio().getProvincia().getNombre())
+            .municipio(h.getMunicipio().getNombre())
             .descripcion(h.getDescripcion())
             .origen(h.getOrigen())
             .lugarAcontecimiento(h.getLugarAcontecimiento())
             .fechaHecho(h.getFechaHecho())
             .fechaDeCarga(h.getFechaDeCarga())
             .etiquetas(hashDeEtiquteas)
-            .contenidoMultimedia(h.getContenidoMultimedia())
+            .contenidosMultimedia(h.getContenidosMultimedia())
             .contribuyente(h.getContribuyente())
             .build();
     }
