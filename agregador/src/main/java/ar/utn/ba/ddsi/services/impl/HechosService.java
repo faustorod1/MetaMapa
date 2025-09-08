@@ -88,12 +88,28 @@ public class HechosService implements IHechosService {
         Mono<Void> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
                 .doOnNext(tupla -> {
                     List<Hecho> hechos = new ArrayList<>(tupla.getT1());
+
+                    List<Long> ids = hechos.stream().map(Hecho::getId).toList();
+                    List<Hecho> hechosAModificar = hechosRepository.findAllByIdIn(ids);
+
                     hechos.addAll(tupla.getT2());
                     hechos.addAll(tupla.getT3());
 
                     normalizarCategoria(hechos);
-                    normalizarUbicacion(hechos).subscribe(hechosNormalizados ->
-                        hechosRepository.saveAll(hechosNormalizados)
+                    normalizarUbicacion(hechos).subscribe(hechosNormalizados -> {
+                                // Para cada hecho normalizado, si ya existía en el agregador, lo actualiza
+                                for (int i = 0; i < hechosNormalizados.size(); i++) {
+                                    Hecho hechoNormalizado = hechosNormalizados.get(i);
+                                    Hecho viejo = hechosAModificar.stream()
+                                            .filter(h -> h.getIdExterno().equals(hechoNormalizado.getIdExterno()))
+                                            .findFirst().orElse(null);
+                                    if (viejo != null) {
+                                        modificarHecho(viejo, hechoNormalizado);
+                                        hechosNormalizados.set(i, viejo);
+                                    }
+                                }
+                                hechosRepository.saveAll(hechosNormalizados);
+                            }
                     );
                 })
                 .then();
@@ -218,6 +234,19 @@ public class HechosService implements IHechosService {
     // TODO: Está bien esto?
     public void guardarCambios(Hecho hecho) {
         hechosRepository.save(hecho);
+    }
+
+    // No lo guarda, solo actualiza sus atributos
+    public void modificarHecho(Hecho viejo, Hecho nuevo) {
+        viejo.setTitulo(nuevo.getTitulo());
+        viejo.setDescripcion(nuevo.getDescripcion());
+        viejo.setCategoria(nuevo.getCategoria());
+        viejo.setContenidosMultimedia(nuevo.getContenidosMultimedia());
+        viejo.setLugarAcontecimiento(nuevo.getLugarAcontecimiento());
+        viejo.setFechaHecho(nuevo.getFechaHecho());
+        viejo.setFechaUltimaActualizacion(LocalDateTime.now());
+        viejo.setRevisado(nuevo.isRevisado());
+        viejo.setMunicipio(nuevo.getMunicipio());
     }
 
     //TODO: revisar si es funcional esto asincronico
