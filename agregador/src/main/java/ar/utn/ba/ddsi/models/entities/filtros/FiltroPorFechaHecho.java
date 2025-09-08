@@ -18,10 +18,10 @@ import java.util.List;
 @Entity @DiscriminatorValue("fecha_hecho")
 public class FiltroPorFechaHecho extends Filtro {
 
-    @Column(name = "desde", columnDefinition = "DATETIME", nullable = true)
+    @Column(name = "desde_fechahecho", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime desde;
 
-    @Column(name = "hasta", columnDefinition = "DATETIME", nullable = true)
+    @Column(name = "hasta_fechahecho", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime hasta;
 
     public FiltroPorFechaHecho() {}

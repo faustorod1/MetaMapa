@@ -19,9 +19,9 @@ import java.util.List;
 @Entity @DiscriminatorValue("fecha_de_carga")
 public class FiltroPorFechaDeCarga extends Filtro {
 
-    @Column(name = "desde", columnDefinition = "DATETIME", nullable = true)
+    @Column(name = "desde_fechacarga", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime desde;
-    @Column(name = "hasta", columnDefinition = "DATETIME", nullable = true)
+    @Column(name = "hasta_fechacarga", columnDefinition = "DATETIME", nullable = true)
     private LocalDateTime hasta;
 
     protected FiltroPorFechaDeCarga() {}

@@ -40,7 +40,7 @@ public class Hecho {
     @Column(name = "titulo", columnDefinition = "VARCHAR(100)", nullable = false)
     private String titulo;
 
-    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = false)
+    @Column(name = "descripcion", columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
     @ManyToOne

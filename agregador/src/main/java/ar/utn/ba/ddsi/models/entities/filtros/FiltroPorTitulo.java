@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Entity @DiscriminatorValue("titulo")
 public class FiltroPorTitulo extends Filtro {
-    @Column(name = "titulo", columnDefinition = "VARCHAR(100)", nullable = false)
+    @Column(name = "titulo", columnDefinition = "VARCHAR(100)", nullable = true)
     private String titulo;
 
     public FiltroPorTitulo() {}

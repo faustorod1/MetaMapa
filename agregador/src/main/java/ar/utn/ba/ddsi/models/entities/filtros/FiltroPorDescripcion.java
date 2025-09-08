@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Entity @DiscriminatorValue("descripcion")
 public class FiltroPorDescripcion extends Filtro {
-    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = false)
+    @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = true)
     private String descripcion;
 
     public FiltroPorDescripcion(){}

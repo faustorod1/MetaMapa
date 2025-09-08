@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Entity @DiscriminatorValue("categoria")
 public class FiltroPorCategoria extends Filtro{
     @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
     private Categoria categoria;
 
     protected FiltroPorCategoria() {}
