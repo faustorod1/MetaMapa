@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class EstadisticasService implements IEstadisticasService {
     private WebClient servicioAgregador;
+    private IEstadisticasRepository estadisticasRepository;
 
     private String[] csvs = {"provincia_con_mas_hechos_de_coleccion.csv","provincia_con_mas_hechos_de_categoria", "categoria_con_mas_hechos.csv", "horario_con_mas_hechos_de_cierta_categoria.csv", "solicitudes_spam.csv"};
 
@@ -27,11 +29,22 @@ public class EstadisticasService implements IEstadisticasService {
     }
 
     public void updateEstadisticas(){
-        //provinciaConMasHechosDeColeccionCSV("1");
-        categoriaConMasHechosCSV();
-        //String provinciaConMasHechosDeCategoriaCSV(String categoria);
-        solicitudesSpamCSV();
-        //horarioConMasHechosPorCategoriaCSV(String categoria);
+
+        List<Estadistica> estadisticas = new ArrayList<>();
+
+       estadisticas.add(new Estadistica(TipoEstadistica.PROVINCIA_CON_MAS_HECHOS_POR_COLECCION, provinciaConMasHechosDeColeccionCSV());
+       estadisticas.add(new Estadistica(TipoEstadistica.CATEGORIA_CON_MAS_HECHOS, categoriaConMasHechosCSV()));
+       estadisticas.add(new Estadistica(TipoEstadistica.PROVINCIA_CON_MAS_HECHOS_POR_CATEGORIA, provinciaConMasHechosDeCategoriaCSV()));
+       estadisticas.add(new Estadistica(TipoEstadistica.SOLICITUDES_DE_ELIMINACION_SPAM, solicitudesSpamCSV()));
+       estadisticas.add(new Estadistica(TipoEstadistica.HORA_CON_MAS_HECHOS_POR_CATEGORIA, horarioConMasHechosPorCategoriaCSV()));
+
+        estadisticasRepository.saveAll(estadisticas);
+
+
+    }
+
+    public void eliminarEstadisticasViejas(){
+        Path basePath = Path.of("../"); 
     }
 
 
@@ -71,8 +84,9 @@ public class EstadisticasService implements IEstadisticasService {
 
     //--------------------------------------------------------- CSV --------------------------------------------------------------//
 
-    public String provinciaConMasHechosDeColeccionCSV(String coleccion_id) {
-        List<Hecho> hechos = getHechosDeColeccionFromAgregador(coleccion_id);
+    public String provinciaConMasHechosDeColeccionCSV() {
+        // List<Hecho> hechos = getHechosDeColeccionFromAgregador(coleccion_id);
+        List<Hecho> hechos = getHechosFromAgregador();
         List<Map.Entry<String, Long>> leaderboard = cantidadHechosSegunParametro(hechos, Hecho::getProvincia);
         return escribirCSV(leaderboard, "Provincia", csvs[0] );
     }

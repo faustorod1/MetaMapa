@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.services.IEstadisticasService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class EstadisticasScheduler {
     private final IEstadisticasService estadisticasService;
@@ -23,4 +24,16 @@ public class EstadisticasScheduler {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
+    //@Scheduled(cron = "0 0 0 1 * ?")
+    @Scheduled(fixedRate = 30000)
+    public void eliminarEstadisticasAntiguas() {
+        try{
+        estadisticasService.eliminarEstadisticasViejas();
+            System.out.println("CSVs antiguos eliminados!");
+        }catch (Exception e){
+            System.out.println("No pudo eliminarse contenido");
+        }
+    }
+
 }
