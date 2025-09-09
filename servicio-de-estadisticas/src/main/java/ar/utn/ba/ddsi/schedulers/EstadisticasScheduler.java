@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EstadisticasScheduler {
+    private static final long PERIODO_DE_GENERACION_DE_ESTADISTICAS = 5000L; // 5 segundos cree manchuas
     private final IEstadisticasService estadisticasService;
 
     public EstadisticasScheduler(IEstadisticasService estadisticasService) {
@@ -15,25 +16,15 @@ public class EstadisticasScheduler {
     }
 
     // @Scheduled (cron = "0 00 2 * * *", zone = "America/Argentina/Buenos_Aires")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = PERIODO_DE_GENERACION_DE_ESTADISTICAS)
     public void enviarEstadisticas() {
         try{
-        estadisticasService.updateEstadisticas();
+        estadisticasService.generarEstadisticas();
             System.out.println("CSVs cargados!");
         }catch (Exception e){
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    //@Scheduled(cron = "0 0 0 1 * ?")
-    @Scheduled(fixedRate = 30000)
-    public void eliminarEstadisticasAntiguas() {
-        try{
-        estadisticasService.eliminarEstadisticasViejas();
-            System.out.println("CSVs antiguos eliminados!");
-        }catch (Exception e){
-            System.out.println("No pudo eliminarse contenido");
-        }
-    }
 
 }

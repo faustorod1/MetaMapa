@@ -1,4 +1,15 @@
 package ar.utn.ba.ddsi.models.dtos.output;
 
+import ar.utn.ba.ddsi.models.entities.Hecho;
+
+import java.util.List;
+import lombok.Data;
+
+@Data
 public class ColeccionConHechosOutputDTO {
+  private String identificador;
+  private String titulo;
+  private String descripcion;
+  private List<Hecho> hechos;
+  private List<String> fuentes;
 }

@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Coleccion;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 public interface IColeccionesService {
     List<ColeccionOutputDTO> buscarTodos();
+    List<ColeccionConHechosOutputDTO> buscarTodosConHechos();
     Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params);
     ColeccionOutputDTO crearColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateColeccion(ColeccionInputDTO input);

@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
@@ -33,6 +34,12 @@ public class ColeccionesController {
     }
 
     // API Administrativa ----------------------------------------------------------------------------------------------
+
+    @GetMapping("/con-hechos")
+    public List<ColeccionConHechosOutputDTO> buscarTodosConHechos(){
+        return this.coleccionesService.buscarTodosConHechos();
+    }
+
 
     @PostMapping
     public ColeccionOutputDTO crearColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){

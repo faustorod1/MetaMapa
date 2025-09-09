@@ -25,21 +25,17 @@ public class CSVReader {
     }
 
 
-
-    public static Boolean crear(String pathArchivo, ArrayList<String[]> info){
-        ArrayList<String[]> filas = new ArrayList<>();
+    public static Boolean crear(String pathArchivo, ArrayList<String[]> info) {
         File file = new File(pathArchivo);
 
-        try{
-            if (!file.exists()) file.createNewFile();
-
-            try(CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
-                csvWriter.writeAll(info);
-            }
-        }catch(Exception e){
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file, false))) {
+            // el "false" indica que NO se hace append, sino sobrescritura
+            csvWriter.writeAll(info);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
+
 }

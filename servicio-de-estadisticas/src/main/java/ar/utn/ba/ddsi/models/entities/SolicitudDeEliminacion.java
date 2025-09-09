@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 public class SolicitudDeEliminacion {
 
     private Long id;
-    private String descripcion;
-    private Long hechoId;
-    private LocalDateTime fechaDeCarga;
+    //private String descripcion;
+    //private Long hechoId;
+    //private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaDeResolucion;
     private EstadoSolicitud estado;
-    private Long solicitante;           // exclusivo para este módulo
-    private Administrador administradorQueResolvio;
+    //private Long solicitante;           // exclusivo para este módulo
+    //private Administrador administradorQueResolvio;
 }

@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
+import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.CriterioOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.FiltroOutputDTO;
@@ -47,6 +48,15 @@ public class ColeccionesService implements IColeccionesService {
                 .stream()
                 .map(this::coleccionOutputDTO)
                 .toList();
+    }
+
+    @Override
+    public List<ColeccionConHechosOutputDTO> buscarTodosConHechos() {
+        return coleccionesRepository
+            .findAll()
+            .stream()
+            .map(this::coleccionConHechosOutputDTO)
+            .toList();
     }
 
     @Override
@@ -182,6 +192,17 @@ public class ColeccionesService implements IColeccionesService {
         dto.setDescripcion(coleccion.getDescripcion());
         dto.setFuentes(coleccion.getFuentes());
         dto.setCriterioDePertenencia(criterioOutputDTO(coleccion.getCriterioDePertenencia()));
+        return dto;
+    }
+
+    private ColeccionConHechosOutputDTO coleccionConHechosOutputDTO(Coleccion coleccion){
+        ColeccionConHechosOutputDTO dto = new ColeccionConHechosOutputDTO();
+
+        dto.setIdentificador(coleccion.getIdentificador());
+        dto.setTitulo(coleccion.getTitulo());
+        dto.setDescripcion(coleccion.getDescripcion());
+        dto.setHechos(coleccion.getHechos());
+        dto.setFuentes(coleccion.getFuentes());
         return dto;
     }
 
