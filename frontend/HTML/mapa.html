@@ -153,5 +153,23 @@ function openBuscador() {
     }, 600);
 }
 
+const btnAdd = document.getElementById("btn-add-hecho");
+
+btnAdd.addEventListener("click", () => {
+    window.location.href = "./cargarHecho.html";
+});
+
+const btnCSV = document.getElementById("btn-add-dataset");
+
+btnCSV.addEventListener("click", () => {
+    window.location.href = "./importarCSV.html";
+});
+
+const btnColeccion = document.getElementById("btn-add-coleccion");
+
+btnColeccion.addEventListener("click", () => {
+    window.location.href = "./crearColeccion.html";
+});
+
 </script>
 </html>
