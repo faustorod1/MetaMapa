@@ -311,16 +311,6 @@ public class HechosService implements IHechosService {
     }
 
 
-    @Override
-    public Mono<List<Hecho>> normalizarTodosLosHechos() {
-        List<Hecho> hechos = hechosRepository.findAll();
-        normalizarCategoria(hechos);
-        return normalizarUbicacion(hechos).map(hechosNormalizados ->
-                hechosRepository.saveAll(hechosNormalizados)
-        );
-    }
-
-
     // ---- Conversiones DTO -------------------------------------------------------------------------------
 
     private GeorrefRequestDTO coordToGeorrefRequestDto(Coordenada c){
