@@ -124,10 +124,6 @@ public class Coleccion {
         return criterioDePertenencia.aplicarA(hechosAFiltrar);
     }
 
-    public void filtrarHechosPropios(List<Hecho> todosLosHechos) {
-        this.hechos = aplicarFiltros(todosLosHechos);
-    }
-
     public void agregarTandaDeHechos(List<Hecho> tanda) {
         List<Hecho> hechosPotables = aplicarFiltros(tanda);
         List<Hecho> hechosARemover = new ArrayList<>(tanda);
@@ -152,23 +148,6 @@ public class Coleccion {
     }
 
     // TODO: Cuándo y cómo deberíamos ver qué hechos permanecen en la colección al actualizar?
-    public void agregarHechoManualmente(Hecho hecho) {
-        this.hechos.add(hecho);
-        this.hechosCargadosManualmente.add(hecho);
-    }
-
-    public void quitarHechoManualmente(Hecho hecho) {
-        this.removerHecho(hecho);
-        hechosCargadosManualmente.remove(hecho);
-    }
-
-    public void agregarFuente(String fuente) {
-        fuentes.add(fuente);
-    }
-
-    public void quitarFuente(String fuente) {
-        fuentes.remove(fuente);
-    }
 
     public void consensuarHechos(){
         this.hechosConsensuados.clear();        // Para asegurar que todos los hechos esten consensuados al día, vaciamos la lista

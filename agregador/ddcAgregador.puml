@@ -1,10 +1,11 @@
 @startuml
 
 class Hecho{
+- id: Long
 - título: String
 - descripción: String
 - categoría: Categoria
-- contenidoMultimedia: List<ContenidoMultimedia>
+- contenidosMultimedia: List<ContenidoMultimedia>
 - origen: OrigenHecho
 - lugarAcontecimiento: Coordenada
 - fechaHecho: LocalDateTime
@@ -12,7 +13,6 @@ class Hecho{
 - fechaUltimaActualizacion: LocalDateTime
 - eliminado: boolean
 - contribuyente: Contribuyente
-- id: Long
 - idExterno: String
 - revisado: boolean
 - municipio: Municipio
@@ -24,6 +24,7 @@ class Hecho{
 + perteneceAlaFuente (String fuente): boolean
 + hechoIgualA (Hecho otroHecho): boolean
 + mismoTituloDiferentesAtributos (Hecho otroHecho): boolean
++ getProvincia(): Provincia
 }
 
 enum OrigenHecho{
@@ -36,6 +37,11 @@ PROXY
 class Categoria{
 - id: Long
 - nombre: String
+- sinonimos: List<String>
+--
++ addSinonimo(String palabra): void
++ esLaMisma(String otraCategoria): boolean
++ esSimilarSegunLevenshtein(String b): boolean
 }
 
 class Etiqueta{
@@ -55,14 +61,32 @@ class Coleccion{
 - hechosConsensuados: List<Hecho>
 - hechos: List<Hecho>
 --
-+ cumpleFiltros(Hecho hecho): boolean
 + contiene (Hecho hecho): boolean
 + aplicarFiltros(List<Hecho> hechos): List<Hecho>
++ filtrarHechosPropios (List<Hecho> hechos): void
 + agregarTandaDeHechos(List<Hecho> tanda): void
 + removerHechoEliminado(Hecho hecho): void
 + removerHecho(Hecho hecho): void
 + consensuarHechos(): void
 }
+
+class SolicitudDeEliminacionBuilder{
+- CANT_MINIMA_DE_CARACTERES = 500;
+- descripcion: String
+- hecho: Hecho
+- fechaDeCarga: LocalDateTime
+- solicitante: Contribuyente
+- estado: EstadoSolicitud
+--
++ descripcion(String d): SolicitudDeEliminacionBuilder
++ hecho(Hecho h): SolicitudDeEliminacionBuilder
++ solicitante(Contribuyente s): SolicitudDeEliminacionBuilder
++ build(): SolicitudDeEliminacion
+}
+
+
+
+
 
 class ContenidoMultimedia{
 - id: Long
@@ -188,8 +212,6 @@ class Contribuyente{
 - nombre: String
 - apellido: String
 - fechaNacimiento: LocalDate
---
-+ getEdad(): int
 }
 
 class CriterioCambiadoEvent{
@@ -210,7 +232,7 @@ class HechosModificadosEvent{
 }
 
 
-Coleccion --> CriterioCambiadoEvent
+CriterioCambiadoEvent --> Coleccion
 FuentesCambiadasEnColeccionEvent --> Coleccion
 HechoEliminadoEvent --> Hecho
 HechosModificadosEvent -->"*" Hecho
@@ -220,7 +242,7 @@ HechosModificadosEvent -->"*" Hecho
 Hecho -u-> Categoria
 Hecho --> Coordenada
 Hecho -->"*" SolicitudDeEliminacion
-Hecho --> ContenidoMultimedia
+Hecho --> "*"ContenidoMultimedia
 Hecho -r-> OrigenHecho
 Hecho -->"*" Etiqueta
 Hecho --> Contribuyente
@@ -249,6 +271,9 @@ ConsensoAbsoluta -u-|> AlgoritmoDeConsenso
 ConsensoMayoriaSimple -u-|> AlgoritmoDeConsenso
 ConsensoMultiplesMenciones -u-|> AlgoritmoDeConsenso
 
-
+SolicitudDeEliminacionBuilder --> Hecho
+SolicitudDeEliminacionBuilder --> Contribuyente
+SolicitudDeEliminacionBuilder --> EstadoSolicitud
+SolicitudDeEliminacionBuilder ..> SolicitudDeEliminacion
 
 @enduml

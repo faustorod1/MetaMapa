@@ -103,11 +103,6 @@ public class Hecho {
         etiquetas.add(etiqueta);
     }
 
-
-    public boolean perteneceALaFuente(OrigenHecho fuente) {
-        return this.origen.equals(fuente);
-    }
-
     public boolean perteneceALaFuente(String fuente) {
         String[] splitF = fuente.split(":");
         String[] splitI = idExterno.split(":");
