@@ -15,4 +15,5 @@ public interface IHechosService {
     HechoOutputDTO hechoOutputDTO(Hecho hecho);
     void normalizarCategoria(List<Hecho> hechos);
     Mono<List<Hecho>> normalizarUbicacion(List<Hecho> hechos);
+    Mono<List<Hecho>> normalizarTodosLosHechos();
 }

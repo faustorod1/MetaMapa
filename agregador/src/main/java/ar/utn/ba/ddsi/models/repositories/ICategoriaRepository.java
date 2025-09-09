@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface ICategoriaRepository extends JpaRepository<Categoria, Long> {
   List<Categoria> findAll();
+  Categoria findByNombre(String nombre);
+  List<Categoria> findByNombreIn(List<String> nombres);
 }

@@ -19,4 +19,6 @@ public interface IHechosRepository extends JpaRepository<Hecho, Long>, HechosRep
     List<Hecho> findFromFuente(String fuente);
 
     List<Hecho> findAllByIdIn(List<Long> ids);
+    List<Hecho> findAllByIdExternoIn(List<String> ids);
+
 }

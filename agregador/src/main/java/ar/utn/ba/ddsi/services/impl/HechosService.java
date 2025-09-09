@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dtos.apigob.GeorrefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
 import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
+import ar.utn.ba.ddsi.models.dtos.output.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
@@ -14,6 +15,7 @@ import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.models.repositories.IMunicipiosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -97,11 +99,11 @@ public class HechosService implements IHechosService {
                 .doOnNext(tupla -> {
                     List<Hecho> hechos = new ArrayList<>(tupla.getT1());
 
-                    List<Long> ids = hechos.stream().map(Hecho::getId).toList();
-                    List<Hecho> hechosAModificar = hechosRepository.findAllByIdIn(ids);
-
                     hechos.addAll(tupla.getT2());
                     hechos.addAll(tupla.getT3());
+
+                    List<String> ids = hechos.stream().map(Hecho::getIdExterno).toList();
+                    List<Hecho> hechosAModificar = hechosRepository.findAllByIdExternoIn(ids);
 
                     normalizarCategoria(hechos);
                     normalizarUbicacion(hechos).subscribe(hechosNormalizados -> {
@@ -309,6 +311,16 @@ public class HechosService implements IHechosService {
     }
 
 
+    @Override
+    public Mono<List<Hecho>> normalizarTodosLosHechos() {
+        List<Hecho> hechos = hechosRepository.findAll();
+        normalizarCategoria(hechos);
+        return normalizarUbicacion(hechos).map(hechosNormalizados ->
+                hechosRepository.saveAll(hechosNormalizados)
+        );
+    }
+
+
     // ---- Conversiones DTO -------------------------------------------------------------------------------
 
     private GeorrefRequestDTO coordToGeorrefRequestDto(Coordenada c){
@@ -326,7 +338,6 @@ public class HechosService implements IHechosService {
         dto.setId(hecho.getId());
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
-        dto.setCategoria(hecho.getCategoria());
         dto.setContenidosMultimedia(hecho.getContenidosMultimedia());
         dto.setOrigen(hecho.getOrigen());
         dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
@@ -334,6 +345,7 @@ public class HechosService implements IHechosService {
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setIdExterno(hecho.getIdExterno());
         dto.setMunicipio(hecho.getMunicipio());
+        if (hecho.getCategoria() != null) dto.setCategoria(CategoriaDTO.fromEntity(hecho.getCategoria()));
         if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
 
         dto.setEtiquetas(
