@@ -54,10 +54,13 @@
 
         /* Contenedor para centrar el gráfico */
         .grafico-contenedor {
-            flex-grow: 1; /* ocupa espacio restante */
             display: flex;
+            position: relative;
+            flex-grow: 1; /* ocupa espacio restante */
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            padding-bottom:6rem;
             width: 100%;
         }
 
@@ -81,18 +84,29 @@
             color: white;
         }
 
+
+       .grafico {
+            position: relative;  /* para colocarla sobre el canvas */
+            top: 10px;
+            left: 10px;
+            width: 30rem;       /* ajusta tamaño */
+            height: auto;
+            z-index: 10;        /* para que esté encima del canvas */
+           border: 0.1rem solid black;
+        }
+
     </style>
 </head>
 
 <body>
-<a href="./index.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+
 <div id="fixed-logo"></div>
 
 <div class="contenedor">
     <h1>Estadísticas</h1>
 
     <div class="grafico-contenedor">
-        <canvas id="miGrafico"></canvas>
+        <img src="../grafico_rosquilla_2.png" class="grafico">
     </div>
 
     <button class="descargar-csv">Descargar csv</button>

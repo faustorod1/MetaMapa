@@ -63,6 +63,36 @@
             height: 100%;
             border: 0;
         }
+
+        #nav-button-modo-de-navegacion {
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* Barra de selección azul siempre que esté seleccionado o no */
+        #nav-button-modo-de-navegacion > .nav-button-selection {
+            background: lightblue; /* azul en cualquier estado */
+            width: 0;
+            height: 1.5em;
+            border-radius: 0 0.5em 0.5em 0;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: width 0.2s ease-out;
+        }
+
+        /* Cuando está seleccionado */
+        #nav-button-modo-de-navegacion.selected > .nav-button-selection {
+            width: 1.8em; /* igual que los otros botones */
+        }
+
+        /* Hover (igual que los otros) */
+        #nav-button-modo-de-navegacion:hover {
+            color: dimgrey;
+        }
+
+
     </style>
 </head>
 <body>
@@ -73,12 +103,12 @@
             <i class="fa-solid fa-house"></i>
         </button>
 
-        <button class="nav-button" view="./mis-hechos.html" id="nav-button-mis-hechos">
+        <button class="nav-button" view="./buscador.html" id="nav-button-mis-hechos">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-folder"></i>
         </button>
 
-        <button class="nav-button">
+        <button class="nav-button selected" id="nav-button-modo-de-navegacion">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-toggle-on"></i>
             <i class="fa-solid fa-toggle-off"></i>
@@ -94,7 +124,7 @@
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-clipboard-list"></i>
         </button>
-        <button class="nav-button" id="nav-button-stadistics">
+        <button class="nav-button" id="nav-button-stadistics" view="./estadisticas.html">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-chart-line"></i>
         </button>
@@ -116,16 +146,34 @@
 </body>
 
 <script>
-    document.querySelectorAll('.nav-button').forEach(button => {
-        button.addEventListener('click', onNavButtonClick);
+    const navButtons = document.querySelectorAll('.nav-button');
+    const iframe = document.getElementById('main-iframe');
+    const modoBtn = document.getElementById('nav-button-modo-de-navegacion');
+
+    // Botones normales
+    navButtons.forEach(button => {
+        if (button !== modoBtn) {
+            button.addEventListener('click', () => {
+                // Quitar selected de los demás (excepto modoBtn)
+                navButtons.forEach(btn => {
+                    if (btn !== modoBtn) btn.classList.remove('selected');
+                });
+                // Seleccionar este botón
+                button.classList.add('selected');
+
+                // Cambiar iframe
+                const view = button.getAttribute('view');
+                if (view) iframe.src = view;
+            });
+        }
     });
 
-    function onNavButtonClick(e) {
-        const button = e.currentTarget;
-        console.log(button);
-        document.querySelector('.nav-button.selected').classList.remove('selected');
-        button.classList.add('selected');
-        document.getElementById('main-iframe').src = button.getAttribute('view');
-    }
+    // Modo de navegación: toggle solo sobre sí mismo
+    modoBtn.classList.add('selected'); // activado por defecto
+    modoBtn.addEventListener('click', (e) => {
+        modoBtn.classList.toggle('selected');
+        console.log("Modo de navegación:", modoBtn.classList.contains('selected') ? "Activado" : "Desactivado");
+    });
+
 </script>
 </html>
