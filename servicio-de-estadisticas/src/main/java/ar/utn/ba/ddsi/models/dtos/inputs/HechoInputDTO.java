@@ -4,7 +4,7 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.entities.Etiqueta;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.Municipio;
+import ar.utn.ba.ddsi.models.entities.Departamento;
 import ar.utn.ba.ddsi.models.entities.OrigenHecho;
 import lombok.Data;
 
@@ -27,17 +27,15 @@ public class HechoInputDTO {
     private Long contribuyente;
     private List<SolicitudDeEliminacionInputDTO> solicitudesDeEliminacion;
     private Set<String> etiquetas;
-    private Municipio municipio;
+    private Departamento departamento;
     
     public Hecho toEntity() {
         Set<Etiqueta> hashDeEtiquetas = this.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toSet());
 
-        return Hecho.builder()
+        Hecho hecho = Hecho.builder()
             .id(this.getId())
             .titulo(this.getTitulo())
             .categoria(this.getCategoria())
-            .provincia(this.getMunicipio().getProvincia().getNombre())
-            .municipio(this.getMunicipio().getNombre())
             .descripcion(this.getDescripcion())
             .origen(this.getOrigen())
             .lugarAcontecimiento(this.getLugarAcontecimiento())
@@ -46,5 +44,12 @@ public class HechoInputDTO {
             .etiquetas(hashDeEtiquetas)
             .contribuyente(this.getContribuyente())
             .build();
+        if (this.getDepartamento() != null) {
+            hecho.setDepartamento(this.getDepartamento().getNombre());
+            if (this.getDepartamento().getProvincia() != null) {
+                hecho.setProvincia(this.getDepartamento().getProvincia().getNombre());
+            }
+        }
+        return hecho;
     } 
 }

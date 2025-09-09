@@ -1,6 +1,6 @@
 package ar.utn.ba.ddsi.models.entities;
 
-import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
+import ar.utn.ba.ddsi.models.entities.ubicacion.Departamento;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Provincia;
 import jakarta.persistence.*;
 import lombok.*;
@@ -63,8 +63,8 @@ public class Hecho {
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
 
     @ManyToOne
-    @JoinColumn(name = "municipio_id", referencedColumnName = "id", nullable = true)
-    private Municipio municipio;
+    @JoinColumn(name = "departamento_id", referencedColumnName = "id", nullable = true)
+    private Departamento departamento;
 
     @OneToMany(mappedBy = "hecho")
     @Builder.Default
@@ -148,7 +148,7 @@ public class Hecho {
     }
 
     public Provincia getProvincia(){
-        return this.municipio.getProvincia();
+        return this.departamento.getProvincia();
     }
 
 }

@@ -39,6 +39,8 @@ public class EstadisticasService implements IEstadisticasService {
     List<Coleccion> colecciones = fetchColeccionesFromAgregador();
     List<SolicitudDeEliminacion> solicitudes = fetchSolicitudesDeEliminacionFromAgregador();
 
+
+
     escribeCSV("provincia-con-mas-hechos-de-categoria", generarStringProvinciaConMasHechosDeCategoria(hechos, categorias));
     escribeCSV("categoria-con-mas-hechos",generarStringCategoriaConMasHechos(hechos));
     escribeCSV("horario-con-mas-hechos-por-categoria",generarStringHorariConMasHechosPorCategoria(hechos,categorias));
@@ -61,9 +63,14 @@ public class EstadisticasService implements IEstadisticasService {
     String[] headers = { "Categoría", "Provincia", "Cantidad de hechos" };
     str.add(headers);
 
+    final List<Hecho> hechosCurados = hechos.stream().filter(h -> h.getProvincia() != null).toList();
+
     categorias.forEach(categoria -> {
-      List<Hecho> hechosDeCategoria = hechos.stream().filter(h->h.getCategoria().equals(categoria)).toList();
+      List<Hecho> hechosDeCategoria = hechosCurados.stream().filter(h->h.getCategoria().equals(categoria)).toList();
       Map.Entry<String, Long> max = masHechosSegunParametro(hechosDeCategoria, Hecho::getProvincia);
+      if (max == null) {
+        return;
+      }
       String provincia = max.getKey();
       Long cantidadHechos = max.getValue();
       String[] fila = { categoria.getNombre(), provincia, cantidadHechos.toString() };
@@ -79,6 +86,9 @@ public class EstadisticasService implements IEstadisticasService {
     str.add(headers);
 
     Map.Entry<Categoria, Long> max = masHechosSegunParametro(hechos, Hecho::getCategoria);
+    if (max == null) {
+      return str;
+    }
     Categoria categoria = max.getKey();
     Long cantidadHechos = max.getValue();
     String[] fila = { categoria.getNombre(), cantidadHechos.toString() };
@@ -94,6 +104,9 @@ public class EstadisticasService implements IEstadisticasService {
     categorias.forEach(categoria -> {
       List<Hecho> hechosDeCategoria = hechos.stream().filter(h->h.getCategoria().equals(categoria)).toList();
       Map.Entry<Integer, Long> max = masHechosSegunParametro(hechosDeCategoria, h -> h.getFechaHecho().getHour());
+      if (max == null) {
+        return;
+      }
       String horario = String.format("%02d:00", max.getKey());
       Long cantidadHechos = max.getValue();
       String[] fila = { categoria.getNombre(), horario, cantidadHechos.toString() };
@@ -124,7 +137,13 @@ public class EstadisticasService implements IEstadisticasService {
 
     colecciones.forEach(coleccion -> {
       List<Hecho> hechos = fetchHechosDeColeccionFromAgregador(coleccion.getIdentificador());
-      Map.Entry<String, Long> max = masHechosSegunParametro(hechos, Hecho::getProvincia);
+
+      List<Hecho> hechosCurados = hechos.stream().filter(h -> h.getProvincia() != null).toList();
+
+      Map.Entry<String, Long> max = masHechosSegunParametro(hechosCurados, Hecho::getProvincia);
+      if (max == null) {
+        return;
+      }
       String provincia = max.getKey();
       Long cantidadHechos = max.getValue();
       String[] fila = { coleccion.getIdentificador(), coleccion.getTitulo(), provincia, cantidadHechos.toString() };

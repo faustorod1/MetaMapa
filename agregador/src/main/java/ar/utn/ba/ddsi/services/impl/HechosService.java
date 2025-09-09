@@ -10,12 +10,11 @@ import ar.utn.ba.ddsi.models.dtos.output.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
-import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
+import ar.utn.ba.ddsi.models.entities.ubicacion.Departamento;
 import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
-import ar.utn.ba.ddsi.models.repositories.IMunicipiosRepository;
+import ar.utn.ba.ddsi.models.repositories.IDepartamentosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -48,7 +48,7 @@ public class HechosService implements IHechosService {
     @Autowired
     private ICategoriaRepository categoriaRepository;
     @Autowired
-    private IMunicipiosRepository municipiosRepository;
+    private IDepartamentosRepository departamentosRepository;
 
 
     @Autowired
@@ -96,7 +96,8 @@ public class HechosService implements IHechosService {
         Mono<List<Hecho>> monoProxy = crearMonoPeticionHechos(webClients.get(OrigenHecho.PROXY));
 
         Mono<Void> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
-                .doOnNext(tupla -> {
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(tupla -> {
                     List<Hecho> hechos = new ArrayList<>(tupla.getT1());
 
                     hechos.addAll(tupla.getT2());
@@ -106,7 +107,7 @@ public class HechosService implements IHechosService {
                     List<Hecho> hechosAModificar = hechosRepository.findAllByIdExternoIn(ids);
 
                     normalizarCategoria(hechos);
-                    normalizarUbicacion(hechos).subscribe(hechosNormalizados -> {
+                    return normalizarUbicacion(hechos).map(hechosNormalizados -> {
                                 // Para cada hecho normalizado, si ya existía en el agregador, lo actualiza
                                 for (int i = 0; i < hechosNormalizados.size(); i++) {
                                     Hecho hechoNormalizado = hechosNormalizados.get(i);
@@ -120,12 +121,13 @@ public class HechosService implements IHechosService {
                                         hechoNormalizado.setFechaUltimaActualizacion(LocalDateTime.now());
                                     }
                                 }
-                                // Hasta acá anda. Falta persistir las categorías/provincias/municipios de antemano
+
                                 hechosRepository.saveAll(hechosNormalizados);
-                            }
-                    );
-                })
-                .then();
+
+                                return hechosNormalizados;
+                            })
+                            .then();
+                }).then();
 
         fechaUltimaActualizacion = LocalDateTime.now();
 
@@ -182,22 +184,22 @@ public class HechosService implements IHechosService {
                 .collectList()
                 .map(listaDeMapas -> {
                     // Junta las respuestas de las peticiones en un solo Map
-                    Map<Coordenada, Municipio> combinados = new HashMap<>();
+                    Map<Coordenada, Departamento> combinados = new HashMap<>();
                     listaDeMapas.forEach(combinados::putAll);
 
-                    combinados.forEach((coordenada, municipio) ->
+                    combinados.forEach((coordenada, departamento) ->
                             hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
-                                    hechoAModificar.setMunicipio(municipio)
+                                    hechoAModificar.setDepartamento(departamento)
                             )
                     );
                     return hechos;
             });
     }
 
-    public Mono<Map<Coordenada, Municipio>> georreferenciacionInversa(List<Coordenada> coordenadas){
+    public Mono<Map<Coordenada, Departamento>> georreferenciacionInversa(List<Coordenada> coordenadas){
 
         List<GeorrefRequestDTO> coordFormat = coordenadas.stream().map(this::coordToGeorrefRequestDto).toList();
-        List<Municipio> municipios = municipiosRepository.findAll();
+        List<Departamento> departamentos = departamentosRepository.findAll();
 
         GeorefRequestMultipleDTO reqBody = new GeorefRequestMultipleDTO();
         reqBody.setUbicaciones(coordFormat);
@@ -217,16 +219,16 @@ public class HechosService implements IHechosService {
                 .map(dto -> Optional.ofNullable(dto.getResultados()).orElse(Collections.emptyList()))
                 .map(listaRes -> listaRes.stream().map(ResultadoGeoDTO::getUbicacion).toList())
                 .map(ubicaciones -> {
-                    Map<Coordenada, Municipio> municipiosPorCoordenada = new HashMap<>();
+                    Map<Coordenada, Departamento> departamentosPorCoordenada = new HashMap<>();
                     ubicaciones.forEach(ubicacion -> {
-                        Municipio municipio = municipios.stream().filter(m ->
-                                        m.getNombre().equals(ubicacion.getMunicipio_nombre()) &&
-                                                m.getProvincia().getNombre().equals(ubicacion.getProvinicia_nombre()))
+                        Departamento departamento = departamentos.stream().filter(m ->
+                                        m.getNombre().equals(ubicacion.getDepartamento_nombre()) &&
+                                                m.getProvincia().getNombre().equals(ubicacion.getProvincia_nombre()))
                                 .findFirst().orElse(null);
                         Coordenada coord = new Coordenada(ubicacion.getLat(), ubicacion.getLon());
-                        municipiosPorCoordenada.put(coord, municipio);
+                        departamentosPorCoordenada.put(coord, departamento);
                     });
-                    return municipiosPorCoordenada;
+                    return departamentosPorCoordenada;
                 });
     }
 
@@ -275,7 +277,7 @@ public class HechosService implements IHechosService {
         viejo.setFechaHecho(nuevo.getFechaHecho());
         viejo.setFechaUltimaActualizacion(LocalDateTime.now());
         viejo.setRevisado(nuevo.isRevisado());
-        viejo.setMunicipio(nuevo.getMunicipio());
+        viejo.setDepartamento(nuevo.getDepartamento());
     }
 
     //TODO: revisar si es funcional esto asincronico
@@ -318,7 +320,7 @@ public class HechosService implements IHechosService {
             .lat(c.getLatitud())
             .lon(c.getLongitud())
             .aplanar(true)
-            .campos("municipio.nombre,provincia.nombre")
+            .campos("estandar")
             .build();
     }
 
@@ -334,7 +336,7 @@ public class HechosService implements IHechosService {
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setIdExterno(hecho.getIdExterno());
-        dto.setMunicipio(hecho.getMunicipio());
+        dto.setDepartamento(hecho.getDepartamento());
         if (hecho.getCategoria() != null) dto.setCategoria(CategoriaDTO.fromEntity(hecho.getCategoria()));
         if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
 

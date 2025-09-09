@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,52 +24,58 @@ public class EstadisticasController {
     private IEstadisticasService estadisticasService;
 
     @GetMapping("/colecciones/provincias/top/csv")
-    public ResponseEntity<String> provinciaConMasHechosDeColeccionCSV() {
+    public ResponseEntity<String> provinciaConMasHechosDeColeccionCSV() throws IOException {
         String path = estadisticasService.getCSVPath("provincia-con-mas-hechos-de-coleccion");
         Path p = Paths.get(path);
         if (Files.notExists(p)) {
             return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.ok(path);
+        String str = Files.readString(p);
+        return ResponseEntity.ok(str);
     }
 
-    @GetMapping("/colecciones/top/csv")
-    public ResponseEntity<String> categoriaConMasHechosCSV(){
+    @GetMapping("/categorias/top/csv")
+    public ResponseEntity<String> categoriaConMasHechosCSV() throws IOException {
         String path = estadisticasService.getCSVPath("categoria-con-mas-hechos");
         Path p = Paths.get(path);
         if (Files.notExists(p)) {
             return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.ok(path);
+        String str = Files.readString(p);
+        return ResponseEntity.ok(str);
     }
 
     @GetMapping("/categorias/provincias/top/csv")
-    public ResponseEntity<String> provinciaConMasHechosDeCategoriaCSV(){
+    public ResponseEntity<String> provinciaConMasHechosDeCategoriaCSV() throws IOException {
         String path = estadisticasService.getCSVPath("provincia-con-mas-hechos-de-categoria");
         Path p = Paths.get(path);
         if (Files.notExists(p)) {
             return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.ok(path);
+        String str = Files.readString(p);
+        return ResponseEntity.ok(str);
     }
 
     @GetMapping("categorias/horarios/top/csv")
-    public ResponseEntity<String> horarioConMasHechosPorCategoriaCSV(){
+    public ResponseEntity<String> horarioConMasHechosPorCategoriaCSV() throws IOException {
         String path = estadisticasService.getCSVPath("horario-con-mas-hechos-por-categoria");
         Path p = Paths.get(path);
         if (Files.notExists(p)) {
             return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.ok(path);
+        String str = Files.readString(p);
+        return ResponseEntity.ok(str);
     }
 
     @GetMapping("/solicitudes/cantidad-spam/csv")
-    public ResponseEntity<String> cuantasSonSpamCSV(){
+    public ResponseEntity<String> cuantasSonSpamCSV() throws IOException {
         String path = estadisticasService.getCSVPath("solicitudes-que-son-spam");
         Path p = Paths.get(path);
         if (Files.notExists(p)) {
             return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.ok(path);
+
+        String str = Files.readString(p);
+        return ResponseEntity.ok(str);
     }
 }

@@ -20,7 +20,7 @@ public class Hecho {
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private String provincia;
-    private String municipio;
+    private String departamento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private String idExterno;

@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/hechos")
-public class HechosController {
+public class  HechosController {
   private IHechosService hechosService;
 
   public HechosController(IHechosService hechosService) {

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Builder
@@ -25,9 +26,8 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
-    private Categoria categoria;
+    @Column(name = "categoria", columnDefinition = "VARCHAR(100)", nullable = true)
+    private String categoria;
 
     @OneToMany
     @JoinColumn(name = "hecho_id", referencedColumnName = "id")
@@ -62,7 +62,7 @@ public class Hecho {
             joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "etiqueta_id", referencedColumnName = "id"))
     @Builder.Default
-    private HashSet<Etiqueta> etiquetas = new HashSet<>();
+    private Set<Etiqueta> etiquetas = new HashSet<>();
 
     @OneToMany
     @JoinColumn(name = "hecho_id", referencedColumnName = "id")

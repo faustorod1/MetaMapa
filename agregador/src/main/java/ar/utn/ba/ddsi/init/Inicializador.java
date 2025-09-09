@@ -1,10 +1,10 @@
 package ar.utn.ba.ddsi.init;
 
-import ar.utn.ba.ddsi.models.dtos.apigob.MunicipiosResponseDTO;
+import ar.utn.ba.ddsi.models.dtos.apigob.DepartamentosResponseDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ProvinciasResponseDTO;
-import ar.utn.ba.ddsi.models.entities.ubicacion.Municipio;
+import ar.utn.ba.ddsi.models.entities.ubicacion.Departamento;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Provincia;
-import ar.utn.ba.ddsi.models.repositories.IMunicipiosRepository;
+import ar.utn.ba.ddsi.models.repositories.IDepartamentosRepository;
 import ar.utn.ba.ddsi.models.repositories.IProvinciasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +22,7 @@ public class Inicializador implements CommandLineRunner {
     @Autowired
     private IProvinciasRepository provinciasRepository;
     @Autowired
-    private IMunicipiosRepository municipiosRepository;
+    private IDepartamentosRepository departamentosRepository;
 
     private WebClient georefWebClient;
 
@@ -42,31 +42,31 @@ public class Inicializador implements CommandLineRunner {
             provinciasRepository.saveAll(provincias);
         }
 
-        if (municipiosRepository.count() == 0) {
-            int municipiosPorPagina = 300;
+        if (departamentosRepository.count() == 0) {
+            int departamentosPorPagina = 300;
 
-            MunicipiosResponseDTO datosQuery = georefWebClient.get()
-                    .uri("/municipios?max=1")
+            DepartamentosResponseDTO datosQuery = georefWebClient.get()
+                    .uri("/departamentos?max=1")
                     .retrieve()
-                    .bodyToMono(MunicipiosResponseDTO.class)
+                    .bodyToMono(DepartamentosResponseDTO.class)
                     .block();
-            // Páginas de 300 municipios
-            int cantPaginas = (int) Math.ceil( (double) datosQuery.getTotal() / municipiosPorPagina );
+            // Páginas de 300 departamentos
+            int cantPaginas = (int) Math.ceil( (double) datosQuery.getTotal() / departamentosPorPagina );
 
-            List<Municipio> municipios = Flux.range(0, cantPaginas)
+            List<Departamento> departamentos = Flux.range(0, cantPaginas)
                     .parallel()
                     .runOn(Schedulers.parallel())
                     .flatMap(page -> georefWebClient.get()
                                     .uri(
                                             uriBuilder -> uriBuilder
-                                                    .path("/municipios")
-                                                    .queryParam("max", municipiosPorPagina)
-                                                    .queryParam("inicio", page * municipiosPorPagina)
+                                                    .path("/departamentos")
+                                                    .queryParam("max", departamentosPorPagina)
+                                                    .queryParam("inicio", page * departamentosPorPagina)
                                                     .build()
                                     )
                             .retrieve()
-                            .bodyToMono(MunicipiosResponseDTO.class)
-                            .map(MunicipiosResponseDTO::getMunicipios)
+                            .bodyToMono(DepartamentosResponseDTO.class)
+                            .map(DepartamentosResponseDTO::getDepartamentos)
                     )
                     .sequential()
                     .flatMap(Flux::fromIterable)
@@ -75,12 +75,12 @@ public class Inicializador implements CommandLineRunner {
 
             List<Provincia> provincias = provinciasRepository.findAll();
 
-            municipios.forEach(municipio -> {
-                municipio.setId(null);
-                Provincia provincia = provincias.stream().filter(p -> p.getNombre().equals(municipio.getProvincia().getNombre())).findFirst().orElse(null);
-                municipio.setProvincia(provincia);
+            departamentos.forEach(departamento -> {
+                departamento.setId(null);
+                Provincia provincia = provincias.stream().filter(p -> p.getNombre().equals(departamento.getProvincia().getNombre())).findFirst().orElse(null);
+                departamento.setProvincia(provincia);
             });
-            municipiosRepository.saveAll(municipios);
+            departamentosRepository.saveAll(departamentos);
         }
     }
 }

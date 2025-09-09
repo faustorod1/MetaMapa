@@ -20,9 +20,8 @@ public class HechoSnapshot {
     @Column(name = "descripcion", columnDefinition = "TEXT", nullable = true)
     private String descripcion;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
-    private Categoria categoria;
+    @Column(name = "categoria", columnDefinition = "VARCHAR(100)", nullable = true)
+    private String categoria;
 
     @OneToMany
     @JoinColumn(name = "contenido_multimedia_id", referencedColumnName = "id")

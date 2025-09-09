@@ -2,11 +2,14 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
+import ar.utn.ba.ddsi.models.dto.input.EtiquetaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
+import ar.utn.ba.ddsi.models.repositories.IContribuyentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
@@ -21,9 +25,11 @@ import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 @Service
 public class HechosService implements IHechosService {
   private final IHechosRepository hechosRepository;
+  private final IContribuyentesRepository contribuyentesRepository;
 
-  public HechosService(IHechosRepository hechosRepository) {
+  public HechosService(IHechosRepository hechosRepository, IContribuyentesRepository contribuyentesRepository) {
     this.hechosRepository = hechosRepository;
+    this.contribuyentesRepository = contribuyentesRepository;
   }
 
 
@@ -52,6 +58,8 @@ public class HechosService implements IHechosService {
   @Override
   public HechoOutputDTO crearHecho(HechoInputDTO hechoInputDTO) {
     Hecho hecho = this.DTOToHecho(hechoInputDTO);
+    hecho.setFechaDeCarga(LocalDateTime.now());
+    hecho.setFechaUltimaActualizacion(LocalDateTime.now());
     hechosRepository.save(hecho);
     return this.hechoToDTO(hecho);
   }
@@ -87,26 +95,31 @@ public class HechosService implements IHechosService {
 
 
   public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
-    ContribuyenteDTO contribuyenteDTO = hechoInputDTO.getContribuyente();
-    return Hecho.builder()
+    Long contribuyenteId = hechoInputDTO.getContribuyenteId();
+    Contribuyente contribuyente = contribuyentesRepository.findById(contribuyenteId).orElse(null);
+
+    Hecho hecho = Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
         .descripcion(hechoInputDTO.getDescripcion())
-        .categoria(new Categoria(hechoInputDTO.getCategoria()))
-            .contenidosMultimedia(hechoInputDTO.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).collect(Collectors.toList()))
+        .categoria(hechoInputDTO.getCategoria())
+         .contenidosMultimedia(hechoInputDTO.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).collect(Collectors.toList()))
         .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(),hechoInputDTO.getLongitud()))
-        .fechaHecho(LocalDateTime.parse(hechoInputDTO.getFechaHecho(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")))
+        .fechaHecho(hechoInputDTO.getFechaHecho())
         .eliminado(false)
-        .contribuyente(new Contribuyente(contribuyenteDTO.getId(), contribuyenteDTO.getNombre(), contribuyenteDTO.getApellido(),
-                LocalDate.parse(contribuyenteDTO.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX"))))
-        .etiquetas(hechoInputDTO.getEtiquetas())
+        .contribuyente(contribuyente)
                 .build();
+    if (hechoInputDTO.getEtiquetas() != null){
+      Set<Etiqueta> etiquetas = hechoInputDTO.getEtiquetas().stream().map(EtiquetaDTO::toEntity).collect(Collectors.toSet());
+      hecho.setEtiquetas(etiquetas);
+    }
+    return hecho;
   }
 
   public HechoOutputDTO hechoToDTO (Hecho hecho){
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())
-        .categoria(hecho.getCategoria())
+        .categoria(new Categoria(hecho.getCategoria()))
         .contenidosMultimedia(hecho.getContenidosMultimedia().stream().map(ContenidoMultimedia::getPath).toList())
         .lugarAcontecimiento(hecho.getLugarAcontecimiento())
         .fechaHecho(hecho.getFechaHecho())
@@ -115,7 +128,7 @@ public class HechosService implements IHechosService {
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
         .contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
-        .etiquetas(hecho.getEtiquetas())
+        .etiquetas(hecho.getEtiquetas().stream().map(EtiquetaDTO::fromEntity).collect(Collectors.toSet()))
         .id(String.format("dinamica:%s", hecho.getId()))
         .build();
   }
@@ -125,7 +138,7 @@ public class HechosService implements IHechosService {
     c.setId(contribuyente.getId());
     c.setNombre(contribuyente.getNombre());
     c.setApellido(contribuyente.getApellido());
-    c.setFechaDeNacimiento(contribuyente.getFechaNacimiento().toString());
+    c.setFechaDeNacimiento(contribuyente.getFechaNacimiento());
     return c;
   }
 }

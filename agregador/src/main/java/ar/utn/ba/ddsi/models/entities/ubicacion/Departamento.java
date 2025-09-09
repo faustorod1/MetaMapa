@@ -10,12 +10,10 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import jakarta.persistence.Column;
 
-import java.util.List;
-
 @Data
 @Entity
-@Table(name = "municipios")
-public class Municipio {
+@Table(name = "departamentos")
+public class Departamento {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

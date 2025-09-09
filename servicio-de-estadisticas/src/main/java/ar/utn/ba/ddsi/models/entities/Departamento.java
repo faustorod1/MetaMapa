@@ -1,10 +1,9 @@
 package ar.utn.ba.ddsi.models.entities;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-public class Municipio {
+public class Departamento {
     private Long id;
     private String nombre;
     private Provincia provincia;

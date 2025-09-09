@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Builder
@@ -19,7 +21,7 @@ public class HechoInputDTO {
   private List<String> contenidosMultimedia;
   private Double latitud;
   private Double longitud;
-  private String fechaHecho;
-  private ContribuyenteDTO contribuyente;
-  private HashSet<Etiqueta> etiquetas;
+  private LocalDateTime fechaHecho;
+  private Long contribuyenteId;
+  private Set<EtiquetaDTO> etiquetas;
 }

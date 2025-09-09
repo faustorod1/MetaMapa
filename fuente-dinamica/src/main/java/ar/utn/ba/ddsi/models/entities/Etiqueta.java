@@ -1,9 +1,11 @@
 package ar.utn.ba.ddsi.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "etiquetas")
+@Data
 public class Etiqueta{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
