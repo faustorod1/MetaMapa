@@ -2,7 +2,7 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestMultipleDTO;
-import ar.utn.ba.ddsi.models.dtos.apigob.GeorrefRequestDTO;
+import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
 import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
@@ -78,7 +78,7 @@ public class HechosService implements IHechosService {
                         Stream.concat(tuple.getT1().stream(), tuple.getT2().stream()).toList()
                 ).map(criterio::aplicarA);
 
-        return todos.map(list -> list.stream().map(this::hechoOutputDTO).toList());
+        return todos.map(list -> list.stream().map(HechoOutputDTO::fromEntity).toList());
     }
 
 
@@ -198,7 +198,7 @@ public class HechosService implements IHechosService {
 
     public Mono<Map<Coordenada, Departamento>> georreferenciacionInversa(List<Coordenada> coordenadas){
 
-        List<GeorrefRequestDTO> coordFormat = coordenadas.stream().map(this::coordToGeorrefRequestDto).toList();
+        List<GeorefRequestDTO> coordFormat = coordenadas.stream().map(GeorefRequestDTO::fromCoordenada).toList();
         List<Departamento> departamentos = departamentosRepository.findAll();
 
         GeorefRequestMultipleDTO reqBody = new GeorefRequestMultipleDTO();
@@ -243,7 +243,7 @@ public class HechosService implements IHechosService {
                 )
                 .retrieve()
                 .bodyToFlux(HechoFuenteDTO.class)
-                .map(this::hechoFromHechoFuenteDTO)
+                .map(HechoFuenteDTO::toEntity)
                 .collectList();
     }
 
@@ -258,7 +258,7 @@ public class HechosService implements IHechosService {
                 )
                 .retrieve()
                 .bodyToFlux(HechoFuenteDTO.class)
-                .map(this::hechoFromHechoFuenteDTO)
+                .map(HechoFuenteDTO::toEntity)
                 .collectList();
     }
 
@@ -310,73 +310,6 @@ public class HechosService implements IHechosService {
             contador += tamLote;
         }
         return lotes;
-    }
-
-
-    // ---- Conversiones DTO -------------------------------------------------------------------------------
-
-    private GeorrefRequestDTO coordToGeorrefRequestDto(Coordenada c){
-    return GeorrefRequestDTO.builder()
-            .lat(c.getLatitud())
-            .lon(c.getLongitud())
-            .aplanar(true)
-            .campos("estandar")
-            .build();
-    }
-
-    public HechoOutputDTO hechoOutputDTO(Hecho hecho) {
-        HechoOutputDTO dto = new HechoOutputDTO();
-
-        dto.setId(hecho.getId());
-        dto.setTitulo(hecho.getTitulo());
-        dto.setDescripcion(hecho.getDescripcion());
-        dto.setContenidosMultimedia(hecho.getContenidosMultimedia());
-        dto.setOrigen(hecho.getOrigen());
-        dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
-        dto.setFechaHecho(hecho.getFechaHecho());
-        dto.setFechaDeCarga(hecho.getFechaDeCarga());
-        dto.setIdExterno(hecho.getIdExterno());
-        dto.setDepartamento(hecho.getDepartamento());
-        if (hecho.getCategoria() != null) dto.setCategoria(CategoriaDTO.fromEntity(hecho.getCategoria()));
-        if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
-
-        dto.setEtiquetas(
-                hecho.getEtiquetas()
-                        .stream()
-                        .map(Etiqueta::getNombre)
-                        .collect(Collectors.toCollection(HashSet::new))
-        );
-        return dto;
-    }
-
-    private Hecho hechoFromHechoFuenteDTO(HechoFuenteDTO dto) {
-        Contribuyente contribuyente = null;
-        if (dto.getContribuyente() != null) {
-            contribuyente = contribuyenteFromContribuyenteDTO(dto.getContribuyente());
-        }
-
-      // Cambiar
-
-      Hecho hecho = Hecho.builder()
-              .idExterno(dto.getId())
-              .titulo(dto.getTitulo())
-              .descripcion(dto.getDescripcion())
-              .categoria(dto.getCategoria())
-              .origen(dto.getOrigen())
-              .lugarAcontecimiento(dto.getLugarAcontecimiento())
-              .fechaHecho(dto.getFechaHecho())
-              .fechaDeCarga(dto.getFechaDeCarga())
-              .contribuyente(contribuyente)
-              .solicitudesDeEliminacion(dto.getSolicitudesDeEliminacion()) // Cambiar
-              .build();
-        if (dto.getContenidosMultimedia() != null) {
-            hecho.setContenidosMultimedia(dto.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
-        }
-        return hecho;
-    }
-
-    private Contribuyente contribuyenteFromContribuyenteDTO(ContribuyenteDTO dto) {
-        return new Contribuyente(dto.getId(), dto.getNombre(), dto.getApellido(), LocalDate.parse(dto.getFechaDeNacimiento(),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 }
 

@@ -46,7 +46,7 @@ public class ColeccionesService implements IColeccionesService {
         return coleccionesRepository
                 .findAll()
                 .stream()
-                .map(this::coleccionOutputDTO)
+                .map(ColeccionOutputDTO::fromEntity)
                 .toList();
     }
 
@@ -100,16 +100,16 @@ public class ColeccionesService implements IColeccionesService {
                 .map(filtrosDeUsuario::aplicarA);
 
         // PASO 3: convertir
-        return todos.map(list -> list.stream().map(hechosService::hechoOutputDTO).toList());
+        return todos.map(list -> list.stream().map(HechoOutputDTO::fromEntity).toList());
     }
 
 
     @Override
     public ColeccionOutputDTO crearColeccion(ColeccionInputDTO input){
-        Coleccion coleccion = inputDTOToColeccion(input);
+        Coleccion coleccion = input.toEntity();
         applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccion));
         coleccionesRepository.save(coleccion);
-        return coleccionOutputDTO(coleccion);
+        return ColeccionOutputDTO.fromEntity(coleccion);
     }
 
     @Override
@@ -119,21 +119,21 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public ColeccionOutputDTO updateColeccion(ColeccionInputDTO input){
-        Coleccion coleccion = inputDTOToColeccion(input);
+        Coleccion coleccion = input.toEntity();
         coleccionesRepository.save(coleccion);
-        return coleccionOutputDTO(coleccion);
+        return ColeccionOutputDTO.fromEntity(coleccion);
     }
 
 
     @Override
     public ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO){
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
-        Criterio criterio = inputDTOToCriterio(criterioInputDTO);
+        Criterio criterio = criterioInputDTO.toEntity();
 
         coleccion.setCriterioDePertenencia(criterio);
 
         applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccion));
-        return coleccionOutputDTO(coleccion);
+        return ColeccionOutputDTO.fromEntity(coleccion);
    }
 
     @Override
@@ -146,7 +146,7 @@ public class ColeccionesService implements IColeccionesService {
         coleccion.setFuentes(fuentes);     // TODO: acá no sería fuentes?
         applicationEventPublisher.publishEvent(new FuentesCambiadasEnColeccionEvent(coleccion, fuentesCambiadas));
 
-        return coleccionOutputDTO(coleccion);
+        return ColeccionOutputDTO.fromEntity(coleccion);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class ColeccionesService implements IColeccionesService {
         AlgoritmoDeConsenso algoritmoDeConsenso = obtenerAlgoritmoDeConsenso(tipoDeConsenso);
         coleccion.setAlgoritmoDeConsenso(algoritmoDeConsenso);
 
-        return coleccionOutputDTO(coleccion);
+        return ColeccionOutputDTO.fromEntity(coleccion);
     }
 
 
@@ -184,17 +184,6 @@ public class ColeccionesService implements IColeccionesService {
     //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 
 
-    private ColeccionOutputDTO coleccionOutputDTO(Coleccion coleccion) {
-        ColeccionOutputDTO dto = new ColeccionOutputDTO();
-
-        dto.setIdentificador(coleccion.getIdentificador());
-        dto.setTitulo(coleccion.getTitulo());
-        dto.setDescripcion(coleccion.getDescripcion());
-        dto.setFuentes(coleccion.getFuentes());
-        dto.setCriterioDePertenencia(criterioOutputDTO(coleccion.getCriterioDePertenencia()));
-        return dto;
-    }
-
     private ColeccionConHechosOutputDTO coleccionConHechosOutputDTO(Coleccion coleccion){
         ColeccionConHechosOutputDTO dto = new ColeccionConHechosOutputDTO();
 
@@ -204,100 +193,6 @@ public class ColeccionesService implements IColeccionesService {
         dto.setHechos(coleccion.getHechos());
         dto.setFuentes(coleccion.getFuentes());
         return dto;
-    }
-
-    private CriterioOutputDTO criterioOutputDTO(Criterio criterio) {
-        CriterioOutputDTO dto = new CriterioOutputDTO();
-        dto.setFiltros(
-                criterio.getFiltros()
-                .stream()
-                .map(this::filtroOutputDTO)
-                .toList()
-        );
-        return dto;
-    }
-
-
-    private Coleccion inputDTOToColeccion(ColeccionInputDTO input){
-        return new Coleccion(
-                input.getIdentificador(),
-                input.getTitulo(),
-                input.getDescripcion(),
-                inputDTOToCriterio(input.getCriterioDePertenencia()),
-                input.getFuentes(),
-                obtenerAlgoritmoDeConsenso(input.getAlgoritmoDeConsenso())
-        );
-    }
-
-    private Criterio inputDTOToCriterio(CriterioInputDTO input){
-        Criterio criterio = new Criterio();
-        input.getFiltros()
-                .stream()
-                .map(this::inputDTOToFiltro)
-                .forEach(criterio::addFiltro);
-        return criterio;
-    }
-
-    // Bajo la alfombra...  (╯°□°)╯︵ ┻━┻
-
-    private FiltroOutputDTO filtroOutputDTO(Filtro filtro) {
-        FiltroOutputDTO dto = new FiltroOutputDTO();
-        if (filtro instanceof FiltroPorTitulo f) {
-            dto.setTipoDeFiltro("titulo");
-            dto.setParametros(new HashMap<>());
-            dto.getParametros().put("titulo", f.getTitulo());
-        } else if (filtro instanceof FiltroPorDescripcion f) {
-            dto.setTipoDeFiltro("descripcion");
-            dto.setParametros(new HashMap<>());
-            dto.getParametros().put("descripcion", f.getDescripcion());
-        } else if (filtro instanceof FiltroPorCategoria f) {
-            dto.setTipoDeFiltro("categoria");
-            dto.setParametros(new HashMap<>());
-            dto.getParametros().put("categoria", f.getCategoria());
-        } else if (filtro instanceof FiltroPorUbicacion f) {
-            dto.setTipoDeFiltro("ubicacion");
-            dto.setParametros(new HashMap<>());
-            dto.getParametros().put("lugar", f.getLugar().comoArray());
-        } else if (filtro instanceof FiltroPorFechaHecho f) {
-            dto.setTipoDeFiltro("fechaHecho");
-            dto.setParametros(new HashMap<>());
-            dto.getParametros().put("desde", f.getDesde());
-            dto.getParametros().put("hasta", f.getHasta());
-        } else if (filtro instanceof FiltroPorFechaDeCarga f) {
-            dto.setTipoDeFiltro("fechaDeCarga");
-            dto.setParametros(new HashMap<>());
-            dto.getParametros().put("desde", f.getDesde());
-            dto.getParametros().put("hasta", f.getHasta());
-        } else if (filtro instanceof FiltroPorEliminados f) {
-            dto.setTipoDeFiltro("eliminados");
-            dto.setParametros(new HashMap<>());
-        } else {
-            throw new RuntimeException("Tipo de filtro no encontrado (╯°□°)╯︵ ┻━┻");
-        }
-
-        return dto;
-    }
-
-    private Filtro inputDTOToFiltro(FiltroInputDTO input){
-        if(input.getTipoDeFiltro().equals("titulo")){
-            return new FiltroPorTitulo((String) input.getParametros().get("titulo"));
-        }else if(input.getTipoDeFiltro().equals("descripcion")){
-            return new FiltroPorDescripcion((String) input.getParametros().get("descripcion"));
-        }else if(input.getTipoDeFiltro().equals("categoria")){
-            return new FiltroPorCategoria(new Categoria((String) input.getParametros().get("nombre")));
-        }else if(input.getTipoDeFiltro().equals("ubicacion")){
-            Double latitud = (Double) input.getParametros().get("latitud");
-            Double longitud = (Double) input.getParametros().get("longitud");
-            return new FiltroPorUbicacion(new Coordenada(latitud, longitud));
-        }else if(input.getTipoDeFiltro().equals("fechaHecho")){
-            LocalDateTime desde = LocalDateTime.parse((String) input.getParametros().get("desde"));
-            LocalDateTime hasta = LocalDateTime.parse((String) input.getParametros().get("hasta"));
-            return new FiltroPorFechaHecho(desde,hasta);
-        }else if(input.getTipoDeFiltro().equals("fechaDeCarga")){
-            return new FiltroPorFechaDeCarga((String) input.getParametros().get("desde"),(String) input.getParametros().get("hasta"));
-        }else{
-            throw new RuntimeException("Tipo de filtro no encontrado (╯°□°)╯︵ ┻━┻");
-        }
     }
 
     private AlgoritmoDeConsenso obtenerAlgoritmoDeConsenso(String algoritmoDeConsenso){         // no devuelve una interfaz OJO

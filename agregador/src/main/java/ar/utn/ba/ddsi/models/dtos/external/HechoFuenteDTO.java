@@ -24,4 +24,30 @@ public class HechoFuenteDTO {
     private ContribuyenteDTO contribuyente;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
     private HashSet<Etiqueta> etiquetas;
+
+    public Hecho toEntity() {
+        Contribuyente contribuyente = null;
+        if (this.getContribuyente() != null) {
+            contribuyente = this.getContribuyente().toEntity();
+        }
+
+        // Cambiar
+
+        Hecho hecho = Hecho.builder()
+                .idExterno(this.getId())
+                .titulo(this.getTitulo())
+                .descripcion(this.getDescripcion())
+                .categoria(this.getCategoria())
+                .origen(this.getOrigen())
+                .lugarAcontecimiento(this.getLugarAcontecimiento())
+                .fechaHecho(this.getFechaHecho())
+                .fechaDeCarga(this.getFechaDeCarga())
+                .contribuyente(contribuyente)
+                .solicitudesDeEliminacion(this.getSolicitudesDeEliminacion()) // Cambiar
+                .build();
+        if (this.getContenidosMultimedia() != null) {
+            hecho.setContenidosMultimedia(this.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
+        }
+        return hecho;
+    }
 }
