@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.models.dtos.output;
 import ar.utn.ba.ddsi.models.dtos.external.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.entities.Administrador;
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
+import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,4 +18,17 @@ public class SolicitudDeEliminacionOutputDTO {
   private EstadoSolicitud estado;
   private ContribuyenteDTO solicitante;
   private Administrador administradorQueResolvio;
+
+  public static SolicitudDeEliminacionOutputDTO fromEntity(SolicitudDeEliminacion solicitud) {
+    SolicitudDeEliminacionOutputDTO dto = new SolicitudDeEliminacionOutputDTO();
+    dto.setId(solicitud.getId());
+    dto.setDescripcion(solicitud.getDescripcion());
+    dto.setHechoId(solicitud.getHecho().getId());
+    dto.setFechaDeCarga(solicitud.getFechaDeCarga());
+    dto.setFechaDeResolucion(solicitud.getFechaDeResolucion());
+    dto.setEstado(solicitud.getEstado());
+    dto.setSolicitante(ContribuyenteDTO.fromEntity(solicitud.getSolicitante()));
+    dto.setAdministradorQueResolvio(solicitud.getAdministradorQueResolvio());
+    return dto;
+  }
 }

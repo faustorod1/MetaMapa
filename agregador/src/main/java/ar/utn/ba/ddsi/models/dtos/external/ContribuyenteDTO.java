@@ -19,4 +19,13 @@ public class ContribuyenteDTO {
                 this.getNombre(), this.getApellido(),
                 LocalDate.parse(this.getFechaDeNacimiento(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
+
+    public static ContribuyenteDTO fromEntity(Contribuyente contribuyente) {
+        ContribuyenteDTO dto = new ContribuyenteDTO();
+        dto.setId(contribuyente.getId());
+        dto.setNombre(contribuyente.getNombre());
+        dto.setApellido(contribuyente.getApellido());
+        dto.setFechaDeNacimiento(contribuyente.getFechaNacimiento().toString());
+        return dto;
+    }
 }

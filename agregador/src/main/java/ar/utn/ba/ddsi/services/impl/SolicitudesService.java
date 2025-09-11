@@ -29,6 +29,7 @@ public class SolicitudesService implements ISolicitudesService {
     Hecho hecho = hechosService.obtenerPorId(solicitudDto.getHechoId());
     SolicitudDeEliminacion solicitud = solicitudDto.toEntity(hecho);
     solicitudesRepository.save(solicitud);
+
     return switch (solicitud.getEstado()) {
       case PENDIENTE -> ResponseEntity.ok("Solicitud creada con éxito");
       case RECHAZADA_POR_SPAM -> ResponseEntity.status(422).body("Solicitud rechazada por spam");

@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class GeorefRequestMultipleDTO {
-    private List<GeorrefRequestDTO> ubicaciones;
+    private List<GeorefRequestDTO> ubicaciones;
 }
