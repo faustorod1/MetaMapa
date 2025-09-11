@@ -3,7 +3,9 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dtos.input.ResolucionSolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dtos.input.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
+import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,13 +29,25 @@ public class SolicitudesController {
   }
 
   @PostMapping      // Devuelve status code HTTP
-  public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO solicitud) {
-    return solicitudesService.crearSolicitud(solicitud);
+  public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto) {
+    SolicitudDeEliminacion solicitud = solicitudesService.crearSolicitud(dto);
+
+    return switch (solicitud.getEstado()) {
+      case PENDIENTE -> ResponseEntity.status(201).body("Solicitud creada con éxito"); // TODO: Devolver ID
+      case RECHAZADA_POR_SPAM -> ResponseEntity.status(422).body("Solicitud rechazada por spam");
+      case RECHAZADA_POR_FALTA_DE_CARACTERES -> ResponseEntity.status(422).body("Solicitud rechazada por insuficientes carácteres");
+      default -> ResponseEntity.internalServerError().body("Error del servidor (ㆆ _ ㆆ)");
+    };
   }
 
   @PatchMapping("/{id}/estado")
-  public void modificarEstadoSolicitud(@PathVariable Long id, @RequestBody ResolucionSolicitudDeEliminacionDTO resolucion) {
-    solicitudesService.modificarEstadoSolicitud(id, resolucion);
+  public ResponseEntity<SolicitudDeEliminacionOutputDTO> modificarEstadoSolicitud(@PathVariable Long id, @RequestBody ResolucionSolicitudDeEliminacionDTO resolucion) {
+    try {
+      SolicitudDeEliminacion solicitud = solicitudesService.modificarEstadoSolicitud(id, resolucion);
+      return ResponseEntity.ok().body(SolicitudDeEliminacionOutputDTO.fromEntity(solicitud));
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.notFound().build();
+    }
   }
 
   @GetMapping

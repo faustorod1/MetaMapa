@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ISolicitudesService {
-    ResponseEntity<String> crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
+    SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
     void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
     List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes();
 

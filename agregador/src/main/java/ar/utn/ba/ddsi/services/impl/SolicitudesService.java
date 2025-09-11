@@ -7,6 +7,7 @@ import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.ISolicitudesRepository;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -25,27 +26,25 @@ public class SolicitudesService implements ISolicitudesService {
 
   //ResponseEntity.ok(cuerpo);
   @Override
-  public ResponseEntity<String> crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
+  public SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
     Hecho hecho = hechosService.obtenerPorId(solicitudDto.getHechoId());
     SolicitudDeEliminacion solicitud = solicitudDto.toEntity(hecho);
     solicitudesRepository.save(solicitud);
 
-    return switch (solicitud.getEstado()) {
-      case PENDIENTE -> ResponseEntity.ok("Solicitud creada con éxito");
-      case RECHAZADA_POR_SPAM -> ResponseEntity.status(422).body("Solicitud rechazada por spam");
-      case RECHAZADA_POR_FALTA_DE_CARACTERES -> ResponseEntity.status(422).body("Solicitud rechazada por insuficientes carácteres");
-      default -> ResponseEntity.internalServerError().body("Error del servidor (ㆆ _ ㆆ)");
-    };
+    return solicitud;
   }
 
   @Override
-  public void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto) {
-    solicitudesRepository.findById(id).ifPresent(solicitudDeEliminacion -> {
-      solicitudDeEliminacion.resolver(resolucionDto.getEstadoSolicitud(), resolucionDto.getAdministradorQueResolvio());
-      solicitudesRepository.save(solicitudDeEliminacion);
-      hechosService.guardarCambios(solicitudDeEliminacion.getHecho());
-      hechosService.eliminarHechoEnLasFuentes(solicitudDeEliminacion.getHecho());
-    });
+  public SolicitudDeEliminacion modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto) {
+    SolicitudDeEliminacion solicitud = solicitudesRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada con id: " + id));
+
+    solicitud.resolver(resolucionDto.getEstadoSolicitud(), resolucionDto.getAdministradorQueResolvio());
+    solicitudesRepository.save(solicitud);
+    hechosService.guardarCambios(solicitud.getHecho());
+    hechosService.eliminarHechoEnLasFuentes(solicitud.getHecho());
+
+    return solicitud;
   }
 
   @Override
@@ -55,6 +54,5 @@ public class SolicitudesService implements ISolicitudesService {
           .stream()
           .map(SolicitudDeEliminacionOutputDTO::fromEntity)
           .toList();
-
   }
 }
