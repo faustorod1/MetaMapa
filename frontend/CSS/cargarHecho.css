@@ -17,10 +17,11 @@ place-items: center;
 */
 
 .container{
-    background-color: #d9d9d9;     /* CAMBIAR */
+    background-color: var(--color-main);     /* CAMBIAR */
     border-radius: 1rem;
     padding: 0.8rem;
     padding-bottom: 0;
+    color: white;
 }
 
 .cargar-hecho-form {
@@ -40,7 +41,7 @@ place-items: center;
 }
 
 input[type="text"]{
-    background-color: #bdbcbc;
+    background-color: white;
     border-radius: 0.3rem;
     padding:0.2rem;
 }
@@ -71,12 +72,12 @@ input[type="text"]{
 
 
 input[type="date"]{
-    background-color: #bdbcbc;
+    background-color: white;
     border-radius: 0.3rem;
 }
 
 textarea{
-    background-color: #bdbcbc;
+    background-color: white;
     width: 100%;
     height: 5rem;
     resize: none;
@@ -107,14 +108,14 @@ textarea{
 .custom-file {
     display: inline-block;
     padding: 0.5rem;
-    background: #007BFF;
-    color: white;
+    background: var(--color-main-2);
+    color: black;
     border-radius: 0.3rem;
     cursor: pointer;
 }
 
 .custom-file:hover {
-    background: var(--color-accent);
+    background: var(--color-main-2-hover);
 }
 input[type="file"] {
     display: none;
@@ -153,11 +154,11 @@ input[type="file"] {
     color: black;
     font-weight: bold;
     cursor: pointer;
-    background-color: #bdbcbc;
+    background-color: var(--color-main-2);
 }
 
 .btn-submit:hover {
-    background-color: var(--color-container);
+    background-color: var(--color-main-2-hover);
 }
 
 .tag-container {
@@ -203,8 +204,8 @@ input[type="file"] {
 .add-btn {
     padding: 6px 12px;
     margin-left: 5px;
-    background: #28a745;
-    color: white;
+    background: var(--color-main-2);
+    color: black;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -212,7 +213,7 @@ input[type="file"] {
 }
 
 .add-btn:hover {
-    background: #218838;
+    background: var(--color-main-2-hover);
 }
 
 

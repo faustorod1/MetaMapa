@@ -33,7 +33,7 @@
         padding: 0.8rem;
         border: 2px solid #ccc;
         border-radius: 1rem;
-        background-color: #d9d9d9;
+        background-color: var(--color-main);
       }
 
       .drop-zone {
@@ -116,7 +116,7 @@
           color: black;
           font-weight: bold;
           cursor: pointer;
-          background-color: #bdbcbc;
+          background-color: var(--color-main-2);
       }
 
       #btn-ok{
@@ -132,14 +132,15 @@
           font-size: 1rem;
           padding:0.2rem;
           border-radius:0.3rem;
+          background-color: var(--color-main-2);
       }
 
       .btn-submit:hover {
-          background-color: var(--color-container);
+          background-color: var(--color-main-2-hover);
       }
 
       .btn-buscar:hover {
-          background-color: var(--color-container);
+          background-color: var(--color-main-2-hover);
       }
 
     </style>
@@ -149,8 +150,7 @@
 
   <div id="fixed-logo"></div>
 
-  <div class="csv-import-container">
-    <h2>Importar archivo CSV</h2>
+  <div class="csv-import-container"><h2 style="color: white;">Importar archivo CSV</h2>
 
     <div class="drop-zone" id="dropZone">
       <p>Arrastrá tus archivos aquí o</p>

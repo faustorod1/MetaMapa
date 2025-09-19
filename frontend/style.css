@@ -47,13 +47,13 @@ header {
     background-color: var(--color-main);
 }
 #header-btn-register {
-    background-color: var(--color-accent);
+    background-color: var(--color-main-2);
 }
 #header-btn-login:hover {
     background-color: var(--color-main-hover);
 }
 #header-btn-register:hover {
-    background-color: var(--color-accent-hover);
+    background-color: var(--color-main-2-hover);
 }
 
 #btn-back-page {
