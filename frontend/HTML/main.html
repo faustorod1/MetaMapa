@@ -69,6 +69,10 @@
             cursor: pointer;
         }
 
+        #nav-button-modo-de-navegacion.selected > .nav-button-selection {
+            width: 1.8em;
+        }
+
         /* Barra de selección azul siempre que esté seleccionado o no */
         #nav-button-modo-de-navegacion > .nav-button-selection {
             background: lightblue; /* azul en cualquier estado */
@@ -82,16 +86,27 @@
             transition: width 0.2s ease-out;
         }
 
-        /* Cuando está seleccionado */
-        #nav-button-modo-de-navegacion.selected > .nav-button-selection {
-            width: 1.8em; /* igual que los otros botones */
+        #nav-button-modo-de-navegacion .nav-button-selection {
+            display: none;
         }
 
-        /* Hover (igual que los otros) */
         #nav-button-modo-de-navegacion:hover {
             color: dimgrey;
         }
 
+        #nav-button-modo-de-navegacion .fa-toggle-on {
+            display: none;
+        }
+        #nav-button-modo-de-navegacion .fa-toggle-off {
+            display: inline;
+        }
+
+        #nav-button-modo-de-navegacion.selected .fa-toggle-on {
+            display: inline;
+        }
+        #nav-button-modo-de-navegacion.selected .fa-toggle-off {
+            display: none;
+        }
 
     </style>
 </head>
@@ -103,12 +118,12 @@
             <i class="fa-solid fa-house"></i>
         </button>
 
-        <button class="nav-button" view="./buscador.html" id="nav-button-mis-hechos">
+        <button class="nav-button" view="./mis-hechos.html" id="nav-button-mis-hechos">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-folder"></i>
         </button>
 
-        <button class="nav-button selected" id="nav-button-modo-de-navegacion">
+        <button class="nav-button" id="nav-button-modo-de-navegacion">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-toggle-on"></i>
             <i class="fa-solid fa-toggle-off"></i>
@@ -146,6 +161,7 @@
 </body>
 
 <script>
+
     const navButtons = document.querySelectorAll('.nav-button');
     const iframe = document.getElementById('main-iframe');
     const modoBtn = document.getElementById('nav-button-modo-de-navegacion');
@@ -168,9 +184,7 @@
         }
     });
 
-    // Modo de navegación: toggle solo sobre sí mismo
-    modoBtn.classList.add('selected'); // activado por defecto
-    modoBtn.addEventListener('click', (e) => {
+    modoBtn.addEventListener('click', () => {
         modoBtn.classList.toggle('selected');
         console.log("Modo de navegación:", modoBtn.classList.contains('selected') ? "Activado" : "Desactivado");
     });

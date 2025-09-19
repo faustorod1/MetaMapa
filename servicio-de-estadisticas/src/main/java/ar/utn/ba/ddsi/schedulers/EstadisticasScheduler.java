@@ -25,6 +25,4 @@ public class EstadisticasScheduler {
             System.out.println("Error: " + e.getMessage());
         }
     }
-
-
 }

@@ -121,6 +121,11 @@
 
       #btn-ok{
           width:4rem;
+          border: none;
+      }
+
+      #btn-cancelar{
+          border:none;
       }
 
       .btn-buscar{
@@ -156,7 +161,7 @@
     <ul id="fileList" class="file-list"></ul>
 
     <div class="actions">
-      <button class="btn-submit" onclick="cancelar()">Cancelar</button>
+      <button class="btn-submit" id= "btn-cancelar"onclick="cancelar()">Cancelar</button>
       <button class="btn-submit" id="btn-ok" onclick="confirmar()">OK</button>
     </div>
   </div>
