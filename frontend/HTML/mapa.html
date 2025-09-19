@@ -18,7 +18,7 @@
         </button>
         <div class="data-container">
             <h3 id="hecho-preview__titulo"></h3>
-            <p id="hecho-preview__categoria"></p>
+            <p id="hecho-preview__categoria"></p>z
             <p>
                 <b>Fecha:</b> <span id="hecho-preview__fecha"></span>
             </p>
@@ -27,7 +27,7 @@
             </p>
             <p id="hecho-preview__descripcion"></p>
         </div>
-        <button id="hecho-preview__btn-open-details">Ver detalles</button>
+        <button id="hecho-preview__btn-open-details" onfocus="openDetalleHecho()">Ver detalles</button>
     </aside>
     <main>
         <div id="map"></div>
@@ -52,6 +52,7 @@
     </main>
 </body>
 <script>
+    let hechoActual = null;
 
 // Barra lateral con información del hecho seleccionado.
 const hechoPreview = {
@@ -66,6 +67,7 @@ const hechoPreview = {
 // Lista con los hechos obtenidos del agregador.
 const hechos = [
     {
+        id: 1,
         titulo: 'Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones',
         descripcion: 'La región de San Vicente en Misiones sufrió los efectos de una intensa ráfagas de más de 100 km/h. El incidente obligando a evacuar a residentes de la zona. Se ha convocado al comité de crisis para coordinar las acciones de respuesta.',
         categoria: 'Ráfagas de más de 100 km/h',
@@ -113,6 +115,7 @@ function addHechoToMap(hecho) {
 
 
 function openHecho(hecho) {
+    hechoActual = hecho;
     toggleHechoPreview(true);
     hechoPreview.titulo.textContent = hecho.titulo;
     hechoPreview.categoria.textContent = hecho.categoria;
@@ -144,6 +147,11 @@ function onBtnAddClick(e) {
             btn.style.setProperty('--translation', `${-(i + 1) * 110}%`);
         });
     }
+}
+
+function openDetalleHecho() {
+    if (!hechoActual) return;
+    window.location.replace(`detalle-hecho.html?id=${encodeURIComponent(hechoActual.id)}` );
 }
 
 function openBuscador() {
