@@ -7,6 +7,12 @@
     <link rel="stylesheet" type="text/css" href="../CSS/cargarHecho.css">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>   <!--Para la flechita-->
     <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet"> <!--Para el logo-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 </head>
 
 <body>
@@ -32,8 +38,10 @@
                     <div class="input-cargarHecho">
                         <h4>Lugar</h4>
                         <div class="input-with-icon">
-                            <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
-                            <input type="text" id="lugar" name="lugar">
+                            <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
+                                <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
+                                Seleccionar en el mapa
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -75,6 +83,11 @@
         </div>
         </form>
     </main>
+
+    <div id="mapa-input-ubicacion-container">
+        <div id="mapa-input-ubicacion"></div>
+        <button type="button" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
+    </div>
 
     <script>
         (() => {
@@ -172,6 +185,79 @@
             });
 
         })();
+
+        const map = L.map('mapa-input-ubicacion', {
+            center: [-34.5986333, -58.4199428],
+            zoom: 13
+        });
+
+        let ubicacionSeleccionada;
+        let markerUbicacionSeleccionada;
+        const inputUbicacionContainer = document.getElementById('mapa-input-ubicacion-container');
+
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {
+                foo: 'bar',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }
+        ).addTo(map);
+
+        map.oncontextmenu = (e) => {
+            console.log(e);
+        }
+
+        const geocoder = new L.Control.Geocoder({
+            defaultMarkGeocode: false
+        })
+        .on('markgeocode', (e) => {
+            const coords = e.geocode.center;
+            if (coords !== null) {
+                console.log(coords);
+                const ubicacion = latlngToCoords(coords);
+                setSelectedUbicacion(ubicacion);
+            }
+        })
+        .addTo(map);
+
+        function setSelectedUbicacion(newUbicacion) {
+            if (markerUbicacionSeleccionada) {
+                markerUbicacionSeleccionada.remove();
+            }
+
+            const marker = L.marker(newUbicacion, {
+                riseOnHover: true,
+                draggable: true
+            }).addTo(map);
+            
+            markerUbicacionSeleccionada = marker;
+        }
+
+        function toggleInputUbicacion(active) {
+            inputUbicacionContainer.classList.toggle('active', active);
+            if (active) {
+                if (ubicacionSeleccionada) {
+                    setSelectedUbicacion(ubicacionSeleccionada);
+                }
+            } else {
+                if (markerUbicacionSeleccionada) {
+                    markerUbicacionSeleccionada.remove();
+                }
+            }
+        }
+
+        function seleccionarUbicacionActual() {
+            if (markerUbicacionSeleccionada) {
+                ubicacionSeleccionada = latlngToCoords(markerUbicacionSeleccionada._latlng);
+                console.log(ubicacionSeleccionada);
+                
+            }
+            toggleInputUbicacion(false);
+        }
+
+        function latlngToCoords(latlng) {
+            return [latlng.lat, latlng.lng];
+        }
+        
     </script>
 </body>
 </html>

@@ -214,3 +214,33 @@ input[type="file"] {
 .add-btn:hover {
     background: #218838;
 }
+
+
+#mapa-input-ubicacion-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+
+    height: 70vh;
+    aspect-ratio: 1;
+    padding: 0.5rem;
+
+    background: whitesmoke;
+    border-radius: 0.5em;
+
+    display: none;
+}
+#mapa-input-ubicacion-container.active {
+    display: block;
+}
+#mapa-input-ubicacion {
+    height: 100%;
+}
+#btn-accept-ubicacion {
+    position: fixed;
+    right: 1rem;
+    bottom: 2rem;
+    z-index: 999;
+}
