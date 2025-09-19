@@ -31,7 +31,7 @@
         }
 
         .card {
-            background: #d9d9d9;
+            background: var(--color-main);
             border-radius: 1rem;
             padding: 2rem;
             height:90vh;
@@ -41,6 +41,7 @@
         }
 
         .header {
+            color: white;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -52,7 +53,7 @@
         }
 
         .categoria {
-            color: #444;
+            color: white;
             font-weight: normal;
             margin-left: 1rem;
             font-size: 1.25rem;
@@ -79,7 +80,7 @@
         .imagen {
             flex: 1;
             height: 9rem;
-            background: #bdbcbc;
+            background: white;
             border-radius: 0.5rem;
             overflow: hidden;
             cursor: pointer;
@@ -104,7 +105,6 @@
         }
 
         .descripcion textarea {
-            background: #bdbcbc;
             width: 98%;
             min-height: 10rem;
             border: none;
@@ -117,7 +117,7 @@
 
 
         .editar {
-            background: #333;
+            background: var(--color-main-2);
             margin-top:0.1rem;
             color: white;
             padding: 0.75rem 1.5rem;
@@ -130,10 +130,11 @@
         }
 
         .editar:hover {
-            background: #555;
+            background: var(--color-main-2-hover);
         }
 
         .menu {
+            background-color: var(--color-main-2);
             font-size: 2rem;
             cursor: pointer;
             padding: 0.25rem 0.5rem;
@@ -143,7 +144,7 @@
         }
 
         .menu:hover {
-            background: #bdbcbc;
+            background: var(--color-main-2-hover);
         }
 
 
@@ -154,7 +155,7 @@
             transform: translateY(-50%);
             font-size: 2.5rem;
             cursor: pointer;
-            background: #fff;
+            background: var(--color-main-2);
             border-radius: 50%;
             padding: 0.5rem;
             user-select: none;
@@ -164,7 +165,7 @@
 
         .flecha:hover {
             font-weight: bold;
-            background: #bdbcbc;
+            background: var(--color-main-2-hover);
         }
 
 
