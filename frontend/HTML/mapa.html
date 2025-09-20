@@ -27,6 +27,7 @@
             </p>
             <p id="hecho-preview__descripcion"></p>
         </div>
+        <button id="hecho-preview__btn-sol-eliminacion" onfocus="openCrearSolicitudEliminacion()">Solicitar Eliminacion</button>
         <button id="hecho-preview__btn-open-details" onfocus="openDetalleHecho()">Ver detalles</button>
     </aside>
     <main>
@@ -152,6 +153,11 @@ function onBtnAddClick(e) {
 function openDetalleHecho() {
     if (!hechoActual) return;
     window.location.replace(`detalle-hecho.html?id=${encodeURIComponent(hechoActual.id)}` );
+}
+
+function openCrearSolicitudEliminacion() {
+    if (!hechoActual) return;
+    window.location.replace(`CrearSolicitudDeEliminacion.html?id=${encodeURIComponent(hechoActual.id)}` );
 }
 
 function openBuscador() {

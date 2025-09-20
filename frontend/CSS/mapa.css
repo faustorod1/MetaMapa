@@ -92,6 +92,27 @@ button {
     background-color: var(--color-accent-hover);
 }
 
+#hecho-preview__btn-sol-eliminacion{
+    font-size: larger;
+    font-weight: bold;
+    color: whitesmoke;
+
+    padding: 0.5em 1em;
+    margin: 0.5em;
+    background-color: darkred;
+    border-radius: 0.5em;
+    transition: background 0.2s;
+    display: none;
+}
+
+#hecho-preview.active > #hecho-preview__btn-sol-eliminacion {
+    display: block;
+}
+
+#hecho-preview__btn-sol-eliminacion:hover{
+    background-color: lightcoral;
+}
+
 main {
     flex: 3;
     position: relative;

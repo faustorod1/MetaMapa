@@ -154,6 +154,7 @@ input[type="file"] {
     color: black;
     font-weight: bold;
     cursor: pointer;
+    border: none;
     background-color: var(--color-main-2);
 }
 
