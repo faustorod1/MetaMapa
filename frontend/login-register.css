@@ -2,7 +2,7 @@
 
 .login-form {
     margin: 2.125rem auto;
-    background-color: var(--color-blue-deep);
+    background-color: var(--color-main);
     padding: 1.5em;
     border-radius: 1em;
     color: white;
@@ -47,7 +47,7 @@
 
 .btn-submit {
     color: black;
-    background-color: var(--color-yellow-soft);
+    background-color: var(--color-main-2);
     padding: 0.5em;
     border-radius: 0.2em;
     border: none;
@@ -55,7 +55,7 @@
     margin-top: 1.5em;
 }
 .btn-submit:hover {
-    background-color: var(--color-yellow-hover);
+    background-color: var(--color-main-2-hover);
 }
 
 #go-to-login {
