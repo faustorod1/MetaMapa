@@ -151,8 +151,6 @@
             color: gray;
         }
 
-
-
     </style>
 </head>
 <body>
@@ -194,14 +192,37 @@
         <div class="card">
             <h3>"Titular Destacado"</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
-            <button class="icon-button" view="./detalle-hecho.html"><i class="fa-regular fa-pen-to-square"></i></button>
+            <button class="icon-button" view="./CrearSolicitudDeEliminacion.html"><i class="fa-regular fa-pen-to-square"></i></button>
         </div>
         <div class="card">
             <h3>“Titular Destacado”</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
-            <button class="icon-button" view ="./detalle-hecho.html"><i class="fa-regular fa-pen-to-square"></i></button>
+            <button class="icon-button" view ="./CrearSolicitudDeEliminacion.html"><i class="fa-regular fa-pen-to-square"></i></button>
         </div>
     </div>
+
+
 </main>
+
 </body>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const navButtons = document.querySelectorAll('.icon-button');
+        const iframe = document.getElementById('main-iframe');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                navButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                const view = button.getAttribute('data-view');
+                if (view) iframe.src = view;
+            });
+        });
+    });
+
+</script>
 </html>
+
+

@@ -27,17 +27,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
         }
 
         .card {
             background: var(--color-main);
             border-radius: 1rem;
-            padding: 2rem;
-            height:90vh;
+            padding: 1.5rem;
+            height:80vh;
             max-width: 70rem;
             width: 80%;
             position: relative;
+            margin-top:2.2rem;
         }
 
         .header {
@@ -45,6 +46,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            margin-top:0;
         }
 
         .titulo {
@@ -74,7 +76,8 @@
             display: flex;
             justify-content: space-between;
             gap: 1rem;
-            margin: 1.5rem 0;
+            margin: 0.5rem 0;
+            padding:0;
         }
 
         .imagen {
@@ -101,11 +104,10 @@
 
         .descripcion {
             padding: 0rem;
-            margin-bottom: 1.5rem;
         }
 
         .descripcion textarea {
-            width: 98%;
+            width: 100%;
             min-height: 10rem;
             border: none;
             border-radius: 0.5rem;
@@ -238,9 +240,8 @@
     </style>
 </head>
 <body>
-    <a href="./index.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <a href="./mapa.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
-    <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
 
 <div class="card">
     <span class="flecha izquierda">&#10094;</span>
@@ -266,11 +267,9 @@
     </div>
 
     <div class="descripcion">
-        <textarea placeholder="Escribe aquí la descripción..."></textarea>
+        <textarea placeholder="<descripcion_hecho>" readonly></textarea>
     </div>
 
-
-    <button class="editar">Editar</button>
 </div>
 
 
