@@ -24,10 +24,6 @@ place-items: center;
     color: white;
 }
 
-.cargar-hecho-form {
-
-}
-
 .input-primerFila{
     display: flex;
     gap: 0.5rem;
@@ -50,6 +46,18 @@ input[type="text"]{
 #titulo-cargarHecho{
     margin: 0.1rem 0.2rem 0.2rem 0.2rem;
 }
+
+
+#btn-show-input-lugar {
+    border-radius: 0.5rem;
+    padding-bottom: 0.2rem;
+}
+#input-ubicacion-container {
+    display: flex;
+    flex-direction: column;
+}
+
+
 
 .input-tercerFila{
     margin-top:0;
@@ -86,22 +94,6 @@ textarea{
 
 .input-with-icon {
     position: relative;
-}
-
-.input-with-icon .input-icon {
-    position: absolute;
-    left: 0.5em;
-    top: 75%;
-    height: 100%;
-    aspect-ratio: 1;
-    font-size: small;
-    transform: translateY(-50%);
-    z-index: 2;
-}
-
-.input-with-icon > input {
-    position: relative;
-    padding-left: 2em;
 }
 
 
@@ -229,20 +221,30 @@ input[type="file"] {
     aspect-ratio: 1;
     padding: 0.5rem;
 
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
     background: whitesmoke;
     border-radius: 0.5em;
 
-    display: none;
+    transition-duration: 0.5s;
+
+    opacity: 0;
+    pointer-events: none;
 }
 #mapa-input-ubicacion-container.active {
-    display: block;
+    opacity: 1;
+    pointer-events: initial;
 }
 #mapa-input-ubicacion {
+    width: 100%;
     height: 100%;
 }
-#btn-accept-ubicacion {
-    position: fixed;
-    right: 1rem;
-    bottom: 2rem;
-    z-index: 999;
+#mapa-input-ubicacion-container > .btn-container {
+    display: flex;
+    justify-content: space-between;
+}
+.btn-ubicacion.hidden {
+    display: none;
 }
