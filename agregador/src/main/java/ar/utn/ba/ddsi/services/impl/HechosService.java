@@ -12,6 +12,7 @@ import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Departamento;
 import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
+import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.models.repositories.IDepartamentosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
@@ -49,6 +50,8 @@ public class HechosService implements IHechosService {
     private ICategoriaRepository categoriaRepository;
     @Autowired
     private IDepartamentosRepository departamentosRepository;
+    @Autowired
+    private IFuentesRepository fuentesRepository;
 
 
     @Autowired
@@ -90,57 +93,62 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public Mono<Void> actualizarHechos(){
-        Mono<List<Hecho>> monoEstatica = crearMonoPeticionHechos(webClients.get(OrigenHecho.DATASET));
-        Mono<List<Hecho>> monoDinamica = crearMonoPeticionHechos(webClients.get(OrigenHecho.CONTRIBUYENTE));
-        Mono<List<Hecho>> monoProxy = crearMonoPeticionHechos(webClients.get(OrigenHecho.PROXY));
+    public void actualizarHechos(){
+        Mono<List<HechoFuenteDTO>> monoEstatica = crearMonoPeticionHechos(webClients.get(OrigenHecho.DATASET));
+        Mono<List<HechoFuenteDTO>> monoDinamica = crearMonoPeticionHechos(webClients.get(OrigenHecho.CONTRIBUYENTE));
+        Mono<List<HechoFuenteDTO>> monoProxy = crearMonoPeticionHechos(webClients.get(OrigenHecho.PROXY));
 
-        Mono<Void> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
+        Mono<List<Hecho>> mono = Mono.zip(monoEstatica, monoDinamica, monoProxy)
                 .publishOn(Schedulers.boundedElastic())
                 .flatMap(tupla -> {
-                    List<Hecho> hechos = new ArrayList<>(tupla.getT1());
+                    List<HechoFuenteDTO> hechosFuente = new ArrayList<>(tupla.getT1());
+                    hechosFuente.addAll(tupla.getT2());
+                    hechosFuente.addAll(tupla.getT3());
 
-                    hechos.addAll(tupla.getT2());
-                    hechos.addAll(tupla.getT3());
+                    List<Fuente> fuentes = fuentesRepository.findAll();
 
-                    List<String> ids = hechos.stream().map(Hecho::getIdExterno).toList();
+                    List<Hecho> hechos = hechosFuente.stream().map(dto -> {
+                       Hecho hecho = dto.toEntity();
+                       Fuente fuente = fuentes.stream().filter(f ->
+                           f.getTipoDeFuente().name().equals(dto.getTipoDeFuente())
+                           && f.getSubfuenteId().equals(dto.getSubfuenteId())
+                       ).findFirst().orElse(null);
+
+                       hecho.getIdExterno().setFuente(fuente);
+                       return hecho;
+                    }).toList();
+
+                    List<IdExterno> ids = hechos.stream().map(Hecho::getIdExterno).toList();
                     List<Hecho> hechosAModificar = hechosRepository.findAllByIdExternoIn(ids);
 
                     normalizarCategoria(hechos);
                     return normalizarUbicacion(hechos).map(hechosNormalizados -> {
-                                // Para cada hecho normalizado, si ya existía en el agregador, lo actualiza
-                                for (int i = 0; i < hechosNormalizados.size(); i++) {
-                                    Hecho hechoNormalizado = hechosNormalizados.get(i);
-                                    Hecho viejo = hechosAModificar.stream()
-                                            .filter(h -> h.getIdExterno().equals(hechoNormalizado.getIdExterno()))
-                                            .findFirst().orElse(null);
-                                    if (viejo != null) {
-                                        modificarHecho(viejo, hechoNormalizado);
-                                        hechosNormalizados.set(i, viejo);
-                                    } else {
-                                        hechoNormalizado.setFechaUltimaActualizacion(LocalDateTime.now());
-                                    }
-                                }
+                        // Para cada hecho normalizado, si ya existía en el agregador, lo actualiza
+                        for (int i = 0; i < hechosNormalizados.size(); i++) {
+                            Hecho hechoNormalizado = hechosNormalizados.get(i);
+                            Hecho viejo = hechosAModificar.stream()
+                                    .filter(h -> h.getIdExterno().equals(hechoNormalizado.getIdExterno()))
+                                    .findFirst().orElse(null);
+                            if (viejo != null) {
+                                modificarHecho(viejo, hechoNormalizado);
+                                hechosNormalizados.set(i, viejo);
+                            } else {
+                                hechoNormalizado.setFechaUltimaActualizacion(LocalDateTime.now());
+                            }
+                        }
 
-                                hechosRepository.saveAll(hechosNormalizados);
+                        hechosRepository.saveAll(hechosNormalizados);
 
-                                return hechosNormalizados;
-                            })
-                            .then();
-                }).then();
+                        return hechosNormalizados;
+                    });
+                });
 
         fechaUltimaActualizacion = LocalDateTime.now();
 
         
         // Código necesario para activar el evento
-        List<Hecho> todosLosHechos = Mono.zip(monoEstatica, monoDinamica, monoProxy)
-            .map(tuple -> Stream.of(tuple.getT1(), tuple.getT2(), tuple.getT3())
-                .flatMap(List::stream)
-                .toList())
-                .block();
+        List<Hecho> todosLosHechos = mono.block();
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(todosLosHechos));
-
-        return mono;
     }
 
     @Override
@@ -248,7 +256,7 @@ public class HechosService implements IHechosService {
     }
 
 
-    private Mono<List<Hecho>> crearMonoPeticionHechos(WebClient webClient) {
+    private Mono<List<HechoFuenteDTO>> crearMonoPeticionHechos(WebClient webClient) {
         String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -258,16 +266,13 @@ public class HechosService implements IHechosService {
                 )
                 .retrieve()
                 .bodyToFlux(HechoFuenteDTO.class)
-                .map(HechoFuenteDTO::toEntity)
                 .collectList();
     }
 
-    // TODO: Está bien esto?
     public void guardarCambios(Hecho hecho) {
         hechosRepository.save(hecho);
     }
 
-    // No lo guarda, solo actualiza sus atributos
     public void modificarHecho(Hecho viejo, Hecho nuevo) {
         viejo.setTitulo(nuevo.getTitulo());
         viejo.setDescripcion(nuevo.getDescripcion());
@@ -283,12 +288,10 @@ public class HechosService implements IHechosService {
     //TODO: revisar si es funcional esto asincronico
     @Async
     public void eliminarHechoEnLasFuentes(Hecho hecho){ // Llamada no bloqueante a otra API
-        // Para escapar los ":" del id
-        String idExternoEscapado = UriUtils.encodePathSegment(hecho.getIdExterno(), StandardCharsets.UTF_8);
 
         webClients.get(hecho.getOrigen())
                 .delete()
-                .uri("api/hechos/{id}", idExternoEscapado)
+                .uri("api/hechos/{id}", hecho.getIdExterno().getIdExterno())
                 .retrieve()
                 .toBodilessEntity()
                 .doOnSuccess(response -> System.out.println("Eliminación remota exitosa"))

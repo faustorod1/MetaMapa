@@ -22,7 +22,7 @@ public class HechoOutputDTO {
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private String idExterno;
+    private IdExterno idExterno;
     private Long contribuyente;
     private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion;
     private HashSet<String> etiquetas;

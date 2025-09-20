@@ -34,7 +34,7 @@ public class HechoFuenteDTO {
         // Cambiar
 
         Hecho hecho = Hecho.builder()
-                .idExterno(this.getId())
+                .idExterno(new IdExterno())
                 .titulo(this.getTitulo())
                 .descripcion(this.getDescripcion())
                 .categoria(this.getCategoria())
@@ -45,6 +45,7 @@ public class HechoFuenteDTO {
                 .contribuyente(contribuyente)
                 .solicitudesDeEliminacion(this.getSolicitudesDeEliminacion()) // Cambiar
                 .build();
+        hecho.getIdExterno().setIdExterno(this.getId());
         if (this.getContenidosMultimedia() != null) {
             hecho.setContenidosMultimedia(this.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
         }
