@@ -179,6 +179,7 @@ main {
 #btn-add-coleccion:hover {
     background-color: darkorange;
 }
+
 #btn-add-list.active .btn-add {
     transform: translateY(var(--translation));
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;

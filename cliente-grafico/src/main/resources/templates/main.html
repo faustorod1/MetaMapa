@@ -2,118 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main</title>
-    <link rel="stylesheet" type="text/css" href="../style.css">
+    <title>Main | METAmapa</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            background: black;
-        }
-
-        nav {
-            width: 4em;
-            background: var(--color-secondary);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .nav-button{
-            position: relative;
-            aspect-ratio: 1;
-            width: 100%;
-            background: transparent;
-            border: none;
-            font-size: 2em;
-            outline: none;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
-        .nav-button:hover {
-            color: dimgrey;
-        }
-        .nav-button.selected:hover {
-            color: #1b4018;
-        }
-        .nav-button-selection {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 1.5em;
-            width: 0;
-            border-radius: 0 0.5em 0.5em 0;
-            background: var(--color-main-2);
-            transition: width 0.2s ease-out;
-        }
-        .nav-button.selected > .nav-button-selection {
-            width: 1.8em;
-        }
-        .nav-button > i {
-            position: relative;
-        }
-        main {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        main > iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        #nav-button-tratar-solicitud-de-modificacion i {
-            margin-left: 8px;
-        }
-
-        #nav-button-modo-de-navegacion {
-            background: transparent;
-            cursor: pointer;
-        }
-
-        #nav-button-modo-de-navegacion.selected > .nav-button-selection {
-            width: 1.8em;
-        }
-
-        /* Barra de selección azul siempre que esté seleccionado o no */
-        #nav-button-modo-de-navegacion > .nav-button-selection {
-            background: var(--color-main-2-hover); /* azul en cualquier estado */
-            width: 0;
-            height: 1.5em;
-            border-radius: 0 0.5em 0.5em 0;
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: width 0.2s ease-out;
-        }
-
-        #nav-button-modo-de-navegacion .nav-button-selection {
-            display: none;
-        }
-
-        #nav-button-modo-de-navegacion:hover {
-            color: dimgrey;
-        }
-
-        #nav-button-modo-de-navegacion .fa-toggle-on {
-            display: none;
-        }
-        #nav-button-modo-de-navegacion .fa-toggle-off {
-            display: inline;
-        }
-
-        #nav-button-modo-de-navegacion.selected .fa-toggle-on {
-            display: inline;
-        }
-        #nav-button-modo-de-navegacion.selected .fa-toggle-off {
-            display: none;
-        }
-
-    </style>
 </head>
+
 <body>
 <nav>
     <div class="nav-button-container">
@@ -162,7 +56,6 @@
     </iframe>
 </main>
 </body>
-
 <script>
 
     const navButtons = document.querySelectorAll('.nav-button');
@@ -191,6 +84,5 @@
         modoBtn.classList.toggle('selected');
         console.log("Modo de navegación:", modoBtn.classList.contains('selected') ? "Activado" : "Desactivado");
     });
-
 </script>
 </html>

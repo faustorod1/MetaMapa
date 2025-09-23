@@ -72,6 +72,15 @@
         </processorPath>
         <module name="servicio-de-estadisticas" />
       </profile>
+      <profile name="Annotation profile for cliente-grafico" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar" />
+        </processorPath>
+        <module name="cliente-grafico" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="fuenteEstatica" target="17" />
@@ -82,6 +91,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="MetaMapa" options="-parameters" />
       <module name="agregador" options="-parameters" />
+      <module name="cliente-grafico" options="-parameters" />
       <module name="commons" options="-parameters" />
       <module name="ejercicio" options="-parameters" />
       <module name="fuente-dinamica" options="-parameters" />

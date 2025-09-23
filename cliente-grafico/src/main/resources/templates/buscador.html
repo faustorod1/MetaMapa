@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mis-Hechos</title>
-    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
     <style>
         html{
@@ -70,7 +70,7 @@
         }
 
         .aplicar-filtros-button:hover{
-            background: var(--color-secondary-2-hover);
+            background: var(--color-main-2-hover);
         }
 
         .main {
@@ -81,7 +81,13 @@
             gap: 1rem;
         }
 
+        .top-menu {
+            width: 100%;
+            display: flex;
+        }
+
         .search-bar {
+            width: 100%;
             display: flex;
             align-items: center;
             background: var(--color-secondary-2);
@@ -98,32 +104,71 @@
             margin-left: 0.5rem;
         }
 
+        #btn-close {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            aspect-ratio: 1;
+            width: 2em;
+            font-size: larger;
+            transition-duration: 0.2s;
+        }
+        #btn-close:hover {
+            color: #444;
+        }
+
         .card-container {
-            display: flex;
+            display: grid;
             gap: 1rem;
-            flex-wrap: wrap;
+            grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+            grid-auto-rows: min-content;
             background: var(--color-secondary);
             height: 100%;
             padding: 1rem;
             border-radius: 4px;
             box-shadow: 10px 10px 30px 30px rgba(126, 124, 124, 0.07) inset;
+            overflow-y: auto;
         }
 
         .card {
+            position: relative;
             background: var(--color-accent-2);
-            padding: 0.3rem;
             border-radius: 4px;
+            padding: 1rem;
             height: 8em;
-            overflow: hidden;
-            color: black;
+            color: white;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            box-shadow: 3px 3px 20px 20px rgba(126, 124, 124, 0.07);
+            overflow: hidden;
+            cursor: pointer;
+            transition-duration: 0.2s;
+            background-size: cover;
+            background-position: center;
+        }
+        .card * {
+            z-index: 1;
+        }
+        .card::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: '';
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .card:hover {
+            transform: scale(1.1, 1.1);
         }
 
         .card h3 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: large;
             font-weight: bold;
             font-family: "sans-serif";
         }
@@ -132,6 +177,7 @@
             font-size: 14px;
             margin: 5px 0;
             font-family: "Droid Serif";
+            overflow-y: hidden;
         }
 
         .icon-button {
@@ -139,8 +185,7 @@
             border: none;
             cursor: pointer;
             align-self: flex-end;
-            font-size: 2rem;
-            margin-top: 1.5rem;
+            font-size: 1.5rem;
         }
 
         .icon-button i {
@@ -151,14 +196,12 @@
             color: gray;
         }
 
+
+
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <h2>Mis hechos</h2>
-
-        <hr class="separator">
-
         <div>
             <h5><i class="fa-solid fa-filter" style="margin-right: 0.5rem"></i>Filtros Recientes</h5>
             <div class="filtro-container">
@@ -169,6 +212,7 @@
         </div>
 
         <hr class="separator">
+
 
         <div class="filtro-container">
             <div class="filtro">
@@ -181,48 +225,46 @@
 
     </aside>
 <main class="main">
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar Hechos...">
+    <div class="top-menu">
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" name="search" id="search" placeholder="Buscar Hechos...">
+        </div>
+        <button id="btn-close" onclick="openMapa()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
-
-
     <div class="card-container">
-        <div class="card">
-            <h3>"Titular Destacado"</h3>
+        <div class="card" style="background-image: url(https://www.kissfm.es/wp-content/uploads/2022/02/rick-astley.png);">
+            <h3>“Titular Destacado”</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
-            <button class="icon-button" view="./CrearSolicitudDeEliminacion.html"><i class="fa-regular fa-pen-to-square"></i></button>
         </div>
         <div class="card">
             <h3>“Titular Destacado”</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
-            <button class="icon-button" view ="./CrearSolicitudDeEliminacion.html"><i class="fa-regular fa-pen-to-square"></i></button>
         </div>
     </div>
 
+    <div>Explorar colecciones <hr style="margin-top: 0.5em;"></div>
 
+    <div class="card-container">
+        <div class="card">
+            <h3>“Titular Destacado”</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
+        </div>
+        <div class="card">
+            <h3>“Titular Destacado”</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
+        </div>
+    </div>
 </main>
-
 </body>
-
 <script>
+    document.getElementById('search').focus()
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const navButtons = document.querySelectorAll('.icon-button');
-        const iframe = document.getElementById('main-iframe');
-
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                navButtons.forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-                const view = button.getAttribute('data-view');
-                if (view) iframe.src = view;
-            });
-        });
-    });
-
+    function openMapa() {
+        window.location.replace('mapa.html')
+    }
 </script>
 </html>
-
-
