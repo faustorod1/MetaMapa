@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.models.entities.consenso;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.Fuente;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public class ConsensoMultiplesMenciones extends AlgoritmoDeConsenso {
 
     @Override
-    public List<Hecho> aplicarA(List<Hecho> hechosColeccion, List<String> fuentesColeccion) {
+    public List<Hecho> aplicarA(List<Hecho> hechosColeccion, List<Fuente> fuentesColeccion) {
 
         List<Hecho> hechosConsensuados = new ArrayList<>();
         for (Hecho hecho : hechosColeccion) {

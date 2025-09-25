@@ -12,7 +12,7 @@ public interface IHechosService {
     Mono<List<HechoOutputDTO>> buscarTodos(Map<String, String> params);
     Hecho obtenerPorId(Long id);
     Mono<List<Hecho>> getFromMetaMapa();
-    Mono<Void> actualizarHechos();
+    void actualizarHechos();
     void normalizarCategoria(List<Hecho> hechos);
     Mono<List<Hecho>> normalizarUbicacion(List<Hecho> hechos);
 }

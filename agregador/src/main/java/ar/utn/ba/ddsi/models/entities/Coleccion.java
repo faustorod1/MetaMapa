@@ -51,10 +51,15 @@ public class Coleccion {
     @Column(name = "algoritmo_de_consenso", columnDefinition = "VARCHAR(40)")
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
-    @ElementCollection
-    @CollectionTable(name = "coleccion_fuentes", joinColumns = @JoinColumn(name = "coleccion_id"))
-    @Column(name = "fuente", columnDefinition = "varchar(30)", nullable = false)
-    private List<String> fuentes; //TODO convertir a enum? (correccion)
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "fuentes_de_la_coleccion",
+        joinColumns = @JoinColumn(name = "coleccion_id",
+            referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "fuente_id", referencedColumnName = "id"))
+    private List<Fuente> fuentes;
+
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -82,13 +87,14 @@ public class Coleccion {
 
     protected Coleccion() {} //Para el ORM
 
-    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<String> fuentes, AlgoritmoDeConsenso algoritmoDeConsenso) {
+    public Coleccion(String identificador, String titulo, String descripcion, Criterio criterioDePertenencia, List<Fuente> fuentes, AlgoritmoDeConsenso algoritmoDeConsenso) {
         this.identificador = identificador;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterioDePertenencia = criterioDePertenencia;
-        this.fuentes = fuentes;
         this.algoritmoDeConsenso = algoritmoDeConsenso;     // Si, tambien se específica al crear la coleccion
+
+        this.fuentes = new ArrayList<>(fuentes);
         hechos = new ArrayList<>();
         hechosCargadosManualmente = new ArrayList<>();
         hechosConsensuados = new ArrayList<>();

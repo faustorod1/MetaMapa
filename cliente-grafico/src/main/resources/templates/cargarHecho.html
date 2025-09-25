@@ -37,10 +37,12 @@
 
                     <div class="input-cargarHecho">
                         <h4>Lugar</h4>
-                        <div class="input-with-icon">
+                        <div id="input-ubicacion-container">
                             <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
-                                <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
+                                <input type="text" id="ubicacion" name="ubicacion" disabled>
+                                <br>
                                 Seleccionar en el mapa
+                                <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
                             </button>
                         </div>
                     </div>
@@ -86,7 +88,10 @@
 
     <div id="mapa-input-ubicacion-container">
         <div id="mapa-input-ubicacion"></div>
-        <button type="button" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
+        <div class="btn-container">
+            <button type="button" class="btn-ubicacion" id="btn-cancel-ubicacion" onclick="toggleInputUbicacion(false)">Cancelar</button>
+            <button type="button" class="btn-ubicacion hidden" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
+        </div>
     </div>
 
     <script>
@@ -194,6 +199,7 @@
         let ubicacionSeleccionada;
         let markerUbicacionSeleccionada;
         const inputUbicacionContainer = document.getElementById('mapa-input-ubicacion-container');
+        const inputUbicacion = document.getElementById('ubicacion');
 
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {
@@ -201,10 +207,6 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }
         ).addTo(map);
-
-        map.oncontextmenu = (e) => {
-            console.log(e);
-        }
 
         const geocoder = new L.Control.Geocoder({
             defaultMarkGeocode: false
@@ -214,12 +216,16 @@
             if (coords !== null) {
                 console.log(coords);
                 const ubicacion = latlngToCoords(coords);
-                setSelectedUbicacion(ubicacion);
+                marcarUbicacionActual(ubicacion);
             }
         })
         .addTo(map);
 
-        function setSelectedUbicacion(newUbicacion) {
+        map.on('contextmenu', (e) => {
+            marcarUbicacionActual(latlngToCoords(e.latlng));
+        });
+
+        function marcarUbicacionActual(newUbicacion) {
             if (markerUbicacionSeleccionada) {
                 markerUbicacionSeleccionada.remove();
             }
@@ -230,13 +236,15 @@
             }).addTo(map);
             
             markerUbicacionSeleccionada = marker;
+            // Muestra el botón de aceptar
+            document.getElementById('btn-accept-ubicacion').classList.remove('hidden');
         }
 
         function toggleInputUbicacion(active) {
             inputUbicacionContainer.classList.toggle('active', active);
             if (active) {
                 if (ubicacionSeleccionada) {
-                    setSelectedUbicacion(ubicacionSeleccionada);
+                    marcarUbicacionActual(ubicacionSeleccionada);
                 }
             } else {
                 if (markerUbicacionSeleccionada) {
@@ -248,8 +256,7 @@
         function seleccionarUbicacionActual() {
             if (markerUbicacionSeleccionada) {
                 ubicacionSeleccionada = latlngToCoords(markerUbicacionSeleccionada._latlng);
-                console.log(ubicacionSeleccionada);
-                
+                inputUbicacion.setAttribute('value', ubicacionSeleccionada.toString());
             }
             toggleInputUbicacion(false);
         }

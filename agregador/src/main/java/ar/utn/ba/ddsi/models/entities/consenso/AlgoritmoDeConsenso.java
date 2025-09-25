@@ -1,24 +1,25 @@
 package ar.utn.ba.ddsi.models.entities.consenso;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import ar.utn.ba.ddsi.models.entities.Fuente;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AlgoritmoDeConsenso {
 
-    public List<Hecho> consensuar(List<Hecho> hechos, List<String> fuentes){
+    public List<Hecho> consensuar(List<Hecho> hechos, List<Fuente> fuentes){
 
         List<Hecho> hechosAManejar = aplicarA(hechos, fuentes);
         hechosAManejar = sinContradiccion(hechosAManejar,fuentes);
         return sinDuplicados(hechosAManejar);
 
     }
+    public abstract List<Hecho> aplicarA(List<Hecho> hechos, List<Fuente> fuentes);
 
-    public abstract List<Hecho> aplicarA(List<Hecho> hechos, List<String> fuentes);
 
     // 2. Verificar que en ninguna otra fuente haya un hecho de igual titulo y diferentes atributos
-    public List<Hecho> sinContradiccion(List<Hecho> hechos, List<String> fuentes){
+    public List<Hecho> sinContradiccion(List<Hecho> hechos, List<Fuente> fuentes){
         List<Hecho> hechosAManejar = new ArrayList<>();
 
         for(Hecho hecho : hechos) {

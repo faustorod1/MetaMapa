@@ -56,8 +56,8 @@ public class Hecho {
     @JoinColumn(name = "contribuyente_id", referencedColumnName = "id", nullable = true)
     private Contribuyente contribuyente;
 
-    @Column(name = "id_externo", columnDefinition = "VARCHAR(20)", nullable = false)
-    private String idExterno; // //proxy/2/5
+    @Embedded
+    private IdExterno idExterno; // //proxy:2:5
 
     @Column(name = "revisado", nullable = false)
     private boolean revisado; // USO: cuando un contribuyente sube un hecho se podra aceptar, aceptar con sugerencia de cambios o rechazar la información
@@ -103,16 +103,9 @@ public class Hecho {
         etiquetas.add(etiqueta);
     }
 
-    public boolean perteneceALaFuente(String fuente) {
-        String[] splitF = fuente.split(":");
-        String[] splitI = idExterno.split(":");
 
-        for (int i = 0; i < splitF.length; i++) {
-            if (splitI.length <= i || !splitF[i].equals(splitI[i])) {
-                return false;
-            }
-        }
-        return true;
+    public boolean perteneceALaFuente(Fuente fuente) {
+        return idExterno.getFuente().equals(fuente);
     }
 
     public boolean hechoIgualA(Hecho otroHecho) {
