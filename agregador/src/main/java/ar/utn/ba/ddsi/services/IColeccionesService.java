@@ -7,6 +7,7 @@ import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Criterio;
+import ar.utn.ba.ddsi.models.entities.Fuente;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -21,6 +22,6 @@ public interface IColeccionesService {
     ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO);
     ColeccionOutputDTO updateConsenso(String identificador, String tipoDeConsenso);
     void eliminarColeccion (String identificador);
-    ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes);
-    public void consensuarColecciones();
+    ColeccionOutputDTO updateFuentes(String identificador, List<Long> fuentes);
+    void consensuarColecciones();
 }

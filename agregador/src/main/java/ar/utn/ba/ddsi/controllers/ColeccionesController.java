@@ -52,8 +52,8 @@ public class ColeccionesController {
     }
 
     @PatchMapping("{identificador}/fuentes")
-    public ColeccionOutputDTO actualizarFuentes(@PathVariable String identificador, @RequestBody List<String> fuentes){
-        return coleccionesService.updateFuentes(identificador, fuentes);
+    public ColeccionOutputDTO actualizarFuentes(@PathVariable String identificador, @RequestBody List<Long> idsFuentes){
+        return coleccionesService.updateFuentes(identificador, idsFuentes);
     }
 
 

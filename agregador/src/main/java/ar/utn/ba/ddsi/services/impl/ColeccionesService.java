@@ -141,7 +141,7 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public ColeccionOutputDTO updateFuentes(String identificador, List<Long> fuentesIds){
-        List<Fuente> fuentes = fuenteRepository.findAllByIdIn(fuentesIds);
+        List<Fuente> fuentes = fuentesRepository.findAllByIdIn(fuentesIds);
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
         List<Fuente> fuentesPrevias = coleccion.getFuentes();
 

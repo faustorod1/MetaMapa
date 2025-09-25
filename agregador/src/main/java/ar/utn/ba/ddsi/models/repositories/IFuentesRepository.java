@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface IFuentesRepository extends JpaRepository<Fuente, Long> {
-  List<Fuente> findAllByIdIn( List<Long> ids);
+  List<Fuente> findAllByIdIn(List<Long> ids);
 }
