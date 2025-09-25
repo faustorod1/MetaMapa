@@ -129,7 +129,8 @@ public class HechosService implements IHechosService {
         .eliminado(hecho.isEliminado())
         .contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
         .etiquetas(hecho.getEtiquetas().stream().map(EtiquetaDTO::fromEntity).collect(Collectors.toSet()))
-        .id(String.format("dinamica:%s", hecho.getId()))
+        .id(hecho.getId())
+        .tipoDeFuente("dinamica")
         .build();
   }
 

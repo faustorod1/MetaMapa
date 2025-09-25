@@ -14,6 +14,7 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
 import ar.utn.ba.ddsi.models.entities.filtros.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
+import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
@@ -31,12 +32,14 @@ public class ColeccionesService implements IColeccionesService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private IColeccionesRepository coleccionesRepository;
     private IHechosService hechosService;
+    private IFuentesRepository fuentesRepository;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, IHechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, IHechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher, IFuentesRepository fuentesRepository) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.fuentesRepository = fuentesRepository;
     }
 
     // -------------------------------------------- Métodos expuestos al controller ----------------------------------------- //
@@ -85,7 +88,7 @@ public class ColeccionesService implements IColeccionesService {
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
                 .map(tuple -> {
                         List<Hecho> listaMetaMapa = tuple.getT2();
-                        Map<String, Hecho> hechosPorId = tuple.getT1().stream()
+                        Map<IdExterno, Hecho> hechosPorId = tuple.getT1().stream()
                             .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
 
                         for (Hecho hechoMetaMapa : listaMetaMapa) {
@@ -137,11 +140,12 @@ public class ColeccionesService implements IColeccionesService {
    }
 
     @Override
-    public ColeccionOutputDTO updateFuentes(String identificador, List<String> fuentes){
+    public ColeccionOutputDTO updateFuentes(String identificador, List<Long> fuentesIds){
+        List<Fuente> fuentes = fuenteRepository.findAllByIdIn(fuentesIds);
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
-        List<String> fuentesPrevias = coleccion.getFuentes();
+        List<Fuente> fuentesPrevias = coleccion.getFuentes();
 
-        List<String> fuentesCambiadas = calcularDiferenciaFuentes(fuentes, fuentesPrevias);
+        List<Fuente> fuentesCambiadas = calcularDiferenciaFuentes(fuentes, fuentesPrevias);
 
         coleccion.setFuentes(fuentes);     // TODO: acá no sería fuentes?
         applicationEventPublisher.publishEvent(new FuentesCambiadasEnColeccionEvent(coleccion, fuentesCambiadas));
@@ -166,14 +170,14 @@ public class ColeccionesService implements IColeccionesService {
         this.coleccionesRepository.findAll().forEach(Coleccion::consensuarHechos);
     }
 
-    private List<String> calcularDiferenciaFuentes(List<String> actuales, List<String> previas) {
-        Set<String> setActual = new HashSet<>(actuales); // [a,b,c]
-        Set<String> setPrevio = new HashSet<>(previas); // [a,d,e]
+    private List<Fuente> calcularDiferenciaFuentes(List<Fuente> actuales, List<Fuente> previas) {
+        Set<Fuente> setActual = new HashSet<>(actuales); // [a,b,c]
+        Set<Fuente> setPrevio = new HashSet<>(previas); // [a,d,e]
 
-        Set<String> diferencia = new HashSet<>(setActual);
+        Set<Fuente> diferencia = new HashSet<>(setActual);
         diferencia.addAll(setPrevio); // [a, a , b, c, d, e]
 
-        Set<String> interseccion = new HashSet<>(setActual);
+        Set<Fuente> interseccion = new HashSet<>(setActual);
         interseccion.retainAll(setPrevio); // [a]
 
         diferencia.removeAll(interseccion); // [b, c, d, e]

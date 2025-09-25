@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.dtos.output;
 
+import ar.utn.ba.ddsi.models.entities.Fuente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public class ColeccionConHechosOutputDTO {
   private String titulo;
   private String descripcion;
   private List<Hecho> hechos;
-  private List<String> fuentes;
+  private List<Fuente> fuentes;
 }

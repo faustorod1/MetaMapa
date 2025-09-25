@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.CriterioCambiadoEvent;
+import ar.utn.ba.ddsi.models.entities.Fuente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.entities.HechoEliminadoEvent;
 import ar.utn.ba.ddsi.models.entities.FuentesCambiadasEnColeccionEvent;
@@ -62,7 +63,7 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
   @EventListener
   public void alCambiarFuenteDeColeccion(FuentesCambiadasEnColeccionEvent evento) {
     Coleccion coleccion = evento.getColeccion();
-    List<String> fuentesCambiadas = evento.getFuentesCambiadas();
+    List<Fuente> fuentesCambiadas = evento.getFuentesCambiadas();
     List<Hecho> hechosDeFuentes = hechosRepository.findFromFuentes(fuentesCambiadas);
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
   }

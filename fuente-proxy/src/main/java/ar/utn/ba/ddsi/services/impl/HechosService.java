@@ -107,16 +107,18 @@ public class HechosService implements IHechosService {
 
   private HechoOutputDTO hechoToOutputDTO(Hecho hecho) {
     return HechoOutputDTO.builder()
-            .id(String.format("proxy:%s:%s", hecho.getAPIid(), hecho.getId())) // Usamos proxy:<id-api>:<id-hecho>
-            .titulo(hecho.getTitulo())
-            .descripcion(hecho.getDescripcion())
-            .categoria((hecho.getCategoria()))
-            .origen(OrigenHecho.PROXY)
-            .lugarAcontecimiento(hecho.getLugarAcontecimiento())
-            .fechaHecho(hecho.getFechaHecho())
-            .fechaDeCarga(hecho.getFechaDeCarga())
-            .fechaUltimaActualizacion(hecho.getFechaUltimaActualizacion())
-            .eliminado(hecho.isEliminado())
-            .build();
+        .id(hecho.getId())
+        .subFuenteId(hecho.getAPIid())
+        .tipoDeFuente("proxy")
+        .titulo(hecho.getTitulo())
+        .descripcion(hecho.getDescripcion())
+        .categoria((hecho.getCategoria()))
+        .origen(OrigenHecho.PROXY)
+        .lugarAcontecimiento(hecho.getLugarAcontecimiento())
+        .fechaHecho(hecho.getFechaHecho())
+        .fechaDeCarga(hecho.getFechaDeCarga())
+        .fechaUltimaActualizacion(hecho.getFechaUltimaActualizacion())
+        .eliminado(hecho.isEliminado())
+        .build();
   }
 }

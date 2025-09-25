@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.models.dtos.output;
 
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Criterio;
+import ar.utn.ba.ddsi.models.entities.Fuente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class ColeccionOutputDTO {
     private String titulo;
     private String descripcion;
     private CriterioOutputDTO criterioDePertenencia;
-    private List<String> fuentes;
+    private List<Fuente> fuentes;
 
     public static ColeccionOutputDTO fromEntity(Coleccion coleccion) {
         ColeccionOutputDTO dto = new ColeccionOutputDTO();

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ISolicitudesService {
     SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
-    void modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
+    SolicitudDeEliminacion modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
     List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes();
 
 }

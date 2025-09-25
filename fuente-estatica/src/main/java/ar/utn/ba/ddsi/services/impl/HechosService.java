@@ -54,7 +54,9 @@ public class HechosService implements IHechosService {
     private HechoOutputDTO hechoOutputDTO(Hecho hecho) {
         HechoOutputDTO dto = new HechoOutputDTO();
 
-        dto.setId(String.format("estatica:%s:%s", hecho.getIdDataset(), hecho.getId()));
+        dto.setId(hecho.getId());
+        dto.setTipoDeFuente("estatica");
+        dto.setSubFuenteId(hecho.getIdDataset());
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
         dto.setCategoria(hecho.getCategoria());

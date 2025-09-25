@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.repositories.impl;
 
+import ar.utn.ba.ddsi.models.entities.Fuente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.repositories.HechosRepositoryCustom;
 import jakarta.persistence.EntityManager;
@@ -14,10 +15,15 @@ public class HechosRepositoryCustomImpl implements HechosRepositoryCustom {
     @PersistenceContext
     private EntityManager em;
 
-    public List<Hecho> findFromFuentes(List<String> fuentes) {
+    public List<Hecho> findFromFuentes(List<Fuente> fuentes) {
+
+        //todo
+
         if (fuentes == null || fuentes.isEmpty()) {
             return List.of();
         }
+
+
 
         StringBuilder jpql = new StringBuilder("SELECT h FROM Hecho h WHERE ");
         for (int i = 0; i < fuentes.size(); i++) {

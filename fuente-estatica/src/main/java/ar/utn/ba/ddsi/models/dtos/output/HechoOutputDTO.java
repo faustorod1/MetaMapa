@@ -11,7 +11,9 @@ import java.util.List;
 
 @Data
 public class HechoOutputDTO {
-    private String id;
+    private Long id;
+    private String tipoDeFuente;
+    private Long subFuenteId;
     private String titulo;
     private String descripcion;
     private Categoria categoria;
