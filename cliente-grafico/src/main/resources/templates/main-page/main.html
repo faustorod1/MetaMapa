@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Main | METAmapa</title>
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/main.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
 <nav>
     <div class="nav-button-container">
-        <button class="nav-button selected" view="./mapa.html" id="nav-button-home">
+        <button class="nav-button selected" view="./mapa" id="nav-button-home">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-house"></i>
         </button>
 
-        <button class="nav-button" view="./mis-hechos.html" id="nav-button-mis-hechos">
+        <button class="nav-button" view="./mis-hechos" id="nav-button-mis-hechos">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-folder"></i>
         </button>
@@ -28,19 +28,19 @@
         </button>
     </div>
     <div class="nav-button-container">
-        <button class = "nav-button" id="nav-button-tratar-solicitud-de-modificacion" view = "./tratarSolicitudDeModificacion.html">
+        <button class = "nav-button" id="nav-button-tratar-solicitud-de-modificacion" view = "./tratarSolicitudDeModificacion">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-file-pen"></i>
         </button>
-        <button class="nav-button" id="nav-button-tratar-solicitud-de-eliminacion" view="./tratarSolicitudDeEliminacion.html">
+        <button class="nav-button" id="nav-button-tratar-solicitud-de-eliminacion" view="./tratarSolicitudDeEliminacion">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-file-excel"></i>
         </button>
-        <button class="nav-button" view="./administrar-colecciones.html" id="nav-button-adm-colecciones">
+        <button class="nav-button" view="./administrar-colecciones" id="nav-button-adm-colecciones">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-clipboard-list"></i>
         </button>
-        <button class="nav-button" id="nav-button-stadistics" view="./estadisticas.html">
+        <button class="nav-button" id="nav-button-stadistics" view="./estadisticas">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-chart-line"></i>
         </button>
@@ -49,7 +49,7 @@
 <main>
     <iframe
             id="main-iframe"
-            src="mapa.html"
+            src="./main/mapa"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
@@ -75,7 +75,7 @@
 
                 // Cambiar iframe
                 const view = button.getAttribute('view');
-                if (view) iframe.src = view;
+                if (view) iframe.src = `main/${view}`;
             });
         }
     });

@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión | METAmapa</title>
     <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/login-register.css">
-    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login-register.css}">
+    <script th:src="@{/js/script.js}"></script>
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
     <style>
         body {
             min-height: 100%;
             margin: 5rem;
-            background-image: url('../static/fondoLevementeCargado.png');
+            background-image: url('/fondoLevementeCargado.png');
             background-attachment: fixed;
             background-position: center center;
             background-repeat: no-repeat;
@@ -33,13 +33,15 @@
 </head>
 
 <body>
-    <a href="./index.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <a th:href="@{/}"  id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
-    <form class="login-form" action="" method="POST">
+
+    <form th:action="@{/login}" th:object="${datosLogin}" class="login-form" method="POST">
+
         <h2>Iniciar sesión</h2>
         <div class="input-container">
             <label for="email">Correo electrónico</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" th:field="*{email}" name="email" required>
 
         </div>
         <div class="input-container">
@@ -47,9 +49,8 @@
             <span>
                 <i class="fa-solid fa-eye password-show"
                     id="password-show"
-                    for="password" 
                     onclick="togglePasswordVisible('password-show')"></i>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" th:field="*{password}" required>
             </span>
         </div>
 
@@ -58,19 +59,9 @@
 
 
         <div id="go-to-login">
-            ¿Todavía no tiene una cuenta? <a href="register.html">Crear cuenta</a>
+            ¿Todavía no tiene una cuenta? <a th:href="@{/register}">Crear cuenta</a>
         </div>
     </form>
 
 </body>
-<script>
-    document.querySelector('.login-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        if (this.checkValidity()) {
-            window.location.href = 'main.html';
-        } else {
-            this.reportValidity();
-        }
-    });
-</script>
 </html>

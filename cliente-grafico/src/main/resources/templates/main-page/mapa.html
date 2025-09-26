@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Mapa | METAmapa</title>
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/mapa.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/mapa.css}">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -152,37 +152,37 @@ function onBtnAddClick(e) {
 
 function openDetalleHecho() {
     if (!hechoActual) return;
-    window.location.replace(`detalle-hecho.html?id=${encodeURIComponent(hechoActual.id)}` );
+    window.location.replace(`detalle-hecho?id=${encodeURIComponent(hechoActual.id)}` );
 }
 
 function openCrearSolicitudEliminacion() {
     if (!hechoActual) return;
-    window.location.replace(`CrearSolicitudDeEliminacion.html?id=${encodeURIComponent(hechoActual.id)}` );
+    window.location.replace(`crearSolicitudDeEliminacion.html?id=${encodeURIComponent(hechoActual.id)}` );
 }
 
 function openBuscador() {
     document.getElementById('top-curtain').classList.add('active');
     setTimeout(() => {
-        window.location.replace('buscador.html');
+        window.location.replace('/main/buscador');
     }, 600);
 }
 
 const btnAdd = document.getElementById("btn-add-hecho");
 
 btnAdd.addEventListener("click", () => {
-    window.location.href = "./cargarHecho.html";
+    window.location.href = "cargarHecho.html";
 });
 
 const btnCSV = document.getElementById("btn-add-dataset");
 
 btnCSV.addEventListener("click", () => {
-    window.location.href = "./importarCSV.html";
+    window.location.href = "importarCSV.html";
 });
 
 const btnColeccion = document.getElementById("btn-add-coleccion");
 
 btnColeccion.addEventListener("click", () => {
-    window.location.href = "./crearColeccion.html";
+    window.location.href = "crearColeccion.html";
 });
 
 </script>

@@ -6,7 +6,7 @@ function togglePasswordVisible(buttonID) {
     const btn = document.getElementById(buttonID);
     const inputID = btn.getAttribute('for');
     const input = document.getElementById(inputID);
-    if (input.getAttribute('type') == 'password') {
+    if (input.getAttribute('type') === 'password') {
         btn.classList.remove('fa-eye');
         btn.classList.add('fa-eye-slash');
         input.setAttribute('type', 'text');

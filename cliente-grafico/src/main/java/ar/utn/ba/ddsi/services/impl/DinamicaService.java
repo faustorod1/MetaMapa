@@ -1,4 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
-public class DinamicaService {
+import ar.utn.ba.ddsi.services.IDinamicaService;
+
+public class DinamicaService implements IDinamicaService {
 }

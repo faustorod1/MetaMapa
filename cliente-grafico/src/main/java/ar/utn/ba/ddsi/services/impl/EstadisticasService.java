@@ -1,4 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
-public class EstadisticasService {
+import ar.utn.ba.ddsi.services.IEstadisticasService;
+
+public class EstadisticasService implements IEstadisticasService {
 }

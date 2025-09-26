@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrarse | METAmapa</title>
     <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/login-register.css">
-    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login-register.css}">
+    <script th:src="@{/js/script.js}"></script>
+
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
     <style>
         body {
             min-height: 100%;
             margin: 0;
-            background-image: url('../static/fondoLevementeCargado.png');
+            background-image: url('/fondoLevementeCargado.png');
             background-attachment: fixed;
             background-position: center center;
             background-repeat: no-repeat;
@@ -30,7 +31,7 @@
 </head>
 
 <body>
-    <a href="./index.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <a th:href="@{/}" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
     <form class="login-form" action="" method="POST">
         <h2>Crear cuenta</h2>
