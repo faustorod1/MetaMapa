@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.CriterioOutputDTO;
@@ -70,21 +71,19 @@ public class ColeccionesService implements IColeccionesService {
         Mono<List<Hecho>> hechosColeccion;
         String modo = params.getOrDefault("modo", "curada");
 
-        // PASO 1: segun el modo, convierte la List a Mono<List> para poder juntarla con el otro Mono, el de MetaMapa
         if("irrestricta".equalsIgnoreCase(modo)){
             hechosColeccion = Mono.fromCallable(coleccion::getHechos);
         }else {
-            // Si no es irrestricta, se toma como curada
             hechosColeccion = Mono.fromCallable(coleccion::getHechosConsensuados);
         }
 
-        // PASO 2: trae los hechos de fuentes MetaMapa
         Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa();
 
         // Reemplaza de la colección (ya persistida localmente) con los MetaMapa obtenidos recién
         // Si hay algún hecho de fuente MetaMapa que NO teníamos en el agregador (porque se agregó a esa
         // fuente MetaMapa después de la última actualización), ese hecho NO se incluye entre los hechos
         // que devolvemos acá, ya que no sabemos si debería pertenecer a la colección.
+
         Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
                 .map(tuple -> {
                         List<Hecho> listaMetaMapa = tuple.getT2();
@@ -195,7 +194,7 @@ public class ColeccionesService implements IColeccionesService {
         dto.setTitulo(coleccion.getTitulo());
         dto.setDescripcion(coleccion.getDescripcion());
         dto.setHechos(coleccion.getHechos());
-        dto.setFuentes(coleccion.getFuentes());
+        dto.setFuentes(coleccion.getFuentes().stream().map(FuenteDTO::fromEntity).toList());
         return dto;
     }
 

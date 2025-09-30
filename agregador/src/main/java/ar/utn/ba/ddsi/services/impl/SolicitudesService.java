@@ -24,7 +24,6 @@ public class SolicitudesService implements ISolicitudesService {
     this.hechosService = hechosService;
   }
 
-  //ResponseEntity.ok(cuerpo);
   @Override
   public SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
     Hecho hecho = hechosService.obtenerPorId(solicitudDto.getHechoId());

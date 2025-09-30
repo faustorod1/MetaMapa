@@ -29,6 +29,7 @@
 		<module>fuente-proxy</module>
 		<module>servicio-de-estadisticas</module>
 		<module>commons</module>
+        <module>servicio-de-usuarios</module>
     </modules>
 
 	<scm>

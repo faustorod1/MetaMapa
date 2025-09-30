@@ -1,9 +1,15 @@
 package ar.utn.ba.ddsi.models.entities;
 
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "fuentes")

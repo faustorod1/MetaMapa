@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
+import ar.utn.ba.ddsi.commons.DivisorEnLotes;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestMultipleDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
@@ -182,7 +183,7 @@ public class HechosService implements IHechosService {
                 .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
         List<Coordenada> coordenadas = hechosPorCoordenada.keySet().stream().toList();
 
-        List<List<Coordenada>> lotes = dividirEnLotes(coordenadas, 300);
+        List<List<Coordenada>> lotes = DivisorEnLotes.dividir(coordenadas, 300);
 
         return Flux.fromIterable(lotes)
                 .concatMap(this::georreferenciacionInversa)
@@ -296,20 +297,6 @@ public class HechosService implements IHechosService {
                 .subscribe();
         
         applicationEventPublisher.publishEvent(new HechoEliminadoEvent(hecho));
-    }
-
-
-    private <T> List<List<T>> dividirEnLotes(List <T> lista, Integer tamLote) {
-        List<List<T>> lotes = new ArrayList<>();
-        final int tamLista = lista.size();
-        int contador = 0;
-        while (contador < tamLista) {
-            int fin = Math.min(contador + tamLote, tamLista);
-            List<T> lote = lista.subList(contador, fin);
-            lotes.add(lote);
-            contador += tamLote;
-        }
-        return lotes;
     }
 }
 

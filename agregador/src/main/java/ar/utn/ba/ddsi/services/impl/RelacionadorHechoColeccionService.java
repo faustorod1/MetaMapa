@@ -53,12 +53,6 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     List<Hecho> hechosDeFuentes = hechosRepository.findFromFuentes(coleccion.getFuentes());
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
   }
-/*
-  [a, b,c ]   // FUENTES ANTES
-  [a, d, e]   // FUENTES AHORA
-
-  [b, c, d, e]    // FUENTES QUE ENTRAN O QUE SALEN
-  */
 
   @EventListener
   public void alCambiarFuenteDeColeccion(FuentesCambiadasEnColeccionEvent evento) {
@@ -68,14 +62,5 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
   }
 
-
-  /*
-  Coleccion
-    Nueva  -- Comparar contra todos los de ciertas fuentes y manuales
-    Modificada
-      Criterio -- Comparar contra todos los de ciertas fuentes y manuales
-      Fuente (agregar/quitar) -- Comparar todos los de la fuente / Eliminar todos los de la fuente excepto los manuales
-      Hecho manual (agregar/quitar) -- Sacar si no cumple / Agregar
-  */
 
 }

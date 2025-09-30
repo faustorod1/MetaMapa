@@ -28,7 +28,9 @@ public class MainController {
   }
 
   @GetMapping("buscador")
-  public String buscador() { return "main-page/buscador"; }
+  public String buscador() {
+    return "main-page/buscador";
+  }
 
 
 }

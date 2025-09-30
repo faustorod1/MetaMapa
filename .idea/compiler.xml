@@ -81,6 +81,15 @@
         </processorPath>
         <module name="cliente-grafico" />
       </profile>
+      <profile name="Annotation profile for servicio-de-usuario" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar" />
+        </processorPath>
+        <module name="servicio-de-usuarios" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="fuenteEstatica" target="17" />
@@ -101,6 +110,7 @@
       <module name="fuenteEstatica" options="-parameters" />
       <module name="fuenteProxy" options="-parameters" />
       <module name="servicio-de-estadisticas" options="-parameters" />
+      <module name="servicio-de-usuarios" options="-parameters" />
     </option>
   </component>
 </project>
