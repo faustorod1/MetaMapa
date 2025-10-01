@@ -24,8 +24,6 @@ public class HechosController {
 
     @GetMapping
     public List<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros) {
-        return this.hechosService.buscarTodos(parametros).block();
+        return this.hechosService.buscarTodos(parametros);
     }
-
-    // https://metamapa-avengers.com/api/hechos?categoria=caida%20aeronave&modo=curado&ubicacion=23,56
 }

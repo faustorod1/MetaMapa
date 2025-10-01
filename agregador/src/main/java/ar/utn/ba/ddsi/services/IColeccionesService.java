@@ -16,7 +16,7 @@ import java.util.Map;
 public interface IColeccionesService {
     List<ColeccionOutputDTO> buscarTodos();
     List<ColeccionConHechosOutputDTO> buscarTodosConHechos();
-    Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params);
+    List<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params);
     ColeccionOutputDTO crearColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO);

@@ -1,19 +1,14 @@
 package ar.utn.ba.ddsi.services.impl;
 
-import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
-import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.CriterioOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.FiltroOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
-import ar.utn.ba.ddsi.models.entities.filtros.*;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
@@ -22,11 +17,8 @@ import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ColeccionesService implements IColeccionesService {
@@ -64,45 +56,26 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public Mono<List<HechoOutputDTO>> buscarHechosPorColeccion(String identificador, Map<String, String> params) {
+    public List<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
         Criterio filtrosDeUsuario = new Criterio(params);
 
-        Mono<List<Hecho>> hechosColeccion;
+        List<Hecho> hechosColeccion;
         String modo = params.getOrDefault("modo", "curada");
 
         if("irrestricta".equalsIgnoreCase(modo)){
-            hechosColeccion = Mono.fromCallable(coleccion::getHechos);
+            hechosColeccion = coleccion.getHechos();
         }else {
-            hechosColeccion = Mono.fromCallable(coleccion::getHechosConsensuados);
+            hechosColeccion = coleccion.getHechosConsensuados();
         }
-
-        Mono<List<Hecho>> hechosMetaMapa = hechosService.getFromMetaMapa();
 
         // Reemplaza de la colección (ya persistida localmente) con los MetaMapa obtenidos recién
         // Si hay algún hecho de fuente MetaMapa que NO teníamos en el agregador (porque se agregó a esa
         // fuente MetaMapa después de la última actualización), ese hecho NO se incluye entre los hechos
         // que devolvemos acá, ya que no sabemos si debería pertenecer a la colección.
+        List<Hecho> actualizadosConMetamapa = hechosService.actualizarListaConHechosMetamapa(hechosColeccion);
 
-        Mono<List<Hecho>> todos = Mono.zip(hechosColeccion, hechosMetaMapa)
-                .map(tuple -> {
-                        List<Hecho> listaMetaMapa = tuple.getT2();
-                        Map<IdExterno, Hecho> hechosPorId = tuple.getT1().stream()
-                            .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
-
-                        for (Hecho hechoMetaMapa : listaMetaMapa) {
-                            if (hechosPorId.containsKey(hechoMetaMapa.getIdExterno())) {
-                                hechoMetaMapa.setId(hechosPorId.get(hechoMetaMapa.getIdExterno()).getId());
-                                hechosPorId.put(hechoMetaMapa.getIdExterno(), hechoMetaMapa);
-                            }
-                        }
-                        return new ArrayList<>(hechosPorId.values());
-                    }
-                )
-                .map(filtrosDeUsuario::aplicarA);
-
-        // PASO 3: convertir
-        return todos.map(list -> list.stream().map(HechoOutputDTO::fromEntity).toList());
+        return filtrosDeUsuario.aplicarA(actualizadosConMetamapa).stream().map(HechoOutputDTO::fromEntity).toList();
     }
 
 
@@ -146,7 +119,7 @@ public class ColeccionesService implements IColeccionesService {
 
         List<Fuente> fuentesCambiadas = calcularDiferenciaFuentes(fuentes, fuentesPrevias);
 
-        coleccion.setFuentes(fuentes);     // TODO: acá no sería fuentes?
+        coleccion.setFuentes(fuentes);
         applicationEventPublisher.publishEvent(new FuentesCambiadasEnColeccionEvent(coleccion, fuentesCambiadas));
 
         return ColeccionOutputDTO.fromEntity(coleccion);

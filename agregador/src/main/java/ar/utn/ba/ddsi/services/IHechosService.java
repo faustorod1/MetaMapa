@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface IHechosService {
-    Mono<List<HechoOutputDTO>> buscarTodos(Map<String, String> params);
+    List<HechoOutputDTO> buscarTodos(Map<String, String> params);
     Hecho obtenerPorId(Long id);
-    Mono<List<Hecho>> getFromMetaMapa();
+    List<Hecho> getFromMetaMapa();
+    List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales);
     void actualizarHechos();
     void normalizarCategoria(List<Hecho> hechos);
-    Mono<List<Hecho>> normalizarUbicacion(List<Hecho> hechos);
+    void normalizarUbicacion(List<Hecho> hechos);
 }

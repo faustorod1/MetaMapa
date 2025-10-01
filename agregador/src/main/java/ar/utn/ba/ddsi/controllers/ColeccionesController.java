@@ -26,11 +26,9 @@ public class ColeccionesController {
         return this.coleccionesService.buscarTodos();
     }
 
-    // 1  https://metamapa-avengers.com/api/colecciones/1/hechos?categoria=caida%20aeronave&modo=curado&ubicacion=23,56
-    // 2  https://metamapa-avengers.com/api/colecciones/1/curado/hechos?categoria=caida%20aeronave&ubicacion=23,56
     @GetMapping("/{identificador}/hechos")
     public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros) {
-        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros).block();
+        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros);
     }
 
     // API Administrativa ----------------------------------------------------------------------------------------------

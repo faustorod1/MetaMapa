@@ -1,16 +1,13 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.output.CategoriaDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Categoria;
 import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categorias")
@@ -30,8 +27,7 @@ public class CategoriasController {
         if (categoriaRepository.findByNombre(dto.getNombre()) != null) {
             return ResponseEntity.status(409).body(null);
         }
-        Categoria categoria = new Categoria(dto.getNombre());
-        categoria.setSinonimos(dto.getSinonimos());
+        Categoria categoria = dto.toEntity();
         categoriaRepository.save(categoria);
         return ResponseEntity.status(201).body(CategoriaDTO.fromEntity(categoria));
     }
