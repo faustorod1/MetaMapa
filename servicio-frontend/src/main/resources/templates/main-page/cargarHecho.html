@@ -18,7 +18,7 @@
 <body>
     <main>
         <div id="fixed-logo"></div>
-  
+
         <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
         <form class="cargar-hecho-form" method="post" th:action="@{/main/cargar-hecho}" th:object="${hechoOutputDTO}"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
         <div class = "container">
@@ -37,9 +37,10 @@
                     <div class="input-cargarHecho">
                         <h4>Categoria</h4>
                         <label for ="categoria"></label>
-                        <input type="text" id="categoria" th:field="*{categoriaDTO.nombre}" required>
-                        <div th:if="${#fields.hasErrors('titulo')}" class="text-danger">
-                            <small th:errors="*{categoriaDTO.nombre}">Error en la categoría</small>
+                        <!--/*@thymesVar id="categoria" type="ar.utn.ba.ddsi.models.dto.input.CategoriaDTO"*/-->
+                        <input type="text" id="categoria" th:field="*{categoria.nombre}" required>
+                        <div th:if="${#fields.hasErrors('categoria.nombre')}" class="text-danger">
+                            <small th:errors="*{categoria.nombre}">Error en la categoría</small>
                         </div>
                     </div>
 
@@ -72,17 +73,28 @@
                         <h4>Etiquetas</h4>
                         <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
                         <button type="button" id="addTag" class="add-btn">➕</button>
-                        <!-- contenedor visual -->
                         <div id="tagContainer" class="tag-container"></div>
-                        <!-- input oculto con las etiquetas -->
                         <input type="hidden" name="tags" id="hiddenTags">
                     </div>
                 </div>
+
+            <!--
+               <div th:each="i, etiqueta : ${hechoOutputDTO.etiquetas}">
+            <input type="hidden" th:field="*{etiquetas[i].id}" />
+             input visible para el nombre de la etiqueta
+            <input type="text" th:field="*{etiquetas[i].nombre}" placeholder="Escribe una etiqueta...">
+        </div>
+            -->
+
+
 
             <div class="input-imagenes">
                 <div class="input-cargarHecho">
                     <label for="fotos" class="custom-file">Sube imágenes📷 </label>
                     <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
+
+                    <input type="hidden" th:each="i, contenido : ${hechoOutputDTO.contenidosMultimedia}"
+                           th:field="*{contenidosMultimedia[i].pathImagen}" />
                     <div id="preview"></div>
                 </div>
             </div>

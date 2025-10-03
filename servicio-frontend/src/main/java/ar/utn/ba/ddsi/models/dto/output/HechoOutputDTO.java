@@ -1,14 +1,13 @@
 package ar.utn.ba.ddsi.models.dto.output;
 
-import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
-import ar.utn.ba.ddsi.models.dto.input.CoordenadaDTO;
-import ar.utn.ba.ddsi.models.dto.input.EtiquetaDTO;
+import ar.utn.ba.ddsi.models.dto.input.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -17,11 +16,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class HechoOutputDTO {
     private String titulo;
-    private CategoriaDTO categoriaDTO;
+    private CategoriaDTO categoria;
     private CoordenadaDTO coordenadaDTO;
     private String descripcion;
     private LocalDate fecha;
     private Set<EtiquetaDTO> etiquetas;
-    private 
+    private List<ContenidoMultimediaDTO> contenidosMultimedia;
 
 }
