@@ -20,7 +20,7 @@
         <div id="fixed-logo"></div>
 
         <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
-        <form class="cargar-hecho-form" method="post" th:action="@{/main/cargar-hecho}" th:object="${hechoOutputDTO}"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
+        <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
         <div class = "container">
 
                 <h2 id="titulo-cargarHecho">Cargar Hecho</h2>
@@ -38,9 +38,9 @@
                         <h4>Categoria</h4>
                         <label for ="categoria"></label>
                         <!--/*@thymesVar id="categoria" type="ar.utn.ba.ddsi.models.dto.input.CategoriaDTO"*/-->
-                        <input type="text" id="categoria" th:field="*{categoria.nombre}" required>
-                        <div th:if="${#fields.hasErrors('categoria.nombre')}" class="text-danger">
-                            <small th:errors="*{categoria.nombre}">Error en la categoría</small>
+                        <input type="text" id="categoria" th:field="*{categoria}" required>
+                        <div th:if="${#fields.hasErrors('categoria')}" class="text-danger">
+                            <small th:errors="*{categoria}">Error en la categoría</small>
                         </div>
                     </div>
 
@@ -66,13 +66,18 @@
                 <div class="input-tercerFila">
                     <div class="input-cargarHecho">
                         <h4>Fecha</h4>
-                        <input type="date" id="fecha" name="fecha" th:field="*{fechaHecho}"required>
+                        <input type="date" id="fecha" name="fecha" th:field="*{fechaHecho}" required>
                     </div>
 
                     <div class="input-cargarHecho">
                         <h4>Etiquetas</h4>
                         <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
                         <button type="button" id="addTag" class="add-btn">➕</button>
+
+                        <div th:each="etiqueta, iterStat : *{etiquetas}" class="hidden-tag-input">
+                            <input type="hidden" th:field="*{etiquetas[__${iterStat.index}__].nombre}" th:value="${etiqueta.nombre}" />
+                        </div>
+
                         <div id="tagContainer" class="tag-container"></div>
                         <input type="hidden" name="tags" id="hiddenTags">
                     </div>
@@ -81,20 +86,21 @@
             <!--
                <div th:each="i, etiqueta : ${hechoOutputDTO.etiquetas}">
             <input type="hidden" th:field="*{etiquetas[i].id}" />
-             input visible para el nombre de la etiqueta
             <input type="text" th:field="*{etiquetas[i].nombre}" placeholder="Escribe una etiqueta...">
         </div>
             -->
-
-
 
             <div class="input-imagenes">
                 <div class="input-cargarHecho">
                     <label for="fotos" class="custom-file">Sube imágenes📷 </label>
                     <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
 
-                    <input type="hidden" th:each="i, contenido : ${hechoOutputDTO.contenidosMultimedia}"
-                           th:field="*{contenidosMultimedia[i].pathImagen}" />
+                    <div th:each="path, iterStat : *{contenidosMultimedia}" class="hidden-path-input">
+                        <input type="hidden"
+                               th:field="*{contenidosMultimedia[__${iterStat.index}__]}"
+                               th:value="${path}" />
+                    </div>
+
                     <div id="preview"></div>
                 </div>
             </div>
@@ -113,6 +119,10 @@
             <button type="button" class="btn-ubicacion hidden" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
         </div>
     </div>
+
+
+
+
 
     <script>
         (() => {

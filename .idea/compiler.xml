@@ -38,8 +38,8 @@
         <module name="agregador" />
         <module name="fuente-estatica" />
         <module name="fuente-proxy" />
-        <module name="commons" />
         <module name="fuente-dinamica (1)" />
+        <module name="commons" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

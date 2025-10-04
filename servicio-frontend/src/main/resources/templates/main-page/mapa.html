@@ -36,8 +36,15 @@
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
         </div>
+
+        <!-- Entiendo que, ya que estamos obligados a pasar por endpoints antes de a una nueva pagina, podemos sacar toda la lógica JS de abajo -->
+        <!-- Propuesta: -->
+
+        <!-- <form th:action="@{hechos/formulario-de-carga}" method="get" style="display:inline;"> -->
         <button class="btn-add" id="btn-add" onclick="onBtnAddClick(event)">
             <i class="fa-solid fa-plus"></i>
+        <!-- </form> -->
+
         </button>
         <div id="btn-add-list">
             <button class="btn-add" id="btn-add-hecho" title="Cargar hecho">
