@@ -1,46 +1,107 @@
 package ar.utn.ba.ddsi.services;
 
+import ar.utn.ba.ddsi.models.entities.Administrador;
+import ar.utn.ba.ddsi.models.entities.Contribuyente;
+import ar.utn.ba.ddsi.models.entities.Rol;
 import ar.utn.ba.ddsi.models.entities.Usuario;
 import ar.utn.ba.ddsi.models.exceptions.NotFoundException;
+import ar.utn.ba.ddsi.models.exceptions.UsuarioExistenteException;
+import ar.utn.ba.ddsi.models.repositories.AdministradorRepository;
+import ar.utn.ba.ddsi.models.repositories.ContribuyenteRespository;
 import ar.utn.ba.ddsi.models.repositories.UsuariosRepository;
 import ar.utn.ba.ddsi.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Service
 public class LoginService {
     private final UsuariosRepository usuariosRepository;
+    private final ContribuyenteRespository contribuyenteRepository;
+    private final AdministradorRepository administradorRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public LoginService(UsuariosRepository usuariosRepository) {
+    public LoginService(UsuariosRepository usuariosRepository, ContribuyenteRespository contribuyenteRepository, AdministradorRepository administradorRepository) {
         this.usuariosRepository = usuariosRepository;
+        this.contribuyenteRepository = contribuyenteRepository;
+        this.administradorRepository = administradorRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public Usuario autenticarUsuario(String username, String password) {
-        Optional<Usuario> usuarioOpt = usuariosRepository.findByNombre(username);
+    public Usuario autenticarUsuario(String email, String password) {
+        Optional<Usuario> usuarioOpt = usuariosRepository.findByEmail(email);
 
         if (usuarioOpt.isEmpty()) {
-            throw new NotFoundException("Usuario", username);
+            throw new NotFoundException("Usuario", email);
         }
 
         Usuario usuario = usuarioOpt.get();
 
         // Verificar la contraseña usando BCrypt
         if (!passwordEncoder.matches(password, usuario.getPassword())) {
-            throw new NotFoundException("Usuario", username);
+            throw new NotFoundException("Usuario", email);
         }
 
         return usuario;
     }
 
-    public String generarAccessToken(String username) {
-        return JwtUtil.generarAccessToken(username);
+    public String generarAccessToken(Usuario usuario) {
+        return JwtUtil.generarAccessToken(usuario);
     }
 
-    public String generarRefreshToken(String username) {
-        return JwtUtil.generarRefreshToken(username);
+    public String generarRefreshToken(Usuario usuario) {
+        return JwtUtil.generarRefreshToken(usuario);
     }
+
+    public Usuario getUsuario(String email){
+        Optional<Usuario> usuarioOpt = usuariosRepository.findByEmail(email);
+
+        if (usuarioOpt.isEmpty()) {
+            throw new NotFoundException("Usuario", email);
+        }
+
+        return usuarioOpt.get();
+    }
+
+    public Usuario registrarUsuario(String email, String password, String nombre, String apellido, String rol) {
+        Optional<Usuario> existente = usuariosRepository.findByEmail(email);
+        if (existente.isPresent()) {
+            throw new UsuarioExistenteException(email);
+        }
+
+
+        if (rol == null) {
+            rol = "CONTRIBUYENTE";
+        }
+
+        Usuario usuario = Usuario.builder()
+            .email(email)
+            .password(password)
+            .nombre(nombre)
+            .apellido(apellido)
+            .build();
+
+        switch (rol) {
+            case "ADMINISTRADOR":
+                usuario.setRol(Rol.ADMIN);
+                usuariosRepository.save(usuario);
+
+                Administrador administrador = new Administrador();
+                administrador.setUsuario(usuario);
+                administradorRepository.save(administrador);
+            default:
+                usuario.setRol(Rol.CONTRIBUYENTE);
+                usuariosRepository.save(usuario);
+
+                Contribuyente contribuyente = new Contribuyente();
+                contribuyente.setUsuario(usuario);
+                contribuyenteRepository.save(contribuyente);
+        }
+
+        return usuario;
+    }
+
 }

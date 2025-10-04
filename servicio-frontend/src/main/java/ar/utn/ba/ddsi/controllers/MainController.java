@@ -46,15 +46,18 @@ public class MainController {
     return "main-page/cargar-hecho";      // Ahora ese endpoint tiene el HechoOutputDTO para cargarle los campos
   }
 
+  /*
   @PostMapping("/cargar-hecho")
   public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+
     try{
       HechoDTO hechoDTO = hechosService.cargarHecho(hechoOutputDTO);
 
     }
 
-  }
 
+  }
+*/
 
 
 }

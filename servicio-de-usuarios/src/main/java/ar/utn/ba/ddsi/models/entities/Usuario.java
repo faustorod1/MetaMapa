@@ -1,8 +1,14 @@
 package ar.utn.ba.ddsi.models.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Data
 @Entity @Table(name = "usuarios")
 public class Usuario {
@@ -16,4 +22,7 @@ public class Usuario {
     private String nombre;
     @Column(name = "apellido", columnDefinition = "VARCHAR(30)", nullable = false)
     private String apellido;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", columnDefinition = "varchar(50)", nullable = false)
+    private Rol rol;
 }

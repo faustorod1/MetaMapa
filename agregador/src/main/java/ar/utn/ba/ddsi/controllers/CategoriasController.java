@@ -21,7 +21,7 @@ public class CategoriasController {
         List<CategoriaDTO> dtos = categorias.stream().map(CategoriaDTO::fromEntity).toList();
         return ResponseEntity.ok(dtos);
     }
-
+    
     @PostMapping
     public ResponseEntity<CategoriaDTO> insertar(@RequestBody CategoriaDTO dto) {
         if (categoriaRepository.findByNombre(dto.getNombre()) != null) {

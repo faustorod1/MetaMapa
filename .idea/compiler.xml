@@ -8,39 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
       </profile>
-      <profile name="Annotation profile for MetaMapa" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-        </processorPath>
-        <module name="fuente-dinamica" />
-        <module name="agregador" />
-        <module name="fuente-proxy" />
-        <module name="commons" />
-        <module name="fuente-estatica" />
-        <module name="fuente-dinamica (1)" />
-      </profile>
-      <profile name="Annotation profile for servicio-de-estadisticas" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-        </processorPath>
-        <module name="servicio-de-estadisticas" />
-      </profile>
-      <profile name="Annotation profile for cliente-grafico" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar" />
-        </processorPath>
-        <module name="cliente-grafico" />
-      </profile>
       <profile name="Annotation profile for servicio-de-usuarios" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -50,8 +17,33 @@
         </processorPath>
         <module name="servicio-de-usuarios" />
       </profile>
+      <profile name="Annotation profile for servicio-frontend" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
+        </processorPath>
+        <module name="servicio-frontend" />
+      </profile>
+      <profile name="Annotation profile for MetaMapa" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="servicio-de-estadisticas" />
+        <module name="fuente-dinamica" />
+        <module name="agregador" />
+        <module name="fuente-estatica" />
+        <module name="fuente-proxy" />
+        <module name="commons" />
+        <module name="fuente-dinamica (1)" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="cliente-grafico" target="17" />
       <module name="fuenteEstatica" target="17" />
       <module name="fuenteProxy" target="17" />
     </bytecodeTargetLevel>
@@ -71,6 +63,7 @@
       <module name="fuenteProxy" options="-parameters" />
       <module name="servicio-de-estadisticas" options="-parameters" />
       <module name="servicio-de-usuarios" options="-parameters" />
+      <module name="servicio-frontend" options="" />
     </option>
   </component>
 </project>
