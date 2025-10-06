@@ -5,7 +5,7 @@ import lombok.Value;
 import java.io.Serializable;
 
 @Value
-public class IdExternoDto implements Serializable {
-  FuenteDto fuente;
+public class IdExternoDTO implements Serializable {
+  FuenteDTO fuente;
   Long idExterno;
 }

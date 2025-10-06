@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Value
-public class ContribuyenteDto implements Serializable {
+public class ContribuyenteDTO implements Serializable {
   Long id;
   String nombre;
   String apellido;

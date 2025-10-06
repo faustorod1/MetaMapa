@@ -23,6 +23,8 @@
         <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
         <div class = "container">
 
+           <!-- <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div> -->
+
                 <h2 id="titulo-cargarHecho">Cargar Hecho</h2>
                 <div class ="input-primerFila">
                     <div class="input-cargarHecho">

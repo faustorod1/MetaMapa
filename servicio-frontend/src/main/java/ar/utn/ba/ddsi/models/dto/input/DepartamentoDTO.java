@@ -5,7 +5,8 @@ import lombok.Value;
 import java.io.Serializable;
 
 @Value
-public class AdministradorDto implements Serializable {
+public class DepartamentoDTO implements Serializable {
+  Long id;
   String nombre;
-  String apellido;
+  ProvinciaDTO provincia;
 }

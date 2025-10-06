@@ -13,12 +13,13 @@ public class HechosScheduler {
     }
 
     @Scheduled(fixedRate = 50000) //50 segundos  //TODO: DEBE SER 1HR (60*60*1000)
-    public void actualizarHechos(){
-        hechosService.actualizarHechos()
-                .doOnSuccess(v -> System.out.println("Actualizados!"))
-                .doOnError(e -> System.out.println("Error"))
-                .subscribe();
+    public void actualizarHechos() {
+        try {
+            hechosService.actualizarHechos();
+            System.out.println("Actualizados!");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
     }
-
-
 }

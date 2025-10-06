@@ -5,7 +5,7 @@ import lombok.Value;
 import java.io.Serializable;
 
 @Value
-public class ProvinciaDto implements Serializable {
-  Long id;
+public class AdministradorDTO implements Serializable {
   String nombre;
+  String apellido;
 }

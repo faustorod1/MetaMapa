@@ -13,7 +13,7 @@ public class SolicitudDeEliminacionDto implements Serializable {
   LocalDateTime fechaDeCarga;
   LocalDateTime fechaDeResolucion;
   EstadoSolicitud estado;
-  ContribuyenteDto solicitante;
-  AdministradorDto administradorQueResolvio;
+  ContribuyenteDTO solicitante;
+  AdministradorDTO administradorQueResolvio;
   int CANT_MINIMA_DE_CARACTERES;
 }

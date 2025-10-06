@@ -5,7 +5,7 @@ import lombok.Value;
 import java.io.Serializable;
 
 @Value
-public class DatosLoginDto implements Serializable {
+public class DatosLoginDTO implements Serializable {
   String email;
   String password;
 }
