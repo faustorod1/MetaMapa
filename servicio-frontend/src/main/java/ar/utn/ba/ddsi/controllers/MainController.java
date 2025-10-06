@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -29,8 +30,12 @@ public class MainController {
   }
 
   @GetMapping("mapa")
-  public String mapa() {
-    List<HechoDTO> hechos = hechosService.buscarTodos();
+  public String mapa(Model model) {
+    List<HechoDTO> hechos = new ArrayList<>();
+    try{
+      hechos = hechosService.buscarTodos();
+    } catch (Exception e) {}
+    model.addAttribute("hechos", hechos);
     return "main-page/mapa";
   }
 

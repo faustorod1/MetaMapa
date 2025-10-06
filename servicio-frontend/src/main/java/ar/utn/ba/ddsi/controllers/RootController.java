@@ -30,19 +30,20 @@ public class RootController {
     return "landing-page/login";
   }
 
-  @GetMapping("/register")
-  public String register() {
-    return "landing-page/register";
-  }
-
   @PostMapping("/login")
   public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, Model model){
 
     return "landing-page/login";
   }
 
+  @GetMapping("/register")
+  public String register() {
+    return "landing-page/register";
+  }
 
+  @PostMapping("/register")
+  public String registrarse() {
 
-
-
+    return "landing-page/register";
+  }
 }

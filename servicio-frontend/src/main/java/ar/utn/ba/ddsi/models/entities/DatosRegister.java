@@ -8,4 +8,5 @@ public class DatosRegister {
   private String apellido;
   private String email;
   private String contrasenia;
+  private String contraseniaRepetida;
 }

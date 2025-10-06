@@ -60,6 +60,7 @@
     </main>
 </body>
 <script>
+    const hechos = JSON.parse(/*[[${#json(hechos)}]]*/ '[]'); //para controlar json puro
     let hechoActual = null;
 
 // Barra lateral con información del hecho seleccionado.
@@ -73,16 +74,15 @@ const hechoPreview = {
 };
 
 // Lista con los hechos obtenidos del agregador.
-const hechos = [
-    {
-        id: 1,
-        titulo: 'Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones',
-        descripcion: 'La región de San Vicente en Misiones sufrió los efectos de una intensa ráfagas de más de 100 km/h. El incidente obligando a evacuar a residentes de la zona. Se ha convocado al comité de crisis para coordinar las acciones de respuesta.',
-        categoria: 'Ráfagas de más de 100 km/h',
-        ubicacion: [-27.029465, -54.436559],
-        fechaHecho: '2007-12-21'
-    }
-];
+//const hechos = [
+//    {
+//        id: 1,
+//        titulo: 'Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones',
+//        descripcion: 'La región de San Vicente en Misiones sufrió los efectos de una intensa ráfagas de más de 100 km/h. El incidente obligando a evacuar a residentes de la zona. Se ha convocado al comité de crisis para coordinar las acciones de respuesta.',
+//       categoria: 'Ráfagas de más de 100 km/h',
+//        ubicacion: [-27.029465, -54.436559],
+//        fechaHecho: '2007-12-21'
+//    }];
 
 // Crea el mapa y lo pone en el elemento #map.
 const map = L.map('map', {
