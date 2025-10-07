@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
@@ -68,6 +69,11 @@ public class ColeccionesController {
     @DeleteMapping
     public void EliminarColeccion(@RequestBody String identificador){
         coleccionesService.eliminarColeccion(identificador);
+    }
+
+    @GetMapping("/fuentes")
+    public List<FuenteDTO> buscarFuentes(){
+        return coleccionesService.buscarFuentes();
     }
 
 }

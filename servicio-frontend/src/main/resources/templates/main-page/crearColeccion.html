@@ -162,14 +162,14 @@
 
     <div id="fixed-logo"></div>
 
-    <form class="cargar-coleccion-form" action="" method="post" novalidate>
+    <form th:action="@{colecciones/crear}" th:object="@{coleccionOutputDTO}" class="cargar-coleccion-form" method="post">
         <div class="container">
             <h2 id="titulo-cargarColeccion">Crear coleccion</h2>
 
             <div class="input-crearColeccion">
                 <h4>Título</h4>
                 <label for="tituloColeccion"></label>
-                <input type="text" id="tituloColeccion" name="tituloColeccion" required oninvalid="this.setCustomValidity('Ingresa un título')" oninput="this.setCustomValidity('')">
+                <input type="text" id="tituloColeccion" name="tituloColeccion" th:field="*{titulo}" required oninvalid="this.setCustomValidity('Ingresa un título')" oninput="this.setCustomValidity('')">
             </div>
 
             <div class="input-crearColeccion">
@@ -180,14 +180,13 @@
                         <i class="fa-solid fa-chevron-down" style="margin-left: 0.5rem;"></i>
                     </button>
                     <ul id="dropdownList" role="listbox" aria-multiselectable="true" hidden>
-                        <li>
-                            <label><input type="checkbox" name="fuentes[]" value="estatica"> Estática</label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" name="fuentes[]" value="dinamica"> Dinámica</label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" name="fuentes[]" value="proxy"> Proxy</label>
+                        <li th:each="fuente : ${fuentes}">
+                            <label>
+                                <input type="checkbox"
+                                       th:name="fuentes"
+                                       th:value="${fuente.id}" />
+                                <span th:text="${fuente.tipoDeFuente == 'proxy' ? fuente.tipoDeFuente + ' - ' + fuente.subfuenteId : fuente.tipoDeFuente}"></span>
+                            </label>
                         </li>
                     </ul>
                 </div>
@@ -195,18 +194,19 @@
 
             <div class="input-crearColeccion">
                 <h4>Algoritmo de consenso</h4>
-                <select id="algoritmo" name="algoritmo" required oninvalid="this.setCustomValidity('Selecciona un algoritmo')" oninput="this.setCustomValidity('')">
+                <select th:field="*{algoritmoDeConsenso} "id="algoritmo" name="algoritmo" required oninvalid="this.setCustomValidity('Selecciona un algoritmo')" oninput="this.setCustomValidity('')">
                     <option value="" disabled selected>Selecciona un algoritmo</option>
-                    <option value="multiples">Múltiples menciones </option>
+                    <option value="multiples" >Múltiples menciones </option>
                     <option value="mayoria">Mayoría simple</option>
                     <option value="absoluta">Absoluta</option>
                 </select>
+                <span th:if="${#fields.hasErrors('algoritmo')}" th:errors="*{algoritmo}" style="color: red;"></span>  <!-- prueba de error
             </div>
 
             <div class="input-crearColeccion" id="input-descripcion">
                 <h4>Descripción</h4>
                 <label for ="descripcion"></label>
-                <textarea id="descripcion" name="descripcion" placeholder="Escribe una descripcion..."></textarea>
+                <textarea id="descripcion" name="descripcion" th:field="*{descripcion}" placeholder="Escribe una descripcion..."></textarea>
             </div>
 
             <div class="footer-container">

@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ColeccionesService implements IColeccionesService {
@@ -133,6 +134,11 @@ public class ColeccionesService implements IColeccionesService {
         coleccion.setAlgoritmoDeConsenso(algoritmoDeConsenso);
 
         return ColeccionOutputDTO.fromEntity(coleccion);
+    }
+
+    @Override
+    public List<FuenteDTO> buscarFuentes(){
+        return fuentesRepository.findAll().stream().map(FuenteDTO::fromEntity).collect(Collectors.toList());
     }
 
 

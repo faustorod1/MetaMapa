@@ -2,13 +2,10 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.exceptions.HechoMalCargadoException;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.services.IDinamicaService;
-import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +28,7 @@ public class HechosController {
 
 
     @PostMapping("/cargar")
-    public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, Model model, RedirectAttributes redirectAttributes) {
         try {
             dinamicaService.cargarHecho(hechoOutputDTO);
             redirectAttributes.addFlashAttribute("mensaje", "Hecho creado con éxito");
@@ -49,9 +46,9 @@ public class HechosController {
     public String importarCSV(Model model) {
         return "main-page/importarCSV";
     }
-
+/*
     @PostMapping("subirCSV")
     public
-
+*/
 
 }

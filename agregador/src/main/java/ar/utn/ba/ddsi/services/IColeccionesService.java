@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
@@ -24,4 +25,5 @@ public interface IColeccionesService {
     void eliminarColeccion (String identificador);
     ColeccionOutputDTO updateFuentes(String identificador, List<Long> fuentes);
     void consensuarColecciones();
+    List<FuenteDTO> buscarFuentes();
 }
