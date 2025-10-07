@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Crear solicitud de modificación | METAmapa</title>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/cargarHecho.css}" />
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
+    <style>
+        body{
+            background-image: url('../../static/fondoLevementeCargado.png');
+            background-size: cover;                 /* Que cubra toda la pantalla */
+            background-repeat: no-repeat;           /* Que no se repita */
+            background-attachment: fixed;           /* Fijo */
+            background-position: center center;     /* Que esté centrada */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container{
+            background-color: var(--color-main);
+            border-radius: 1rem;
+            padding: 0.8rem;
+            padding-bottom: 0;
+        }
+
+        .input-primerFila{
+            padding:0;
+        }
+
+        .input-cargarHecho{
+            margin:0;
+        }
+
+        #titulo-cargarHecho{
+            text-align: center;
+            padding-bottom: 0.5rem;
+            border-bottom: 0.1rem solid black;
+        }
+
+        #tituloHecho{
+            max-height: 4.5em;
+            overflow: auto;
+            text-align: right;
+            direction: rtl;
+        }
+
+        #categoria{
+            max-height: 4.5em;
+            overflow: auto;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .input-primerFila{
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        label {
+            max-height: 4.5em; /* por ejemplo 3 líneas */
+            overflow: auto;    /* agrega scroll si es necesario */
+        }
+
+        .buttons-footer{
+            display: flex;
+            align-items: flex-end;
+            justify-content:flex-end;
+            gap: 0.1rem;
+        }
+
+        .btn-submit{
+            margin:0.3rem;
+        }
+
+        .add-btn {
+            padding: 6px 12px;
+            margin-left: 5px;
+            background: var(--color-main-2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .custom-file {
+            display: inline-block;
+            padding: 0.5rem;
+            background: #8f8e8e;
+            color: white;
+            border-radius: 0.3rem;
+            cursor: pointer;
+        }
+
+        .custom-file{
+            background: var(--color-main-2);
+        }
+        .custom-file:hover {
+            background: var(--color-main-2-hover);
+        }
+
+    </style>
+
+
+</head>
+<body>
+<main>
+    <div id="fixed-logo"></div>
+
+    <div class="container">
+        <h2 id="titulo-cargarHecho"> Modificar</h2>
+
+
+        <div class ="input-primerFila">
+            <div class="input-cargarHecho">
+                <h4>Título</h4>
+                <label for ="tituloHecho"></label>
+                <input type="text" id="tituloHecho" name="tituloHecho">
+            </div>
+
+            <div class="input-cargarHecho">
+                <h4>Categoria</h4>
+                <label for ="categoria"></label>
+                <input type="text" id="categoria" >
+            </div>
+
+            <div class="input-cargarHecho">
+                <h4>Lugar</h4>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
+                    <input type="text" id="lugar" name="lugar">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-cargarHecho">
+            <h4>Descripción</h4>
+            <label for ="descripcion"></label>
+            <textarea id="descripcion" ></textarea><!--Descripcio-->
+        </div>
+
+        <div class="input-tercerFila">
+            <div class="input-cargarHecho">
+                <h4>Fecha</h4>
+                <input type="text" id="fecha" name="fecha" style="text-align: center">
+            </div>
+
+            <div class="input-cargarHecho">
+                <h4>Etiquetas</h4>
+                <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
+                <button type="button" id="addTag" class="add-btn">➕</button>
+                <!-- contenedor visual -->
+                <div id="tagContainer" class="tag-container">
+                </div>
+                <!-- input oculto con las etiquetas -->
+                <input type="hidden" name="tags" id="hiddenTags">
+            </div>
+        </div>
+
+        <div class="input-imagenes">
+            <div class="input-cargarHecho">
+                <label for="fotos" class="custom-file">Sube imágenes📷 </label>
+                <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
+                <div id="preview"></div>
+            </div>
+        </div>
+
+        <div class="buttons-footer">
+            <button class="btn-submit" type="submit">Solicitar modificación</button>
+        </div>
+    </div>
+
+    </div>
+
+</main>
+
+
+</body>
+
+</html>

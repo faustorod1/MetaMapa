@@ -45,4 +45,13 @@ public class HechosController {
 
     }
 
+    @GetMapping("importarCSV")
+    public String importarCSV(Model model) {
+        return "main-page/importarCSV";
+    }
+
+    @PostMapping("subirCSV")
+    public
+
+
 }

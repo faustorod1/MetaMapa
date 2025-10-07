@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.entities.DatosLogin;
+import ar.utn.ba.ddsi.models.entities.DatosRegister;
 import ar.utn.ba.ddsi.services.IRootService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -42,8 +43,7 @@ public class RootController {
   }
 
   @PostMapping("/register")
-  public String registrarse() {
-
-    return "landing-page/register";
+  public String registrarse(@ModelAttribute("datosRegister") DatosRegister datosRegister, Model model) {
+      return "landing-page/register";
   }
 }

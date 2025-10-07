@@ -49,9 +49,16 @@
                     <div class="input-cargarHecho">
                         <h4>Lugar</h4>
                         <div id="input-ubicacion-container">
+
+                            <!-- Campo visible para mostrar ambas coordenadas -->
+                            <input type="text" id="ubicacion" placeholder="Ubicación" disabled required>
+
+                            <!-- Campos ocultos mapeados al objeto hecho -->
+                            <input type="hidden" th:field="*{latitud}" id="latitud" required>
+                            <input type="hidden" th:field="*{longitud}" id="longitud" required>
+
+                            <!-- Botón para seleccionar en el mapa -->
                             <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
-                                <input type="text" id="ubicacion" th:field="" disabled>
-                                <br>
                                 Seleccionar en el mapa
                                 <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
                             </button>
@@ -65,7 +72,7 @@
                     <textarea id="descripcion" placeholder="Escribe una descripcion..." th:field="*{descripcion}"></textarea><!--Descripcio-->
                 </div>
 
-                <div class="input-tercerFila">
+            <div class="input-tercerFila">
                     <div class="input-cargarHecho">
                         <h4>Fecha</h4>
                         <input type="date" id="fecha" name="fecha" th:field="*{fechaHecho}" required>
@@ -84,13 +91,6 @@
                         <input type="hidden" name="tags" id="hiddenTags">
                     </div>
                 </div>
-
-            <!--
-               <div th:each="i, etiqueta : ${hechoOutputDTO.etiquetas}">
-            <input type="hidden" th:field="*{etiquetas[i].id}" />
-            <input type="text" th:field="*{etiquetas[i].nombre}" placeholder="Escribe una etiqueta...">
-        </div>
-            -->
 
             <div class="input-imagenes">
                 <div class="input-cargarHecho">
@@ -285,18 +285,33 @@
             }
         }
 
+        // MODIFICADO - Versión anterior en GIT 6/10
         function seleccionarUbicacionActual() {
             if (markerUbicacionSeleccionada) {
-                ubicacionSeleccionada = latlngToCoords(markerUbicacionSeleccionada._latlng);
-                inputUbicacion.setAttribute('value', ubicacionSeleccionada.toString());
+                const lat = markerUbicacionSeleccionada._latlng.lat;
+                const lng = markerUbicacionSeleccionada._latlng.lng;
+
+                // Guarda en la variable global
+                ubicacionSeleccionada = [lat, lng];
+
+                // Muestra en el input visible
+                inputUbicacion.value = `${lat};${lng}`;
+
+                // ✅ Asigna también a los campos ocultos del DTO
+                document.getElementById("latitud").value = lat;
+                document.getElementById("longitud").value = lng;
             }
+
             toggleInputUbicacion(false);
         }
 
         function latlngToCoords(latlng) {
             return [latlng.lat, latlng.lng];
         }
-        
+
+
+
+
     </script>
 </body>
 </html>

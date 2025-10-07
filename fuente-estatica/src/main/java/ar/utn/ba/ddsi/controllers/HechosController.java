@@ -27,6 +27,11 @@ public class HechosController {
         return this.hechosService.obtenerHechosCargadosDesde(desde);
     }
 
+    @PostMapping()
+    public void importarCSV{
+
+    }
+
     @DeleteMapping
     public void eliminarHecho(@RequestParam Long id){
         hechosService.marcarComoELiminado(id);

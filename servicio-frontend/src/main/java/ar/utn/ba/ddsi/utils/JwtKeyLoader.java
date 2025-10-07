@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.commons;
+package ar.utn.ba.ddsi.utils;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;

@@ -37,22 +37,24 @@
             <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
         </div>
 
-        <!-- Entiendo que, ya que estamos obligados a pasar por endpoints antes de a una nueva pagina, podemos sacar toda la lógica JS de abajo -->
-        <!-- Propuesta: -->
 
-        <form th:action="@{hechos/formulario-de-carga}" method="get" style="display:inline;">
-        <button class="btn-add" id="btn-add">
+            <button class="btn-add" id="btn-add"></button>
             <i class="fa-solid fa-plus"></i>
-        </form>
 
-        </button>
         <div id="btn-add-list">
+
+            <form th:action="@{hechos/formulario-de-carga}" method="get" style="display:inline;">
             <button class="btn-add" id="btn-add-hecho" title="Cargar hecho">
                 <i class="fa-solid fa-newspaper"></i>
             </button>
+            </form>
+
+            <form th:action="@{hechos/importarCSV}" method="get" style="display:inline;">
             <button class="btn-add" id="btn-add-dataset" title="Importar DataSet">
                 <i class="fa-solid fa-file-import"></i>
             </button>
+            </form>
+
             <button class="btn-add" id="btn-add-coleccion" title="Crear colección">
                 <i class="fa-solid fa-layer-group"></i>
             </button>

@@ -152,11 +152,17 @@
 
   <div class="csv-import-container"><h2 style="color: white;">Importar archivo CSV</h2>
 
+
     <div class="drop-zone" id="dropZone">
       <p>Arrastrá tus archivos aquí o</p>
       <input type="file" id="fileInput" multiple accept=".csv" hidden />
       <button class="btn-buscar" onclick="document.getElementById('fileInput').click()">Buscar</button>
     </div>
+
+      <form th:action="@{/importar}" th:object="${file}" method="post" enctype="multipart/form-data" id="uploadForm">
+          <input type="file" name="files" multiple accept=".csv" hidden />
+      </form>
+
 
     <ul id="fileList" class="file-list"></ul>
 

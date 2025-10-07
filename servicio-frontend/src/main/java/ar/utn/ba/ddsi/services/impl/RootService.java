@@ -1,16 +1,72 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import ar.utn.ba.ddsi.services.IRootService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import java.util.Map;
 
 public class RootService implements IRootService {
     WebClient agregadorWebClient;
+    WebClient usuariosWebClient;
 
-    public RootService(@Value("${agregador.api.base-url}") String agregadorBaseUrl) {
+    public RootService(@Value("${agregador.api.base-url}") String agregadorBaseUrl,@Value("${usuarios.api.base-url}") String servicioDeUsuarios) {
         agregadorWebClient = WebClient.builder().baseUrl(agregadorBaseUrl).build();
+        usuariosWebClient = WebClient.builder().baseUrl(servicioDeUsuarios).build();
     }
 
+    public AuthResponseDTO login(String email, String password) {
+        try {
+            AuthResponseDTO response = usuariosWebClient
+                    .post()
+                    .uri("/api/auth")
+                    .bodyValue(Map.of(
+                            "email", email,
+                            "password", password
+                    ))
+                    .retrieve()
+                    .bodyToMono(AuthResponseDTO.class)
+                    .block();
+            return response;
+        } catch (WebClientResponseException e){
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+            throw new RuntimeException("Error en el servicio de autenticación: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error de conexión con el servicio de autenticación: " + e.getMessage(), e);
+        }
+    }
+/*
+    public registrar(String nombre, String apellido, String email, String password, String repetedPassword){
+
+        try{
+            return usuariosWebClient
+            .post()
+            .uri("/api/auth/register")
+            .body(Map.of(
+            "nombre",nombre
+            "apellido",apellido
+            "email",email
+            "password",password
+            "repetedPassword", repetedPassword))
+            .retrieve()
+            .bodyToMono(AuthResponseDTO.class)
+            .block();
+        } catch (WebClientResponseException e){
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+            throw new RuntimeException("Error en el servicio de autenticación: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error de conexión con el servicio de autenticación: " + e.getMessage(), e);
+        }
+
+    }
+*/
     /* Idea para login: conectarse con un endpoint del agregador, y que el se encargue de revisar en la BD si existe ese usuario.
     public boolean loginExitoso(LoginDatosDTO){
     return agregador.post
