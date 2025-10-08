@@ -159,10 +159,9 @@
       <button class="btn-buscar" onclick="document.getElementById('fileInput').click()">Buscar</button>
     </div>
 
-      <form th:action="@{/importar}" th:object="${file}" method="post" enctype="multipart/form-data" id="uploadForm">
+      <form th:action="@{hechos/importar}" method="post" enctype="multipart/form-data" id="uploadForm">
           <input type="file" name="files" multiple accept=".csv" hidden />
       </form>
-
 
     <ul id="fileList" class="file-list"></ul>
 

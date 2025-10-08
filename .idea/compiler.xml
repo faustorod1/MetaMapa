@@ -49,6 +49,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar" />
         </processorPath>
         <module name="servicio-de-usuarios" />
+        <module name="servicio-de-usuarios (2)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -72,6 +73,7 @@
       <module name="fuenteProxy" options="-parameters" />
       <module name="servicio-de-estadisticas" options="-parameters" />
       <module name="servicio-de-usuarios" options="-parameters" />
+      <module name="servicio-de-usuarios (2)" options="-parameters" />
       <module name="servicio-frontend" options="" />
     </option>
   </component>

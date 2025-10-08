@@ -22,18 +22,21 @@ public class ColeccionesController {
     private IAgregadorService agregadorService;
 
     @GetMapping("/formulario-de-carga")
-    public String formularioCrearColeccion(Model model){
-        List<FuenteDTO> fuentes = agregadorService.buscarFuentes();
-
-        model.addAttribute("coleccionOutputDTO", new ColeccionOutputDTO());
-        model.addAttribute("fuentes", fuentes);
-        return "main/crearColeccion";
+    public String formularioCrearColeccion(Model model) {
+        try {
+            List<FuenteDTO> fuentes = agregadorService.buscarFuentes();
+            model.addAttribute("coleccionOutputDTO", new ColeccionOutputDTO());
+            model.addAttribute("fuentes", fuentes);
+            return "main/crearColeccion";
+        } catch (Exception e) {
+            model.addAttribute("errorFuentes", "Error al intentar cargar la página");
+            // Quizás podría haber un redirect a una página de status 400
+            return "/main-page/mapa";
+        }
     }
 
-    @PostMapping("/crear")
-    public String crearColeccion(@ModelAttribute("coleccionOutputDTO") ColeccionOutputDTO coleccionOutputDTO, Model model){
 
 
-    }
+
 
 }

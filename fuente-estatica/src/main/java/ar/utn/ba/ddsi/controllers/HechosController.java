@@ -8,6 +8,7 @@ import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -27,9 +28,9 @@ public class HechosController {
         return this.hechosService.obtenerHechosCargadosDesde(desde);
     }
 
-    @PostMapping()
-    public void importarCSV{
-
+    @PostMapping("importar")
+    public void importarCSVs(List<MultipartFile> archivos){
+        this.hechosService.guardarCSVs(archivos);
     }
 
     @DeleteMapping

@@ -14,9 +14,7 @@ public class HechosRepository implements IHechosRepository {
 
     @Override
     public List<Hecho> findAllFrom(PathDataset dataset) {
-
         LectorDeCSV lectorDeCSV = new LectorDeCSV(dataset);
-
         return lectorDeCSV.getHechos();
     }
 
