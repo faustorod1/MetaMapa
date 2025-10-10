@@ -1,4 +1,5 @@
 package ar.utn.ba.ddsi.controllers;
+import lombok.extern.slf4j.Slf4j;
 
 import ar.utn.ba.ddsi.exceptions.HechoMalCargadoException;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
@@ -16,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-
+@Slf4j
 @Controller
 @RequestMapping("/hechos")
 public class HechosController {
@@ -37,13 +38,13 @@ public class HechosController {
     @PostMapping("/cargar")
     public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, Model model, RedirectAttributes redirectAttributes) {
         try {
+            log.info("DTO recibido: {}", hechoOutputDTO);
             dinamicaService.cargarHecho(hechoOutputDTO);
             redirectAttributes.addFlashAttribute("mensaje", "Hecho creado con éxito");
-            return "redirect:/main/mapa";
+            return "redirect:/main";
         } catch (Exception ex) {
             model.addAttribute("error", "Ocurrió un error inesperado al intentar cargar el hecho");
-            model.addAttribute("hechoOutputDTO", hechoOutputDTO);
-            return "/main-page/cargarHecho";
+            return "main-page/cargarHecho";
         }
 
     }
@@ -61,7 +62,7 @@ public class HechosController {
             return "main-page/importarCSV";
         } catch (Exception e) {
             model.addAttribute("error", "Error al importar");
-            return "/main-page/importarCSV";
+            return "main-page/importarCSV";
         }
     }
 }

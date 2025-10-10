@@ -26,7 +26,7 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
-    @Column(name = "categoria", columnDefinition = "VARCHAR(100)", nullable = true)
+    @Column(name = "categoria", columnDefinition = "VARCHAR(100)")
     private String categoria;
 
     @OneToMany
@@ -56,13 +56,12 @@ public class Hecho {
     @Builder.Default
     private SolicitudDeModificacion solicitudDeModificacion = null;
 
-    @ManyToMany
-    @JoinTable(
+    @ElementCollection
+    @CollectionTable(
             name = "etiquetas_por_hecho",
-            joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "etiqueta_id", referencedColumnName = "id"))
-    @Builder.Default
-    private Set<Etiqueta> etiquetas = new HashSet<>();
+            joinColumns = @JoinColumn(name = "hecho_id"))
+    @Column(name = "etiqueta")
+    private List<String> etiquetas = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "hecho_id", referencedColumnName = "id")

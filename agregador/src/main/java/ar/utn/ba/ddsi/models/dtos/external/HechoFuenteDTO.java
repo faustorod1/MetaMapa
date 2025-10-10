@@ -16,7 +16,7 @@ public class HechoFuenteDTO {
     private Long subfuenteId;
     private String titulo;
     private String descripcion;
-    private Categoria categoria;
+    private String categoria;
     private List<String> contenidosMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
@@ -25,7 +25,7 @@ public class HechoFuenteDTO {
     private boolean eliminado;
     private ContribuyenteDTO contribuyente;
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
-    private HashSet<Etiqueta> etiquetas;
+    private HashSet<String> etiquetas;
 
     public Hecho toEntity() {
         Contribuyente contribuyente = null;
@@ -39,7 +39,8 @@ public class HechoFuenteDTO {
                 .idExterno(new IdExterno())
                 .titulo(this.getTitulo())
                 .descripcion(this.getDescripcion())
-                .categoria(this.getCategoria())
+                // .categoria(this.categoria()) TODO: setear bien categoria
+                // . etiquetas(this.etiquetas)     TODO: setear bien etiquetas
                 .origen(this.getOrigen())
                 .lugarAcontecimiento(this.getLugarAcontecimiento())
                 .fechaHecho(this.getFechaHecho())

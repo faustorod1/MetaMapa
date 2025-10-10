@@ -57,6 +57,8 @@ public class HechosService implements IHechosService {
 
   @Override
   public HechoOutputDTO crearHecho(HechoInputDTO hechoInputDTO) {
+    System.out.println("HECHO recibido");
+
     Hecho hecho = this.DTOToHecho(hechoInputDTO);
     hecho.setFechaDeCarga(LocalDateTime.now());
     hecho.setFechaUltimaActualizacion(LocalDateTime.now());
@@ -95,22 +97,22 @@ public class HechosService implements IHechosService {
 
 
   public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
-    Long contribuyenteId = hechoInputDTO.getContribuyenteId();
-    Contribuyente contribuyente = contribuyentesRepository.findById(contribuyenteId).orElse(null);
+
+    //Long contribuyenteId = hechoInputDTO.getContribuyenteId();
+    //Contribuyente contribuyente = contribuyentesRepository.findById(contribuyenteId).orElse(null);
 
     Hecho hecho = Hecho.builder()
         .titulo(hechoInputDTO.getTitulo())
         .descripcion(hechoInputDTO.getDescripcion())
         .categoria(hechoInputDTO.getCategoria())
-         .contenidosMultimedia(hechoInputDTO.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).collect(Collectors.toList()))
-        .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(),hechoInputDTO.getLongitud()))
-        .fechaHecho(hechoInputDTO.getFechaHecho())
+        .contenidosMultimedia(hechoInputDTO.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).collect(Collectors.toList()))
+        .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(), hechoInputDTO.getLongitud()))
+        .fechaHecho(hechoInputDTO.getFechaHecho().atStartOfDay())
         .eliminado(false)
-        .contribuyente(contribuyente)
+       // .contribuyente(contribuyente)
                 .build();
     if (hechoInputDTO.getEtiquetas() != null){
-      Set<Etiqueta> etiquetas = hechoInputDTO.getEtiquetas().stream().map(EtiquetaDTO::toEntity).collect(Collectors.toSet());
-      hecho.setEtiquetas(etiquetas);
+        hecho.setEtiquetas(hechoInputDTO.getEtiquetas().stream().map(EtiquetaDTO::getNombre).toList());
     }
     return hecho;
   }
@@ -119,7 +121,7 @@ public class HechosService implements IHechosService {
     return HechoOutputDTO.builder()
         .titulo(hecho.getTitulo())
         .descripcion(hecho.getDescripcion())
-        .categoria(new Categoria(hecho.getCategoria()))
+        .categoria(hecho.getCategoria())
         .contenidosMultimedia(hecho.getContenidosMultimedia().stream().map(ContenidoMultimedia::getPath).toList())
         .lugarAcontecimiento(hecho.getLugarAcontecimiento())
         .fechaHecho(hecho.getFechaHecho())
@@ -127,8 +129,8 @@ public class HechosService implements IHechosService {
         .fechaUltimaActualizacion(hecho.getFechaUltimaActualizacion())
         .origen(CONTRIBUYENTE)
         .eliminado(hecho.isEliminado())
-        .contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
-        .etiquetas(hecho.getEtiquetas().stream().map(EtiquetaDTO::fromEntity).collect(Collectors.toSet()))
+        //.contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
+        .etiquetas(hecho.getEtiquetas().stream().map(EtiquetaDTO::new).collect(Collectors.toSet()))
         .id(hecho.getId())
         .tipoDeFuente("dinamica")
         .build();

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,10 +21,10 @@ public class HechoOutputDTO {
     private String titulo;
     private String descripcion;
     private String categoria;
-    private List<String> contenidosMultimedia;
+    private List<String> contenidosMultimedia = new ArrayList<>();
     private Double latitud;
     private Double longitud;
-    private LocalDateTime fechaHecho;
-    // private Long contribuyenteId;
-    private Set<EtiquetaOutputDTO> etiquetas;
+    private LocalDate fechaHecho;
+    private Long contribuyenteId = 1l; // TODO: harcodeado
+    private List<EtiquetaOutputDTO> etiquetas = new ArrayList<>();
 }

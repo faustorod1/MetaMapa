@@ -3,9 +3,8 @@ package ar.utn.ba.ddsi.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Data
-@Entity
-@Table(name = "categorias")
+
+
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,3 +19,4 @@ public class Categoria {
         this.nombre = nombre;
     }
 }
+

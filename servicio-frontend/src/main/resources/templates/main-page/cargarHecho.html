@@ -78,19 +78,16 @@
                         <input type="date" id="fecha" name="fecha" th:field="*{fechaHecho}" required>
                     </div>
 
-                    <div class="input-cargarHecho">
-                        <h4>Etiquetas</h4>
-                        <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
-                        <button type="button" id="addTag" class="add-btn">➕</button>
+                <div class="input-cargarHecho">
+                    <h4>Etiquetas</h4>
+                    <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
+                    <button type="button" id="addTag" class="add-btn">➕</button>
 
-                        <div th:each="etiqueta, iterStat : *{etiquetas}" class="hidden-tag-input">
-                            <input type="hidden" th:field="*{etiquetas[__${iterStat.index}__].nombre}" th:value="${etiqueta.nombre}" />
-                        </div>
+                    <div id="hiddenTagsContainer"></div>
 
-                        <div id="tagContainer" class="tag-container"></div>
-                        <input type="hidden" name="tags" id="hiddenTags">
-                    </div>
+                    <div id="tagContainer" class="tag-container"></div>
                 </div>
+            </div>
 
             <div class="input-imagenes">
                 <div class="input-cargarHecho">
@@ -132,6 +129,16 @@
             const inputFotos = document.getElementById("fotos");
             const preview = document.getElementById("preview");
             let filesArray = [];
+
+            function agregarPathImagen(path) {
+                const index = document.querySelectorAll(".hidden-path").length;
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = `contenidosMultimedia[${index}]`;
+                input.value = path; // por ejemplo: "uploads/foto1.png"
+                input.classList.add("hidden-path");
+                document.getElementById("preview").appendChild(input);
+            }
 
             function mostrarPreviews() {
                 preview.innerHTML = "";
@@ -177,15 +184,26 @@
                 mostrarPreviews();
             });
 
-            /*** ETIQUETAS ***/
             const inputTags = document.getElementById("tagInput");
             const addBtn = document.getElementById("addTag");
             const tagContainer = document.getElementById("tagContainer");
-            const hiddenInput = document.getElementById("hiddenTags");
             let etiquetas = [];
 
             function actualizarHidden() {
-                hiddenInput.value = etiquetas.join(",");
+                const hiddenContainer = document.getElementById("hiddenTagsContainer");
+
+                // Limpia los inputs previos
+                hiddenContainer.innerHTML = "";
+
+                // Crea los inputs como espera Spring
+                etiquetas.forEach((et, index) => {
+                    const hidden = document.createElement("input");
+                    hidden.type = "hidden";
+                    hidden.name = `etiquetas[${index}].nombre`;
+                    hidden.value = et;
+                    hidden.classList.add("hidden-tag");
+                    hiddenContainer.appendChild(hidden);
+                });
             }
 
             function crearEtiqueta(texto) {
@@ -308,6 +326,8 @@
         function latlngToCoords(latlng) {
             return [latlng.lat, latlng.lng];
         }
+
+
 
 
 

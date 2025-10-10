@@ -25,7 +25,7 @@ public class HechoOutputDTO {
   private String tipoDeFuente;
   private String titulo;
   private String descripcion;
-  private Categoria categoria;
+  private String categoria;
   private List<String> contenidosMultimedia;
   private OrigenHecho origen;
   private Coordenada lugarAcontecimiento;
