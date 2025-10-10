@@ -10,25 +10,28 @@ import ar.utn.ba.ddsi.models.repositories.AdministradorRepository;
 import ar.utn.ba.ddsi.models.repositories.ContribuyenteRespository;
 import ar.utn.ba.ddsi.models.repositories.UsuariosRepository;
 import ar.utn.ba.ddsi.utils.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 @Service
 public class LoginService {
+
     private final UsuariosRepository usuariosRepository;
     private final ContribuyenteRespository contribuyenteRepository;
     private final AdministradorRepository administradorRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public LoginService(UsuariosRepository usuariosRepository, ContribuyenteRespository contribuyenteRepository, AdministradorRepository administradorRepository) {
+    @Autowired
+    public LoginService(UsuariosRepository usuariosRepository, ContribuyenteRespository contribuyenteRepository, AdministradorRepository administradorRepository,JwtUtil jwtUtil) {
         this.usuariosRepository = usuariosRepository;
         this.contribuyenteRepository = contribuyenteRepository;
         this.administradorRepository = administradorRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
+        this.jwtUtil = jwtUtil;
     }
 
     public Usuario autenticarUsuario(String email, String password) {
@@ -49,11 +52,11 @@ public class LoginService {
     }
 
     public String generarAccessToken(Usuario usuario) {
-        return JwtUtil.generarAccessToken(usuario);
+        return jwtUtil.generarAccessToken(usuario);
     }
 
     public String generarRefreshToken(Usuario usuario) {
-        return JwtUtil.generarRefreshToken(usuario);
+        return jwtUtil.generarRefreshToken(usuario);
     }
 
     public Usuario getUsuario(String email){
@@ -72,14 +75,13 @@ public class LoginService {
             throw new UsuarioExistenteException(email);
         }
 
-
         if (rol == null) {
             rol = "CONTRIBUYENTE";
         }
 
         Usuario usuario = Usuario.builder()
             .email(email)
-            .password(password)
+            .password(passwordEncoder.encode(password))
             .nombre(nombre)
             .apellido(apellido)
             .build();

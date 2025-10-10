@@ -10,6 +10,7 @@ import ar.utn.ba.ddsi.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
+    @Autowired
     private final LoginService loginService;
+    @Autowired
+    private final JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<AuthResponseDTO> login(@RequestBody Map<String, String> credentials) {
@@ -59,10 +63,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponseDTO> refresh(@RequestBody RefreshRequestDTO request) {
         try {
-            String email = JwtUtil.validarToken(request.getRefreshToken());
+            String email = jwtUtil.validarToken(request.getRefreshToken());
 
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(JwtUtil.getKey())
+                    .setSigningKey(jwtUtil.getKey())
                     .build()
                     .parseClaimsJws(request.getRefreshToken())
                     .getBody();
