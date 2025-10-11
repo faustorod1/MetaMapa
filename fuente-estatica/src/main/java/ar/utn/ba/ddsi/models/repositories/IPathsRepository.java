@@ -1,13 +1,13 @@
 package ar.utn.ba.ddsi.models.repositories;
 
 import ar.utn.ba.ddsi.models.entities.PathDataset;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface IPathsRepository {
-    List<PathDataset> findAll();
-    List<PathDataset> findCargadosDesde(LocalDateTime desde);
-    PathDataset save(PathDataset path);
-
+@Repository
+public interface IPathsRepository extends JpaRepository<PathDataset, Long> {
+    List<PathDataset> findAllByFechaCargaAfter(LocalDateTime fechaCarga);
 }

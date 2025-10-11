@@ -153,97 +153,107 @@
   <div class="csv-import-container"><h2 style="color: white;">Importar archivo CSV</h2>
 
 
-    <div class="drop-zone" id="dropZone">
-      <p>Arrastrá tus archivos aquí o</p>
-      <input type="file" id="fileInput" multiple accept=".csv" hidden />
-      <button class="btn-buscar" onclick="document.getElementById('fileInput').click()">Buscar</button>
-    </div>
+      <div class="drop-zone" id="dropZone">
+          <p>Arrastrá tus archivos aquí o</p>
+          <input type="file" id="fileInput" multiple accept=".csv" hidden />
+          <button type="button" class="btn-buscar" onclick="document.getElementById('fileInput').click()">Buscar</button>
+      </div>
 
-      <form th:action="@{hechos/importar}" method="post" enctype="multipart/form-data" id="uploadForm">
+      <!-- Este es el ÚNICO form con th:action -->
+      <form th:action="@{/hechos/importar}" method="post" enctype="multipart/form-data" id="uploadForm">
           <input type="file" name="files" multiple accept=".csv" hidden />
       </form>
 
-    <ul id="fileList" class="file-list"></ul>
+      <ul id="fileList" class="file-list"></ul>
 
-    <div class="actions">
-      <button class="btn-submit" id= "btn-cancelar"onclick="cancelar()">Cancelar</button>
-      <button class="btn-submit" id="btn-ok" onclick="confirmar()">OK</button>
-    </div>
+      <div class="actions">
+          <button class="btn-submit" type="button" id="btn-cancelar" onclick="cancelar()">Cancelar</button>
+          <button class="btn-submit" type="button" id="btn-ok" onclick="confirmar()">OK</button>
+      </div>
   </div>
 </main>
-  <script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-    let archivos = [];
 
-    dropZone.addEventListener('dragover', e => {
-      e.preventDefault();
-      dropZone.style.backgroundColor = '#e0f7fa';
-    });
+      <script>
+          const dropZone = document.getElementById('dropZone');
+          const fileInput = document.getElementById('fileInput');
+          const fileList = document.getElementById('fileList');
+          let archivos = [];
 
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.backgroundColor = '#fff';
-    });
+          // --- Estilos visuales del drag & drop ---
+          dropZone.addEventListener('dragover', e => {
+              e.preventDefault();
+              dropZone.style.backgroundColor = '#e0f7fa';
+          });
 
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.style.backgroundColor = '#fff';
-      manejarArchivos(e.dataTransfer.files);
-    });
+          dropZone.addEventListener('dragleave', () => {
+              dropZone.style.backgroundColor = '#fff';
+          });
 
-    fileInput.addEventListener('change', () => {
-      manejarArchivos(fileInput.files);
-    });
+          dropZone.addEventListener('drop', e => {
+              e.preventDefault();
+              dropZone.style.backgroundColor = '#fff';
+              manejarArchivos(e.dataTransfer.files);
+          });
 
-    function manejarArchivos(files) {
-      for (let file of files) {
-        if (file.name.endsWith('.csv')) {
-          archivos.push(file);
-        }
-      }
-      actualizarLista();
-    }
+          fileInput.addEventListener('change', () => {
+              manejarArchivos(fileInput.files);
+          });
 
-    function actualizarLista() {
-      fileList.innerHTML = '';
-      archivos.forEach((file, index) => {
-        const li = document.createElement('li');
+          // --- Manejo de archivos en memoria ---
+          function manejarArchivos(files) {
+              for (let file of files) {
+                  if (file.name.endsWith('.csv')) {
+                      archivos.push(file);
+                  }
+              }
+              actualizarLista();
+          }
 
-        const spanNombre = document.createElement('span');
-        spanNombre.textContent = file.name;
+          function actualizarLista() {
+              fileList.innerHTML = '';
+              archivos.forEach((file, index) => {
+                  const li = document.createElement('li');
 
-        const btnEliminar = document.createElement('button');
-        btnEliminar.innerHTML = `
-          <i class="fa-solid fa-xmark"></i>
-        `;
-        btnEliminar.title = "Eliminar archivo";
-        btnEliminar.onclick = () => {
-          archivos.splice(index, 1);
-          actualizarLista();
-        };
+                  const spanNombre = document.createElement('span');
+                  spanNombre.textContent = file.name;
 
-        li.appendChild(spanNombre);
-        li.appendChild(btnEliminar);
-        fileList.appendChild(li);
-      });
-    }
+                  const btnEliminar = document.createElement('button');
+                  btnEliminar.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+                  btnEliminar.title = "Eliminar archivo";
+                  btnEliminar.onclick = () => {
+                      archivos.splice(index, 1);
+                      actualizarLista();
+                  };
 
-    function cancelar() {
-      archivos = [];
-      actualizarLista();
-      alert('Importación cancelada.');
-    }
+                  li.appendChild(spanNombre);
+                  li.appendChild(btnEliminar);
+                  fileList.appendChild(li);
+              });
+          }
 
-    function confirmar() {
-      if (archivos.length === 0) {
-        alert('No hay archivos para importar.');
-        return;
-      }
+          function cancelar() {
+              archivos = [];
+              actualizarLista();
+              alert('Importación cancelada.');
+          }
 
-      // Acá podrías enviar los archivos al backend con fetch/FormData
-      alert(`Importando ${archivos.length} archivo(s)...`);
-    }
-  </script>
+          // --- Envío del formulario ---
+          function confirmar() {
+              if (archivos.length === 0) {
+                  alert('No hay archivos para importar.');
+                  return;
+              }
+
+              // Transferir los archivos seleccionados al input del formulario
+              const dataTransfer = new DataTransfer();
+              archivos.forEach(file => dataTransfer.items.add(file));
+
+              const inputForm = document.querySelector('#uploadForm input[name="files"]');
+              inputForm.files = dataTransfer.files;
+
+              // Enviar el formulario (POST a hechos/importar)
+              document.getElementById('uploadForm').submit();
+          }
+      </script>
 </body>
 </html>

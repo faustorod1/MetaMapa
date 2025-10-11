@@ -58,7 +58,7 @@ public class Hecho {
 
     @ElementCollection
     @CollectionTable(
-            name = "etiquetas_por_hecho",
+            name = "etiquetas",
             joinColumns = @JoinColumn(name = "hecho_id"))
     @Column(name = "etiqueta")
     private List<String> etiquetas = new ArrayList<>();

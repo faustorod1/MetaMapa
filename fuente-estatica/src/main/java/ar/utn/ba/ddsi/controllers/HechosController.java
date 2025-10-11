@@ -28,14 +28,6 @@ public class HechosController {
         return this.hechosService.obtenerHechosCargadosDesde(desde);
     }
 
-    @PostMapping("importar")
-    public void importarCSVs(List<MultipartFile> archivos){
-        this.hechosService.guardarCSVs(archivos);
-    }
 
-    @DeleteMapping
-    public void eliminarHecho(@RequestParam Long id){
-        hechosService.marcarComoELiminado(id);
-    }
 
 }

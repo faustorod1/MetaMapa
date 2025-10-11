@@ -8,10 +8,7 @@ import ar.utn.ba.ddsi.services.IEstaticaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,7 +40,8 @@ public class HechosController {
             redirectAttributes.addFlashAttribute("mensaje", "Hecho creado con éxito");
             return "redirect:/main";
         } catch (Exception ex) {
-            model.addAttribute("error", "Ocurrió un error inesperado al intentar cargar el hecho");
+            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al intentar cargar el hecho");
+            //model.addAttribute("error", "Ocurrió un error inesperado al intentar cargar el hecho");
             return "main-page/cargarHecho";
         }
 
@@ -55,15 +53,20 @@ public class HechosController {
     }
 
     @PostMapping("importar")
-    public String importarCSV(List<MultipartFile> archivos, Model model) {
-        try {
+    public String importarCSVs(@RequestParam("files") List<MultipartFile> archivos, Model model, RedirectAttributes redirectAttributes) {
+
+        for (MultipartFile file : archivos) {
+            System.out.println("Archivo recibido: " + file.getOriginalFilename());
+        }
+
+//        try {
             estaticaService.importarCSVs(archivos);
             model.addAttribute("exito", "Archivos correctamente importados");
-            return "main-page/importarCSV";
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al importar");
-            return "main-page/importarCSV";
-        }
+            return "redirect:/main";
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("error", "Error al importar los archivos");
+//            return "redirect:/main-page/cargarHecho";
+//        }
     }
 }
 

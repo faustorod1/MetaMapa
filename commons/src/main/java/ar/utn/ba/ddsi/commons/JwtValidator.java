@@ -27,7 +27,7 @@ import java.util.Optional;
  * de autenticación para Spring Security.
  * Se configura a través de la propiedad 'jwt.secret' en application.properties.
  */
-@Component
+//@Component
 public class JwtValidator {
 
     @Value("${jwt.secret}")
@@ -42,19 +42,21 @@ public class JwtValidator {
         this.key = Keys.hmacShaKeyFor(secretString.getBytes());
     }
 
+    // TODO: Manchuas qué va acá
     /**
      * Valida el token y, si es válido, construye y devuelve un objeto Authentication.
      *
      * @param token El token JWT extraído de la cabecera de la solicitud.
      * @return Un Optional con el objeto Authentication si el token es válido, o un Optional vacío si no lo es.
      */
-    public Optional<Authentication> getAuthentication(String token) {
-        return validateAndGetClaims(token).map(claims -> {
-            String email = claims.getSubject();
-            String rol = claims.get("rol", String.class);
-
-            // Spring Security espera que los roles tengan el prefijo "ROLE_"
-            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));
-
-            // Creamos el objeto de autenticación que Spring Security utilizará
-            return
+//    public Optional<Authentication> getAuthentication(String token) {
+//        return validateAndGetClaims(token).map(claims -> {
+//            String email = claims.getSubject();
+//            String rol = claims.get("rol", String.class);
+//
+//            // Spring Security espera que los roles tengan el prefijo "ROLE_"
+//            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));
+//
+//            // Creamos el objeto de autenticación que Spring Security utilizará
+//            return
+}
