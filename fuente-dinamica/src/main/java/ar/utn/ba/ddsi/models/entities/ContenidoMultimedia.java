@@ -3,9 +3,8 @@ package ar.utn.ba.ddsi.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Data
-@Entity
-@Table(name = "contenidos_multimedia")
+
+
 public class ContenidoMultimedia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

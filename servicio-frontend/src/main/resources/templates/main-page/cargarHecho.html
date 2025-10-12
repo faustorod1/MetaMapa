@@ -20,7 +20,7 @@
         <div id="fixed-logo"></div>
 
         <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
-        <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
+        <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}" enctype="multipart/form-data"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
         <div class = "container">
 
            <!-- <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div> -->
@@ -94,12 +94,6 @@
                     <label for="fotos" class="custom-file">Sube imágenes📷 </label>
                     <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
 
-                    <div th:each="path, iterStat : *{contenidosMultimedia}" class="hidden-path-input">
-                        <input type="hidden"
-                               th:field="*{contenidosMultimedia[__${iterStat.index}__]}"
-                               th:value="${path}" />
-                    </div>
-
                     <div id="preview"></div>
                 </div>
             </div>
@@ -129,7 +123,7 @@
             const inputFotos = document.getElementById("fotos");
             const preview = document.getElementById("preview");
             let filesArray = [];
-
+/*
             function agregarPathImagen(path) {
                 const index = document.querySelectorAll(".hidden-path").length;
                 const input = document.createElement("input");
@@ -139,7 +133,7 @@
                 input.classList.add("hidden-path");
                 document.getElementById("preview").appendChild(input);
             }
-
+*/
             function mostrarPreviews() {
                 preview.innerHTML = "";
                 filesArray.forEach((file, index) => {

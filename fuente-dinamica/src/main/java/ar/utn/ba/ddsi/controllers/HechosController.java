@@ -7,16 +7,10 @@ import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,9 +34,9 @@ public class  HechosController {
     return this.hechosService.getAllDesde_DTO(desde);
   }
 
-  @PostMapping
-  public HechoOutputDTO crearHecho(@RequestBody HechoInputDTO hecho){
-    return hechosService.crearHecho(hecho);
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public HechoOutputDTO crearHecho(@RequestPart("hecho") HechoInputDTO hecho, @RequestPart(value = "contenidosMultimedia")List<MultipartFile> archivos){
+    return hechosService.crearHecho(hecho, archivos);
   }
 
   // Para que el agregador le avise cuando se elimina un hecho

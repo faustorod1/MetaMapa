@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 public class HechoFuenteDTO {
@@ -33,14 +35,13 @@ public class HechoFuenteDTO {
             contribuyente = this.getContribuyente().toEntity();
         }
 
-        // Cambiar
 
         Hecho hecho = Hecho.builder()
                 .idExterno(new IdExterno())
                 .titulo(this.getTitulo())
                 .descripcion(this.getDescripcion())
-                // .categoria(this.categoria()) TODO: setear bien categoria
-                // . etiquetas(this.etiquetas)     TODO: setear bien etiquetas
+                .categoria(new Categoria(this.getCategoria()))
+                .etiquetas(this.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toSet()))
                 .origen(this.getOrigen())
                 .lugarAcontecimiento(this.getLugarAcontecimiento())
                 .fechaHecho(this.getFechaHecho())

@@ -17,4 +17,12 @@ public class Etiqueta{
 
   @Column(name = "nombre", columnDefinition = "VARCHAR(50)", nullable = false)
   private String nombre;
+
+  public Etiqueta(String nombre){
+    this.nombre = nombre;
+  }
+
+  public Etiqueta() {
+
+  }
 }

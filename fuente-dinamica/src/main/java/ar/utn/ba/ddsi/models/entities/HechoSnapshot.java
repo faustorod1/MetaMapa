@@ -23,9 +23,10 @@ public class HechoSnapshot {
     @Column(name = "categoria", columnDefinition = "VARCHAR(100)", nullable = true)
     private String categoria;
 
-    @OneToMany
-    @JoinColumn(name = "contenido_multimedia_id", referencedColumnName = "id")
-    private List<ContenidoMultimedia> contenidosMultimedia;
+    @ElementCollection
+    @CollectionTable(name = "contenidos_multimedia_snapshot", joinColumns = @JoinColumn(name = "hecho_id"))
+    @Column(name = "path")
+    private List<String> contenidosMultimedia;
 
     @Embedded
     private Coordenada lugarAcontecimiento;

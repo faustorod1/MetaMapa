@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +22,6 @@ public class HechoOutputDTO {
     private String titulo;
     private String descripcion;
     private String categoria;
-    private List<String> contenidosMultimedia = new ArrayList<>();
     private Double latitud;
     private Double longitud;
     private LocalDate fechaHecho;
