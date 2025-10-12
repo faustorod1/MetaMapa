@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.services;
 
+import ar.utn.ba.ddsi.models.dto.UserRolesDTO;
 import ar.utn.ba.ddsi.models.entities.Administrador;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Rol;
@@ -104,6 +105,21 @@ public class LoginService {
         }
 
         return usuario;
+    }
+
+    public UserRolesDTO obtenerRolUsuario(String email){
+        Optional<Usuario> usuarioOpt = usuariosRepository.findByEmail(email);
+
+        if (usuarioOpt.isEmpty()) {
+            throw new NotFoundException("Usuario", email);
+        }
+
+        Usuario usuario = usuarioOpt.get();
+
+        return UserRolesDTO.builder()
+                .email(usuario.getEmail())
+                .role(usuario.getRol())
+                .build();
     }
 
 }

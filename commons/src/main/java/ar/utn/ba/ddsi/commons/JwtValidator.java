@@ -10,53 +10,54 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Componente reutilizable para validar tokens JWT y construir un objeto
- * de autenticación para Spring Security.
- * Se configura a través de la propiedad 'jwt.secret' en application.properties.
- */
-//@Component
 public class JwtValidator {
-
-    @Value("${jwt.secret}")
-    private String secretString;
-
     private Key key;
-
     private static final Logger logger = LoggerFactory.getLogger(JwtValidator.class);
 
-    @PostConstruct
-    public void init() {
+    public JwtValidator(String secretString) {
         this.key = Keys.hmacShaKeyFor(secretString.getBytes());
     }
 
-    // TODO: Manchuas qué va acá
-    /**
-     * Valida el token y, si es válido, construye y devuelve un objeto Authentication.
-     *
-     * @param token El token JWT extraído de la cabecera de la solicitud.
-     * @return Un Optional con el objeto Authentication si el token es válido, o un Optional vacío si no lo es.
-     */
-//    public Optional<Authentication> getAuthentication(String token) {
-//        return validateAndGetClaims(token).map(claims -> {
-//            String email = claims.getSubject();
-//            String rol = claims.get("rol", String.class);
-//
-//            // Spring Security espera que los roles tengan el prefijo "ROLE_"
-//            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));
-//
-//            // Creamos el objeto de autenticación que Spring Security utilizará
-//            return
+    public Optional<Authentication> getAuthentication(String token) {
+        return validateAndGetClaims(token).map(claims -> {
+            String email = claims.getSubject();
+            String rol = claims.get("rol", String.class);
+
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));
+
+            return new UsernamePasswordAuthenticationToken(email, null, authorities);
+        });
+    }
+
+    private Optional<Claims> validateAndGetClaims(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return Optional.of(claims);
+        } catch (ExpiredJwtException e) {
+            logger.error("Token JWT expirado: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("Token JWT no soportado: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            logger.error("Token JWT malformado: {}", e.getMessage());
+        } catch (SignatureException e) {
+            logger.error("Firma del token JWT inválida: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("Claims del token JWT vacíos: {}", e.getMessage());
+        }
+        return Optional.empty();
+    }
 }

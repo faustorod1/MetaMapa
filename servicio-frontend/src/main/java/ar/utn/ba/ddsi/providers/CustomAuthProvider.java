@@ -1,6 +1,9 @@
 package ar.utn.ba.ddsi.providers;
 
 
+import ar.utn.ba.ddsi.models.dto.Rol;
+import ar.utn.ba.ddsi.models.dto.external.UserRolesDTO;
+import ar.utn.ba.ddsi.services.IRootService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,17 +12,22 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
-import ar.utn.ba.ddsi.services.impl.RootService;
-import ar.utn.ba.ddsi.utils.JwtKeyLoader;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class CustomAuthProvider implements AuthenticationProvider {
     private static final Logger log = LoggerFactory.getLogger(CustomAuthProvider.class);
-    private final RootService externalAuthService;
+    private final IRootService externalAuthService;
 
-    public CustomAuthProvider(RootService externalAuthService) {
+    public CustomAuthProvider(IRootService externalAuthService) {
         this.externalAuthService = externalAuthService;
     }
 
@@ -40,12 +48,14 @@ public class CustomAuthProvider implements AuthenticationProvider {
             if (accessToken == null || accessToken.isEmpty()) {
                 throw new BadCredentialsException("Token de acceso inválido");
             }
-            log.info("Parseando Token");
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(JwtKeyLoader.loadPublicKey())
-                    .build()
-                    .parseClaimsJws(accessToken)
-                    .getBody();
+
+            log.info("Buscando roles y permisos del usuario");
+            UserRolesDTO userRoles = externalAuthService.getRole(authResponse.getAccessToken());
+
+            Rol rol = userRoles.getRole();
+
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
 
             log.info("Email logueado! Configurando sesión...");
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -54,9 +64,11 @@ public class CustomAuthProvider implements AuthenticationProvider {
             request.getSession().setAttribute("accessToken", authResponse.getAccessToken());
             request.getSession().setAttribute("refreshToken", authResponse.getRefreshToken());
             request.getSession().setAttribute("email", email);
+            request.getSession().setAttribute("role", rol);
 
-
-
+            return new UsernamePasswordAuthenticationToken(email, password, authorities);
+        } catch (RuntimeException e) {
+            throw new BadCredentialsException("Error en el sistema de autenticación: " + e.getMessage());
         }
     }
 

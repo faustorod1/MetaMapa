@@ -17,6 +17,8 @@ public class HechosService implements IHechosService {
     @Autowired
     private PathsService pathsService;
 
+    private final static LocalDateTime ancientDate = LocalDateTime.parse("1000-01-01T00:00:00");
+
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
@@ -36,7 +38,7 @@ public class HechosService implements IHechosService {
 
     @Override
     public List<HechoOutputDTO> buscarTodos() {
-        return this.obtenerHechosCargadosDesde(LocalDateTime.MIN);
+        return this.obtenerHechosCargadosDesde(ancientDate);
     }
 
 

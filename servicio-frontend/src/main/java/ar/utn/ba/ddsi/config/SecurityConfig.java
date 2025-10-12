@@ -22,16 +22,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
-                                //.requestMatchers("/alumnos/**").hasAnyRole("ADMIN", "DOCENTE")
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/login", "/register", "informacion-legal-y-privacidad").permitAll()
+                        //.requestMatchers("/alumnos/**").hasAnyRole("ADMIN", "DOCENTE")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/main")
+                        .defaultSuccessUrl("/main", true)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

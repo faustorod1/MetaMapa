@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dto.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.dto.RefreshRequestDTO;
 import ar.utn.ba.ddsi.models.dto.TokenResponseDTO;
+import ar.utn.ba.ddsi.models.dto.UserRolesDTO;
 import ar.utn.ba.ddsi.models.entities.Usuario;
 import ar.utn.ba.ddsi.models.exceptions.NotFoundException;
 import ar.utn.ba.ddsi.models.exceptions.UsuarioExistenteException;
@@ -13,10 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import ar.utn.ba.ddsi.services.LoginService;
 import java.util.Map;
@@ -117,6 +116,16 @@ public class AuthController {
         }
     }
 
-
-
+    @GetMapping("/roles")
+    public ResponseEntity<UserRolesDTO> getRoles(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            UserRolesDTO response = loginService.obtenerRolUsuario(username);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

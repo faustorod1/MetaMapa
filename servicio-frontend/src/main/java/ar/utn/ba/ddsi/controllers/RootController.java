@@ -3,6 +3,8 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.models.entities.DatosRegister;
 import ar.utn.ba.ddsi.services.IRootService;
+import ar.utn.ba.ddsi.services.impl.RootService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,11 @@ import org.springframework.ui.Model;
 @RequestMapping("/")
 public class RootController {
   public IRootService rootService;
+
+  @Autowired
+  public RootController(IRootService rootService) {
+    this.rootService = rootService;
+  }
 
   @GetMapping()
   public String home() {
@@ -33,7 +40,7 @@ public class RootController {
 
   @PostMapping("/login")
   public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, Model model){
-
+    rootService.login(datosLogin.getUsername(), datosLogin.getPassword());
     return "landing-page/login";
   }
 
