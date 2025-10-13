@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -17,10 +16,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("SYSTEM")
-                    .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("ADMIN")
-                    .requestMatchers("/api/hechos/{idHecho}/estado").hasRole("ADMIN")
-                    .anyRequest().hasRole("CONTRIBUYENTE")
+                        // Permite el acceso sin autenticación a /api/hechos
+                        .requestMatchers("/api/hechos").permitAll()
+                        // Para subir un dataset requiere ser un administrador
+                        .requestMatchers("/api/datasets").hasRole("ADMIN")
+                        // Para cualquier otra ruta, se requiere ser administrador (por las dudas)
+                        .anyRequest().hasRole("ADMIN")
                 );
 
         return http.build();
