@@ -1,8 +1,10 @@
 package ar.utn.ba.ddsi.controllers;
+import ar.utn.ba.ddsi.services.IAgregadorService;
 import lombok.extern.slf4j.Slf4j;
 
 import ar.utn.ba.ddsi.exceptions.HechoMalCargadoException;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import ar.utn.ba.ddsi.services.IEstaticaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class HechosController {
     private IDinamicaService dinamicaService;
     @Autowired
     private IEstaticaService estaticaService;
+    @Autowired
+    private IAgregadorService agregadorService;
 
     // TODO: falta diseñar los banners ante un error o redirección
 
@@ -53,17 +57,35 @@ public class HechosController {
     }
 
     @PostMapping("importar")
-    public String importarCSVs(@RequestParam("files") List<MultipartFile> archivos, Model model, RedirectAttributes redirectAttributes) {
+    public String importarCSVs(@RequestParam("files") List<MultipartFile> archivos, RedirectAttributes redirectAttributes) {
+
+        for (MultipartFile file : archivos) {
+            System.out.println("Archivo para enviar: " + file.getOriginalFilename());
+        }
 
         try {
             estaticaService.importarCSVs(archivos);
-            model.addAttribute("exito", "Archivos correctamente importados");
-            return "redirect:/main";
+            redirectAttributes.addFlashAttribute("exito", "Archivos correctamente importados");
+            return "redirect:/hechos/importarCSV";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al importar los archivos");
-            return "redirect:/main-page/cargarHecho";
+            return "redirect:/hechos/importarCSV";
       }
     }
+
+    @GetMapping("detalle-hecho/{id_hecho}")
+    public String detalleHecho(@PathVariable("id_hecho") Long id_hecho, Model model) {
+        try{
+            HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+            model.addAttribute("hechoDTO", hecho);
+            return "detalle-hecho";
+
+        } catch (Exception e) {
+
+            return "redirect:/404"; //TODO hacer nuestra gina de 404
+        }
+    }
+
 }
 
 

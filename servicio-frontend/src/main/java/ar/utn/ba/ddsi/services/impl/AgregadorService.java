@@ -35,9 +35,12 @@ public class AgregadorService implements IAgregadorService {
             .block();
   }
 
-
-
-
-
+  public HechoDTO pedirHecho(Long id) {
+    return agregadorWebClient.get()
+            .uri("/api/hechos/{id}", id)
+            .retrieve()
+            .bodyToMono(HechoDTO.class)
+            .block();
+  }
 
 }

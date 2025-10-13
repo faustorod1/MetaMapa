@@ -16,8 +16,8 @@ public class HechoOutputDTO {
     private Long subFuenteId;
     private String titulo;
     private String descripcion;
-    private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
+    private String categoria;
+    private List<String> contenidosMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;

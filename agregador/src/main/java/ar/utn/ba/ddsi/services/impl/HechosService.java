@@ -72,6 +72,11 @@ public class HechosService implements IHechosService {
             .stream().map(HechoOutputDTO::fromEntity).toList();
     }
 
+    @Override
+    public HechoOutputDTO buscarHecho(Long id){
+        return HechoOutputDTO.fromEntity(obtenerPorId(id));
+    }
+
     // -------------------------------------------------------- Métodos de trabajo interno ---------------------------------------------------------------------------//
     @Override
     public Hecho obtenerPorId(Long id){

@@ -147,10 +147,18 @@
 </head>
 <body>
 <main>
-
+    <a th:href="@{/main}" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
   <div id="fixed-logo"></div>
 
   <div class="csv-import-container"><h2 style="color: white;">Importar archivo CSV</h2>
+
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"
+           style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+      </div>
+
+      <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
+           style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
+      </div>
 
 
       <div class="drop-zone" id="dropZone">

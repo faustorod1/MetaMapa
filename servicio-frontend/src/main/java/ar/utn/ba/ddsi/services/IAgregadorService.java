@@ -8,4 +8,5 @@ import java.util.List;
 public interface IAgregadorService {
   List<HechoDTO> buscarHechos();
   List<FuenteDTO> buscarFuentes();
+  HechoDTO pedirHecho(Long id);
 }

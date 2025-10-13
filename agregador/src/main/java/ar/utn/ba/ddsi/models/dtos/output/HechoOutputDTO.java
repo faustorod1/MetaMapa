@@ -22,6 +22,7 @@ public class HechoOutputDTO {
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
+    private LocalDateTime fechaUltimaActualizacion;
     private IdExterno idExterno;
     private Long contribuyente;
     private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion;
@@ -39,6 +40,7 @@ public class HechoOutputDTO {
         dto.setLugarAcontecimiento(hecho.getLugarAcontecimiento());
         dto.setFechaHecho(hecho.getFechaHecho());
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
+        dto.setFechaUltimaActualizacion(hecho.getFechaUltimaActualizacion());
         dto.setIdExterno(hecho.getIdExterno());
         dto.setDepartamento(hecho.getDepartamento());
         if (hecho.getCategoria() != null) dto.setCategoria(CategoriaDTO.fromEntity(hecho.getCategoria()));

@@ -46,10 +46,11 @@ public class HechoFuenteDTO {
                 .lugarAcontecimiento(this.getLugarAcontecimiento())
                 .fechaHecho(this.getFechaHecho())
                 .fechaDeCarga(this.getFechaDeCarga())
-                .contribuyente(contribuyente)
-                .solicitudesDeEliminacion(this.getSolicitudesDeEliminacion()) // Cambiar
-                .build();
-        hecho.getIdExterno().setIdExterno(this.getId());
+                .contribuyente(contribuyente).build();
+        if(this.getSolicitudesDeEliminacion() != null) {
+                hecho.setSolicitudesDeEliminacion(this.getSolicitudesDeEliminacion()); // Cambiar
+        }
+                hecho.getIdExterno().setIdExterno(this.getId());
         if (this.getContenidosMultimedia() != null) {
             hecho.setContenidosMultimedia(this.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
         }

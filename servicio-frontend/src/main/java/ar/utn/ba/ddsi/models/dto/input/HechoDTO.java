@@ -21,6 +21,7 @@ public class HechoDTO implements Serializable {
   LocalDateTime fechaHecho;
   LocalDateTime fechaDeCarga;
   LocalDateTime fechaUltimaActualizacion;
+  IdExternoDTO idExterno;
   DepartamentoDTO departamento;
   List<SolicitudDeEliminacionDto> solicitudesDeEliminacion;
   Set<EtiquetaDTO> etiquetas;

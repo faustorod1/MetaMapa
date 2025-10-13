@@ -26,4 +26,11 @@ public class HechosController {
     public List<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros) {
         return this.hechosService.buscarTodos(parametros);
     }
+
+    @GetMapping("{id}")
+    public HechoOutputDTO buscarHecho(@PathVariable Long id) {
+        return this.hechosService.buscarHecho(id);
+    }
+
+
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 
 public interface IHechosService {
     List<HechoOutputDTO> buscarTodos(Map<String, String> params);
+    HechoOutputDTO buscarHecho(Long id);
     Hecho obtenerPorId(Long id);
     List<Hecho> getFromMetaMapa();
     List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales);
