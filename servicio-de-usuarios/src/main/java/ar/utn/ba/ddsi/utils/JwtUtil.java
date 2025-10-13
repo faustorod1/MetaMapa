@@ -51,4 +51,12 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
+    public String generarSystemToken() {
+        return Jwts.builder()
+            .setSubject("internal-system")
+            .claim("rol", "SYSTEM")
+            .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+    }
 }
