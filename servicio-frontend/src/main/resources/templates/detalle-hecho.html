@@ -110,7 +110,7 @@
             width: 100%;
             min-height: 6rem;
             border: none;
-            background-color: #bdbcbc;
+            background-color: #E0E0E0;
             border-radius: 0.5rem;
             padding: 0.5rem;
             font-size: 1.125rem;
@@ -241,7 +241,7 @@
     </style>
 </head>
 <body>
-    <main>
+
     <a th:href="@{/main}" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
@@ -258,36 +258,28 @@
         </div>
         <div class="menu">⋮</div>
     </div>
-    <!--
-        <div class="imagenes" th:if="${hechoDTO.imagenes != null}">
-            <div class="imagen" th:each="img : ${hechoDTO.imagenes}">
-            <img th:src="${img}" alt="Imagen del hecho" />
-            </div>
-    -->
-            <div class="imagenes" th:if="${hechoDTO.contenidosMultimedia != null}">
-                <div class="imagen" th:each="img : ${hechoDTO.contenidosMultimedia}">
-                    <img th:src="@{${img.path}}" alt="Imagen del hecho" />
-                </div>
-            </div>
 
-            <!-- Agregar src reales o de ejemplo -->
-    </div>
 
     <div class="descripcion">
-        <textarea placeholder="Descripción" readonly th:text="${hechoDTO.descripcion}"></textarea>
+        <textarea style="resize: none" placeholder="Descripción" readonly th:text="${hechoDTO.descripcion}"></textarea>
     </div>
 
-</div>
+    <div class="imagenes" th:if="${hechoDTO.contenidosMultimedia != null and not #lists.isEmpty(hechoDTO.contenidosMultimedia)}">
+        <img th:each="multimedia : ${hechoDTO.contenidosMultimedia}"
+             th:src="${multimedia.pathImagen}"
+             th:alt="'Imagen del hecho ' + ${hechoDTO.titulo}"
+             class="imagen-hecho"/>
 
+    </div>
 
-<!-- Modal para imagen expandida -->
+    <!-- Modal para imagen expandida -->
     <div class="modal" id="modal">
         <div class="modal-content">
         <span class="close-modal" id="closeModal">&times;</span>
         <img src="" alt="Imagen expandida" id="modalImage" />
         </div>
         </div>
-    </main>
+
 <script>
     // Seleccionar elementos relevantes
     const modal = document.getElementById('modal');

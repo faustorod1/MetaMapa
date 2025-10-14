@@ -26,23 +26,28 @@ public class MainController {
 
   @GetMapping("mapa")
   public String mapa(Model model) {
-    List<HechoDTO> hechos = new ArrayList<>();
-    try{
-      hechos = agregadorService.buscarHechos();
-    } catch (Exception e) {}
-    model.addAttribute("hechos", hechos);
-    return "main-page/mapa";
-  }
+    try {
+      List<HechoDTO> hechos = agregadorService.buscarHechos();
+      model.addAttribute("hechos", hechos);
+      System.out.println("HECHOS PEDIDOS");
+      return "main-page/mapa";
+    } catch (Exception e) {
+      model.addAttribute("error", "La carga de hechos ha fallado");
+      return "main-page/mapa";
 
+    }
+  }
+}
+
+    /*
   @GetMapping("buscador")
   public String buscador() {
     return "main-page/buscador";
   }
+  */
 
 
 
 
-
-}
 
 

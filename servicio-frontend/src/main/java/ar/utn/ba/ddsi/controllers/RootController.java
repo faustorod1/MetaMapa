@@ -4,6 +4,7 @@ import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.models.entities.DatosRegister;
 import ar.utn.ba.ddsi.services.IRootService;
 import ar.utn.ba.ddsi.services.impl.RootService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Slf4j
 @Controller
 @RequestMapping("/")
 public class RootController {
@@ -45,12 +48,22 @@ public class RootController {
   }
 
   @GetMapping("/register")
-  public String register() {
+  public String register(Model model){
+    model.addAttribute("datosRegister", new DatosRegister());
     return "landing-page/register";
   }
 
   @PostMapping("/register")
-  public String registrarse(@ModelAttribute("datosRegister") DatosRegister datosRegister, Model model) {
-      return "landing-page/register";
+  public String registrarse(@ModelAttribute("datosRegister") DatosRegister datosRegister, Model model, RedirectAttributes redirectAttributes) {
+
+      try{
+        rootService.registrar(datosRegister.getNombre(), datosRegister.getApellido(), datosRegister.getEmail(), datosRegister.getContrasenia(), datosRegister.getContraseniaRepetida());
+        redirectAttributes.addFlashAttribute("exito", "Se ha registrado correctamente");
+        return "redirect:/login";
+      } catch (Exception ex){
+        redirectAttributes.addFlashAttribute("error", "Hubo una falla al registrarse");
+        return "redirect:/login";
+      }
+
   }
 }

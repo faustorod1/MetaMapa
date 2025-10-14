@@ -19,7 +19,7 @@ public class RootService implements IRootService {
     WebApiCallerService webApiCallerService;
     private final String authServiceUrl;
 
-    public RootService(@Value("${servicio.agregador.api.base-url}") String agregadorBaseUrl,@Value("${servicio.usuarios.api.base-url}") String servicioDeUsuarios, WebApiCallerService webApiCallerService) {
+    public RootService(@Value("${servicio.agregador.api.base-url}") String agregadorBaseUrl, @Value("${servicio.usuarios.api.base-url}") String servicioDeUsuarios, WebApiCallerService webApiCallerService) {
         agregadorWebClient = WebClient.builder().baseUrl(agregadorBaseUrl).build();
         usuariosWebClient = WebClient.builder().baseUrl(servicioDeUsuarios).build();
         this.authServiceUrl = servicioDeUsuarios;
@@ -39,7 +39,7 @@ public class RootService implements IRootService {
                     .bodyToMono(AuthResponseDTO.class)
                     .block();
             return response;
-        } catch (WebClientResponseException e){
+        } catch (WebClientResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return null;
             }
@@ -61,23 +61,21 @@ public class RootService implements IRootService {
             throw new RuntimeException("Error al obtener roles: " + e.getMessage(), e);
         }
     }
-/*
-    public registrar(String nombre, String apellido, String email, String password, String repetedPassword){
 
-        try{
-            return usuariosWebClient
-            .post()
-            .uri("/api/auth/register")
-            .body(Map.of(
-            "nombre",nombre
-            "apellido",apellido
-            "email",email
-            "password",password
-            "repetedPassword", repetedPassword))
-            .retrieve()
-            .bodyToMono(AuthResponseDTO.class)
-            .block();
-        } catch (WebClientResponseException e){
+    public AuthResponseDTO registrar(String nombre, String apellido, String email, String password, String repetedPassword) {
+
+        try {
+            return usuariosWebClient.post()
+                    .uri("/api/auth/register")
+                    .bodyValue(Map.of("nombre", nombre,
+                            "apellido", apellido,
+                            "email", email,
+                            "password", password,
+                            "repetedPassword", repetedPassword))
+                    .retrieve()
+                    .bodyToMono(AuthResponseDTO.class)
+                    .block();
+        } catch (WebClientResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return null;
             }
@@ -87,15 +85,8 @@ public class RootService implements IRootService {
         }
 
     }
-*/
-    /* Idea para login: conectarse con un endpoint del agregador, y que el se encargue de revisar en la BD si existe ese usuario.
-    public boolean loginExitoso(LoginDatosDTO){
-    return agregador.post
-        .uri("/api/login")
-        .bodyValue(LoginDatosDTO)
-        ...
-    }
-
-    */
-
 }
+
+
+
+

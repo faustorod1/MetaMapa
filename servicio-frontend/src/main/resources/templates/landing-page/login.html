@@ -38,6 +38,15 @@
 
     <form th:action="@{/login}" th:object="${datosLogin}" class="login-form" method="POST">
 
+        <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
+             style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"
+             style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+        </div>
+
+
         <h2>Iniciar sesión</h2>
         <div class="input-container">
             <label for="username">Correo electrónico</label>
