@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dto.ServiceCredentialsDTO;
 import ar.utn.ba.ddsi.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,10 @@ public class ServiceTokenController {
   public ServiceTokenController(JwtUtil jwtUtil) {
     this.jwtUtil = jwtUtil;
   }
-  record ServiceCredentials(String clientId, String clientSecret) {}
 
   @PostMapping("/token")
-  public ResponseEntity<Map<String, String>> generateServiceToken(@RequestBody ServiceCredentials credentials) {
-    if (serviceClientId.equals(credentials.clientId()) && serviceClientSecret.equals(credentials.clientSecret())) {
+  public ResponseEntity<Map<String, String>> generateServiceToken(@RequestBody ServiceCredentialsDTO credentials) {
+    if (serviceClientId.equals(credentials.getClientId()) && serviceClientSecret.equals(credentials.getClientSecret())) {
       String token = jwtUtil.generarSystemToken();
 
       return ResponseEntity.ok(Map.of("access_token", token));
@@ -36,4 +36,8 @@ public class ServiceTokenController {
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
+
+  // Sabemos que implementar un token de sistema sin fecha de expiracion y sin refersh token es potencialmente peligroso
+  // pero debido a la complejidad que presenta implementar por ahora decidimos evitarlo
+
 }

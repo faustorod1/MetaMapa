@@ -1,10 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
-import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.entities.Contribuyente;
-import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;

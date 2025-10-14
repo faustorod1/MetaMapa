@@ -31,9 +31,8 @@ public class SolicitudDeModificacion {
   @Column(name = "motivo_de_estado", columnDefinition = "VARCHAR(80)", nullable = false)
   private String motivoDeEstado;
 
-  @ManyToOne
-  @JoinColumn(name = "administrador_id", referencedColumnName = "id", nullable = false)
-  private Administrador administrador = null;
+  @Column(name = "administrador_Id", nullable = true)
+  private Long administradorId = null;
 
   protected SolicitudDeModificacion() {}
 
@@ -45,7 +44,7 @@ public class SolicitudDeModificacion {
 
   public void resolver(ResolucionDTO resolucion) {
     if(estado == PENDIENTE){
-      this.administrador = resolucion.getAdministrador();
+      this.administradorId = resolucion.getAdministradorId();
       this.motivoDeEstado = resolucion.getMotivoDeEstado();
       this.estado = resolucion.getEstadoNuevo();
     }

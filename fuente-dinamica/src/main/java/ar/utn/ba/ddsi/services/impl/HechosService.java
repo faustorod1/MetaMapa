@@ -1,12 +1,10 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
-import ar.utn.ba.ddsi.models.dto.input.ContribuyenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.EtiquetaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
-import ar.utn.ba.ddsi.models.repositories.IContribuyentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,12 +23,10 @@ import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 @Service
 public class HechosService implements IHechosService {
     private final IHechosRepository hechosRepository;
-    private final IContribuyentesRepository contribuyentesRepository;
     private String imagenesFolder;
 
-    public HechosService(IHechosRepository hechosRepository, IContribuyentesRepository contribuyentesRepository, @Value("${imagenes.folder}") String imagenesFolder) {
+    public HechosService(IHechosRepository hechosRepository,  @Value("${imagenes.folder}") String imagenesFolder) {
         this.hechosRepository = hechosRepository;
-        this.contribuyentesRepository = contribuyentesRepository;
         this.imagenesFolder = imagenesFolder;
     }
 
@@ -120,10 +116,6 @@ public void update(Hecho h, Hecho hViejo){
 
 
 public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el hecho por 1era vez: fechaDeCarga == lastUpdate
-
-    //Long contribuyenteId = hechoInputDTO.getContribuyenteId();
-    //Contribuyente contribuyente = contribuyentesRepository.findById(contribuyenteId).orElse(null);
-
     Hecho hecho = Hecho.builder()
             .titulo(hechoInputDTO.getTitulo())
             .descripcion(hechoInputDTO.getDescripcion())
@@ -131,7 +123,7 @@ public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el h
             .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(), hechoInputDTO.getLongitud()))
             .fechaHecho(hechoInputDTO.getFechaHecho().atStartOfDay())
             .eliminado(false)
-            // .contribuyente(contribuyente)
+            .contribuyenteId(hechoInputDTO.getContribuyenteId())
             .build();
     if (hechoInputDTO.getEtiquetas() != null){
         hecho.setEtiquetas(hechoInputDTO.getEtiquetas().stream().map(EtiquetaDTO::getNombre).toList());
@@ -158,12 +150,4 @@ public HechoOutputDTO hechoToDTO (Hecho hecho){
             .build();
 }
 
-private ContribuyenteDTO contribuyenteToDTO (Contribuyente contribuyente){
-    ContribuyenteDTO c = new ContribuyenteDTO();
-    c.setId(contribuyente.getId());
-    c.setNombre(contribuyente.getNombre());
-    c.setApellido(contribuyente.getApellido());
-    c.setFechaDeNacimiento(contribuyente.getFechaNacimiento());
-    return c;
-}
 }

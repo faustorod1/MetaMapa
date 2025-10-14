@@ -52,7 +52,7 @@ public class SolicitudesService implements ISolicitudesService {
     Hecho h = hechosService.DTOToHecho(hecho);
     Hecho hViejo = this.hechosService.getById(id);
     if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7) { // Pasaron menos de 7 días
-      if (hViejo.getContribuyente().getId().equals(h.getContribuyente().getId())) { // El que intenta modificar el hecho es quien lo subió
+      if (hViejo.getContribuyenteId().equals(h.getContribuyenteId())) { // El que intenta modificar el hecho es quien lo subió
         SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hViejo,h);
         hViejo.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
         return hechosService.hechoToDTO(h);

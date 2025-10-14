@@ -46,9 +46,9 @@ public class Hecho {
     @Column(name = "eliminado", nullable = false)
     private boolean eliminado;          //USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.
 
-    @ManyToOne
-    @JoinColumn(name = "contribuyente_id", referencedColumnName = "id", nullable = true)
-    private Contribuyente contribuyente;
+    @Column(name = "contribuyenteId", nullable = true)
+    private Long contribuyenteId;
+
     @Column(name = "fecha_de_ultima_actualizacion", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime fechaUltimaActualizacion;
 
