@@ -126,7 +126,7 @@ public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el h
             .contribuyenteId(hechoInputDTO.getContribuyenteId())
             .build();
     if (hechoInputDTO.getEtiquetas() != null){
-        hecho.setEtiquetas(hechoInputDTO.getEtiquetas().stream().map(EtiquetaDTO::getNombre).toList());
+        hecho.setEtiquetas(hechoInputDTO.getEtiquetas().stream().map(EtiquetaDTO::getNombre).collect(Collectors.toSet()));
     }
     return hecho;
 }
@@ -144,7 +144,7 @@ public HechoOutputDTO hechoToDTO (Hecho hecho){
             .origen(CONTRIBUYENTE)
             .eliminado(hecho.isEliminado())
             //.contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
-            .etiquetas(hecho.getEtiquetas().stream().map(EtiquetaDTO::new).collect(Collectors.toSet()))
+            .etiquetas(hecho.getEtiquetas())
             .id(hecho.getId())
             .tipoDeFuente("dinamica")
             .build();

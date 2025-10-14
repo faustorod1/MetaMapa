@@ -86,19 +86,35 @@ public class HechosService implements IHechosService {
     @Override
     public void actualizarHechos(){
         Mono<List<HechoFuenteDTO>> monoEstatica = crearMonoPeticionHechos(webClients.get(OrigenHecho.DATASET));
+        System.out.println("PASE POR DINÁMICA");
         Mono<List<HechoFuenteDTO>> monoDinamica = crearMonoPeticionHechos(webClients.get(OrigenHecho.CONTRIBUYENTE));
-        Mono<List<HechoFuenteDTO>> monoProxy = crearMonoPeticionHechos(webClients.get(OrigenHecho.PROXY));
+        System.out.println("PASE POR ESTÁTICA");
+       // Mono<List<HechoFuenteDTO>> monoProxy = crearMonoPeticionHechos(webClients.get(OrigenHecho.PROXY));
+        System.out.println("PASE POR PROXY");
+
 
         // Ejecuta los mono y junta los resultados
         List<HechoFuenteDTO> hechosFuente = new ArrayList<>();
-        List.of(monoEstatica, monoDinamica, monoProxy).forEach(mono -> {
-            List<HechoFuenteDTO> hechosFuenteDTO = mono.block();
-            if (hechosFuenteDTO != null) {
-                hechosFuente.addAll(hechosFuenteDTO);
+        System.out.println("LISTO PARA ITERAR ACÁ");
+        List.of(monoEstatica, monoDinamica).forEach(mono ->{
+        //List.of(monoEstatica, monoDinamica, monoProxy).forEach(mono -> {
+            //List<HechoFuenteDTO> hechosFuenteDTO = mono.block();
+            //if (hechosFuenteDTO != null) {
+            //    hechosFuente.addAll(hechosFuenteDTO);
+            //}
+
+            try {
+                List<HechoFuenteDTO> hechosFuenteDTO = mono.block();
+                if (hechosFuenteDTO != null) {
+                    hechosFuente.addAll(hechosFuenteDTO);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
         // Carga las fuentes del repo y los setea en los hechos obtenidos
+        System.out.println("Listo para pedir fuentes");
         List<Fuente> fuentes = fuentesRepository.findAll();
         List<Hecho> hechos = new ArrayList<>(hechosFuente.stream().map(dto -> {
             Hecho hecho = dto.toEntity();
@@ -115,7 +131,6 @@ public class HechosService implements IHechosService {
         List<IdExterno> ids = hechos.stream().map(Hecho::getIdExterno).toList();
         List<Hecho> hechosAModificar = hechosRepository.findAllByIdExternoIn(ids);
 
-        // Aplica normalizaciones
         normalizarCategoria(hechos);
         normalizarUbicacion(hechos);
 
@@ -134,6 +149,7 @@ public class HechosService implements IHechosService {
         }
 
         hechosRepository.saveAll(hechos);
+        System.out.println("Guardado");
         fechaUltimaActualizacion = LocalDateTime.now();
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(hechos));
     }
@@ -152,7 +168,8 @@ public class HechosService implements IHechosService {
                     return;
                 }
             }
-            hecho.setCategoria(null);
+            //hecho.setCategoria(null);
+            categoriaRepository.save(hecho.getCategoria());
         });
     }
 

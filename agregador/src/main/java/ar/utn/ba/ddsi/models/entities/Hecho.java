@@ -26,10 +26,10 @@ public class Hecho {
     private String descripcion;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = false)
     private Categoria categoria;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)  // Guardado de todas los contenidosMultimedia en BD
     @JoinColumn(name = "hecho_id", referencedColumnName = "id")
     private List<ContenidoMultimedia> contenidosMultimedia;
 
@@ -72,7 +72,7 @@ public class Hecho {
 
     @Access(AccessType.FIELD)
     @Setter(AccessLevel.NONE)
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })       // Guardado de todas las etiquetas en BD
     @JoinTable(
             name = "etiquetas_por_hecho",
             joinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"),
