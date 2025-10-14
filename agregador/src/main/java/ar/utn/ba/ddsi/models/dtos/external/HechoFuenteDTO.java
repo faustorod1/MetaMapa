@@ -25,17 +25,10 @@ public class HechoFuenteDTO {
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
     private boolean eliminado;
-    private ContribuyenteDTO contribuyente;
-    private List<SolicitudDeEliminacion> solicitudesDeEliminacion;
+    private Long contribuyenteId;
     private HashSet<String> etiquetas;
 
     public Hecho toEntity() {
-        Contribuyente contribuyente = null;
-        if (this.getContribuyente() != null) {
-            contribuyente = this.getContribuyente().toEntity();
-        }
-
-
         Hecho hecho = Hecho.builder()
                 .idExterno(new IdExterno())
                 .titulo(this.getTitulo())
@@ -46,10 +39,7 @@ public class HechoFuenteDTO {
                 .lugarAcontecimiento(this.getLugarAcontecimiento())
                 .fechaHecho(this.getFechaHecho())
                 .fechaDeCarga(this.getFechaDeCarga())
-                .contribuyente(contribuyente).build();
-        if(this.getSolicitudesDeEliminacion() != null) {
-                hecho.setSolicitudesDeEliminacion(this.getSolicitudesDeEliminacion()); // Cambiar
-        }
+                .contribuyenteId(this.contribuyenteId).build();
                 hecho.getIdExterno().setIdExterno(this.getId());
         if (this.getContenidosMultimedia() != null) {
             hecho.setContenidosMultimedia(this.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());

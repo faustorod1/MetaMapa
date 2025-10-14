@@ -52,9 +52,8 @@ public class Hecho {
     @Column(name = "eliminado", nullable = false)
     private boolean eliminado;      // USO: cuando una solDeElim es aceptada, el hecho se mantiene en el sistema pero no se mostrará en ninguna colección.}
 
-    @ManyToOne
-    @JoinColumn(name = "contribuyente_id", referencedColumnName = "id", nullable = true)
-    private Contribuyente contribuyente;
+    @Column(name = "contribuyente_id", nullable = true)
+    private Long contribuyenteId;
 
     @Embedded
     private IdExterno idExterno; // //proxy:2:5
@@ -82,12 +81,12 @@ public class Hecho {
 
     protected Hecho() {}
 
-    public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Contribuyente contribuyente) {
+    public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Long contribuyenteId) {
         try {
 
             SolicitudDeEliminacion solicitud = SolicitudDeEliminacion.builder()
                     .hecho(this)
-                    .solicitante(contribuyente)
+                    .solicitanteId(contribuyenteId)
                     .descripcion(justificacion)
                     .build();
 

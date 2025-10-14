@@ -22,8 +22,8 @@ public class HechoOutputDTO {
     private Long subFuenteId;
     private String titulo;
     private String descripcion;
-    private Categoria categoria;
-    private ContenidoMultimedia contenidoMultimedia;
+    private String categoria;
+    private List<String> contenidoMultimedia;
     private OrigenHecho origen;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
@@ -31,5 +31,22 @@ public class HechoOutputDTO {
     private LocalDateTime fechaUltimaActualizacion;
     private boolean eliminado;
     private Long contribuyenteId;
-    private HashSet<Etiqueta> etiquetas;
+    private HashSet<String> etiquetas;
+
+    public static HechoOutputDTO fromEntity(Hecho hecho) {
+        return HechoOutputDTO.builder()
+                .id(hecho.getId())
+                .subFuenteId(hecho.getAPIid())
+                .tipoDeFuente("proxy")
+                .titulo(hecho.getTitulo())
+                .descripcion(hecho.getDescripcion())
+                .categoria(hecho.getCategoria())
+                .origen(OrigenHecho.PROXY)
+                .lugarAcontecimiento(hecho.getLugarAcontecimiento())
+                .fechaHecho(hecho.getFechaHecho())
+                .fechaDeCarga(hecho.getFechaDeCarga())
+                .fechaUltimaActualizacion(hecho.getFechaUltimaActualizacion())
+                .eliminado(hecho.isEliminado())
+                .build();
+    }
 }

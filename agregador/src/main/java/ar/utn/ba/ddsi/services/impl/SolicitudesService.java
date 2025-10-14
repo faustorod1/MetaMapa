@@ -34,7 +34,7 @@ public class SolicitudesService implements ISolicitudesService {
     SolicitudDeEliminacion solicitud = solicitudesRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada con id: " + id));
 
-    solicitud.resolver(resolucionDto.getEstadoSolicitud(), resolucionDto.getAdministradorQueResolvio());
+    solicitud.resolver(resolucionDto.getEstadoSolicitud(), resolucionDto.getAdministradorQueResolvioId());
     solicitudesRepository.save(solicitud);
     hechosService.guardarCambios(solicitud.getHecho());
     hechosService.eliminarHechoEnLasFuentes(solicitud.getHecho());

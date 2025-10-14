@@ -1,9 +1,7 @@
 package ar.utn.ba.ddsi.models.dtos.externals;
 
-import ar.utn.ba.ddsi.models.entities.Categoria;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

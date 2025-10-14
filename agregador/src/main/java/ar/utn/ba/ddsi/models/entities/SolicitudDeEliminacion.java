@@ -40,13 +40,11 @@ public class SolicitudDeEliminacion {
     @Column(name = "estado", columnDefinition = "varchar(50)", nullable = false)
     private EstadoSolicitud estado;
 
-    @ManyToOne
-    @JoinColumn(name = "solicitante_id", referencedColumnName = "id", nullable = false)
-    private Contribuyente solicitante;
+    @Column(name = "solicitante_id", nullable = false)
+    private Long solicitanteId;
 
-    @ManyToOne
-    @JoinColumn(name = "administrador_que_resolvio_id", referencedColumnName = "id")
-    private Administrador administradorQueResolvio;
+    @Column(name = "administrador_que_resolvio_id")
+    private Long administradorQueResolvioId;
 
     private final int CANT_MINIMA_DE_CARACTERES = 500;
 
@@ -55,7 +53,7 @@ public class SolicitudDeEliminacion {
     public SolicitudDeEliminacion(SolicitudDeEliminacionBuilder builder){
         descripcion = builder.getDescripcion();
         hecho = builder.getHecho();
-        solicitante = builder.getSolicitante();
+        solicitanteId = builder.getSolicitanteId();
         fechaDeCarga = builder.getFechaDeCarga();
         estado = builder.getEstado();
     }
@@ -64,12 +62,12 @@ public class SolicitudDeEliminacion {
         return new SolicitudDeEliminacionBuilder();
     }
 
-    public void resolver(EstadoSolicitud estado, Administrador administrador) {
+    public void resolver(EstadoSolicitud estado, Long administrador) {
         if (this.estado != EstadoSolicitud.PENDIENTE) {return;}
 
         this.fechaDeResolucion = LocalDateTime.now();
         this.estado = estado;
-        this.administradorQueResolvio = administrador;
+        this.administradorQueResolvioId = administrador;
 
         if (this.estado == EstadoSolicitud.ACEPTADA) { this.hecho.setEliminado(true); }
     }

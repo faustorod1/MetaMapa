@@ -26,10 +26,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/hechos").permitAll()
 
                 .requestMatchers(String.valueOf(RequestMethod.POST),"/api/solicitudes").hasAnyRole("CONTRIBUYENTE","ADMIN")
-                .requestMatchers(String.valueOf(RequestMethod.GET),"/api/solicitudes").hasAnyRole("ADMIN","SYSTEM")
+                .requestMatchers(String.valueOf(RequestMethod.GET),"/api/solicitudes").hasRole("ADMIN")
                 .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
-                .anyRequest().hasAnyRole("ADMIN","SYSTEM")
+                .anyRequest().hasAnyRole("ADMIN")
             );
 
         return http.build();

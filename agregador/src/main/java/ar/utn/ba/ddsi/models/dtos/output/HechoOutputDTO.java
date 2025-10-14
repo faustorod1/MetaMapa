@@ -24,8 +24,7 @@ public class HechoOutputDTO {
     private LocalDateTime fechaDeCarga;
     private LocalDateTime fechaUltimaActualizacion;
     private IdExterno idExterno;
-    private Long contribuyente;
-    private List<SolicitudDeEliminacionOutputDTO> solicitudesDeEliminacion;
+    private Long contribuyenteId;
     private HashSet<String> etiquetas;
     private Departamento departamento;
 
@@ -42,9 +41,9 @@ public class HechoOutputDTO {
         dto.setFechaDeCarga(hecho.getFechaDeCarga());
         dto.setFechaUltimaActualizacion(hecho.getFechaUltimaActualizacion());
         dto.setIdExterno(hecho.getIdExterno());
+        dto.setContribuyenteId(hecho.getContribuyenteId());
         dto.setDepartamento(hecho.getDepartamento());
         if (hecho.getCategoria() != null) dto.setCategoria(CategoriaDTO.fromEntity(hecho.getCategoria()));
-        if (hecho.getContribuyente() != null) dto.setContribuyente(hecho.getContribuyente().getId());
 
         dto.setEtiquetas(
                 hecho.getEtiquetas()

@@ -20,7 +20,7 @@ public class Hecho {
     private Long APIid;
     private String titulo;
     private String descripcion;
-    private Categoria categoria;
+    private String categoria;
     private List<ContenidoMultimedia> contenidoMultimedia;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;

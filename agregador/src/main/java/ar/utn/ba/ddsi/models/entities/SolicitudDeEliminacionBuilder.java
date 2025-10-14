@@ -11,7 +11,7 @@ public class SolicitudDeEliminacionBuilder {
     private String descripcion;
     private Hecho hecho;
     private LocalDateTime fechaDeCarga;
-    private Contribuyente solicitante;
+    private Long solicitanteId;
     private EstadoSolicitud estado;
 
     public SolicitudDeEliminacionBuilder descripcion(String d) {
@@ -22,8 +22,8 @@ public class SolicitudDeEliminacionBuilder {
         this.hecho = h;
         return this;
     }
-    public SolicitudDeEliminacionBuilder solicitante(Contribuyente s) {
-        this.solicitante = s;
+    public SolicitudDeEliminacionBuilder solicitanteId(Long s) {
+        this.solicitanteId = s;
         return this;
     }
 
