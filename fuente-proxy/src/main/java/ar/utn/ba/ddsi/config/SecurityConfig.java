@@ -16,12 +16,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Permite el acceso sin autenticación a /api/hechos
-                        .requestMatchers("/api/hechos").permitAll()
-                        // Para subir un dataset requiere ser un administrador
-                        .requestMatchers("/api/datasets").hasRole("ADMIN")
-                        // Para cualquier otra ruta, se requiere ser administrador (por las dudas)
-                        .anyRequest().hasRole("ADMIN")
+                        .anyRequest().hasRole("SYSTEM")
                 );
 
         return http.build();

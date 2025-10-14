@@ -39,7 +39,6 @@
         <module name="servicio-de-usuarios" />
         <module name="fuente-estatica" />
         <module name="fuente-proxy" />
-        <module name="servicio-de-usuarios (2)" />
         <module name="fuente-dinamica (1)" />
         <module name="commons" />
       </profile>
@@ -65,7 +64,6 @@
       <module name="fuenteProxy" options="-parameters" />
       <module name="servicio-de-estadisticas" options="-parameters" />
       <module name="servicio-de-usuarios" options="-parameters" />
-      <module name="servicio-de-usuarios (2)" options="-parameters" />
       <module name="servicio-frontend" options="" />
     </option>
   </component>

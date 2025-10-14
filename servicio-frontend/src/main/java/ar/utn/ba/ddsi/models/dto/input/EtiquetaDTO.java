@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.dto.input;
 
+import lombok.Data;
 import lombok.Value;
 
 import java.io.Serializable;

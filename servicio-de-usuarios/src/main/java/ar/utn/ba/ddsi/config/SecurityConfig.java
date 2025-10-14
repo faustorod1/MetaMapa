@@ -19,7 +19,7 @@ public class SecurityConfig {
                 // Aquí se definen las reglas de autorización
                 .authorizeHttpRequests(auth -> auth
                         // Permite el acceso sin autenticación a cualquier ruta bajo /api/auth/
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/internal/auth/**").permitAll()
                         // Para cualquier otra ruta, se requiere autenticación
                         .anyRequest().authenticated()
                 );

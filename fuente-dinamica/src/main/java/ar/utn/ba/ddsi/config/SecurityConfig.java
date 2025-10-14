@@ -17,10 +17,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("SYSTEM")
-                    .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("ADMIN")
-                    .requestMatchers("/api/hechos/{idHecho}/estado").hasRole("ADMIN")
-                    .anyRequest().hasRole("CONTRIBUYENTE")
+                        .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("SYSTEM")
+                        .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("ADMIN")
+                        .requestMatchers(String.valueOf(RequestMethod.GET),"/api/hechos").hasRole("SYSTEM")
+                        .requestMatchers("/api/hechos/{idHecho}/estado").hasRole("ADMIN")
+                        .anyRequest().hasRole("CONTRIBUYENTE")
+                        .anyRequest().permitAll()
                 );
 
         return http.build();

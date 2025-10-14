@@ -1,7 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
-import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
-import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
+import ar.utn.ba.ddsi.models.dto.input.*;
+import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,7 @@ public class AgregadorService implements IAgregadorService {
             .retrieve()
             .bodyToMono(HechoDTO.class)
             .block();
-  }
+   }
+
 
 }

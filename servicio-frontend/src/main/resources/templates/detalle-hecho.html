@@ -61,13 +61,13 @@
             font-size: 1.25rem;
         }
 
-        .detalles {
+        .fecha {
             margin: 0.75rem 0;
             font-weight: bold;
             font-size: 1.25rem;
         }
 
-        .direccion {
+        .ubicacion {
             font-size: 1.125rem;
             margin-bottom: 0.8rem;
         }
@@ -108,8 +108,9 @@
 
         .descripcion textarea {
             width: 100%;
-            min-height: 10rem;
+            min-height: 6rem;
             border: none;
+            background-color: #bdbcbc;
             border-radius: 0.5rem;
             padding: 0.5rem;
             font-size: 1.125rem;
@@ -240,7 +241,8 @@
     </style>
 </head>
 <body>
-    <a href="main-page/mapa.html" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <main>
+    <a th:href="@{/main}" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
 <div class="card">
@@ -249,37 +251,43 @@
 
     <div class="header">
         <div>
-            <span class="titulo" th:text="${titulo}"></span>
-            <span class="categoria">Caídas de aeronave</span>
-            <div class="detalles">DD/MM/AAAA</div>
-            <div class="direccion">Una Dirección 1234</div>
+            <span class="titulo" th:text="${hechoDTO.titulo}">Titulo del hecho</span>
+            <span class="categoria" th:text="${hechoDTO.categoria.nombre}">Categoria</span>
+            <div class="fecha" th:text="${hechoDTO.fechaHecho.toLocalDate()}">DD/MM/AAAA</div>
+            <div class="ubicacion" th:text="${hechoDTO.departamento.getNombre() + ', ' + hechoDTO.departamento.getProvincia().getNombre()}">Una Dirección 1234</div>
         </div>
         <div class="menu">⋮</div>
     </div>
+    <!--
+        <div class="imagenes" th:if="${hechoDTO.imagenes != null}">
+            <div class="imagen" th:each="img : ${hechoDTO.imagenes}">
+            <img th:src="${img}" alt="Imagen del hecho" />
+            </div>
+    -->
+            <div class="imagenes" th:if="${hechoDTO.contenidosMultimedia != null}">
+                <div class="imagen" th:each="img : ${hechoDTO.contenidosMultimedia}">
+                    <img th:src="@{${img.path}}" alt="Imagen del hecho" />
+                </div>
+            </div>
 
-    <div class="imagenes">
-        <!-- Agregar src reales o de ejemplo -->
-        <div class="imagen"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Fire_inside_an_abandoned_convent_in_Massueville%2C_Quebec%2C_Canada.jpg" alt="Foto 1" /></div>
-        <div class="imagen"><img src="https://via.placeholder.com/300x150?text=Foto+2" alt="Foto 2" /></div>
-        <div class="imagen"><img src="https://via.placeholder.com/300x150?text=Foto+3" alt="Foto 3" /></div>
-        <div class="imagen"><img src="https://via.placeholder.com/300x150?text=Foto+4" alt="Foto 4" /></div>
-        <div class="imagen"><img src="https://via.placeholder.com/300x150?text=Foto+5" alt="Foto 5" /></div>
+            <!-- Agregar src reales o de ejemplo -->
     </div>
 
     <div class="descripcion">
-        <textarea placeholder="<descripcion_hecho>" readonly></textarea>
+        <textarea placeholder="Descripción" readonly th:text="${hechoDTO.descripcion}"></textarea>
     </div>
 
 </div>
 
 
 <!-- Modal para imagen expandida -->
-<div class="modal" id="modal">
-    <div class="modal-content">
+    <div class="modal" id="modal">
+        <div class="modal-content">
         <span class="close-modal" id="closeModal">&times;</span>
         <img src="" alt="Imagen expandida" id="modalImage" />
-    </div>
-</div>
+        </div>
+        </div>
+    </main>
 <script>
     // Seleccionar elementos relevantes
     const modal = document.getElementById('modal');

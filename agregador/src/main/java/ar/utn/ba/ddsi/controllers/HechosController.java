@@ -2,7 +2,6 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IHechosService;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,8 @@ public class HechosController {
 
     @GetMapping("{id}")
     public HechoOutputDTO buscarHecho(@PathVariable Long id) {
-        return this.hechosService.buscarHecho(id);
+        HechoOutputDTO hechoDTO = this.hechosService.buscarHecho(id);
+        return hechoDTO;
     }
 
 

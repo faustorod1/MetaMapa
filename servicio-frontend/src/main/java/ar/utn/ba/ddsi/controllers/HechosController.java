@@ -74,19 +74,16 @@ public class HechosController {
     }
 
     @GetMapping("detalle-hecho/{id_hecho}")
-    public String detalleHecho(@PathVariable("id_hecho") Long id_hecho, Model model) {
-        try{
+    public String detalleHecho(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
             HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+            System.out.println("hecho pedido");
             model.addAttribute("hechoDTO", hecho);
             return "detalle-hecho";
 
-        } catch (Exception e) {
-
-            return "redirect:/404"; //TODO hacer nuestra gina de 404
         }
     }
 
-}
+
 
 
 
