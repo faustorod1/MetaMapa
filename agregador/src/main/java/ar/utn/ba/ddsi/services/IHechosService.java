@@ -14,6 +14,7 @@ public interface IHechosService {
     Hecho obtenerPorId(Long id);
     List<Hecho> getFromMetaMapa();
     List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales);
+    List<HechoOutputDTO> buscarHechoDe(Long contribuyenteId);
     void actualizarHechos();
     void normalizarCategoria(List<Hecho> hechos);
     void normalizarUbicacion(List<Hecho> hechos);

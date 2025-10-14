@@ -30,6 +30,7 @@ public class JwtValidator {
     public Optional<Authentication> getAuthentication(String token) {
         return validateAndGetClaims(token).map(claims -> {
             String email = claims.getSubject();
+            Long userId = claims.get("userId", Long.class);
             String rol = claims.get("rol", String.class);
 
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));

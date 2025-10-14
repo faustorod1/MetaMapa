@@ -1,12 +1,11 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IHechosService;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.Map;
@@ -32,5 +31,9 @@ public class HechosController {
         return hechoDTO;
     }
 
-
+  @GetMapping("contribuyente/{id}")
+  public List<HechoOutputDTO> buscarHechoContribuyente(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long contribuyenteId = userDetails.getId();
+        return hechosService.buscarHechoDe(contribuyenteId);
+    }
 }

@@ -28,6 +28,7 @@ public class JwtUtil {
     public String generarAccessToken(Usuario user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
+                .claim("userId", user.getId())
                 .claim("rol", user.getRol())
                 .setIssuer("metamapa-usuarios-server")
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))

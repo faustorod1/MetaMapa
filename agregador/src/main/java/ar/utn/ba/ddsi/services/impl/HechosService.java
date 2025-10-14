@@ -296,6 +296,10 @@ public class HechosService implements IHechosService {
         viejo.setDepartamento(nuevo.getDepartamento());
     }
 
+    public List<HechoOutputDTO> buscarHechoDe(Long contribuyenteId){
+        return hechosRepository.findByContribuyenteId(contribuyenteId);
+    }
+
 
     //TODO: revisar si es funcional esto asincronico
     @Async

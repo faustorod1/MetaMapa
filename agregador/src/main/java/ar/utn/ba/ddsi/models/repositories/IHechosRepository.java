@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.repositories;
 
+import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Fuente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.entities.IdExterno;
@@ -18,4 +19,5 @@ public interface IHechosRepository extends JpaRepository<Hecho, Long>, HechosRep
     List<Hecho> findAllByIdIn(List<Long> ids);
     List<Hecho> findAllByIdExternoIn(List<IdExterno> ids);
 
+  List<HechoOutputDTO> findByContribuyenteId(Long contribuyenteId);
 }
