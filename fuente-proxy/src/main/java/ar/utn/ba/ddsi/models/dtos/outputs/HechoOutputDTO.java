@@ -19,7 +19,7 @@ import java.util.List;
 public class HechoOutputDTO {
     private Long id;
     private String tipoDeFuente;
-    private Long subFuenteId;
+    private Long subfuenteId;
     private String titulo;
     private String descripcion;
     private String categoria;
@@ -36,8 +36,8 @@ public class HechoOutputDTO {
     public static HechoOutputDTO fromEntity(Hecho hecho) {
         return HechoOutputDTO.builder()
                 .id(hecho.getId())
-                .subFuenteId(hecho.getAPIid())
-                .tipoDeFuente("proxy")
+                .subfuenteId(hecho.getAPIid())
+                .tipoDeFuente("PROXY")
                 .titulo(hecho.getTitulo())
                 .descripcion(hecho.getDescripcion())
                 .categoria(hecho.getCategoria())

@@ -17,12 +17,12 @@ public class APIsRepository implements IAPIsRepository {
 
     public APIsRepository() {
         APIs = new ArrayList<>();
-        API apiDesastres = new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false);
+//        API apiDesastres = new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false);
         // Comentado porque solo manu tiene el mock que nos da hechos metamapa :)
         // (Pudimos haber hecho un try catch)
-        //API apiMetamapa = new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true);
-        //save(apiMetamapa);
-        save(apiDesastres);
+        API apiMetamapa = new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true);
+        save(apiMetamapa);
+        //save(apiDesastres);
     }
 
     @Override

@@ -1,15 +1,23 @@
 package ar.utn.ba.ddsi.config;
 
+import ar.utn.ba.ddsi.config.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -21,8 +29,9 @@ public class SecurityConfig {
                         // Para subir un dataset requiere ser un administrador
                         .requestMatchers("/api/datasets").hasRole("ADMIN")
                         // Para cualquier otra ruta, se requiere ser administrador (por las dudas)
-                        .anyRequest().hasRole("ADMIN")
-                );
+                        .anyRequest().hasAnyRole("ADMIN","SYSTEM")
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
 
         return http.build();
     }

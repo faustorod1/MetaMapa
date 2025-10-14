@@ -1,200 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Mapa | METAmapa</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/mapa.css}">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 </head>
 <body>
-    <div id="top-curtain"></div>
-    <aside id="hecho-preview">
-        <button class="btn-close" onclick="toggleHechoPreview(false)">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <div class="data-container">
-            <h3 id="hecho-preview__titulo"></h3>
-            <p id="hecho-preview__categoria"></p>z
-            <p>
-                <b>Fecha:</b> <span id="hecho-preview__fecha"></span>
-            </p>
-            <p>
-                <b>Ubicación:</b> <span id="hecho-preview__ubicacion"></span>
-            </p>
-            <p id="hecho-preview__descripcion"></p>
-        </div>
-        <button id="hecho-preview__btn-sol-eliminacion" onfocus="openCrearSolicitudEliminacion()">Solicitar Eliminacion</button>
-        <button id="hecho-preview__btn-open-details" onfocus="openDetalleHecho()">Ver detalles</button>
-    </aside>
-    <main>
-        <div id="map"></div>
-        <div class="search-bar">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
-        </div>
+<div id="top-curtain"></div>
 
+<aside id="hecho-preview">
+    <button class="btn-close" onclick="toggleHechoPreview(false)">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="data-container">
+        <h3 id="hecho-preview__titulo"></h3>
+        <p id="hecho-preview__categoria"></p>
+        <p><b>Fecha:</b> <span id="hecho-preview__fecha"></span></p>
+        <p><b>Ubicación:</b> <span id="hecho-preview__ubicacion"></span></p>
+        <p id="hecho-preview__descripcion"></p>
+    </div>
+    <button id="hecho-preview__btn-sol-eliminacion" onclick="openCrearSolicitudEliminacion()">Solicitar Eliminación</button>
+    <button id="hecho-preview__btn-open-details" onclick="openDetalleHecho()">Ver detalles</button>
+</aside>
 
-            <button class="btn-add" id="btn-add"></button>
-            <i class="fa-solid fa-plus"></i>
+<main>
+    <div id="map"></div>
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
+    </div>
 
-        <div id="btn-add-list">
+    <button class="btn-add" id="btn-add"></button>
+    <i class="fa-solid fa-plus"></i>
 
-            <form th:action="@{hechos/formulario-de-carga}" method="get" style="display:inline;">
+    <div id="btn-add-list">
+        <form th:action="@{/hechos/formulario-de-carga}" method="get" style="display:inline;">
             <button class="btn-add" id="btn-add-hecho" title="Cargar hecho">
                 <i class="fa-solid fa-newspaper"></i>
             </button>
-            </form>
+        </form>
 
-            <form th:action="@{hechos/importarCSV}" method="get" style="display:inline;">
+        <form th:action="@{/hechos/importarCSV}" method="get" style="display:inline;">
             <button class="btn-add" id="btn-add-dataset" title="Importar DataSet">
                 <i class="fa-solid fa-file-import"></i>
             </button>
-            </form>
+        </form>
 
-            <form th:action="@{colecciones/formulario-de-carga}" method="get" style="display:inline;">
+        <form th:action="@{/colecciones/formulario-de-carga}" method="get" style="display:inline;">
             <button class="btn-add" id="btn-add-coleccion" title="Crear colección">
                 <i class="fa-solid fa-layer-group"></i>
             </button>
-            </form>
-        </div>
-    </main>
-</body>
+        </form>
+    </div>
+</main>
+
+<!-- JSON de hechos embebido -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const hechos = /*[[${hechos}]]*/ [];
+    console.log("Hechos cargados desde el backend:", hechos);
+    /*]]>*/
+</script>
+
 <script>
-    const hechos = JSON.parse(/*[[${#json(hechos)}]]*/ '[]'); //para controlar json puro
     let hechoActual = null;
 
-// Barra lateral con información del hecho seleccionado.
-const hechoPreview = {
-    self: document.getElementById('hecho-preview'),
-    titulo: document.getElementById('hecho-preview__titulo'),
-    categoria: document.getElementById('hecho-preview__categoria'),
-    fecha: document.getElementById('hecho-preview__fecha'),
-    ubicacion: document.getElementById('hecho-preview__ubicacion'),
-    descripcion: document.getElementById('hecho-preview__descripcion'),
-};
+    // --- Elementos de la vista lateral ---
+    const hechoPreview = {
+        self: document.getElementById('hecho-preview'),
+        titulo: document.getElementById('hecho-preview__titulo'),
+        categoria: document.getElementById('hecho-preview__categoria'),
+        fecha: document.getElementById('hecho-preview__fecha'),
+        ubicacion: document.getElementById('hecho-preview__ubicacion'),
+        descripcion: document.getElementById('hecho-preview__descripcion'),
+    };
 
-// Lista con los hechos obtenidos del agregador.
-//const hechos = [
-//    {
-//        id: 1,
-//        titulo: 'Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones',
-//        descripcion: 'La región de San Vicente en Misiones sufrió los efectos de una intensa ráfagas de más de 100 km/h. El incidente obligando a evacuar a residentes de la zona. Se ha convocado al comité de crisis para coordinar las acciones de respuesta.',
-//       categoria: 'Ráfagas de más de 100 km/h',
-//        ubicacion: [-27.029465, -54.436559],
-//        fechaHecho: '2007-12-21'
-//    }];
+    // --- Inicializa el mapa ---
+    const map = L.map('map', {
+        center: [-38.4161, -63.6167], // centro de Argentina
+        zoom: 5
+    });
 
-// Crea el mapa y lo pone en el elemento #map.
-const map = L.map('map', {
-center: [-27.029465, -54.436559],
-zoom: 13
-});
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-// Agrega una layer de openstreetmap.org al mapa (esto es para que renderice un mapa, sino queda vacío).
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {
-        foo: 'bar',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    // --- Carga de marcadores ---
+    addHechoListToMap(hechos);
+
+    function addHechoListToMap(hechos) {
+        if (!hechos || hechos.length === 0) {
+            console.warn("No se recibieron hechos para mostrar.");
+            return;
+        }
+        for (const hecho of hechos) {
+            addHechoToMap(hecho);
+        }
     }
-).addTo(map);
 
-addHechoListToMap(hechos);
+    function addHechoToMap(hecho) {
+        if (!hecho.lugarAcontecimiento) return;
+        const { latitud, longitud } = hecho.lugarAcontecimiento;
+        if (latitud == null || longitud == null) return;
 
+        // Creamos el marcador con coordenadas
+        const marker = L.marker([latitud, longitud], {
+            riseOnHover: true,
+            hecho: hecho
+        }).addTo(map);
 
-// --- funciones --------------------------------------------------------------------------------------------------
-
-// Agrega marcadores al mapa por cada hecho que se le pase por parámetro.
-function addHechoListToMap(hechos) {
-    for (const i in hechos) {
-        const hecho = hechos[i];
-        addHechoToMap(hecho);
-    }
-}
-
-// Agrega un marcador del hecho al mapa. Al hacerle click, despliega la barra lateral y
-// muestra la información de ese hecho.
-function addHechoToMap(hecho) {
-    const marker = L.marker(hecho.ubicacion, {
-        riseOnHover: true,
-        hecho: hecho
-    }).addTo(map).bindTooltip(`<b><center>${hecho.titulo}</center></b>`, {permanent: false, direction: "top"});
-
-    marker.on('click', onHechoMarkerClick);
-}
-
-
-function openHecho(hecho) {
-    hechoActual = hecho;
-    toggleHechoPreview(true);
-    hechoPreview.titulo.textContent = hecho.titulo;
-    hechoPreview.categoria.textContent = hecho.categoria;
-    hechoPreview.fecha.textContent = hecho.fechaHecho;
-    hechoPreview.ubicacion.textContent = hecho.ubicacion;
-    hechoPreview.descripcion.textContent = hecho.descripcion;
-}
-
-
-function toggleHechoPreview(force = null) {
-    hechoPreview.self.classList.toggle('active', force);
-}
-
-
-function onHechoMarkerClick(e) {
-    openHecho(e.target.options.hecho);
-}
-
-
-function onBtnAddClick(e) {
-    const btn = e.currentTarget;
-    const active = !btn.classList.contains('active');
-    btn.classList.toggle('active', active);
-    const list = document.getElementById('btn-add-list');
-    list.classList.toggle('active', active);
-
-    if (active) { // Si debe mostrar los botones, actualiza sus variables de translate
-        list.querySelectorAll(".btn-add").forEach((btn, i) => {
-            btn.style.setProperty('--translation', `${-(i + 1) * 110}%`);
+        marker.bindTooltip(`<b><center>${hecho.titulo}</center></b>`, {
+            permanent: false,
+            direction: "top"
         });
+
+        marker.on('click', onHechoMarkerClick);
     }
-}
 
-function openDetalleHecho() {
-    if (!hechoActual) return;
-    window.location.replace(`detalle-hecho?id=${encodeURIComponent(hechoActual.id)}` );
-}
+    // --- Interacción con el panel lateral ---
+    function openHecho(hecho) {
+        hechoActual = hecho;
+        toggleHechoPreview(true);
 
-function openCrearSolicitudEliminacion() {
-    if (!hechoActual) return;
-    window.location.replace(`crearSolicitudDeEliminacion.html?id=${encodeURIComponent(hechoActual.id)}` );
-}
+        hechoPreview.titulo.textContent = hecho.titulo || "Sin título";
+        hechoPreview.categoria.textContent = hecho.categoria?.nombre || "Sin categoría";
+        hechoPreview.fecha.textContent = hecho.fechaHecho ? hecho.fechaHecho.split('T')[0] : "Sin fecha";
 
-function openBuscador() {
-    document.getElementById('top-curtain').classList.add('active');
-    setTimeout(() => {
-        window.location.replace('/main/buscador');
-    }, 600);
-}
+        // Mostrar departamento y provincia
+        const depto = hecho.departamento?.nombre || "Desconocido";
+        const prov = hecho.departamento?.provincia?.nombre || "Desconocida";
+        hechoPreview.ubicacion.textContent = `${depto}, ${prov}`;
 
-const btnAdd = document.getElementById("btn-add-hecho");
+        hechoPreview.descripcion.textContent = hecho.descripcion || "Sin descripción disponible";
+    }
 
-btnAdd.addEventListener("click", () => {
-    window.location.href = "cargarHecho.html";
-});
+    function toggleHechoPreview(force = null) {
+        hechoPreview.self.classList.toggle('active', force);
+    }
 
-const btnCSV = document.getElementById("btn-add-dataset");
+    function onHechoMarkerClick(e) {
+        openHecho(e.target.options.hecho);
+    }
 
-btnCSV.addEventListener("click", () => {
-    window.location.href = "importarCSV.html";
-});
+    // --- Botones auxiliares ---
+    function openDetalleHecho() {
+        if (!hechoActual) return;
+        window.location.href = `/detalle-hecho/${hechoActual.id}`;
+    }
 
-const btnColeccion = document.getElementById("btn-add-coleccion");
-
-btnColeccion.addEventListener("click", () => {
-    window.location.href = "crearColeccion.html";
-});
-
+    function openCrearSolicitudEliminacion() {
+        if (!hechoActual) return;
+        window.location.href = `/crearSolicitudDeEliminacion?id=${hechoActual.id}`;
+    }
 </script>
+</body>
 </html>

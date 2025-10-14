@@ -31,7 +31,7 @@ public class ServiceTokenController {
     if (serviceClientId.equals(credentials.getClientId()) && serviceClientSecret.equals(credentials.getClientSecret())) {
       String token = jwtUtil.generarSystemToken();
 
-      return ResponseEntity.ok(Map.of("access_token", token));
+      return ResponseEntity.ok(Map.of("accessToken", token));
     }
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

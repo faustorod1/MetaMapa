@@ -52,7 +52,7 @@ public class HechosService implements IHechosService {
 
         dto.setId(hecho.getId());
         dto.setTipoDeFuente("ESTATICA");
-        dto.setSubFuenteId(hecho.getIdDataset());
+        dto.setSubfuenteId(hecho.getIdDataset());
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
         dto.setCategoria(hecho.getCategoria().getNombre());

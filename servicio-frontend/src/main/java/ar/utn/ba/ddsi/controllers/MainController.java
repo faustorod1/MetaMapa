@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.util.ArrayList;
@@ -25,29 +26,25 @@ public class MainController {
   }
 
   @GetMapping("mapa")
-  public String mapa(Model model) {
-    try {
-      List<HechoDTO> hechos = agregadorService.buscarHechos();
+  public String mapa(Model model, RedirectAttributes redirectAttributes) {
+    try{
+      List<HechoDTO> hechos  = agregadorService.buscarHechos();
       model.addAttribute("hechos", hechos);
-      System.out.println("HECHOS PEDIDOS");
       return "main-page/mapa";
     } catch (Exception e) {
-      model.addAttribute("error", "La carga de hechos ha fallado");
-      return "main-page/mapa";
-
+      return "redirect:/404";
     }
   }
-}
 
-    /*
   @GetMapping("buscador")
   public String buscador() {
     return "main-page/buscador";
   }
-  */
 
 
 
 
+
+}
 
 

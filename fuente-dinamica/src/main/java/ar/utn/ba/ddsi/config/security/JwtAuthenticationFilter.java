@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7); // Saca "Bearer"
+        System.out.println("Token recibido para validar: '" + token + "'");
 
         jwtValidator.getAuthentication(token).ifPresent(authentication -> {
             SecurityContextHolder.getContext().setAuthentication(authentication);

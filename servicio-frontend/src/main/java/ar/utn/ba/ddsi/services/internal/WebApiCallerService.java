@@ -5,10 +5,14 @@ import ar.utn.ba.ddsi.models.dto.external.RefreshTokenDTO;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -126,6 +130,21 @@ public class WebApiCallerService {
                         .block()
         );
     }
+
+    public <T> T postMultipart(String url, MultiValueMap<String, HttpEntity<?>> body, Class<T> responseType){
+        return executeWithTokenRetry(accessToken ->
+                webClient
+                        .post()
+                        .uri(url)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .body(BodyInserters.fromMultipartData(body))
+                        .retrieve()
+                        .bodyToMono(responseType)
+                        .block()
+        );
+    }
+
 
     /**
      * Ejecuta una llamada HTTP PUT

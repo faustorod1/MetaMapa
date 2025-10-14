@@ -34,7 +34,6 @@ public class HechoFuenteDTO {
                 .titulo(this.getTitulo())
                 .descripcion(this.getDescripcion())
                 .categoria(new Categoria(this.getCategoria()))
-                .etiquetas(this.getEtiquetas().stream().map(Etiqueta::new).collect(Collectors.toSet()))
                 .origen(this.getOrigen())
                 .lugarAcontecimiento(this.getLugarAcontecimiento())
                 .fechaHecho(this.getFechaHecho())
@@ -43,6 +42,11 @@ public class HechoFuenteDTO {
                 hecho.getIdExterno().setIdExterno(this.getId());
         if (this.getContenidosMultimedia() != null) {
             hecho.setContenidosMultimedia(this.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
+        }
+        if (this.getEtiquetas() != null) {
+            this.etiquetas.forEach(etiqueta -> {
+                hecho.etiquetar(new Etiqueta(etiqueta));
+            });
         }
         return hecho;
     }

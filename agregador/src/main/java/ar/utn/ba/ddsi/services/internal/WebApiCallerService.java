@@ -31,37 +31,37 @@ public class WebApiCallerService {
     /**
      * Ejecuta una llamada HTTP GET con el token system
      */
-    public <T> T getWithAuth(WebClient webClient, Map<String, String> queryParams, Class<T> responseType) {
+    public <T> T getWithAuth(WebClient webClient, String uri, Map<String, String> queryParams, Class<T> responseType) {
         try {
-            return this.executeGetRequest(webClient, queryParams, responseType);
+            return this.executeGetRequest(webClient, uri, queryParams, responseType);
         } catch (Exception e) {
             this.loginToSystem();
-            return this.executeGetRequest(webClient, queryParams, responseType);
+            return this.executeGetRequest(webClient, uri, queryParams, responseType);
         }
     }
 
     /**
      * Ejecuta una llamada HTTP GET con el token system
      */
-    public <T> List<T> getListWithAuth(WebClient webClient, Map<String, String> queryParams, Class<T> responseType) {
+    public <T> List<T> getListWithAuth(WebClient webClient,String uri, Map<String, String> queryParams, Class<T> responseType) {
         try {
-            return this.executeGetListRequest(webClient, queryParams, responseType);
+            return this.executeGetListRequest(webClient, uri, queryParams, responseType);
         } catch (Exception e) {
             this.loginToSystem();
-            return this.executeGetListRequest(webClient, queryParams, responseType);
+            return this.executeGetListRequest(webClient, uri, queryParams, responseType);
         }
     }
 
 
-    private <T> T executeGetRequest(WebClient webClient, Map<String, String> queryParams, Class<T> responseType) {
+    private <T> T executeGetRequest(WebClient webClient,String uri, Map<String, String> queryParams, Class<T> responseType) {
         return webClient
                 .get()
                 .uri(uriBuilder -> {
-                    // Itera sobre el Map y agrega cada par clave-valor como un parámetro
+
                     if (queryParams != null) {
                         queryParams.forEach(uriBuilder::queryParam);
                     }
-                    return uriBuilder.build();
+                    return uriBuilder.path(uri).build();
                 })
                 .header("Authorization", "Bearer " + systemAccessToken)
                 .retrieve()
@@ -69,20 +69,21 @@ public class WebApiCallerService {
                 .block();
     }
 
-    private <T> List<T> executeGetListRequest(WebClient webClient, Map<String, String> queryParams, Class<T> responseType) {
-        return webClient
+    private <T> List<T> executeGetListRequest(WebClient webClient, String uri, Map<String, String> queryParams, Class<T> responseType) {
+        List<T> lista = webClient
                 .get()
                 .uri(uriBuilder -> {
                     if (queryParams != null) {
                         queryParams.forEach(uriBuilder::queryParam);
                     }
-                    return uriBuilder.build();
+                    return uriBuilder.path(uri).build();
                 })
                 .header("Authorization", "Bearer " + systemAccessToken)
                 .retrieve()
                 .bodyToFlux(responseType)
                 .collectList()
                 .block();
+        return lista;
     }
 
     private void loginToSystem() {

@@ -13,7 +13,7 @@ import java.util.List;
 public class HechoOutputDTO {
     private Long id;
     private String tipoDeFuente;
-    private Long subFuenteId;
+    private Long subfuenteId;
     private String titulo;
     private String descripcion;
     private String categoria;

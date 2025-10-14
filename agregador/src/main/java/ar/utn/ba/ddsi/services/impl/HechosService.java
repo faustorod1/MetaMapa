@@ -26,6 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +44,8 @@ public class HechosService implements IHechosService {
     private final Map<TipoDeFuente, WebClient> webClients = new HashMap<TipoDeFuente, WebClient>();
     private final WebClient webClientGeoref;
     private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
+
+    private static final Logger logger = LoggerFactory.getLogger(HechosService.class);
 
     @Autowired
     private ICategoriaRepository categoriaRepository;
@@ -74,7 +79,7 @@ public class HechosService implements IHechosService {
         List<Hecho> actualizadosConMetamapa = actualizarListaConHechosMetamapa(hechosLocales);
 
         return filtrosDeUsuario.aplicarA(actualizadosConMetamapa)
-            .stream().map(HechoOutputDTO::fromEntity).toList();
+                .stream().map(HechoOutputDTO::fromEntity).toList();
     }
 
     @Override
@@ -96,23 +101,38 @@ public class HechosService implements IHechosService {
         webClients.forEach((key, value) -> {
             try {
                 List<HechoFuenteDTO> hechosFuenteDTO = getFromFuente(value);
-                if (hechosFuenteDTO != null) {
+                if (hechosFuenteDTO != null && !hechosFuenteDTO.isEmpty()) {
+                    logger.info("Se encontraron {} hechos de la fuente: {}", hechosFuenteDTO.size(), key);
                     hechosFuente.addAll(hechosFuenteDTO);
+                } else {
+                    logger.warn("No se recibieron hechos de la fuente: {}", key);
                 }
             } catch (Exception e) {
+                logger.error("Error al obtener hechos de la fuente {}: {}", key, e.getMessage());
                 e.printStackTrace();
             }
         });
 
         // Carga las fuentes del repo y los setea en los hechos obtenidos
-        System.out.println("Listo para pedir fuentes");
         List<Fuente> fuentes = fuentesRepository.findAll();
+
         List<Hecho> hechos = new ArrayList<>(hechosFuente.stream().map(dto -> {
             Hecho hecho = dto.toEntity();
-            Fuente fuente = fuentes.stream().filter(f ->
-                f.getTipoDeFuente().name().equals(dto.getTipoDeFuente())
-                    && f.getSubfuenteId().equals(dto.getSubfuenteId())
-            ).findFirst().orElse(null);
+            Fuente fuente = fuentes.stream().filter(f -> {
+                boolean fuenteCoincide = f.getTipoDeFuente().name().equals(dto.getTipoDeFuente());
+                if (f.getSubfuenteId() == null || dto.getSubfuenteId() == null) {
+                    return fuenteCoincide;
+                }
+                return fuenteCoincide && f.getSubfuenteId().equals(dto.getSubfuenteId());
+            }).findFirst().orElseGet(() -> {
+                Fuente nuevaFuente = new Fuente();
+                nuevaFuente.setTipoDeFuente(TipoDeFuente.valueOf(dto.getTipoDeFuente()));
+                nuevaFuente.setSubfuenteId(dto.getSubfuenteId());
+
+                fuentesRepository.save(nuevaFuente);
+                fuentes.add(nuevaFuente);
+                return nuevaFuente;
+            });
 
             hecho.getIdExterno().setFuente(fuente);
             return hecho;
@@ -129,8 +149,8 @@ public class HechosService implements IHechosService {
         for (int i = 0; i < hechos.size(); i++) {
             Hecho hechoNormalizado = hechos.get(i);
             Hecho viejo = hechosAModificar.stream()
-                .filter(h -> h.getIdExterno().equals(hechoNormalizado.getIdExterno()))
-                .findFirst().orElse(null);
+                    .filter(h -> h.getIdExterno().equals(hechoNormalizado.getIdExterno()))
+                    .findFirst().orElse(null);
             if (viejo != null) {
                 modificarHecho(viejo, hechoNormalizado);
                 hechos.set (i, viejo);
@@ -140,7 +160,6 @@ public class HechosService implements IHechosService {
         }
 
         hechosRepository.saveAll(hechos);
-        System.out.println("Guardado");
         fechaUltimaActualizacion = LocalDateTime.now();
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(hechos));
     }
@@ -178,15 +197,15 @@ public class HechosService implements IHechosService {
         });
 
         Map<Coordenada, List<Hecho>> hechosPorCoordenada = requierenGeorref.stream()
-            .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
+                .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
         List<Coordenada> coordenadas = hechosPorCoordenada.keySet().stream().toList();
 
         List<List<Coordenada>> lotes = DivisorEnLotes.dividir(coordenadas, 300);
 
         List<Map<Coordenada, Departamento>> listaDeMapas = Flux.fromIterable(lotes)
-            .concatMap(this::georreferenciacionInversa)
-            .collectList()
-            .block();
+                .concatMap(this::georreferenciacionInversa)
+                .collectList()
+                .block();
 
         if (listaDeMapas == null) {
             return;
@@ -196,9 +215,9 @@ public class HechosService implements IHechosService {
         listaDeMapas.forEach(combinados::putAll);
 
         combinados.forEach((coordenada, departamento) ->
-            hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
-                hechoAModificar.setDepartamento(departamento)
-            )
+                hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
+                        hechoAModificar.setDepartamento(departamento)
+                )
         );
 
     }
@@ -213,31 +232,31 @@ public class HechosService implements IHechosService {
         reqBody.setUbicaciones(coordFormat);
 
         return webClientGeoref
-            .post()
-            .uri("/ubicacion")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(reqBody)
-            .retrieve()
-            .onStatus(
-                HttpStatusCode::isError,
-                clientResponse -> clientResponse.bodyToMono(String.class)
-                    .map(body -> new RuntimeException("Error en API Georef: " + body))
-            )
-            .bodyToMono(GeorreferenciacionDTO.class)
-            .map(dto -> Optional.ofNullable(dto.getResultados()).orElse(Collections.emptyList()))
-            .map(listaRes -> listaRes.stream().map(ResultadoGeoDTO::getUbicacion).toList())
-            .map(ubicaciones -> {
-                Map<Coordenada, Departamento> departamentosPorCoordenada = new HashMap<>();
-                ubicaciones.forEach(ubicacion -> {
-                    Departamento departamento = departamentos.stream().filter(m ->
-                            m.getNombre().equals(ubicacion.getDepartamento_nombre()) &&
-                                m.getProvincia().getNombre().equals(ubicacion.getProvincia_nombre()))
-                        .findFirst().orElse(null);
-                    Coordenada coord = new Coordenada(ubicacion.getLat(), ubicacion.getLon());
-                    departamentosPorCoordenada.put(coord, departamento);
+                .post()
+                .uri("/ubicacion")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(reqBody)
+                .retrieve()
+                .onStatus(
+                        HttpStatusCode::isError,
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .map(body -> new RuntimeException("Error en API Georef: " + body))
+                )
+                .bodyToMono(GeorreferenciacionDTO.class)
+                .map(dto -> Optional.ofNullable(dto.getResultados()).orElse(Collections.emptyList()))
+                .map(listaRes -> listaRes.stream().map(ResultadoGeoDTO::getUbicacion).toList())
+                .map(ubicaciones -> {
+                    Map<Coordenada, Departamento> departamentosPorCoordenada = new HashMap<>();
+                    ubicaciones.forEach(ubicacion -> {
+                        Departamento departamento = departamentos.stream().filter(m ->
+                                        m.getNombre().equals(ubicacion.getDepartamento_nombre()) &&
+                                                m.getProvincia().getNombre().equals(ubicacion.getProvincia_nombre()))
+                                .findFirst().orElse(null);
+                        Coordenada coord = new Coordenada(ubicacion.getLat(), ubicacion.getLon());
+                        departamentosPorCoordenada.put(coord, departamento);
+                    });
+                    return departamentosPorCoordenada;
                 });
-                return departamentosPorCoordenada;
-            });
     }
 
 
@@ -246,7 +265,7 @@ public class HechosService implements IHechosService {
         List<Hecho> hechosMetaMapa = this.getFromMetaMapa();
 
         Map<IdExterno, Hecho> hechosPorId = hechosLocales.stream()
-            .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
+                .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
 
         for (Hecho hechoMetamapa : hechosMetaMapa) {
             if (hechosPorId.containsKey(hechoMetamapa.getIdExterno())) {
@@ -263,6 +282,7 @@ public class HechosService implements IHechosService {
         return webApiCallerService
                 .getListWithAuth(
                         webClients.get(TipoDeFuente.PROXY),
+                        "/api/hechos/metamapaInstance",
                         null,
                         HechoFuenteDTO.class
                 )
@@ -275,7 +295,8 @@ public class HechosService implements IHechosService {
         String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("desde", fechaUltimaActualizacionStr);
-        return webApiCallerService.getListWithAuth(webClient, queryParams, HechoFuenteDTO.class);
+        List<HechoFuenteDTO> hechos = webApiCallerService.getListWithAuth(webClient, "/api/hechos", queryParams, HechoFuenteDTO.class);
+        return hechos;
     }
 
 
@@ -300,18 +321,17 @@ public class HechosService implements IHechosService {
         return hechosRepository.findByContribuyenteId(contribuyenteId);
     }
 
-
     //TODO: revisar si es funcional esto asincronico
     @Async
     public void eliminarHechoEnLasFuentes(Hecho hecho){ // Llamada no bloqueante a otra API
         webClients.get(hecho.getOrigen())
-            .delete()
-            .uri("api/hechos/{id}", hecho.getIdExterno().getIdExterno())
-            .retrieve()
-            .toBodilessEntity()
-            .doOnSuccess(response -> System.out.println("Eliminación remota exitosa"))
-            .doOnError(error -> System.err.println("Error en la eliminación remota"))
-            .subscribe();
+                .delete()
+                .uri("api/hechos/{id}", hecho.getIdExterno().getIdExterno())
+                .retrieve()
+                .toBodilessEntity()
+                .doOnSuccess(response -> System.out.println("Eliminación remota exitosa"))
+                .doOnError(error -> System.err.println("Error en la eliminación remota"))
+                .subscribe();
 
         applicationEventPublisher.publishEvent(new HechoEliminadoEvent(hecho));
     }

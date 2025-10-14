@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface IPathsService {
     List<PathDataset> obtenerPathsDesde(LocalDateTime desde);
-    void guardarCSVs(List<MultipartFile> archivos);
+    Long guardarCSVs(List<MultipartFile> archivos);
 }

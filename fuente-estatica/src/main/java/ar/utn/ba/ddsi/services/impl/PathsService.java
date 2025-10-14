@@ -26,7 +26,7 @@ public class PathsService implements IPathsService {
     }
 
     @Override
-    public void guardarCSVs(List<MultipartFile> archivos) {
+    public Long guardarCSVs(List<MultipartFile> archivos) {
 
         for (MultipartFile file : archivos) {
             System.out.println("Archivo recibido: " + file.getOriginalFilename());
@@ -48,6 +48,8 @@ public class PathsService implements IPathsService {
                 throw new RuntimeException(ex);
             }
         }
+
+        return 1L;
     }
 
     @Override
