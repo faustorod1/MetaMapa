@@ -12,14 +12,12 @@ public class ColeccionInputDTO {
     private String titulo;
     private String descripcion;
     private List<Hecho> hechos;
-    private List<String> fuentes;
 
     public Coleccion toEntity() {
         return Coleccion.builder()
             .descripcion(this.getDescripcion())
             .titulo(this.getTitulo())
             .identificador(this.getIdentificador())
-            .fuentes(this.getFuentes())
             .hechos(this.getHechos())
             .build();
     }

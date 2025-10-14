@@ -13,9 +13,5 @@ public class Coleccion {
     private String identificador;
     private String titulo;
     private String descripcion;
-    private List<String> fuentes;
     private List<Hecho> hechos;
-
-
-
 }

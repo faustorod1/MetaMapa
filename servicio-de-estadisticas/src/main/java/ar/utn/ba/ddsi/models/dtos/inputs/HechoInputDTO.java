@@ -23,9 +23,7 @@ public class HechoInputDTO {
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
-    private String idExterno;
     private Long contribuyente;
-    private List<SolicitudDeEliminacionInputDTO> solicitudesDeEliminacion;
     private Set<String> etiquetas;
     private Departamento departamento;
     
