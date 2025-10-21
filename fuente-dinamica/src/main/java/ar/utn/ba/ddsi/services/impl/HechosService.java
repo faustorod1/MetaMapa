@@ -60,7 +60,7 @@ public class HechosService implements IHechosService {
         hecho.setFechaDeCarga(LocalDateTime.now());
         hecho.setFechaUltimaActualizacion(LocalDateTime.now());
 
-        if (!imagenes.isEmpty()) {
+        if (imagenes != null && !imagenes.isEmpty()) {
             List<String> paths = new ArrayList<>();
             for (MultipartFile archivo : imagenes) {
                 if (archivo.isEmpty()) continue;

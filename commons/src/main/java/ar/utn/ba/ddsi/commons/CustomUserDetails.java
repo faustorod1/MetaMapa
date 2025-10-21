@@ -11,10 +11,20 @@ public class CustomUserDetails implements UserDetails {
 
   @Getter
   private final Long id;
+  private final String email;
+  private final String rol;
   private final List<GrantedAuthority> authorities;
 
+  /*
   public CustomUserDetails(Long id, String email, String nombre, String apellido, List<GrantedAuthority> authorities) {
     this.id = id;
+    this.authorities = authorities;
+  }
+  */
+  public CustomUserDetails(Long id, String email, String rol, List<GrantedAuthority> authorities) {
+    this.id = id;
+    this.email = email;
+    this.rol = rol;
     this.authorities = authorities;
   }
 

@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,20 +25,34 @@ public class  HechosController {
   }
 
   @GetMapping
-  public List<HechoOutputDTO> listarHechos(){
+  public List<HechoOutputDTO> listarHechos() {
     return hechosService.getAll_DTO();
   }
 
   @GetMapping(params = "desde") // localhost:8082/api/hechos?desde=algo
-  public List<HechoOutputDTO> buscarTodosCargadosDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde){
+  public List<HechoOutputDTO> buscarTodosCargadosDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
     return this.hechosService.getAllDesde_DTO(desde);
   }
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public HechoOutputDTO crearHecho(@RequestPart("hecho") HechoInputDTO hecho, @RequestPart(value = "contenidosMultimedia")List<MultipartFile> archivos, @AuthenticationPrincipal CustomUserDetails userDetails){
+  public HechoOutputDTO crearHecho(@RequestPart("hecho") HechoInputDTO hecho, @RequestPart(value = "contenidosMultimedia", required = false)List<MultipartFile> archivos, @AuthenticationPrincipal CustomUserDetails userDetails){
     hecho.setContribuyenteId(userDetails.getId());
     return hechosService.crearHecho(hecho, archivos);
   }
+
+  /*
+@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public HechoOutputDTO crearHecho(
+        @RequestPart("hecho") HechoInputDTO hecho,
+        @RequestPart(value = "contenidosMultimedia", required = false) List<MultipartFile> archivos,
+        Authentication authentication
+) {
+  CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+  hecho.setContribuyenteId(userDetails.getId());
+  return hechosService.crearHecho(hecho, archivos);
+}
+   */
+
 
   // Para que el agregador le avise cuando se elimina un hecho
   @DeleteMapping

@@ -42,13 +42,13 @@ public class RootController {
   }
 
   @PostMapping("/login")
-  public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, Model model){
+  public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, Model model) {
     rootService.login(datosLogin.getUsername(), datosLogin.getPassword());
     return "landing-page/login";
   }
 
   @GetMapping("/register")
-  public String register(Model model){
+  public String register(Model model) {
     model.addAttribute("datosRegister", new DatosRegister());
     return "landing-page/register";
   }
@@ -56,14 +56,14 @@ public class RootController {
   @PostMapping("/register")
   public String registrarse(@ModelAttribute("datosRegister") DatosRegister datosRegister, Model model, RedirectAttributes redirectAttributes) {
 
-      try{
-        rootService.registrar(datosRegister.getNombre(), datosRegister.getApellido(), datosRegister.getEmail(), datosRegister.getContrasenia(), datosRegister.getContraseniaRepetida());
-        redirectAttributes.addFlashAttribute("exito", "Se ha registrado correctamente");
-        return "redirect:/login";
-      } catch (Exception ex){
-        redirectAttributes.addFlashAttribute("error", "Hubo una falla al registrarse");
-        return "redirect:/login";
-      }
+    try {
+      rootService.registrar(datosRegister.getNombre(), datosRegister.getApellido(), datosRegister.getEmail(), datosRegister.getContrasenia(), datosRegister.getContraseniaRepetida());
+      redirectAttributes.addFlashAttribute("exito", "Se ha registrado correctamente");
+      return "redirect:/login";
+    } catch (Exception ex) {
+      redirectAttributes.addFlashAttribute("error", "Hubo una falla al registrarse");
+      return "redirect:/login";
 
+    }
   }
 }
