@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.models.entities;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.entities.filtros.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class Criterio {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="criterio_id", referencedColumnName = "id", nullable=false)
     private List<Filtro> filtros = new ArrayList<>();
 

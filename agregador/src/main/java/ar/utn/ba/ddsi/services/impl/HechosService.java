@@ -43,7 +43,7 @@ public class HechosService implements IHechosService {
 
     private final Map<TipoDeFuente, WebClient> webClients = new HashMap<TipoDeFuente, WebClient>();
     private final WebClient webClientGeoref;
-    private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1000", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
+    private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1999", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
     private static final Logger logger = LoggerFactory.getLogger(HechosService.class);
 

@@ -52,7 +52,7 @@ public class Coleccion {
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
         name = "fuentes_de_la_coleccion",
         joinColumns = @JoinColumn(name = "coleccion_id",
@@ -61,7 +61,7 @@ public class Coleccion {
     private List<Fuente> fuentes;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
         name = "hechos_en_coleccion_cargados_manualmente",
             joinColumns = @JoinColumn(name = "coleccion_id",
@@ -69,14 +69,14 @@ public class Coleccion {
         inverseJoinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     private List<Hecho> hechosCargadosManualmente;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
         name = "hechos_en_coleccion_consensuados",
         joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name ="hecho_id", referencedColumnName = "id"))
     private List<Hecho> hechosConsensuados;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
         name = "coleccion_hechos",
         joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),

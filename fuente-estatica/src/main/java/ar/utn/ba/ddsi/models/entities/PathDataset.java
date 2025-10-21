@@ -26,9 +26,14 @@ public class PathDataset {
         this.fechaCarga = fechaCarga;
     }
 
+    public PathDataset(Long id, String path, LocalDateTime fechaCarga) {
+        this.id = id;
+        this.path = path;
+        this.fechaCarga = fechaCarga;
+    }
+
     public List<Hecho> cargarHechos() {
         LectorDeCSV reader = new LectorDeCSV(this);
         return reader.getHechos();
     }
-
 }

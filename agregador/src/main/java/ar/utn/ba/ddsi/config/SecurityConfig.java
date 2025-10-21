@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.config;
 import ar.utn.ba.ddsi.config.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,16 +27,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/solicitudes").hasAnyRole("CONTRIBUYENTE","ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/colecciones").permitAll()
                         .requestMatchers("/api/colecciones").hasRole("ADMIN")
-                        .requestMatchers(String.valueOf(RequestMethod.GET), "/api/colecciones").permitAll()
+
                         .requestMatchers("/api/colecciones/{identificador}/hechos").permitAll()
                         .requestMatchers("/api/colecciones/con-hechos").permitAll()
 
                         .requestMatchers("/api/hechos").permitAll()
                         .requestMatchers("/api/hechos/contribuyente/{id}").hasRole("CONTRIBUYENTE")
-
-                        .requestMatchers(String.valueOf(RequestMethod.POST),"/api/solicitudes").hasAnyRole("CONTRIBUYENTE","ADMIN")
-                        .requestMatchers(String.valueOf(RequestMethod.GET),"/api/solicitudes").hasRole("ADMIN")
                         .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
                         .anyRequest().hasAnyRole("ADMIN")

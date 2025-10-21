@@ -26,16 +26,11 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                      //  .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("SYSTEM")
-                      //  .requestMatchers(String.valueOf(RequestMethod.POST), "/api/hechos").hasRole("CONTRIBUYENTE")
-                      //  .requestMatchers(String.valueOf(RequestMethod.DELETE),"/api/hechos").hasRole("ADMIN")
-                      //  .requestMatchers(String.valueOf(RequestMethod.GET),"/api/hechos").hasRole("SYSTEM")
-                      //  .requestMatchers("/api/hechos/{idHecho}/estado").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/hechos").hasRole("CONTRIBUYENTE")
                         .requestMatchers(HttpMethod.DELETE, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/hechos").hasRole("SYSTEM")
                         .requestMatchers("/api/hechos/{idHecho}/estado").hasRole("ADMIN")
-                      //  .anyRequest().permitAll()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
 

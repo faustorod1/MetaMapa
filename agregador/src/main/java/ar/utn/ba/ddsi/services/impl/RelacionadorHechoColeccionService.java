@@ -15,6 +15,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 //Patrón Observer
 @Service
@@ -50,7 +51,7 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
   @EventListener
   public void alCambiarCriterioDeColeccion(CriterioCambiadoEvent evento) {
     Coleccion coleccion = evento.getColeccion();
-    List<Hecho> hechosDeFuentes = hechosRepository.findFromFuentes(coleccion.getFuentes());
+    List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(coleccion.getFuentes());
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
   }
 
@@ -58,7 +59,7 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
   public void alCambiarFuenteDeColeccion(FuentesCambiadasEnColeccionEvent evento) {
     Coleccion coleccion = evento.getColeccion();
     List<Fuente> fuentesCambiadas = evento.getFuentesCambiadas();
-    List<Hecho> hechosDeFuentes = hechosRepository.findFromFuentes(fuentesCambiadas);
+    List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(fuentesCambiadas);
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
   }
 
