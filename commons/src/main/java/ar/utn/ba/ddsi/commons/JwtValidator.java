@@ -36,7 +36,7 @@ public class JwtValidator {
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));
 
 
-            CustomUserDetails principal = new CustomUserDetails(userId, email,rol, authorities); // Asumo que tienes un constructor así
+            CustomUserDetails principal = new CustomUserDetails(userId, email,rol, authorities);
 
             // 4. Guarda el OBJETO COMPLETO como principal
             return new UsernamePasswordAuthenticationToken(principal, null, authorities);

@@ -38,15 +38,15 @@ public class HechosController {
 
     @PostMapping("/cargar")
     public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes, Model model, RedirectAttributes redirectAttributes) {
-        //try {
+        try {
             log.info("DTO recibido: {}", hechoOutputDTO);
             dinamicaService.cargarHecho(hechoOutputDTO, imagenes);
             redirectAttributes.addFlashAttribute("mensaje", "Hecho creado con éxito");
             return "redirect:/hechos/formulario-de-carga";
-       // } catch (Exception ex) {
-        //    redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al intentar cargar el hecho");
-         //   return "redirect:/hechos/formulario-de-carga";
-        //}
+       } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al intentar cargar el hecho");
+            return "redirect:/hechos/formulario-de-carga";
+        }
 
     }
 

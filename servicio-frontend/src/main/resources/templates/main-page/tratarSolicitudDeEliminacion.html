@@ -94,7 +94,7 @@
     <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
-    <form class="tratarSolicitudDeEliminacion-form" action="" method="post">
+    <form th:action="@{/solicitudes/solicitarEliminacion}" th:object="@{solicitud}" class="tratarSolicitudDeEliminacion-form" action="" method="post">
     <div class="container">
 
         <div class="header-titulo">
@@ -103,17 +103,17 @@
 
 
         <div class="container-data" id="container-data-2">
-                <p><strong>Fecha</strong>: 24/08/2025</p>
+                <p><strong>Fecha</strong>: <span th:text="${hecho.fecha}"></span></p>
                 <p><strong>Solicitante</strong>: nombre_usuario</p>
         </div>
 
         <div class="container-data">
-        <p><strong>Título</strong>: Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones</p>
+        <p><strong>Título</strong>: <span th:text="${hecho.titulo}"></span></p>
         </div>
 
         <div class="container-data">
             <p><strong>Descripción:</strong></p>
-        <textarea readonly id="descripcion">La región de San Vicente en Misiones sufrió los efectos de una intensa ráfagas de más de 100 km/h. El incidente obligando a evacuar a residentes de la zona. Se ha convocado al comité de crisis para coordinar las acciones de respuesta.</textarea>
+        <textarea readonly id="descripcion" th:text="${hecho.descripcion}"> Descripcion</textarea>
         </div>
 
         <div class ="buttons-footer">

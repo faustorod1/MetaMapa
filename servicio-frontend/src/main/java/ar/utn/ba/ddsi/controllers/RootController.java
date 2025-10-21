@@ -37,14 +37,22 @@ public class RootController {
   }
 
   @GetMapping("/login")
-  public String logIn(@ModelAttribute("datosLogin") DatosLogin datosLogin) {
+  public String logIn(Model model) {
+    model.addAttribute("datosLogin", new DatosLogin());
     return "landing-page/login";
   }
 
   @PostMapping("/login")
-  public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, Model model) {
-    rootService.login(datosLogin.getUsername(), datosLogin.getPassword());
-    return "landing-page/login";
+  public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, RedirectAttributes redirectAttributes) {
+    log.info("Login recibido: {}", datosLogin);
+
+    //try {
+      rootService.login(datosLogin.getUsername(), datosLogin.getPassword());
+      return "redirect:/main";
+    //} catch (Exception ex) {
+     // redirectAttributes.addFlashAttribute("error", "Correo electrónico y/o contraseña incorrecta");
+     // return "redirect:/login";
+    //}
   }
 
   @GetMapping("/register")
@@ -62,7 +70,7 @@ public class RootController {
       return "redirect:/login";
     } catch (Exception ex) {
       redirectAttributes.addFlashAttribute("error", "Hubo una falla al registrarse");
-      return "redirect:/login";
+      return "redirect:/register";
 
     }
   }
