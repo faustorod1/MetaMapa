@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/colecciones/con-hechos").permitAll()
 
                         .requestMatchers("/api/hechos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/hechos/{id}").permitAll()
                         .requestMatchers("/api/hechos/contribuyente/{id}").hasRole("CONTRIBUYENTE")
                         .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 

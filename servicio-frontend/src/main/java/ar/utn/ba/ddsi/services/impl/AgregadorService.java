@@ -2,7 +2,9 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dto.input.*;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
+import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,9 +23,13 @@ import java.util.stream.Collectors;
 @Service
 public class AgregadorService implements IAgregadorService {
   WebClient agregadorWebClient;
+  String agregadorBaseUrl;
+  WebApiCallerService webApiCallerService;
 
-  public AgregadorService(@Value("${servicio.agregador.api.base-url}") String agregadorBaseUrl) {
+  public AgregadorService(@Value("${servicio.agregador.api.base-url}") String agregadorUrl, WebApiCallerService webApiCallerService) {
+    agregadorBaseUrl = agregadorUrl;
     agregadorWebClient = WebClient.builder().baseUrl(agregadorBaseUrl).build();
+    this.webApiCallerService = webApiCallerService;
   }
 
   public List<HechoDTO> buscarHechos() {
@@ -50,7 +56,13 @@ public class AgregadorService implements IAgregadorService {
             .retrieve()
             .bodyToMono(HechoDTO.class)
             .block();
+   }
 
+   public void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud) {
+      webApiCallerService.post(
+              agregadorBaseUrl + "/api/solicitudes",
+                solicitud,
+                String.class);
    }
 
 }

@@ -45,14 +45,13 @@ public class RootController {
   @PostMapping("/login")
   public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, RedirectAttributes redirectAttributes) {
     log.info("Login recibido: {}", datosLogin);
-
-    //try {
+    try {
       rootService.login(datosLogin.getUsername(), datosLogin.getPassword());
       return "redirect:/main";
-    //} catch (Exception ex) {
-     // redirectAttributes.addFlashAttribute("error", "Correo electrónico y/o contraseña incorrecta");
-     // return "redirect:/login";
-    //}
+    } catch (Exception ex) {
+      redirectAttributes.addFlashAttribute("error", "Correo electrónico y/o contraseña incorrecta");
+      return "redirect:/login";
+    }
   }
 
   @GetMapping("/register")

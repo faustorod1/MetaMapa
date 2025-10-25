@@ -15,7 +15,7 @@
             height: 90vh;
             margin:0;
             font-family: Arial, sans-serif;
-            background-image:url('../static/fondoLevementeCargado.png');
+            background-image:url('/fondoLevementeCargado.png');
             background-size: cover;                 /* Que cubra toda la pantalla */
             background-repeat: no-repeat;           /* Que no se repita */
             background-attachment: fixed;           /* Fijo */
@@ -32,10 +32,10 @@
         .contenedor {
             background: var(--color-main);
             width:70vw;
-
+            margin-top:2rem;
             margin-bottom:0;
             padding: 0.5rem;
-            height: 65vh;
+            height: 80vh;
             border-radius: 0.5rem;
         }
 
@@ -141,23 +141,33 @@
 
 </head>
     <body>
-    <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+    <a th:href="@{/main}"  id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
 
     <div class="contenedor">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"
+             style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+        </div>
+
+        <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
+             style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
+        </div>
+
         <h1 id="h1-main">Solicitud de eliminación</h1>
         <div class="contenedor-header">
-            <h1>Título Hecho</h1>
-            <h2>Descripcion Del Hecho</h2>
+            <h1 th:text="${hecho.titulo}">Título Hecho</h1>
+            <h2 th:text="${hecho.descripcion}">Descripcion Del Hecho</h2>
         </div>
+        <form th:action="@{/api/solicitudes/solicitarEliminacion}" method="post" th:object="${solicitud}">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion"></textarea>
+        <textarea id="descripcion" th:field="*{descripcion}" required></textarea>
         <div class="acciones">
             <button class="descartar">Descartar</button>
             <span class="min-char" id="contador">min 500c.</span>
-            <button class="enviar">Enviar</button>
+            <button type="submit" class="enviar">Enviar</button>
         </div>
+        </form>
 </div>
 
 <script>
