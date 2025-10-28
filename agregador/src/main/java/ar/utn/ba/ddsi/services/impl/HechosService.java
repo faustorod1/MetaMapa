@@ -42,8 +42,8 @@ public class HechosService implements IHechosService {
     private IHechosRepository hechosRepository;
 
     private final Map<TipoDeFuente, WebClient> webClients = new HashMap<TipoDeFuente, WebClient>();
+    private final Map<TipoDeFuente, LocalDateTime> fechaUltimaActualizacionFuentes = new HashMap<>();
     private final WebClient webClientGeoref;
-    private LocalDateTime fechaUltimaActualizacion = LocalDate.parse("01/01/1999", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
 
     private static final Logger logger = LoggerFactory.getLogger(HechosService.class);
 
@@ -66,6 +66,9 @@ public class HechosService implements IHechosService {
         this.webClientGeoref = WebClient.builder().baseUrl(georefApiBaseUrl).build();
         this.applicationEventPublisher = applicationEventPublisher;
         this.webApiCallerService = webApiCallerService;
+        this.fechaUltimaActualizacionFuentes.put(TipoDeFuente.ESTATICA, LocalDate.parse("01/01/1999", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay());
+        this.fechaUltimaActualizacionFuentes.put(TipoDeFuente.DINAMICA, LocalDate.parse("01/01/1999", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay());
+        this.fechaUltimaActualizacionFuentes.put(TipoDeFuente.PROXY, LocalDate.parse("01/01/1999", DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay());
     }
 
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
@@ -100,13 +103,15 @@ public class HechosService implements IHechosService {
         List<HechoFuenteDTO> hechosFuente = new ArrayList<>();
         webClients.forEach((key, value) -> {
             try {
-                List<HechoFuenteDTO> hechosFuenteDTO = getFromFuente(value);
+                LocalDateTime desde = fechaUltimaActualizacionFuentes.get(key);
+                List<HechoFuenteDTO> hechosFuenteDTO = getFromFuente(value, desde);
                 if (hechosFuenteDTO != null && !hechosFuenteDTO.isEmpty()) {
                     logger.info("Se encontraron {} hechos de la fuente: {}", hechosFuenteDTO.size(), key);
                     hechosFuente.addAll(hechosFuenteDTO);
                 } else {
                     logger.warn("No se recibieron hechos de la fuente: {}", key);
                 }
+                fechaUltimaActualizacionFuentes.put(key, LocalDateTime.now());
             } catch (Exception e) {
                 logger.error("Error al obtener hechos de la fuente {}: {}", key, e.getMessage());
                 e.printStackTrace();
@@ -160,7 +165,6 @@ public class HechosService implements IHechosService {
         }
 
         hechosRepository.saveAll(hechos);
-        fechaUltimaActualizacion = LocalDateTime.now();
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(hechos));
     }
 
@@ -291,8 +295,8 @@ public class HechosService implements IHechosService {
                 .toList();
     }
 
-    private List<HechoFuenteDTO> getFromFuente(WebClient webClient) {
-        String fechaUltimaActualizacionStr = fechaUltimaActualizacion.format(DateTimeFormatter.ISO_DATE_TIME);
+    private List<HechoFuenteDTO> getFromFuente(WebClient webClient, LocalDateTime desde) {
+        String fechaUltimaActualizacionStr = desde.format(DateTimeFormatter.ISO_DATE_TIME);
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("desde", fechaUltimaActualizacionStr);
         List<HechoFuenteDTO> hechos = webApiCallerService.getListWithAuth(webClient, "/api/hechos", queryParams, HechoFuenteDTO.class);
