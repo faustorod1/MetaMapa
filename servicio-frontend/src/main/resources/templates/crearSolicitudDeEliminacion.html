@@ -159,6 +159,7 @@
             <h1 th:text="${hecho.titulo}">Título Hecho</h1>
             <h2 th:text="${hecho.descripcion}">Descripcion Del Hecho</h2>
         </div>
+
         <form th:action="@{/api/solicitudes/solicitarEliminacion}" method="post" th:object="${solicitud}">
         <label for="descripcion">Descripción</label>
         <textarea id="descripcion" th:field="*{descripcion}" required></textarea>
@@ -181,6 +182,16 @@
             contador.textContent = `min ${restante}c.`;
         } else {
             contador.textContent = "Listo ✅";
+        }
+    });
+
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", (e) => {            // Esto prohibe que se mande la sol. si no llega a 500cc
+        const texto = textarea.value.trim();
+        if (texto.length < minChar) {
+            e.preventDefault();
+            alert(`La descripción debe tener al menos ${minChar} caracteres.`);
         }
     });
     </script>

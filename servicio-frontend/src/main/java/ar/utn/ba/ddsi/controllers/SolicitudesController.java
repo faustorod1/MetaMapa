@@ -18,6 +18,7 @@ public class SolicitudesController {
     @Autowired
     private IAgregadorService agregadorService;
 
+    // ENDPOINTS: Contribuyente
     @GetMapping("/eliminacion/{id}")
     public String formularioSolicitudEliminacion(@PathVariable("id") Long id, Model model) {
         SolicitudDeEliminacionOutputDTO solicitud = new SolicitudDeEliminacionOutputDTO();
@@ -28,11 +29,9 @@ public class SolicitudesController {
         return "crearSolicitudDeEliminacion";
     }
 
-    // TODO: agregarle a crearSolicitudDeEliminacion.html una verificacion con JS para que, si no se llega a 500cc, no se pueda mandar nada
-
-
     @PostMapping("/solicitarEliminacion")
     public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeEliminacionOutputDTO solicitud, RedirectAttributes redirectAttributes) {
+       log.info("Solicitud recibida: " + solicitud);
        Long id = solicitud.getHechoId();
         try {
           agregadorService.solicitarEliminacion(solicitud);
@@ -42,8 +41,29 @@ public class SolicitudesController {
           redirectAttributes.addFlashAttribute("error", "Error en la solicitud");
           return "redirect:/solicitudes/eliminacion/" + id;
           }
+
     }
 
+    @GetMapping("/modificacion/{id_hecho}")
+    public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
+        HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+        //if(hecho.getContribuyente() = jwt.getIdContribuyente()) TODO: agregar validación
+        model.addAttribute("hecho", hecho);
+        return "main-page/crearSolicitudDeModificacion";
+    }
+
+    /*
+    @PutMapping("/solicitarModificacion")
+    public String solicitarModificacion(@ModelAttribute("hecho") )
+
+
+    // ENDPOINTS: administrador
+    /*
+    @GetMapping("/eliminacionPendiente/{id}")
+    public String formularioTratarSolicitudDeEliminacion(@PathVariable("id") Long id, Model model) {
+
+    }
+    */
 
 
 }

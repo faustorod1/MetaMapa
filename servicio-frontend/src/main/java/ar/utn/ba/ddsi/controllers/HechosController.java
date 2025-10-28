@@ -28,7 +28,7 @@ public class HechosController {
     @Autowired
     private IAgregadorService agregadorService;
 
-    // TODO: falta diseñar los banners ante un error o redirección
+    // ENDPOINTS: contribuyentes
 
     @GetMapping("/formulario-de-carga")
     public String formularioCargarHecho(Model model) {
@@ -50,7 +50,17 @@ public class HechosController {
 
     }
 
+    @GetMapping("detalle-hecho/{id_hecho}")
+    public String detalleHecho(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
+        HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+        model.addAttribute("hechoDTO", hecho);
+        return "detalle-hecho";
 
+    }
+
+
+
+    // ENDPOINTS: administradores
     @GetMapping("importarCSV")
     public String formularioImportarCSV() {
         return "main-page/importarCSV";
@@ -69,14 +79,6 @@ public class HechosController {
       }
     }
 
-    @GetMapping("detalle-hecho/{id_hecho}")
-    public String detalleHecho(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
-            HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
-            System.out.println("hecho pedido");
-            model.addAttribute("hechoDTO", hecho);
-            return "detalle-hecho";
-
-        }
     }
 
 

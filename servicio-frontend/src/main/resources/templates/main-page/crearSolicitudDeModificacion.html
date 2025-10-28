@@ -1,191 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title> Crear solicitud de modificación | METAmapa</title>
-    <meta charset="utf-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Modificar hecho | METAmapa</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/cargarHecho.css}" />
-    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>   <!--Para la flechita-->
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet"> <!--Para el logo-->
 
-    <style>
-        body{
-            background-image: url('../../static/fondoLevementeCargado.png');
-            background-size: cover;                 /* Que cubra toda la pantalla */
-            background-repeat: no-repeat;           /* Que no se repita */
-            background-attachment: fixed;           /* Fijo */
-            background-position: center center;     /* Que esté centrada */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-        .container{
-            background-color: var(--color-main);
-            border-radius: 1rem;
-            padding: 0.8rem;
-            padding-bottom: 0;
-        }
-
-        .input-primerFila{
-            padding:0;
-        }
-
-        .input-cargarHecho{
-            margin:0;
-        }
-
-        #titulo-cargarHecho{
-            text-align: center;
-            padding-bottom: 0.5rem;
-            border-bottom: 0.1rem solid black;
-        }
-
-        #tituloHecho{
-            max-height: 4.5em;
-            overflow: auto;
-            text-align: right;
-            direction: rtl;
-        }
-
-        #categoria{
-            max-height: 4.5em;
-            overflow: auto;
-            text-align: right;
-            direction: rtl;
-        }
-
-        .input-primerFila{
-            display: flex;
-            gap: 0.5rem;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.5rem;
-        }
-
-        label {
-            max-height: 4.5em; /* por ejemplo 3 líneas */
-            overflow: auto;    /* agrega scroll si es necesario */
-        }
-
-        .buttons-footer{
-            display: flex;
-            align-items: flex-end;
-            justify-content:flex-end;
-            gap: 0.1rem;
-        }
-
-        .btn-submit{
-            margin:0.3rem;
-        }
-
-        .add-btn {
-            padding: 6px 12px;
-            margin-left: 5px;
-            background: var(--color-main-2);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .custom-file {
-            display: inline-block;
-            padding: 0.5rem;
-            background: #8f8e8e;
-            color: white;
-            border-radius: 0.3rem;
-            cursor: pointer;
-        }
-
-        .custom-file{
-            background: var(--color-main-2);
-        }
-        .custom-file:hover {
-            background: var(--color-main-2-hover);
-        }
-
-    </style>
-
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 </head>
+
 <body>
 <main>
+    <a th:href="@{/main}" id="btn-back-page"> <i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
-    <div class="container">
-        <h2 id="titulo-cargarHecho"> Modificar</h2>
+    <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
+    <form class="solicitar-modificacion-form" method="post" th:action="@{api/solicitudes/solicitarModificacion}" th:object="${hecho}" enctype="multipart/form-data"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
+        <div class = "container">
 
-
-        <div class ="input-primerFila">
-            <div class="input-cargarHecho">
-                <h4>Título</h4>
-                <label for ="tituloHecho"></label>
-                <input type="text" id="tituloHecho" name="tituloHecho">
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"
+                 style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
             </div>
 
-            <div class="input-cargarHecho">
-                <h4>Categoria</h4>
-                <label for ="categoria"></label>
-                <input type="text" id="categoria" >
+            <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"
+                 style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
             </div>
 
-            <div class="input-cargarHecho">
-                <h4>Lugar</h4>
-                <div class="input-with-icon">
-                    <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
-                    <input type="text" id="lugar" name="lugar">
+            <h2 id="titulo-cargarHecho">Modificar hecho </h2>
+            <div class ="input-primerFila">
+                <div class="input-cargarHecho">
+                    <h4>Título</h4>
+                    <label for ="titulo"></label>
+                    <input type="text" id="titulo" th:field="*{titulo}" required>
+                    <div th:if="${#fields.hasErrors('titulo')}" class="text-danger">
+                        <small th:errors="*{titulo}">Error en titulo</small>
+                    </div>
+                </div>
+
+                <div class="input-cargarHecho">
+                    <h4>Categoria</h4>
+                    <label for ="categoria"></label>
+                    <!--/*@thymesVar id="categoria" type="ar.utn.ba.ddsi.models.dto.input.CategoriaDTO"*/-->
+                    <input type="text" id="categoria" th:field="*{categoria.nombre}" required>
+                    <div th:if="${#fields.hasErrors('categoria')}" class="text-danger">
+                        <small th:errors="*{categoria}">Error en la categoría</small>
+                    </div>
+                </div>
+
+                <div class="input-cargarHecho">
+                    <h4>Lugar</h4>
+                    <div id="input-ubicacion-container">
+
+                        <!-- Campo visible para mostrar ambas coordenadas -->
+                        <input type="text" id="ubicacion" placeholder="Ubicación" disabled required>
+
+                        <!-- Campos ocultos mapeados al objeto hecho -->
+                        <input type="hidden" th:field="*{lugarAcontecimiento.latitud}" id="latitud" required>
+                        <input type="hidden" th:field="*{lugarAcontecimiento.longitud}" id="longitud" required>
+
+                        <!-- Botón para seleccionar en el mapa -->
+                        <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
+                            Seleccionar en el mapa
+                            <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="input-cargarHecho">
-            <h4>Descripción</h4>
-            <label for ="descripcion"></label>
-            <textarea id="descripcion" ></textarea><!--Descripcio-->
-        </div>
-
-        <div class="input-tercerFila">
             <div class="input-cargarHecho">
-                <h4>Fecha</h4>
-                <input type="text" id="fecha" name="fecha" style="text-align: center">
+                <h4>Descripción</h4>
+                <label for ="descripcion"></label>
+                <textarea id="descripcion" th:field="*{descripcion}"></textarea><!--Descripcio-->
             </div>
 
-            <div class="input-cargarHecho">
-                <h4>Etiquetas</h4>
-                <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
-                <button type="button" id="addTag" class="add-btn">➕</button>
-                <!-- contenedor visual -->
-                <div id="tagContainer" class="tag-container">
+            <div class="input-tercerFila">
+                <div class="input-cargarHecho">
+                    <h4>Fecha</h4>
+                    <input type="date" id="fecha" name="fecha" th:field="*{fechaHecho}" disabled>
                 </div>
-                <!-- input oculto con las etiquetas -->
-                <input type="hidden" name="tags" id="hiddenTags">
+
+                <div class="input-cargarHecho">
+                    <h4>Etiquetas</h4>
+                    <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
+                    <button type="button" id="addTag" class="add-btn">➕</button>
+
+                    <div id="hiddenTagsContainer"></div>
+
+                    <div id="tagContainer" class="tag-container"></div>
+                </div>
+            </div>
+
+            <div class="input-imagenes">
+                <div class="input-cargarHecho">
+                    <label for="fotos" class="custom-file">Sube imágenes📷 </label>
+                    <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
+
+                    <div id="preview"></div>
+                </div>
+            </div>
+
+            <div class="button-footer">
+                <button class="btn-submit" type="submit">Solicitar modificación</button>
             </div>
         </div>
-
-        <div class="input-imagenes">
-            <div class="input-cargarHecho">
-                <label for="fotos" class="custom-file">Sube imágenes📷 </label>
-                <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
-                <div id="preview"></div>
-            </div>
-        </div>
-
-        <div class="buttons-footer">
-            <button class="btn-submit" type="submit">Solicitar modificación</button>
-        </div>
-    </div>
-
-    </div>
-
+    </form>
 </main>
 
+<div id="mapa-input-ubicacion-container">
+    <div id="mapa-input-ubicacion"></div>
+    <div class="btn-container">
+        <button type="button" class="btn-ubicacion" id="btn-cancel-ubicacion" onclick="toggleInputUbicacion(false)">Cancelar</button>
+        <button type="button" class="btn-ubicacion hidden" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
+    </div>
+</div>
 
+
+
+
+
+<script>
+    (() => {
+        /*** CARGA DE FOTOS ***/
+        const inputFotos = document.getElementById("fotos");
+        const preview = document.getElementById("preview");
+        let filesArray = [];
+        /*
+                    function agregarPathImagen(path) {
+                        const index = document.querySelectorAll(".hidden-path").length;
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = `contenidosMultimedia[${index}]`;
+                        input.value = path; // por ejemplo: "uploads/foto1.png"
+                        input.classList.add("hidden-path");
+                        document.getElementById("preview").appendChild(input);
+                    }
+        */
+        function mostrarPreviews() {
+            preview.innerHTML = "";
+            filesArray.forEach((file, index) => {
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const container = document.createElement("div");
+                        container.classList.add("preview-item");
+
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+
+                        const btn = document.createElement("button");
+                        btn.textContent = "×";
+                        btn.classList.add("remove-btn");
+                        btn.onclick = (ev) => {
+                            ev.preventDefault();
+                            eliminarArchivo(index);
+                        };
+
+                        container.appendChild(img);
+                        container.appendChild(btn);
+                        preview.appendChild(container);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            const dataTransfer = new DataTransfer();
+            filesArray.forEach(file => dataTransfer.items.add(file));
+            inputFotos.files = dataTransfer.files;
+        }
+
+        function eliminarArchivo(index) {
+            filesArray.splice(index, 1);
+            mostrarPreviews();
+        }
+
+        inputFotos.addEventListener("change", () => {
+            const nuevosArchivos = Array.from(inputFotos.files);
+            filesArray = filesArray.concat(nuevosArchivos);
+            mostrarPreviews();
+        });
+
+        const inputTags = document.getElementById("tagInput");
+        const addBtn = document.getElementById("addTag");
+        const tagContainer = document.getElementById("tagContainer");
+        let etiquetas = [];
+
+        function actualizarHidden() {
+            const hiddenContainer = document.getElementById("hiddenTagsContainer");
+
+            // Limpia los inputs previos
+            hiddenContainer.innerHTML = "";
+
+            // Crea los inputs como espera Spring
+            etiquetas.forEach((et, index) => {
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = `etiquetas[${index}].nombre`;
+                hidden.value = et;
+                hidden.classList.add("hidden-tag");
+                hiddenContainer.appendChild(hidden);
+            });
+        }
+
+        function crearEtiqueta(texto) {
+            const tagText = texto.trim();
+            if (!tagText || etiquetas.includes(tagText)) return;
+
+            etiquetas.push(tagText);
+            actualizarHidden();
+
+            const tag = document.createElement("div");
+            tag.classList.add("tag");
+            tag.textContent = tagText;
+
+            const btn = document.createElement("button");
+            btn.textContent = "×";
+            btn.onclick = (e) => {
+                e.preventDefault();
+                etiquetas = etiquetas.filter(et => et !== tagText);
+                actualizarHidden();
+                tag.remove();
+            };
+
+            tag.appendChild(btn);
+            tagContainer.appendChild(tag);
+            inputTags.value = "";
+        }
+
+        addBtn.addEventListener("click", () => crearEtiqueta(inputTags.value));
+        inputTags.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                crearEtiqueta(inputTags.value);
+            }
+        });
+
+    })();
+
+    const map = L.map('mapa-input-ubicacion', {
+        center: [-34.5986333, -58.4199428],
+        zoom: 13
+    });
+
+    let ubicacionSeleccionada;
+    let markerUbicacionSeleccionada;
+    const inputUbicacionContainer = document.getElementById('mapa-input-ubicacion-container');
+    const inputUbicacion = document.getElementById('ubicacion');
+
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {
+            foo: 'bar',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }
+    ).addTo(map);
+
+    const geocoder = new L.Control.Geocoder({
+        defaultMarkGeocode: false
+    })
+        .on('markgeocode', (e) => {
+            const coords = e.geocode.center;
+            if (coords !== null) {
+                console.log(coords);
+                const ubicacion = latlngToCoords(coords);
+                marcarUbicacionActual(ubicacion);
+            }
+        })
+        .addTo(map);
+
+    map.on('contextmenu', (e) => {
+        marcarUbicacionActual(latlngToCoords(e.latlng));
+    });
+
+    function marcarUbicacionActual(newUbicacion) {
+        if (markerUbicacionSeleccionada) {
+            markerUbicacionSeleccionada.remove();
+        }
+
+        const marker = L.marker(newUbicacion, {
+            riseOnHover: true,
+            draggable: true
+        }).addTo(map);
+
+        markerUbicacionSeleccionada = marker;
+        // Muestra el botón de aceptar
+        document.getElementById('btn-accept-ubicacion').classList.remove('hidden');
+    }
+
+    function toggleInputUbicacion(active) {
+        inputUbicacionContainer.classList.toggle('active', active);
+        if (active) {
+            if (ubicacionSeleccionada) {
+                marcarUbicacionActual(ubicacionSeleccionada);
+            }
+        } else {
+            if (markerUbicacionSeleccionada) {
+                markerUbicacionSeleccionada.remove();
+            }
+        }
+    }
+
+    // MODIFICADO - Versión anterior en GIT 6/10
+    function seleccionarUbicacionActual() {
+        if (markerUbicacionSeleccionada) {
+            const lat = markerUbicacionSeleccionada._latlng.lat;
+            const lng = markerUbicacionSeleccionada._latlng.lng;
+
+            // Guarda en la variable global
+            ubicacionSeleccionada = [lat, lng];
+
+            // Muestra en el input visible
+            inputUbicacion.value = `${lat};${lng}`;
+
+            // ✅ Asigna también a los campos ocultos del DTO
+            document.getElementById("latitud").value = lat;
+            document.getElementById("longitud").value = lng;
+        }
+
+        toggleInputUbicacion(false);
+    }
+
+    function latlngToCoords(latlng) {
+        return [latlng.lat, latlng.lng];
+    }
+</script>
 </body>
-
 </html>
