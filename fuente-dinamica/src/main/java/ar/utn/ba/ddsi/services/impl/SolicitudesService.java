@@ -2,20 +2,20 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
-import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
-import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
+import ar.utn.ba.ddsi.models.dto.output.SolicitudCreadaDTO;
+import ar.utn.ba.ddsi.models.dto.output.SolicitudResueltaDTO;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.HechoSnapshot;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeModificacion;
+import ar.utn.ba.ddsi.models.exceptions.NoHaySolicitudPendienteException;
+import ar.utn.ba.ddsi.models.exceptions.SolicitudFueraDePlazoException;
+import ar.utn.ba.ddsi.models.exceptions.UnauthorizedException;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
-import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADA;
-import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.ACEPTADACONSUGERENCIA;
 
 @Service
 public class SolicitudesService implements ISolicitudesService {
@@ -30,34 +30,42 @@ public class SolicitudesService implements ISolicitudesService {
 
 
   @Override
-  public HechoOutputDTO procesarSoliPendiente(Long id, ResolucionDTO resolucion){
-    Hecho h = hechosService.getById(id);
-    h.getSolicitudDeModificacion().resolver(resolucion);
-    EstadoSolicitud estadoNuevo = resolucion.getEstadoNuevo();
-    if (estadoNuevo == ACEPTADA || estadoNuevo == ACEPTADACONSUGERENCIA){
-      Hecho hechoNuevo = h.getSolicitudDeModificacion().getHechoNuevo();
+  public SolicitudResueltaDTO procesarSoliPendiente(Long id, ResolucionDTO resolucion, Long adminId) {
 
-      HechoSnapshot snapshot = new HechoSnapshot(h);
-      h.agregarSnapshot(snapshot);
-
-      hechoNuevo.setFechaUltimaActualizacion(LocalDateTime.now());
-      hechosService.update(hechoNuevo,h);
-      return hechosService.hechoToDTO(hechoNuevo);
+    Hecho hechoViejo = hechosService.getById(id);
+    if (hechoViejo == null) {
+      throw new EntityNotFoundException("Hecho no encontrado");
     }
-    return hechosService.hechoToDTO(h);
+
+    if (hechoViejo.getSolicitudDeModificacion() == null) {
+      throw new NoHaySolicitudPendienteException(id);
+    }
+
+    SolicitudDeModificacion solicitud = hechoViejo.getSolicitudDeModificacion();
+    solicitud.resolver(resolucion, adminId);
+
+    hechosService.guardarCambios(hechoViejo);
+
+    return new SolicitudResueltaDTO(solicitud.getId(), solicitud.getEstado(), hechosService.hechoToDTO(hechoViejo));
   }
 
   @Override
-  public HechoOutputDTO crearSolModificacion(Long id, HechoInputDTO hecho){
+  public SolicitudCreadaDTO crearSolModificacion(Long id, HechoInputDTO hecho, Long contribuyenteId){
     Hecho h = hechosService.DTOToHecho(hecho);
     Hecho hViejo = this.hechosService.getById(id);
-    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) <= 7) { // Pasaron menos de 7 días
-      if (hViejo.getContribuyenteId().equals(h.getContribuyenteId())) { // El que intenta modificar el hecho es quien lo subió
-        SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hViejo,h);
-        hViejo.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
-        return hechosService.hechoToDTO(h);
-      }
+
+    if (!hViejo.getContribuyenteId().equals(contribuyenteId)) {
+        throw new UnauthorizedException(contribuyenteId);
     }
-    return null;
+    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) > 7) {
+        throw new SolicitudFueraDePlazoException(id);
+    }
+
+    SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hViejo,h);
+    hViejo.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
+
+    hechosService.guardarCambios(hViejo);
+
+    return new SolicitudCreadaDTO(hViejo.getSolicitudDeModificacion().getId(), hViejo.getId());
   }
 }

@@ -2,9 +2,12 @@ package ar.utn.ba.ddsi.models.entities;
 
 
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
+import ar.utn.ba.ddsi.models.exceptions.SolicitudYaProcesadaException;
 import jakarta.persistence.*;
 import lombok.Data;
 
+
+import java.time.LocalDateTime;
 
 import static ar.utn.ba.ddsi.models.entities.EstadoSolicitud.*;
 
@@ -42,11 +45,27 @@ public class SolicitudDeModificacion {
     this.estado = PENDIENTE;
   }
 
-  public void resolver(ResolucionDTO resolucion) {
-    if(estado == PENDIENTE){
-      this.administradorId = resolucion.getAdministradorId();
-      this.motivoDeEstado = resolucion.getMotivoDeEstado();
-      this.estado = resolucion.getEstadoNuevo();
+  public void resolver(ResolucionDTO resolucion, Long adminId) {
+    if (estado != PENDIENTE) {
+      throw new SolicitudYaProcesadaException(this.id);
+    }
+    
+    this.administradorId = adminId;
+    this.motivoDeEstado = resolucion.getMotivoDeEstado();
+    this.estado = resolucion.getEstadoNuevo();
+    
+    if (estado == ACEPTADA || estado == ACEPTADACONSUGERENCIA) {
+      HechoSnapshot snapshot = new HechoSnapshot(hechoViejo);
+      hechoViejo.agregarSnapshot(snapshot);
+      hechoNuevo.setFechaUltimaActualizacion(LocalDateTime.now());
+
+      hechoViejo.setFechaHecho(hechoNuevo.getFechaHecho());
+      hechoViejo.setLugarAcontecimiento(hechoNuevo.getLugarAcontecimiento());
+      hechoViejo.setDescripcion(hechoNuevo.getDescripcion());
+      hechoViejo.setCategoria(hechoNuevo.getCategoria());
+      hechoViejo.setEtiquetas(hechoNuevo.getEtiquetas());
+      hechoViejo.setTitulo(hechoNuevo.getTitulo());
+      hechoViejo.setContenidosMultimedia(hechoNuevo.getContenidosMultimedia());
     }
   }
 

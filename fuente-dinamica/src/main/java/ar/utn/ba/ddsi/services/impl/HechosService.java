@@ -97,18 +97,10 @@ public void marcarComoELiminado(Long id) {
 @Override
 public Hecho getById(Long id){return hechosRepository.findById(id).orElse(null);}
 
+
 @Override
-public void update(Hecho h, Hecho hViejo){
-    hViejo.setFechaUltimaActualizacion(h.getFechaUltimaActualizacion());
-    hViejo.setFechaDeCarga(h.getFechaDeCarga());
-    hViejo.setFechaHecho(h.getFechaHecho());
-    hViejo.setLugarAcontecimiento(h.getLugarAcontecimiento());
-    hViejo.setDescripcion(h.getDescripcion());
-    hViejo.setCategoria(h.getCategoria());
-    hViejo.setEtiquetas(h.getEtiquetas());
-    hViejo.setTitulo(h.getTitulo());
-    hViejo.setContenidosMultimedia(h.getContenidosMultimedia());
-    hechosRepository.save(hViejo);
+public void guardarCambios(Hecho h){
+    hechosRepository.save(h);
 }
 
 

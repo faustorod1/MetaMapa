@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class ResolucionDTO {
-  private Long administradorId;
   private String motivoDeEstado;
   private EstadoSolicitud estadoNuevo;
 }

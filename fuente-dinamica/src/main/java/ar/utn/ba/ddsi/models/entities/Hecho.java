@@ -52,8 +52,7 @@ public class Hecho {
     @Column(name = "fecha_de_ultima_actualizacion", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime fechaUltimaActualizacion;
 
-    @ManyToOne
-    @JoinColumn(name = "solicitud_de_modificacion_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private SolicitudDeModificacion solicitudDeModificacion = null;
 
