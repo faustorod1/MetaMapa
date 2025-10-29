@@ -224,7 +224,7 @@ public class WebApiCallerService {
     /**
      * Actualiza los tokens en la sesión
      */
-    private void updateTokensInSession(String accessToken, String refreshToken) {
+    public void updateTokensInSession(String accessToken, String refreshToken) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 

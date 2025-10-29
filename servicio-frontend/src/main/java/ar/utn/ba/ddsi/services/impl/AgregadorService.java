@@ -32,12 +32,7 @@ public class AgregadorService implements IAgregadorService {
   }
 
   public List<FuenteDTO> buscarFuentes(){
-    return agregadorWebClient.get()
-            .uri("/api/colecciones/fuentes")
-            .retrieve()
-            .bodyToFlux(FuenteDTO.class)
-            .collectList()
-            .block();
+    return webApiCallerService.getList("/api/colecciones/fuentes", FuenteDTO.class);
   }
 
   public HechoDTO pedirHecho(Long id) {

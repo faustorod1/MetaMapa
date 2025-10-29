@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
@@ -262,19 +263,23 @@ public class HechosService implements IHechosService {
 
     @Override
     public List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales) {
-        List<Hecho> hechosMetaMapa = this.getFromMetaMapa();
-
         Map<IdExterno, Hecho> hechosPorId = hechosLocales.stream()
                 .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
 
-        for (Hecho hechoMetamapa : hechosMetaMapa) {
-            if (hechosPorId.containsKey(hechoMetamapa.getIdExterno())) {
-                hechoMetamapa.setId(hechosPorId.get(hechoMetamapa.getIdExterno()).getId());
-                hechosPorId.put(hechoMetamapa.getIdExterno(), hechoMetamapa);
-            }
-        }
+        try {
+            List<Hecho> hechosMetaMapa = this.getFromMetaMapa();
 
-        return new ArrayList<>(hechosPorId.values());
+            for (Hecho hechoMetamapa : hechosMetaMapa) {
+                if (hechosPorId.containsKey(hechoMetamapa.getIdExterno())) {
+                    hechoMetamapa.setId(hechosPorId.get(hechoMetamapa.getIdExterno()).getId());
+                    hechosPorId.put(hechoMetamapa.getIdExterno(), hechoMetamapa);
+                }
+            }
+            return new ArrayList<>(hechosPorId.values());
+        } catch (WebClientException e) {
+            e.printStackTrace();
+        }
+        return hechosLocales;
     }
 
     @Override

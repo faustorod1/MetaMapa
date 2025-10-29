@@ -42,7 +42,7 @@ public class RootController {
     model.addAttribute("datosLogin", new DatosLogin());
     return "landing-page/login";
   }
-
+/*
   @PostMapping("/login")
   public String iniciarSesion(@ModelAttribute("datosLogin") DatosLogin datosLogin, RedirectAttributes redirectAttributes) {
     log.info("Login recibido: {}", datosLogin);
@@ -54,7 +54,7 @@ public class RootController {
       return "redirect:/login";
     }
   }
-
+*/
 
   @GetMapping("/register")
   public String register(Model model) {

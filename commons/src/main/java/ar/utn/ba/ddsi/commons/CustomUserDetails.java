@@ -11,6 +11,7 @@ public class CustomUserDetails implements UserDetails {
 
   @Getter
   private final Long id;
+  @Getter
   private final String email;
   private final String rol;
   private final List<GrantedAuthority> authorities;

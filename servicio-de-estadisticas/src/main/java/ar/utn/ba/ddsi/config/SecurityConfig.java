@@ -22,12 +22,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
 
-                        .anyRequest().hasRole("ADMIN")
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
+                // Regla explícita para asegurar todos los endpoints del controlador de estadísticas
+                // (incluyendo CSV y JSON) requieren el rol ADMIN.
+                .requestMatchers("/api/**").hasRole("ADMIN")
+
+                // Asegura que cualquier otra solicitud no mapeada también requiera ADMIN
+                .anyRequest().hasRole("ADMIN")
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -30,6 +30,7 @@ public class RootService implements IRootService {
 
     public AuthResponseDTO login(String email, String password) {
         try {
+
             AuthResponseDTO response = usuariosWebClient
                     .post()
                     .uri("/api/auth")
@@ -41,6 +42,10 @@ public class RootService implements IRootService {
                     .retrieve()
                     .bodyToMono(AuthResponseDTO.class)
                     .block();
+
+            if (response != null) {
+                webApiCallerService.updateTokensInSession(response.getAccessToken(), response.getRefreshToken());
+            }
 
             return response;
         } catch (WebClientResponseException e) {

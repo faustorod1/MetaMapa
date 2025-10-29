@@ -19,7 +19,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                       Authentication authentication) throws IOException, ServletException {
 
-    AuthResponseDTO authResponse = (AuthResponseDTO) authentication.getCredentials();
+    Object details = authentication.getDetails();
+    AuthResponseDTO authResponse = null;
+
+    if (details instanceof AuthResponseDTO) {
+      authResponse = (AuthResponseDTO) details;
+    }
+    if (authResponse == null) {
+      response.sendRedirect("/login?error=true&message=auth_failed");
+      return;
+    }
 
     HttpSession session = request.getSession();
 

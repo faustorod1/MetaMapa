@@ -55,7 +55,15 @@ public class CustomAuthProvider implements AuthenticationProvider {
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
 
-            return new UsernamePasswordAuthenticationToken(email, authResponse, authorities);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                email,        // Principal
+                null,         // Credenciales (se borran por seguridad)
+                authorities   // Roles
+            );
+            authToken.setDetails(authResponse);
+
+            return authToken;
+
         } catch (RuntimeException e) {
             throw new BadCredentialsException("Error en el sistema de autenticación: " + e.getMessage());
         }
