@@ -6,9 +6,11 @@ import ar.utn.ba.ddsi.services.IRootService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 
 import java.util.Map;
 
@@ -31,6 +33,7 @@ public class RootService implements IRootService {
             AuthResponseDTO response = usuariosWebClient
                     .post()
                     .uri("/api/auth")
+                    .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(Map.of(
                             "email", email,
                             "password", password
@@ -38,6 +41,7 @@ public class RootService implements IRootService {
                     .retrieve()
                     .bodyToMono(AuthResponseDTO.class)
                     .block();
+
             return response;
         } catch (WebClientResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -67,6 +71,7 @@ public class RootService implements IRootService {
         try {
             return usuariosWebClient.post()
                     .uri("/api/auth/register")
+                    .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(Map.of("nombre", nombre,
                             "apellido", apellido,
                             "email", email,

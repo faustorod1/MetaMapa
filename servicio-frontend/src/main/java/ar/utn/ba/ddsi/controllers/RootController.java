@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.models.entities.DatosRegister;
 import ar.utn.ba.ddsi.services.IRootService;
@@ -53,6 +54,7 @@ public class RootController {
       return "redirect:/login";
     }
   }
+
 
   @GetMapping("/register")
   public String register(Model model) {

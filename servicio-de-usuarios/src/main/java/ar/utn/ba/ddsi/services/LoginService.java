@@ -13,11 +13,13 @@ import ar.utn.ba.ddsi.models.repositories.UsuariosRepository;
 import ar.utn.ba.ddsi.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
 @Service
+@Transactional
 public class LoginService {
 
     private final UsuariosRepository usuariosRepository;
@@ -35,6 +37,7 @@ public class LoginService {
         this.jwtUtil = jwtUtil;
     }
 
+    @Transactional(readOnly = true)
     public Usuario autenticarUsuario(String email, String password) {
         Optional<Usuario> usuarioOpt = usuariosRepository.findByEmail(email);
 
@@ -60,6 +63,7 @@ public class LoginService {
         return jwtUtil.generarRefreshToken(usuario);
     }
 
+    @Transactional(readOnly = true)
     public Usuario getUsuario(String email){
         Optional<Usuario> usuarioOpt = usuariosRepository.findByEmail(email);
 
@@ -87,26 +91,26 @@ public class LoginService {
             .apellido(apellido)
             .build();
 
-        switch (rol) {
-            case "ADMINISTRADOR":
-                usuario.setRol(Rol.ADMIN);
-                usuariosRepository.save(usuario);
+      if (rol.equals("ADMINISTRADOR")) {
+        usuario.setRol(Rol.ADMIN);
+        usuariosRepository.save(usuario);
 
-                Administrador administrador = new Administrador();
-                administrador.setUsuario(usuario);
-                administradorRepository.save(administrador);
-            default:
-                usuario.setRol(Rol.CONTRIBUYENTE);
-                usuariosRepository.save(usuario);
-                System.out.println("LLEGUE");
-                Contribuyente contribuyente = new Contribuyente();
-                contribuyente.setUsuario(usuario);
-                contribuyenteRepository.save(contribuyente);
-        }
+        Administrador administrador = new Administrador();
+        administrador.setUsuario(usuario);
+        administradorRepository.save(administrador);
+      } else {
+        usuario.setRol(Rol.CONTRIBUYENTE);
+        usuariosRepository.save(usuario);
+        System.out.println("LLEGUE");
+        Contribuyente contribuyente = new Contribuyente();
+        contribuyente.setUsuario(usuario);
+        contribuyenteRepository.save(contribuyente);
+      }
 
         return usuario;
     }
 
+    @Transactional(readOnly = true)
     public UserRolesDTO obtenerRolUsuario(String email){
         Optional<Usuario> usuarioOpt = usuariosRepository.findByEmail(email);
 
