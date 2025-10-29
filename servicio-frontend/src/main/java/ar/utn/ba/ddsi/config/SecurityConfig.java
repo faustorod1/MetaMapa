@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.config;
 
 import ar.utn.ba.ddsi.providers.CustomAuthProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,10 +14,19 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig {
+    private final CustomAuthenticationSuccessHandler successHandler;
+
+
+    @Autowired
+    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler) {
+      this.successHandler = successHandler;
+    }
+
     @Bean
     public AuthenticationManager authManager(HttpSecurity http, CustomAuthProvider provider) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(provider)
+                .eraseCredentials(false)
                 .build();
     }
 
@@ -25,14 +35,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/", "/login", "/register", "informacion-legal-y-privacidad").permitAll()
-                        //.requestMatchers("/alumnos/**").hasAnyRole("ADMIN", "DOCENTE")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/", "/login", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
+                                        "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}").permitAll()
+                        .requestMatchers("/colecciones/formulario-de-carga","/api/solicitudes/eliminacion/{id}","/api/solicitudes/solicitarEliminacion").hasRole("ADMIN")
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/main", true)
+                      .successHandler(successHandler)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -53,3 +63,5 @@ public class SecurityConfig {
     }
 
 }
+
+

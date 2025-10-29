@@ -15,8 +15,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 
 import java.util.ArrayList;
@@ -50,23 +48,22 @@ public class CustomAuthProvider implements AuthenticationProvider {
             }
 
             log.info("Buscando roles y permisos del usuario");
-            UserRolesDTO userRoles = externalAuthService.getRole(authResponse.getAccessToken());
 
+            UserRolesDTO userRoles = externalAuthService.getRole(authResponse.getAccessToken());
             Rol rol = userRoles.getRole();
 
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
 
-            log.info("Email logueado! Configurando sesión...");
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = attributes.getRequest();
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                email,        // Principal
+                null,         // Credenciales (se borran por seguridad)
+                authorities   // Roles
+            );
+            authToken.setDetails(authResponse);
 
-            request.getSession().setAttribute("accessToken", authResponse.getAccessToken());
-            request.getSession().setAttribute("refreshToken", authResponse.getRefreshToken());
-            request.getSession().setAttribute("email", email);
-            request.getSession().setAttribute("role", rol);
+            return authToken;
 
-            return new UsernamePasswordAuthenticationToken(email, password, authorities);
         } catch (RuntimeException e) {
             throw new BadCredentialsException("Error en el sistema de autenticación: " + e.getMessage());
         }

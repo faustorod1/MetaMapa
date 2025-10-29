@@ -3,7 +3,6 @@ package ar.utn.ba.ddsi.services;
 import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

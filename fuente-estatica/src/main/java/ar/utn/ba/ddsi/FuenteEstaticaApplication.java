@@ -9,7 +9,4 @@ public class FuenteEstaticaApplication {
     public static void main(String[] args) {
         SpringApplication.run(FuenteEstaticaApplication.class, args);
     }
-
-
-
 }

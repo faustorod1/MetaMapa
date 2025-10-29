@@ -23,7 +23,7 @@
         <p><b>Ubicación:</b> <span id="hecho-preview__ubicacion"></span></p>
         <p id="hecho-preview__descripcion"></p>
     </div>
-    <button id="hecho-preview__btn-sol-eliminacion" onclick="openCrearSolicitudEliminacion()">Solicitar Eliminación</button>
+    <button id="hecho-preview__btn-sol-eliminacion" onclick="openCrearSolicitudEliminacion()" th:if="${session.role == 'CONTRIBUYENTE'}">Solicitar Eliminación</button>
     <button id="hecho-preview__btn-open-details" onclick="openDetalleHecho()">Ver detalles</button>
 </aside>
 
@@ -34,8 +34,9 @@
         <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
     </div>
 
-    <button class="btn-add" id="btn-add"></button>
-    <i class="fa-solid fa-plus"></i>
+    <button class="btn-add" id="btn-add" onclick="onBtnAddClick(event)">
+        <i class="fa-solid fa-plus"></i>
+    </button>
 
     <div id="btn-add-list">
         <form th:action="@{/hechos/formulario-de-carga}" method="get" style="display:inline;">
@@ -45,13 +46,13 @@
         </form>
 
         <form th:action="@{/hechos/importarCSV}" method="get" style="display:inline;">
-            <button class="btn-add" id="btn-add-dataset" title="Importar DataSet">
+            <button class="btn-add" id="btn-add-dataset" title="Importar DataSet" th:if="${session.role == 'ADMIN'}">
                 <i class="fa-solid fa-file-import"></i>
             </button>
         </form>
 
         <form th:action="@{/colecciones/formulario-de-carga}" method="get" style="display:inline;">
-            <button class="btn-add" id="btn-add-coleccion" title="Crear colección">
+            <button class="btn-add" id="btn-add-coleccion" title="Crear colección" th:if="${session.role == 'ADMIN'}">
                 <i class="fa-solid fa-layer-group"></i>
             </button>
         </form>
@@ -156,6 +157,41 @@
         if (!hechoActual) return;
         window.location.href = `/crearSolicitudDeEliminacion?id=${hechoActual.id}`;
     }
+
+
+    function onBtnAddClick(e) {
+        const btn = e.currentTarget;
+        const active = !btn.classList.contains('active');
+        btn.classList.toggle('active', active);
+        const list = document.getElementById('btn-add-list');
+        list.classList.toggle('active', active);
+
+        if (active) { // Si debe mostrar los botones, actualiza sus variables de translate
+            list.querySelectorAll(".btn-add").forEach((btn, i) => {
+                btn.style.setProperty('--translation', `${-(i + 1) * 110}%`);
+            });
+        }
+    }
+
+
+    const btnAdd = document.getElementById("btn-add-hecho");
+
+    btnAdd.addEventListener("click", () => {
+        window.location.href = "./cargarHecho.html";
+    });
+
+    const btnCSV = document.getElementById("btn-add-dataset");
+
+    btnCSV.addEventListener("click", () => {
+        window.location.href = "./importarCSV.html";
+    });
+
+    const btnColeccion = document.getElementById("btn-add-coleccion");
+
+    btnColeccion.addEventListener("click", () => {
+        window.location.href = "./crearColeccion.html";
+    });
+
 </script>
 </body>
 </html>

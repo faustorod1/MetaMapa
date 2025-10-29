@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dto.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.dto.RefreshRequestDTO;
 import ar.utn.ba.ddsi.models.dto.TokenResponseDTO;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import ar.utn.ba.ddsi.services.LoginService;
@@ -119,9 +121,17 @@ public class AuthController {
     @GetMapping("/roles")
     public ResponseEntity<UserRolesDTO> getRoles(Authentication authentication) {
         try {
-            String username = authentication.getName();
-            UserRolesDTO response = loginService.obtenerRolUsuario(username);
-            return ResponseEntity.ok(response);
+
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) principal;
+                String email = userDetails.getEmail();
+                UserRolesDTO response = loginService.obtenerRolUsuario(email);
+                return ResponseEntity.ok(response);
+            }else {
+                return ResponseEntity.badRequest().build();
+            }
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

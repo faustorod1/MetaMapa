@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
 <head>
     <meta charset="UTF-8">
     <title>Main | METAmapa</title>
@@ -17,7 +17,7 @@
             <i class="fa-solid fa-house"></i>
         </button>
 
-        <button class="nav-button" view="./mis-hechos" id="nav-button-mis-hechos">
+        <button class="nav-button" view="./mis-hechos" id="nav-button-mis-hechos" sec:authorize="isAuthenticated()">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-folder"></i>
         </button>
@@ -29,19 +29,19 @@
         </button>
     </div>
     <div class="nav-button-container">
-        <button class = "nav-button" id="nav-button-tratar-solicitud-de-modificacion" view = "./tratarSolicitudDeModificacion">
+        <button class = "nav-button" id="nav-button-tratar-solicitud-de-modificacion" view = "./tratarSolicitudDeModificacion" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-file-pen"></i>
         </button>
-        <button class="nav-button" id="nav-button-tratar-solicitud-de-eliminacion" view="./tratarSolicitudDeEliminacion">
+        <button class="nav-button" id="nav-button-tratar-solicitud-de-eliminacion" view="./tratarSolicitudDeEliminacion" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-file-excel"></i>
         </button>
-        <button class="nav-button" view="./administrar-colecciones" id="nav-button-adm-colecciones">
+        <button class="nav-button" view="./administrar-colecciones" id="nav-button-adm-colecciones" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-clipboard-list"></i>
         </button>
-        <button class="nav-button" id="nav-button-stadistics" view="./estadisticas">
+        <button class="nav-button" id="nav-button-stadistics" view="./estadisticas" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-chart-line"></i>
         </button>

@@ -31,7 +31,7 @@ public class ColeccionesController {
         } catch (Exception e) {
             model.addAttribute("errorFuentes", "Error al intentar cargar la página");
             // Quizás podría haber un redirect a una página de status 400
-            return "/main-page/mapa";
+            return "/403";
         }
     }
 
