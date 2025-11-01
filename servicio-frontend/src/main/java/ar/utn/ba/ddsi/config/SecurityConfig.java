@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -35,9 +36,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/", "/login", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
-                                        "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}", "/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion").permitAll()
-                        .requestMatchers("/colecciones/formulario-de-carga","/api/solicitudes/eliminacion/{id}","/api/solicitudes/solicitarEliminacion").hasRole("ADMIN")
+                        .requestMatchers("/", "/login", "/logout", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
+                                        "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}").permitAll()
+                        .requestMatchers("/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion").hasAnyRole("CONTRIBUYENTE","ADMIN")
+                        .requestMatchers("/colecciones/formulario-de-carga").hasRole("ADMIN")
+                    .requestMatchers("/404","/403","/401").permitAll()
+                    .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

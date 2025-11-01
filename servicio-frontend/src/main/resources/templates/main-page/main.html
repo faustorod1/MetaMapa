@@ -45,6 +45,20 @@
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-chart-line"></i>
         </button>
+
+        <form title="Cerrar sesión" id="nav-button-logout" th:action="@{/logout}" th:if="${session.role == 'ADMIN' || session.role == 'CONTRIBUYENTE'}" method="POST">
+            <button class="nav-button" type="submit">
+                <div class="nav-button-selection"></div>
+                <a class="fa-solid fa-right-from-bracket"></a>
+            </button>
+        </form>
+
+        <button class="nav-button" title="Iniciar sesión" id="nav-button-login"  th:if="${session.role != 'ADMIN' && session.role != 'CONTRIBUYENTE'}">
+            <div class="nav-button-selection"></div>
+            <a class="link-no-style fa-solid fa-right-to-bracket" th:href="@{/login}"></a>
+        </button>
+
+
     </div>
 </nav>
 <main>

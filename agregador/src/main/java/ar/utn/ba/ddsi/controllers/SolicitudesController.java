@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dtos.input.ResolucionSolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dtos.input.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
@@ -9,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,9 +32,10 @@ public class SolicitudesController {
     this.solicitudesService = solicitudesService;
   }
 
-  @PostMapping      // Devuelve status code HTTP
-  public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto) {
-    log.info("Solicitud recibida: " + dto);
+  @PostMapping
+  public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long contribuyenteId = userDetails.getId();
+    dto.setSolicitanteId(contribuyenteId);
     SolicitudDeEliminacion solicitud = solicitudesService.crearSolicitud(dto);
 
     return switch (solicitud.getEstado()) {

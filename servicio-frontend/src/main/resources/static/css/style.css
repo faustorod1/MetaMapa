@@ -91,3 +91,8 @@ h1 {
     font-weight: bolder;
     font-size: 5rem;
 }
+
+.link-no-style {
+    text-decoration: none;
+    color: inherit;
+}

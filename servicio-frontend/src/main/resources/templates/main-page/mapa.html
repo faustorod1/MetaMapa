@@ -31,7 +31,7 @@
     <div id="map"></div>
     <div class="search-bar">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar..." onfocus="openBuscador()">
+        <input type="text" placeholder="Buscar..." > <!--onfocus="openBuscador()"-->
     </div>
 
     <button class="btn-add" id="btn-add" onclick="onBtnAddClick(event)">
@@ -69,6 +69,7 @@
 
 <script>
     let hechoActual = null;
+    let allMarkers = [];
 
     // --- Elementos de la vista lateral ---
     const hechoPreview = {
@@ -79,6 +80,37 @@
         ubicacion: document.getElementById('hecho-preview__ubicacion'),
         descripcion: document.getElementById('hecho-preview__descripcion'),
     };
+
+    // --- Logica del buscador ---
+    const searchInput = document.querySelector(".search-bar input");
+
+    // Creamos la función que filtra el mapa
+    function filtrarMapa() {
+        const textoBusqueda = searchInput.value.trim().toLowerCase();
+
+        // Recorremos TODOS los marcadores que creamos
+        allMarkers.forEach(marker => {
+            const hecho = marker.options.hecho;
+
+            const titulo = hecho.titulo?.toLowerCase() || "";
+            const descripcion = hecho.descripcion?.toLowerCase() || "";
+
+            // Comprobamos si el texto de búsqueda está en el título O en la descripción
+            const coincide = titulo.includes(textoBusqueda) || descripcion.includes(textoBusqueda);
+
+            if (textoBusqueda === "" || coincide) {
+                marker.addTo(map);
+            } else {
+                marker.remove();
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', filtrarMapa);
+
+    // --- Fin de logica del buscador ---
+
+
 
     // --- Inicializa el mapa ---
     const map = L.map('map', {
@@ -120,6 +152,8 @@
         });
 
         marker.on('click', onHechoMarkerClick);
+
+        allMarkers.push(marker);
     }
 
     // --- Interacción con el panel lateral ---

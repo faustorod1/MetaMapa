@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface IDinamicaService {
     void cargarHecho(HechoOutputDTO hecho, List<MultipartFile> imagenes);
+    void modificarHecho(Long id_hecho, HechoOutputDTO hecho);
 }

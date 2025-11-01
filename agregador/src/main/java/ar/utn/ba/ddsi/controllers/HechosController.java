@@ -32,7 +32,7 @@ public class HechosController {
     }
 
   @GetMapping("contribuyente/{id}")
-  public List<HechoOutputDTO> buscarHechoContribuyente(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+  public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long contribuyenteId = userDetails.getId();
         return hechosService.buscarHechoDe(contribuyenteId);
     }

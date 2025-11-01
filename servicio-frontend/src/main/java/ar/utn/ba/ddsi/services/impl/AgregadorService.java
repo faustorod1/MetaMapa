@@ -32,7 +32,7 @@ public class AgregadorService implements IAgregadorService {
   }
 
   public List<FuenteDTO> buscarFuentes(){
-    return webApiCallerService.getList("/api/colecciones/fuentes", FuenteDTO.class);
+    return webApiCallerService.getList( agregadorBaseUrl + "/api/colecciones/fuentes", FuenteDTO.class);
   }
 
   public HechoDTO pedirHecho(Long id) {
@@ -41,6 +41,12 @@ public class AgregadorService implements IAgregadorService {
             .retrieve()
             .bodyToMono(HechoDTO.class)
             .block();
+   }
+
+   public List<HechoDTO> pedirHechosDeContribuyente(Long id) {
+     return webApiCallerService.getList(
+         agregadorBaseUrl + "/api/hechos/contribuyente/" + id,
+         HechoDTO.class);
    }
 
    public void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud) {

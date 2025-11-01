@@ -22,13 +22,17 @@
 
     <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
     <form class="solicitar-modificacion-form" method="post" th:action="@{api/solicitudes/solicitarModificacion}" th:object="${hecho}" enctype="multipart/form-data"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" name="id_hecho" th:value="${hecho.id}">
+
+
         <div class = "container">
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"
                  style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
             </div>
 
-            <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"
+            <div th:if="${mensaje}" class="alert alert-success" th:text="${exito}"
                  style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
             </div>
 

@@ -12,7 +12,5 @@ import lombok.NoArgsConstructor;
 public class SolicitudDeEliminacionOutputDTO {
     private String descripcion;
     private Long hechoId;
-    private Long solicitanteId;
-
 
 }

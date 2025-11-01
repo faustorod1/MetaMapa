@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 
 @Controller
-@RequestMapping
+@RequestMapping("api/solicitudes")
 public class SolicitudesController {
   private ISolicitudesService solicitudesService;
 
