@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeEliminacion;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/solicitudes")
 public class SolicitudesController {
@@ -30,6 +32,7 @@ public class SolicitudesController {
 
   @PostMapping      // Devuelve status code HTTP
   public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto) {
+    log.info("Solicitud recibida: " + dto);
     SolicitudDeEliminacion solicitud = solicitudesService.crearSolicitud(dto);
 
     return switch (solicitud.getEstado()) {

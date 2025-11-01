@@ -101,7 +101,6 @@ public class LoginService {
       } else {
         usuario.setRol(Rol.CONTRIBUYENTE);
         usuariosRepository.save(usuario);
-        System.out.println("LLEGUE");
         Contribuyente contribuyente = new Contribuyente();
         contribuyente.setUsuario(usuario);
         contribuyenteRepository.save(contribuyente);

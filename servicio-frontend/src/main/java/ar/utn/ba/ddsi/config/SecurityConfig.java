@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/login", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
-                                        "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}").permitAll()
+                                        "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}", "/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion").permitAll()
                         .requestMatchers("/colecciones/formulario-de-carga","/api/solicitudes/eliminacion/{id}","/api/solicitudes/solicitarEliminacion").hasRole("ADMIN")
                 )
                 .formLogin(form -> form

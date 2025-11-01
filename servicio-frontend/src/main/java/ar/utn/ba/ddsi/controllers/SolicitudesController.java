@@ -31,18 +31,19 @@ public class SolicitudesController {
 
     @PostMapping("/solicitarEliminacion")
     public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeEliminacionOutputDTO solicitud, RedirectAttributes redirectAttributes) {
-       log.info("Solicitud recibida: " + solicitud);
        Long id = solicitud.getHechoId();
-        try {
+       solicitud.setSolicitanteId(1L);       //MAL, CAMBIAR -> es una prueba
+       log.info("Solicitud recibida: " + solicitud);
+        //try {
           agregadorService.solicitarEliminacion(solicitud);
           redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
           return "redirect:/api/solicitudes/eliminacion/" + id;
-      } catch (Exception ex){
-          redirectAttributes.addFlashAttribute("error", "Error en la solicitud");
-          return "redirect:/solicitudes/eliminacion/" + id;
+      //} catch (Exception ex){
+        //  redirectAttributes.addFlashAttribute("error", "Error en la solicitud");
+          //return "redirect:/solicitudes/eliminacion/" + id;
           }
 
-    }
+
 
     @GetMapping("/modificacion/{id_hecho}")
     public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {

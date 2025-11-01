@@ -27,15 +27,13 @@
         }
 
 
-
-
         .contenedor {
             background: var(--color-main);
             width:70vw;
             margin-top:2rem;
             margin-bottom:0;
             padding: 0.5rem;
-            height: 80vh;
+            height: 83vh;
             border-radius: 0.5rem;
         }
 
@@ -46,7 +44,7 @@
         }
 
         #h1-main{
-            margin: 0 1rem 0.5rem 1rem;
+            margin: 0.2rem 1rem 0.2rem 1rem;
             align-self:flex-start;
             text-align: left;
             padding:0;
@@ -83,7 +81,7 @@
         }
 
         textarea {
-            height: 40vh;
+            height: 38vh;
             width: 100%;
             resize: none;
             border: none;
@@ -147,11 +145,11 @@
 
     <div class="contenedor">
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"
-             style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+             style="margin-bottom: 5px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
         </div>
 
         <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
-             style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
+             style="margin-bottom: 5px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
         </div>
 
         <h1 id="h1-main">Solicitud de eliminación</h1>
@@ -163,8 +161,9 @@
         <form th:action="@{/api/solicitudes/solicitarEliminacion}" method="post" th:object="${solicitud}">
         <label for="descripcion">Descripción</label>
         <textarea id="descripcion" th:field="*{descripcion}" required></textarea>
+            <input type="hidden" th:field="*{hechoId}"/>
         <div class="acciones">
-            <button class="descartar">Descartar</button>
+            <button type = "button" class="descartar">Descartar</button>
             <span class="min-char" id="contador">min 500c.</span>
             <button type="submit" class="enviar">Enviar</button>
         </div>
