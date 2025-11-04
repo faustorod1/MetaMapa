@@ -42,7 +42,7 @@ public class Categoria {
         if (this.sinonimos.contains(otra)){
             return true;
         }
-        return esSimilarSegunLevenshtein(otra);
+        return false;
     }
 
     public Boolean esSimilarSegunLevenshtein(String b) {

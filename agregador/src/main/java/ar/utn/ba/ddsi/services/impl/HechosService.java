@@ -183,6 +183,13 @@ public class HechosService implements IHechosService {
                     return;
                 }
             }
+            for (Categoria categoria : listaDeCategorias) {
+                if (categoria.esSimilarSegunLevenshtein(categoriaOriginal)) {
+                    hecho.setCategoria(categoria);
+                    return;
+                }
+            }
+
             //hecho.setCategoria(null);
             categoriaRepository.save(hecho.getCategoria());
         });
