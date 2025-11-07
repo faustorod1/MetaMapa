@@ -24,7 +24,7 @@ public class HechoOutputDTO {
     private String categoria;
     private Double latitud;
     private Double longitud;
-    private LocalDate fechaHecho;
-    private Long contribuyenteId = 1l; // TODO: harcodeado
+    private LocalDate fechaHecho;    // LO CAMBIAMOS A LOCALDATETIME?!?!
+    private Long contribuyenteId;
     private List<EtiquetaOutputDTO> etiquetas = new ArrayList<>();
 }

@@ -43,9 +43,9 @@ public class AgregadorService implements IAgregadorService {
             .block();
    }
 
-   public List<HechoDTO> pedirHechosDeContribuyente(Long id) {
+   public List<HechoDTO> pedirHechosDeContribuyente() {
      return webApiCallerService.getList(
-         agregadorBaseUrl + "/api/hechos/contribuyente/" + id,
+         agregadorBaseUrl + "/api/hechos/contribuyente",
          HechoDTO.class);
    }
 

@@ -53,13 +53,14 @@ public class SolicitudesController {
 
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes){
-     List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente(id_hecho);
+     List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
     try{
-        HechoDTO hecho = hechosDelContribuyente.stream().filter(h -> h.getId().equals(id_hecho)).findAny().get();
+        HechoDTO hecho = hechosDelContribuyente.stream().filter(h -> h.getId().equals(id_hecho)).findFirst().get();
+        log.info("DTO a procesar: {}", hecho);
         model.addAttribute("hecho", hecho);
         return "main-page/crearSolicitudDeModificacion";
     }catch (Exception ex){
-      return "redirect:/main";    // Acá podríamos agregar un :403 calculo
+      return "error/403";
     }
   }
 

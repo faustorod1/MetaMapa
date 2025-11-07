@@ -11,5 +11,5 @@ public interface IAgregadorService {
   List<FuenteDTO> buscarFuentes();
   HechoDTO pedirHecho(Long id);
   void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud);
-  List<HechoDTO> pedirHechosDeContribuyente(Long id);
+  List<HechoDTO> pedirHechosDeContribuyente();
 }

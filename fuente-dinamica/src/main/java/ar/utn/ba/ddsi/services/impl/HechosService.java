@@ -135,10 +135,10 @@ public HechoOutputDTO hechoToDTO (Hecho hecho){
             .fechaUltimaActualizacion(hecho.getFechaUltimaActualizacion())
             .origen(CONTRIBUYENTE)
             .eliminado(hecho.isEliminado())
-            //.contribuyente(this.contribuyenteToDTO(hecho.getContribuyente()))
+            .contribuyenteId(hecho.getContribuyenteId())
             .etiquetas(hecho.getEtiquetas())
             .id(hecho.getId())
-            .tipoDeFuente("dinamica")
+            .tipoDeFuente("DINAMICA")
             .build();
 }
 

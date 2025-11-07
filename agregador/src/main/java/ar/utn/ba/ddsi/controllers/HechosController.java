@@ -31,7 +31,7 @@ public class HechosController {
         return hechoDTO;
     }
 
-  @GetMapping("contribuyente/{id}")
+  @GetMapping("/contribuyente")      // Le sacamos el {id} por ahora, ya que se uso queda reservado para validaciones contra el token
   public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long contribuyenteId = userDetails.getId();
         return hechosService.buscarHechoDe(contribuyenteId);

@@ -37,7 +37,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/hechos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/hechos/{id}").permitAll()
-                        .requestMatchers("/api/hechos/contribuyente/{id}").hasRole("CONTRIBUYENTE")
+                        .requestMatchers("/api/hechos/contribuyente").hasRole("CONTRIBUYENTE")
                         .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
                         .anyRequest().hasAnyRole("ADMIN")

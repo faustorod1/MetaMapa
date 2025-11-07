@@ -36,7 +36,7 @@
                  style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
             </div>
 
-            <h2 id="titulo-cargarHecho">Modificar hecho </h2>
+            <h2 id="titulo-cargarHecho" style="text-align: center" >Modificar hecho </h2>
             <div class ="input-primerFila">
                 <div class="input-cargarHecho">
                     <h4>Título</h4>
@@ -61,14 +61,14 @@
                     <h4>Lugar</h4>
                     <div id="input-ubicacion-container">
 
-                        <!-- Campo visible para mostrar ambas coordenadas -->
-                        <input type="text" id="ubicacion" placeholder="Ubicación" disabled required>
+                        <input type="text" id="ubicacion" placeholder="Ubicación" disabled required
+                               th:value="*{lugarAcontecimiento != null && lugarAcontecimiento.latitud != null}
+                        ? *{lugarAcontecimiento.latitud} + ';' + *{lugarAcontecimiento.longitud}
+                        : ''">
 
-                        <!-- Campos ocultos mapeados al objeto hecho -->
                         <input type="hidden" th:field="*{lugarAcontecimiento.latitud}" id="latitud" required>
                         <input type="hidden" th:field="*{lugarAcontecimiento.longitud}" id="longitud" required>
 
-                        <!-- Botón para seleccionar en el mapa -->
                         <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
                             Seleccionar en el mapa
                             <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
@@ -86,8 +86,9 @@
             <div class="input-tercerFila">
                 <div class="input-cargarHecho">
                     <h4>Fecha</h4>
-                    <input type="date" id="fecha" name="fecha" th:field="*{fechaHecho}" disabled>
+                    <input type="date" id="fecha" th:field="*{fechaHecho}" required>
                 </div>
+
 
                 <div class="input-cargarHecho">
                     <h4>Etiquetas</h4>
@@ -114,6 +115,15 @@
             </div>
         </div>
     </form>
+
+
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Pasa la lista de etiquetas de Spring (del th:object) a una variable JS
+        const etiquetasExistentes = /*[[${hecho.etiquetas}]]*/ [];
+        /*]]>*/
+    </script>
 </main>
 
 <div id="mapa-input-ubicacion-container">
@@ -243,6 +253,18 @@
                 crearEtiqueta(inputTags.value);
             }
         });
+        function initEtiquetas() {
+            // Comprueba si la variable 'etiquetasExistentes' fue definida por Thymeleaf
+            if (typeof etiquetasExistentes !== 'undefined' && etiquetasExistentes) {
+                etiquetasExistentes.forEach(tagText => {
+                    // Reutiliza tu propia función para añadir cada etiqueta
+                    crearEtiqueta(tagText);
+                });
+            }
+        }
+
+        // Llama a la función de inicialización cuando el script se carga
+        initEtiquetas();
 
     })();
 
