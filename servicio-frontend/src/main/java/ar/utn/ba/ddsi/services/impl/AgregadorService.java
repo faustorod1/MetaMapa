@@ -49,6 +49,21 @@ public class AgregadorService implements IAgregadorService {
          HechoDTO.class);
    }
 
+   public List<CategoriaDTO> pedirCategorias() {
+      return webApiCallerService.getList(
+              agregadorBaseUrl + "/api/categorias",
+              CategoriaDTO.class
+      );
+   }
+
+   public CategoriaDTO pedirCategoriaPorID(Long id){
+      return agregadorWebClient.get()
+              .uri("/api/categorias/{id}", id)
+              .retrieve()
+              .bodyToMono(CategoriaDTO.class)
+              .block();
+   }
+
    public void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud) {
       webApiCallerService.post(
               agregadorBaseUrl + "/api/solicitudes",

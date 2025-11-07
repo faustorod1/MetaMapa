@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -53,11 +55,15 @@ public class SolicitudesController {
 
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes){
-     List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
+    List<CategoriaDTO> categorias = agregadorService.pedirCategorias() ;
+    List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
     try{
         HechoDTO hecho = hechosDelContribuyente.stream().filter(h -> h.getId().equals(id_hecho)).findFirst().get();
         log.info("DTO a procesar: {}", hecho);
+
         model.addAttribute("hecho", hecho);
+        model.addAttribute("categorias", categorias);
+
         return "main-page/crearSolicitudDeModificacion";
     }catch (Exception ex){
       return "error/403";

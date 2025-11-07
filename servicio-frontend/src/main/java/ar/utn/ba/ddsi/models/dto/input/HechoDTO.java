@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.models.dto.input;
 
 import ar.utn.ba.ddsi.models.entities.OrigenHecho;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class HechoDTO implements Serializable {
   private List<ContenidoMultimediaDTO> contenidosMultimedia;
   private OrigenHecho origen;
   private CoordenadaDTO lugarAcontecimiento;
+  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
   private LocalDateTime fechaHecho;
   private LocalDateTime fechaDeCarga;
   private LocalDateTime fechaUltimaActualizacion;

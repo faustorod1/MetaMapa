@@ -49,9 +49,17 @@
 
                 <div class="input-cargarHecho">
                     <h4>Categoria</h4>
-                    <label for ="categoria"></label>
-                    <!--/*@thymesVar id="categoria" type="ar.utn.ba.ddsi.models.dto.input.CategoriaDTO"*/-->
-                    <input type="text" id="categoria" th:field="*{categoria.nombre}" required>
+
+                    <select th:field="*{categoria}" required>
+
+                        <option value="">-- Seleccionar Categoría --</option>
+
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id}"
+                                th:text="${cat.nombre}">
+                        </option>
+                    </select>
+
                     <div th:if="${#fields.hasErrors('categoria')}" class="text-danger">
                         <small th:errors="*{categoria}">Error en la categoría</small>
                     </div>
@@ -86,9 +94,8 @@
             <div class="input-tercerFila">
                 <div class="input-cargarHecho">
                     <h4>Fecha</h4>
-                    <input type="date" id="fecha" th:field="*{fechaHecho}" required>
+                    <input type="datetime-local" id="fecha" th:field="*{fechaHecho}" required>
                 </div>
-
 
                 <div class="input-cargarHecho">
                     <h4>Etiquetas</h4>

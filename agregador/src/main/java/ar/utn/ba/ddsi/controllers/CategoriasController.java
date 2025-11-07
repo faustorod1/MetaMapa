@@ -21,6 +21,12 @@ public class CategoriasController {
         List<CategoriaDTO> dtos = categorias.stream().map(CategoriaDTO::fromEntity).toList();
         return ResponseEntity.ok(dtos);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoriaDTO> buscarPorId(@PathVariable Long id) {
+        Categoria categoria = categoriaRepository.findById(id).get();
+        return ResponseEntity.ok(CategoriaDTO.fromEntity(categoria));
+    }
     
     @PostMapping
     public ResponseEntity<CategoriaDTO> insertar(@RequestBody CategoriaDTO dto) {

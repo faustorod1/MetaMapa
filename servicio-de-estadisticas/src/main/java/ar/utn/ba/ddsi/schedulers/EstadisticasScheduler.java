@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EstadisticasScheduler {
-    private static final long PERIODO_DE_GENERACION_DE_ESTADISTICAS = 5000L; // 5 segundos cree manchuas
+    private static final long PERIODO_DE_GENERACION_DE_ESTADISTICAS = 60000L; // 1 minuto
     private final IEstadisticasService estadisticasService;
 
     public EstadisticasScheduler(IEstadisticasService estadisticasService) {

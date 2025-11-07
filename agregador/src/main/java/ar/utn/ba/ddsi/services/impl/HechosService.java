@@ -115,7 +115,7 @@ public class HechosService implements IHechosService {
                 fechaUltimaActualizacionFuentes.put(key, LocalDateTime.now());
             } catch (Exception e) {
                 logger.error("Error al obtener hechos de la fuente {}: {}", key, e.getMessage());
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         });
 
