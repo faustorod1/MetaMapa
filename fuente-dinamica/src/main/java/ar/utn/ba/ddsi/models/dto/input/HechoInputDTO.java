@@ -21,7 +21,7 @@ public class HechoInputDTO {
   private String categoria;
   private Double latitud;
   private Double longitud;
-  private LocalDate fechaHecho;
+  private LocalDateTime fechaHecho;
   private Long contribuyenteId;
   private List <EtiquetaDTO> etiquetas;
 }

@@ -54,7 +54,7 @@ public class DinamicaService implements IDinamicaService {
 
     public void modificarHecho(Long id_hecho, HechoOutputDTO hecho){
         webApiCallerService.put(
-            dinamicaBaseUrl + "api/solicitudes" + id_hecho,
+                dinamicaBaseUrl + "/api/solicitudes/" + id_hecho,
                hecho,
                String.class
         );

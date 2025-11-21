@@ -163,7 +163,7 @@
 
         hechoPreview.titulo.textContent = hecho.titulo || "Sin título";
         hechoPreview.categoria.textContent = hecho.categoria?.nombre || "Sin categoría";
-        hechoPreview.fecha.textContent = hecho.fechaHecho ? hecho.fechaHecho.split('T')[0] : "Sin fecha";
+        hechoPreview.fecha.textContent = hecho.fechaHecho ? hecho.fechaHecho.replace('T', ' ') : "Sin fecha";
 
         // Mostrar departamento y provincia
         const depto = hecho.departamento?.nombre || "Desconocido";

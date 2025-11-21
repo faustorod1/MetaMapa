@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -24,7 +26,35 @@ public class HechoOutputDTO {
     private String categoria;
     private Double latitud;
     private Double longitud;
-    private LocalDate fechaHecho;    // LO CAMBIAMOS A LOCALDATETIME?!?!
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime fechaHecho;
     private Long contribuyenteId;
     private List<EtiquetaOutputDTO> etiquetas = new ArrayList<>();
+
+
+
+
+    public static HechoOutputDTO fromDTOtoOutput(HechoDTO hecho) {
+        List<EtiquetaOutputDTO> etiquetasOutput = hecho.getEtiquetas().stream()
+                .map(EtiquetaOutputDTO::new)
+                .collect(Collectors.toList());
+
+        return HechoOutputDTO.builder()
+                .titulo(hecho.getTitulo())
+                .descripcion(hecho.getDescripcion())
+                .categoria(hecho.getCategoria().getNombre())
+                .fechaHecho(hecho.getFechaHecho())
+                .contribuyenteId(hecho.getContribuyente())
+                .latitud(hecho.getLugarAcontecimiento().getLatitud())
+                .longitud(hecho.getLugarAcontecimiento().getLongitud())
+                .etiquetas(etiquetasOutput)
+                .build();
+    }
+
+
+
+
+
+
+
 }

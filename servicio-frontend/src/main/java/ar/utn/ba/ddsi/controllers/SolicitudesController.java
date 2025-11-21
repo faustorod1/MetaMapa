@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.format.DateTimeFormatter;
@@ -55,13 +56,15 @@ public class SolicitudesController {
 
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes){
-    List<CategoriaDTO> categorias = agregadorService.pedirCategorias() ;
+    List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
     List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
-    try{
-        HechoDTO hecho = hechosDelContribuyente.stream().filter(h -> h.getId().equals(id_hecho)).findFirst().get();
-        log.info("DTO a procesar: {}", hecho);
 
-        model.addAttribute("hecho", hecho);
+    try{
+      HechoDTO hecho = hechosDelContribuyente.stream().filter(h -> h.getId().equals(id_hecho)).findFirst().get();
+      HechoOutputDTO hechoOutputDTO = HechoOutputDTO.fromDTOtoOutput(hecho);
+
+        model.addAttribute("hecho", hechoOutputDTO);
+        model.addAttribute("id_hecho", id_hecho);
         model.addAttribute("categorias", categorias);
 
         return "main-page/crearSolicitudDeModificacion";
@@ -71,16 +74,17 @@ public class SolicitudesController {
   }
 
   @PostMapping("/solicitarModificacion")
-  public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam Long id_hecho, RedirectAttributes redirectAttributes) {
-      log.info("DTO recibido: {}", hecho);
-      try{
-        dinamicaService.modificarHecho(id_hecho, hecho);
+  public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
+      log.info("DTO recibido: {}", hecho + ", Id recibido: " + id_hecho);
+
+     // try{
+        dinamicaService.modificarHecho(id_hecho, hecho);      // El id_hecho lo obtenemos al cargar la página, pero lo mantenemos 'hidden'
         redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
         return "redirect:/api/solicitudes/modificacion/" + id_hecho;
-      }catch (Exception ex){
-        redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
-        return "redirect:/solicitudes/modificacion/" + id_hecho;
-      }
+      //}catch (Exception ex){
+       // redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
+       // return "redirect:/solicitudes/modificacion/" + id_hecho;
+     // }
 
   }
 

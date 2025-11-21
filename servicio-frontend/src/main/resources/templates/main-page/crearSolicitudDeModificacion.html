@@ -21,10 +21,9 @@
     <div id="fixed-logo"></div>
 
     <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
-    <form class="solicitar-modificacion-form" method="post" th:action="@{api/solicitudes/solicitarModificacion}" th:object="${hecho}" enctype="multipart/form-data"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
-        <input type="hidden" th:field="*{id}">
-        <input type="hidden" name="id_hecho" th:value="${hecho.id}">
+    <form class="solicitar-modificacion-form" method="post" th:action="@{/api/solicitudes/solicitarModificacion}" th:object="${hecho}" enctype="multipart/form-data">
 
+        <input type="hidden" name="id_hecho" th:value="${id_hecho}">
 
         <div class = "container">
 
@@ -70,12 +69,10 @@
                     <div id="input-ubicacion-container">
 
                         <input type="text" id="ubicacion" placeholder="Ubicación" disabled required
-                               th:value="*{lugarAcontecimiento != null && lugarAcontecimiento.latitud != null}
-                        ? *{lugarAcontecimiento.latitud} + ';' + *{lugarAcontecimiento.longitud}
-                        : ''">
+                               th:value="*{latitud != null} ? *{latitud} + ';' + *{longitud} : ''">
 
-                        <input type="hidden" th:field="*{lugarAcontecimiento.latitud}" id="latitud" required>
-                        <input type="hidden" th:field="*{lugarAcontecimiento.longitud}" id="longitud" required>
+                        <input type="hidden" th:field="*{latitud}" id="latitud" required>
+                        <input type="hidden" th:field="*{longitud}" id="longitud" required>
 
                         <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
                             Seleccionar en el mapa

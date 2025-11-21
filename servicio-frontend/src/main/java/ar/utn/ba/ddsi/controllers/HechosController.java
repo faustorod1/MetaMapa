@@ -1,4 +1,5 @@
 package ar.utn.ba.ddsi.controllers;
+import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,12 +33,14 @@ public class HechosController {
 
     @GetMapping("/formulario-de-carga")
     public String formularioCargarHecho(Model model) {
+        List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
         model.addAttribute("hechoOutputDTO", new HechoOutputDTO());
+        model.addAttribute("categorias", categorias);
         return "main-page/cargarHecho";      // Ahora ese endpoint tiene el HechoOutputDTO para cargarle los campos
     }
 
     @PostMapping("/cargar")
-    public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes, Model model, RedirectAttributes redirectAttributes) {
+    public String cargarHecho(@ModelAttribute("hechoOutputDTO") HechoOutputDTO hechoOutputDTO, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes, RedirectAttributes redirectAttributes) {
         try {
             log.info("DTO recibido: {}", hechoOutputDTO);
             dinamicaService.cargarHecho(hechoOutputDTO, imagenes);

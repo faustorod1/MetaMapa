@@ -57,7 +57,7 @@ public class SolicitudesService implements ISolicitudesService {
     if (!hViejo.getContribuyenteId().equals(contribuyenteId)) {
         throw new UnauthorizedException(contribuyenteId);
     }
-    if(ChronoUnit.DAYS.between(h.getFechaDeCarga(), LocalDateTime.now()) > 7) {
+    if(ChronoUnit.DAYS.between(hViejo.getFechaDeCarga(), LocalDateTime.now()) > 7) {
         throw new SolicitudFueraDePlazoException(id);
     }
 

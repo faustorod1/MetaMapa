@@ -113,7 +113,7 @@ public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el h
             .descripcion(hechoInputDTO.getDescripcion())
             .categoria(hechoInputDTO.getCategoria())
             .lugarAcontecimiento(new Coordenada(hechoInputDTO.getLatitud(), hechoInputDTO.getLongitud()))
-            .fechaHecho(hechoInputDTO.getFechaHecho().atStartOfDay())
+            .fechaHecho(hechoInputDTO.getFechaHecho())
             .eliminado(false)
             .contribuyenteId(hechoInputDTO.getContribuyenteId())
             .build();
