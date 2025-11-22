@@ -1,9 +1,12 @@
 package ar.utn.ba.ddsi.services.impl;
 
+
+import ar.utn.ba.ddsi.models.dto.input.EtiquetaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudCreadaDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudResueltaDTO;
+import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.models.entities.SolicitudDeModificacion;
 import ar.utn.ba.ddsi.models.exceptions.NoHaySolicitudPendienteException;
@@ -16,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Service
 public class SolicitudesService implements ISolicitudesService {
@@ -50,22 +55,34 @@ public class SolicitudesService implements ISolicitudesService {
   }
 
   @Override
-  public SolicitudCreadaDTO crearSolModificacion(Long id, HechoInputDTO hecho, Long contribuyenteId){
-    Hecho h = hechosService.DTOToHecho(hecho);
-    Hecho hViejo = this.hechosService.getById(id);
+  public SolicitudCreadaDTO crearSolModificacion(Long id, HechoInputDTO hechoInput, Long contribuyenteId){
+    Hecho hecho = this.hechosService.getById(id);
 
-    if (!hViejo.getContribuyenteId().equals(contribuyenteId)) {
+    if (!hecho.getContribuyenteId().equals(contribuyenteId)) {
         throw new UnauthorizedException(contribuyenteId);
     }
-    if(ChronoUnit.DAYS.between(hViejo.getFechaDeCarga(), LocalDateTime.now()) > 7) {
+    if(ChronoUnit.DAYS.between(hecho.getFechaDeCarga(), LocalDateTime.now()) > 7) {
         throw new SolicitudFueraDePlazoException(id);
     }
 
-    SolicitudDeModificacion nuevaSolicitudDeModificacion = new SolicitudDeModificacion(hViejo,h);
-    hViejo.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
+    SolicitudDeModificacion nuevaSolicitudDeModificacion =
+            SolicitudDeModificacion.builder()
+            .hecho(hecho)
+            .tituloNuevo(hechoInput.getTitulo())
+            .descripcionNueva(hechoInput.getDescripcion())
+            .categoriaNueva(hechoInput.getCategoria())
+            .latitudNueva(hechoInput.getLatitud())
+            .longitudNueva(hechoInput.getLongitud())
+            .fechaHechoNueva(hechoInput.getFechaHecho())
+            .etiquetasNuevas(hechoInput.getEtiquetas().stream().map(EtiquetaDTO::getNombre).collect(Collectors.toCollection(HashSet::new)))
+                    .estado(EstadoSolicitud.PENDIENTE)
+             // .contenidosMultimediaNuevos() TODO: falta el manejo del contenidoMultimedia
+            .build();
 
-    hechosService.guardarCambios(hViejo);
+    hecho.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);
 
-    return new SolicitudCreadaDTO(hViejo.getSolicitudDeModificacion().getId(), hViejo.getId());
+    hechosService.guardarCambios(hecho);
+
+    return new SolicitudCreadaDTO(hecho.getSolicitudDeModificacion().getId(), hecho.getId());
   }
 }

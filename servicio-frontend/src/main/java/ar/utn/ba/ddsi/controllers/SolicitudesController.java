@@ -76,15 +76,14 @@ public class SolicitudesController {
   @PostMapping("/solicitarModificacion")
   public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
       log.info("DTO recibido: {}", hecho + ", Id recibido: " + id_hecho);
-
-     // try{
-        dinamicaService.modificarHecho(id_hecho, hecho);      // El id_hecho lo obtenemos al cargar la página, pero lo mantenemos 'hidden'
+     try{
+        dinamicaService.modificarHecho(id_hecho, hecho);
         redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
         return "redirect:/api/solicitudes/modificacion/" + id_hecho;
-      //}catch (Exception ex){
-       // redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
-       // return "redirect:/solicitudes/modificacion/" + id_hecho;
-     // }
+      }catch (Exception ex){
+       redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
+       return "redirect:/solicitudes/modificacion/" + id_hecho;
+      }
 
   }
 

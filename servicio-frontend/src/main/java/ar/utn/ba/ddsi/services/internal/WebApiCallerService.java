@@ -5,9 +5,7 @@ import ar.utn.ba.ddsi.models.dto.external.RefreshTokenDTO;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 /**
  * Servicio genérico para hacer llamadas HTTP con manejo automático de tokens
@@ -154,9 +153,15 @@ public class WebApiCallerService {
                 webClient
                         .put()
                         .uri(url)
+
                         .header("Authorization", "Bearer " + accessToken)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                         .bodyValue(body)
                         .retrieve()
+
+                        .onStatus(HttpStatusCode::isError, clientResponse -> {return Mono.empty(); // Retorna un Mono vacío en caso de error
+                        })
                         .bodyToMono(responseType)
                         .block()
         );
