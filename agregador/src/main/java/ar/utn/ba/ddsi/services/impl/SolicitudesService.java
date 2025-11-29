@@ -45,7 +45,7 @@ public class SolicitudesService implements ISolicitudesService {
   @Override
   public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes(){
       return solicitudesRepository
-              .          findAll()
+          .findAll()
           .stream()
           .map(SolicitudDeEliminacionOutputDTO::fromEntity)
           .toList();

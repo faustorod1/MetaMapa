@@ -28,7 +28,7 @@
             border-radius: 1rem;
             padding: 0.5rem;
             width: 85vw;
-            height: 40vh;
+            height: 70vh;
         }
 
         .header-titulo{
@@ -100,20 +100,19 @@
         <div class="header-titulo">
             <h2>Solicitud de eliminación (ID: <span th:text="*{id}"></span>)</h2>
         </div>
-    </div>
 
 
         <div class="container-data" id="container-data-2">
                 <p><strong>Fecha</strong>: <span th:text="${solicitud.fechaDeCarga}"></span></p>
-            <p><strong>Solicitante - ID</strong>: <span th:text="${solicitud.solicitanteID}"></span></p>
+            <p><strong>Solicitante - ID</strong>: <span th:text="${solicitud.solicitanteId}"></span></p>
         </div>
 
         <div class="container-data">
-        <p><strong>HechoID</strong>: <span th:text="${solicitud.hechoID}"></span></p>
+        <p><strong>HechoID</strong>: <span th:text="${solicitud.hechoId}"></span></p>
         </div>
 
         <div class="container-data">
-            <p><strong>HechoID </strong>: <span th:text="${solicitud.hechoID}"></span></p>
+            <p><strong>HechoID </strong>: <span th:text="${solicitud.hechoId}"></span></p>
         </div>
 
         <div class="container-data">

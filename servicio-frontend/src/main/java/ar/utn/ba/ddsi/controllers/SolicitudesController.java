@@ -105,12 +105,10 @@ public class SolicitudesController {
       List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
       log.info("Solicitud a tratar: " + solicitud);
 
-      // Esto es para despues ir retrocediendo/avanzando entre solicitudes -> no implementado
       int indiceActual = idsPendientes.indexOf(solicitudId);
       Long anteriorId = (indiceActual > 0) ? idsPendientes.get(indiceActual - 1) : null;
       Long siguienteId = (indiceActual < idsPendientes.size() - 1) ? idsPendientes.get(indiceActual + 1) : null;
 
-      // 4. Agregar al modelo
       model.addAttribute("solicitud", solicitud);
       model.addAttribute("anteriorId", anteriorId);
       model.addAttribute("siguienteId", siguienteId);

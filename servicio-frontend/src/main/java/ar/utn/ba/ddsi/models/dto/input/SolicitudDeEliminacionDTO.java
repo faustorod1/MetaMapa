@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 public class SolicitudDeEliminacionDTO implements Serializable {
   Long id;
   String descripcion;
-  Long hechoID;
+  Long hechoId;
   LocalDateTime fechaDeCarga;
   LocalDateTime fechaDeResolucion;
   EstadoSolicitud estado;
-  Long solicitanteID;
-  Long administradorQueResolvio;
+  Long solicitanteId;
+  Long administradorQueResolvioId;
 }
 
 
