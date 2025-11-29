@@ -18,7 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 90vh;
             margin: 0;
         }
 
@@ -26,19 +26,19 @@
             background-color: var(--color-main);
             color: white;
             border-radius: 1rem;
-            padding: 0.2rem;
-            width: 60vw;
+            padding: 0.5rem;
+            width: 85vw;
+            height: 40vh;
         }
 
         .header-titulo{
-            text-align: center;
-            margin-bottom: 0.3rem;
-            margin-top:0.3rem;
+            margin-bottom: 0.5rem;
+            margin-top:0.2rem;
         }
 
         .container-data{
             padding: 0.3rem;
-            margin: 0.1rem 0.2rem 0.1rem 0.5rem;
+            margin: 0.1rem 0.2rem 0.2rem 0.2rem;
             text-align: left;
         }
 
@@ -92,36 +92,40 @@
 <body>
 
     <a href="" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
-    <div id="fixed-logo"></div>
+    <div id="fixed-logo"></div>    <!-- Acá falta la opción de ir variando entre solicitudes -->
 
-    <form th:action="@{/solicitudes/solicitarEliminacion}" th:object="@{solicitud}" class="tratarSolicitudDeEliminacion-form" action="" method="post">
+    <form th:action="@{api/solicitudes/solicitudesDeEliminacion/tratar}" th:object="${solicitud}" class="tratarSolicitudDeEliminacion-form" action="" method="post">
     <div class="container">
 
         <div class="header-titulo">
-            <h2>Solicitud de eliminación</h2>
+            <h2>Solicitud de eliminación (ID: <span th:text="*{id}"></span>)</h2>
         </div>
+    </div>
 
 
         <div class="container-data" id="container-data-2">
-                <p><strong>Fecha</strong>: <span th:text="${hecho.fecha}"></span></p>
-                <p><strong>Solicitante</strong>: nombre_usuario</p>
+                <p><strong>Fecha</strong>: <span th:text="${solicitud.fechaDeCarga}"></span></p>
+            <p><strong>Solicitante - ID</strong>: <span th:text="${solicitud.solicitanteID}"></span></p>
         </div>
 
         <div class="container-data">
-        <p><strong>Título</strong>: <span th:text="${hecho.titulo}"></span></p>
+        <p><strong>HechoID</strong>: <span th:text="${solicitud.hechoID}"></span></p>
         </div>
 
         <div class="container-data">
-            <p><strong>Descripción:</strong></p>
-        <textarea readonly id="descripcion" th:text="${hecho.descripcion}"> Descripcion</textarea>
+            <p><strong>HechoID </strong>: <span th:text="${solicitud.hechoID}"></span></p>
         </div>
 
+        <div class="container-data">
+            <p><strong>Justificación: </strong></p>
+        <textarea readonly id="descripcion" th:text="${solicitud.descripcion}"> </textarea>
+        </div>
+
+        <input type="hidden" name="solicitudId" th:value="${solicitud.id}" />
         <div class ="buttons-footer">
-            <button class="btn-submit" type="submit">Rechazar</button>
-            <button class="btn-submit" type="submit">Aprobar</button>
+            <button class="btn-submit" type="submit" name="accion" value="rechazar">Rechazar</button>
+            <button class="btn-submit" type="submit" name="accion" value="aprobar">Aprobar</button>
         </div>
-        </div>
-
     </form>
 
 

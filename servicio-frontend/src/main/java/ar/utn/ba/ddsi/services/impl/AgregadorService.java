@@ -71,4 +71,17 @@ public class AgregadorService implements IAgregadorService {
                 String.class);
    }
 
+   public List<Long> pedirIDsPendientes(){
+      return webApiCallerService.getList(
+              agregadorBaseUrl + "/api/solicitudes/idsPendientes",
+              Long.class
+      );
+   }
+
+    public SolicitudDeEliminacionDTO pedirSolicitudDeEliminacion(Long id) {
+        return webApiCallerService.get(
+                agregadorBaseUrl + "/api/solicitudes/" + id,
+                SolicitudDeEliminacionDTO.class
+        );
+    }
 }

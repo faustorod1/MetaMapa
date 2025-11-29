@@ -50,4 +50,25 @@ public class SolicitudesService implements ISolicitudesService {
           .map(SolicitudDeEliminacionOutputDTO::fromEntity)
           .toList();
   }
+
+  @Override
+  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesPendientes(){
+      return obtenerSolicitudes().stream()
+              .filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.PENDIENTE))
+              .toList();
+  }
+
+  @Override
+  public SolicitudDeEliminacionOutputDTO obtenerSolicitudPorID(Long id){
+    return obtenerSolicitudesPendientes().stream()
+            .filter(solicitud -> solicitud.getId().equals(id))
+            .findFirst()
+            .orElse(null);
+  }
+
+  @Override
+  public List<Long> obtenerIDsPendientes(){
+    return obtenerSolicitudesPendientes().stream()
+            .map(SolicitudDeEliminacionOutputDTO::getId).toList();
+  }
 }

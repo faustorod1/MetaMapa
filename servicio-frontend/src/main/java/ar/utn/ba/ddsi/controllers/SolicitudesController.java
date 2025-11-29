@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
+import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -87,15 +87,63 @@ public class SolicitudesController {
 
   }
 
-
     // ENDPOINTS: administrador
-    /*
-    @GetMapping("/eliminacionPendiente/{id}")
-    public String formularioTratarSolicitudDeEliminacion(@PathVariable("id") Long id, Model model) {
+
+    @GetMapping("/tratarEliminaciones")
+    public String solicitudesPendientes(Model model){
+      List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
+      if (idsPendientes.isEmpty()) {
+        return "error/sinSolicitudesDeEliminacionPendientes";
+      }
+      return "redirect:/api/solicitudes/tratarEliminacion/" + idsPendientes.get(0);
 
     }
-    */
+
+    @GetMapping("/tratarEliminacion/{solicitudId}")
+    public String formularioTratarSolicitudDeEliminacion(@PathVariable("solicitudId") Long solicitudId, Model model){
+      SolicitudDeEliminacionDTO solicitud = agregadorService.pedirSolicitudDeEliminacion(solicitudId);
+      List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
+      log.info("Solicitud a tratar: " + solicitud);
+
+      // Esto es para despues ir retrocediendo/avanzando entre solicitudes -> no implementado
+      int indiceActual = idsPendientes.indexOf(solicitudId);
+      Long anteriorId = (indiceActual > 0) ? idsPendientes.get(indiceActual - 1) : null;
+      Long siguienteId = (indiceActual < idsPendientes.size() - 1) ? idsPendientes.get(indiceActual + 1) : null;
+
+      // 4. Agregar al modelo
+      model.addAttribute("solicitud", solicitud);
+      model.addAttribute("anteriorId", anteriorId);
+      model.addAttribute("siguienteId", siguienteId);
+
+      return "main-page/tratarSolicitudDeEliminacion";
+    }
+
+    /*
+  @PostMapping("/solicitudesDeEliminacion/resolverEliminacion")
+  public String procesarSolicitudDeEliminacion(@RequestParam Long solicitudId, @RequestParam String accion) {
+
+    if ("aprobar".equals(accion)) {
+      agregadorService.aceptarSolicitud(solicitudId);
+    } else if ("rechazar".equals(accion)) {
+      agregadorService.rechazarSolicitud(solicitudId);
+    }
 
 
+    Long proximaSolicitudId = agregadorService.obtenerPrimerIdSolicitudPendiente();
+
+    // 3. Redirigir
+    if (proximaSolicitudId != null) {
+      // Redirigir a la vista de la próxima solicitud
+      return "redirect:/solicitudesDeEliminacion/" + proximaSolicitudId;
+    } else {
+      // No quedan solicitudes
+      return "redirect:/dashboard-admin?mensaje=solicitudes_completadas";
+    }
   }
+  */
+
+
+}
+
+
 

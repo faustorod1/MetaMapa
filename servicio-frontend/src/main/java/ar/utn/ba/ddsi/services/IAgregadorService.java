@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.services;
 import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
+import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface IAgregadorService {
   List<HechoDTO> pedirHechosDeContribuyente();
   List<CategoriaDTO> pedirCategorias();
   CategoriaDTO pedirCategoriaPorID(Long id);
+  List<Long> pedirIDsPendientes();
+  SolicitudDeEliminacionDTO pedirSolicitudDeEliminacion(Long id);
 }

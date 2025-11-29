@@ -12,5 +12,8 @@ public interface ISolicitudesService {
     SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
     SolicitudDeEliminacion modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
     List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes();
+    List<Long> obtenerIDsPendientes();
+    SolicitudDeEliminacionOutputDTO obtenerSolicitudPorID(Long id);
+    List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesPendientes();
 
 }

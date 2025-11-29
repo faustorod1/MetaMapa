@@ -28,10 +28,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(HttpMethod.GET, "/api/solicitudes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/idsPendientes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes").hasAnyRole("CONTRIBUYENTE","ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/api/colecciones").permitAll()
                         .requestMatchers("/api/colecciones").hasRole("ADMIN")
-
                         .requestMatchers("/api/colecciones/{identificador}/hechos").permitAll()
                         .requestMatchers("/api/colecciones/con-hechos").permitAll()
 
@@ -41,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/categorias", "/api/categorias/{id}").permitAll()
+
 
                         .anyRequest().hasAnyRole("ADMIN")
                 )

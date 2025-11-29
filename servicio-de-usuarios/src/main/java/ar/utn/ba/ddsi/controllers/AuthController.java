@@ -94,12 +94,14 @@ public class AuthController {
             String password = credentials.get("password");
             String nombre = credentials.get("nombre");
             String apellido = credentials.get("apellido");
+            // String rol = credentials.get("rol"); no habría que agregar esto para el register de admins?
 
             if (email == null || email.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
 
+            // Usuario usuario = loginService.registrarUsuario(email, password, nombre, apellido, rol);
             Usuario usuario = loginService.registrarUsuario(email, password, nombre, apellido, null);
 
             String accessToken = loginService.generarAccessToken(usuario);

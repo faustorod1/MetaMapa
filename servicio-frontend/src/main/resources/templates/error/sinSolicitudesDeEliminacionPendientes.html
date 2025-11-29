@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sin Solicitudes | METAmapa</title>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            /* Define variables si no están en style.css para asegurar el estilo */
+            --color-main: #34495e;
+            --color-main-2: #ecf0f1;
+            --color-main-2-hover: #bdc3c7;
+        }
+
+        body {
+            background-image: url('../../static/fondoLevementeCargado.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Londrina Solid', cursive;
+        }
+
+        .container {
+            background-color: var(--color-main);
+            color: white;
+            border-radius: 1rem;
+            padding: 1.8rem;
+            width: 60vw;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-titulo">
+        <i class="fa-solid fa-check-circle" style="font-size: 3rem; color: #2ecc71; margin-bottom: 0.5rem;"></i>
+        <h2>¡Sin Solicitudes pendientes!</h2>
+    </div>
+
+    <p>
+        No hay solicitudes de eliminación para tratar en este momento.
+        El trabajo está al día.
+    </p>
+
+</div>
+
+</body>
+</html>

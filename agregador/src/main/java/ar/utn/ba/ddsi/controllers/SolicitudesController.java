@@ -61,5 +61,15 @@ public class SolicitudesController {
     return solicitudesService.obtenerSolicitudes();
   }
 
+  @GetMapping("/{id}")
+  public SolicitudDeEliminacionOutputDTO obtenerSolicitudPorId(@PathVariable Long id){
+    return solicitudesService.obtenerSolicitudPorID(id);
+  }
+
+  @GetMapping("/idsPendientes")
+  public List<Long> obtenerIDsPendientes(){
+    return solicitudesService.obtenerIDsPendientes();
+  }
+
 
 }

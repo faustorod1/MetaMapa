@@ -38,8 +38,9 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/logout", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
                                         "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}").permitAll()
                         .requestMatchers("/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion", "/api/solicitudes/modificacion/{id_hecho}", "api/solicitudes/solicitarModificacion").hasAnyRole("CONTRIBUYENTE","ADMIN")
-                        .requestMatchers("/colecciones/formulario-de-carga").hasRole("ADMIN")
-                    .requestMatchers("/404","/403","/401").permitAll()
+                        .requestMatchers("/colecciones/formulario-de-carga", "/api/solicitudes/tratarEliminaciones", "/api/solicitudes/tratarEliminacion/{id}", "/api/solicitudes/resolverEliminacion").hasRole("ADMIN")
+                        .requestMatchers("/404","/403","/401").permitAll()
+                        .requestMatchers("/sinSolicitudesDeEliminacionPendientes").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

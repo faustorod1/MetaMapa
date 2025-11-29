@@ -1,19 +1,27 @@
 package ar.utn.ba.ddsi.models.dto.input;
 
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Value
-public class SolicitudDeEliminacionDto implements Serializable {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class SolicitudDeEliminacionDTO implements Serializable {
+  Long id;
   String descripcion;
-  HechoDTO hecho;
+  Long hechoID;
   LocalDateTime fechaDeCarga;
   LocalDateTime fechaDeResolucion;
   EstadoSolicitud estado;
-  ContribuyenteDTO solicitante;
-  AdministradorDTO administradorQueResolvio;
-  int CANT_MINIMA_DE_CARACTERES;
+  Long solicitanteID;
+  Long administradorQueResolvio;
 }
+
+
+
+
+
