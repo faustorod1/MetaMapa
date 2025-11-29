@@ -6,8 +6,12 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/mapa.css}">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
 <div id="top-curtain"></div>
@@ -70,6 +74,7 @@
 <script>
     let hechoActual = null;
     let allMarkers = [];
+    let markersLayer = L.markerClusterGroup();
 
     // --- Elementos de la vista lateral ---
     const hechoPreview = {
@@ -84,26 +89,24 @@
     // --- Logica del buscador ---
     const searchInput = document.querySelector(".search-bar input");
 
-    // Creamos la función que filtra el mapa
     function filtrarMapa() {
         const textoBusqueda = searchInput.value.trim().toLowerCase();
 
-        // Recorremos TODOS los marcadores que creamos
-        allMarkers.forEach(marker => {
-            const hecho = marker.options.hecho;
+        // 1. Quitamos todos los marcadores del cluster
+        markersLayer.clearLayers();
 
+        // 2. Filtramos la lista original 'allMarkers'
+        const marcadoresFiltrados = allMarkers.filter(marker => {
+            const hecho = marker.options.hecho; // Accedemos a la data guardada
             const titulo = hecho.titulo?.toLowerCase() || "";
             const descripcion = hecho.descripcion?.toLowerCase() || "";
 
-            // Comprobamos si el texto de búsqueda está en el título O en la descripción
-            const coincide = titulo.includes(textoBusqueda) || descripcion.includes(textoBusqueda);
-
-            if (textoBusqueda === "" || coincide) {
-                marker.addTo(map);
-            } else {
-                marker.remove();
-            }
+            return titulo.includes(textoBusqueda) || descripcion.includes(textoBusqueda);
         });
+
+        // 3. Agregamos al cluster SOLO los que coinciden
+        // (addLayers es mucho más rápido que agregar uno por uno)
+        markersLayer.addLayers(marcadoresFiltrados);
     }
 
     searchInput.addEventListener('input', filtrarMapa);
@@ -113,48 +116,57 @@
 
 
     // --- Inicializa el mapa ---
+    const boundsArgentina = [
+        [-58.0, -80.0], // Esquina Sur-Oeste (Abajo a la izquierda, cubriendo Tierra del Fuego y Chile)
+        [-20.0, -50.0]  // Esquina Nor-Este (Arriba a la derecha, cubriendo Misiones, Uruguay, sur de Brasil)
+    ];
+
     const map = L.map('map', {
-        center: [-38.4161, -63.6167], // centro de Argentina
-        zoom: 5
+        center: [-38.4161, -63.6167], // Centro de Argentina
+        zoom: 5,
+        minZoom: 4,
+        maxBounds: boundsArgentina,
+        maxBoundsViscosity: 1.0
     });
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap contributors',
+        noWrap: true
     }).addTo(map);
+
+    map.addLayer(markersLayer);
 
     // --- Carga de marcadores ---
     addHechoListToMap(hechos);
 
     function addHechoListToMap(hechos) {
-        if (!hechos || hechos.length === 0) {
-            console.warn("No se recibieron hechos para mostrar.");
-            return;
-        }
+        if (!hechos || hechos.length === 0) return;
+        let nuevosMarcadores = [];
+
         for (const hecho of hechos) {
-            addHechoToMap(hecho);
+            if (!hecho.lugarAcontecimiento) continue;
+            const { latitud, longitud } = hecho.lugarAcontecimiento;
+            if (latitud == null || longitud == null) continue;
+
+            const marker = L.marker([latitud, longitud], {
+                riseOnHover: true,
+                hecho: hecho
+            });
+
+            marker.bindTooltip(`<b><center>${hecho.titulo}</center></b>`, {
+                permanent: false,
+                direction: "top"
+            });
+
+            marker.on('click', onHechoMarkerClick);
+
+            nuevosMarcadores.push(marker);
+            allMarkers.push(marker);
         }
+
+        markersLayer.addLayers(nuevosMarcadores);
     }
 
-    function addHechoToMap(hecho) {
-        if (!hecho.lugarAcontecimiento) return;
-        const { latitud, longitud } = hecho.lugarAcontecimiento;
-        if (latitud == null || longitud == null) return;
-
-        // Creamos el marcador con coordenadas
-        const marker = L.marker([latitud, longitud], {
-            riseOnHover: true,
-            hecho: hecho
-        }).addTo(map);
-
-        marker.bindTooltip(`<b><center>${hecho.titulo}</center></b>`, {
-            permanent: false,
-            direction: "top"
-        });
-
-        marker.on('click', onHechoMarkerClick);
-
-        allMarkers.push(marker);
-    }
 
     // --- Interacción con el panel lateral ---
     function openHecho(hecho) {
@@ -206,26 +218,6 @@
             });
         }
     }
-
-
-    const btnAdd = document.getElementById("btn-add-hecho");
-
-    btnAdd.addEventListener("click", () => {
-        window.location.href = "./cargarHecho.html";
-    });
-
-    const btnCSV = document.getElementById("btn-add-dataset");
-
-    btnCSV.addEventListener("click", () => {
-        window.location.href = "./importarCSV.html";
-    });
-
-    const btnColeccion = document.getElementById("btn-add-coleccion");
-
-    btnColeccion.addEventListener("click", () => {
-        window.location.href = "./crearColeccion.html";
-    });
-
 </script>
 </body>
 </html>
