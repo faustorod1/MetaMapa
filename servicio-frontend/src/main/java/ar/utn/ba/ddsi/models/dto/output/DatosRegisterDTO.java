@@ -14,4 +14,5 @@ public class DatosRegisterDTO {
   private String apellido;
   private String email;
   private String contrasenia;
+  private String codigoAdministrador;
 }

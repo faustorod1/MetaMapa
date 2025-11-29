@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.models.entities.Administrador;
 import ar.utn.ba.ddsi.models.entities.Contribuyente;
 import ar.utn.ba.ddsi.models.entities.Rol;
 import ar.utn.ba.ddsi.models.entities.Usuario;
+import ar.utn.ba.ddsi.models.exceptions.BadCodeException;
 import ar.utn.ba.ddsi.models.exceptions.NotFoundException;
 import ar.utn.ba.ddsi.models.exceptions.UsuarioExistenteException;
 import ar.utn.ba.ddsi.models.repositories.AdministradorRepository;
@@ -74,14 +75,10 @@ public class LoginService {
         return usuarioOpt.get();
     }
 
-    public Usuario registrarUsuario(String email, String password, String nombre, String apellido, String rol) {
+    public Usuario registrarUsuario(String email, String password, String nombre, String apellido, Integer code) {
         Optional<Usuario> existente = usuariosRepository.findByEmail(email);
         if (existente.isPresent()) {
-            throw new UsuarioExistenteException(email);
-        }
-
-        if (rol == null) {
-            rol = "CONTRIBUYENTE";
+            throw new UsuarioExistenteException(email + " ya existe este usuario");
         }
 
         Usuario usuario = Usuario.builder()
@@ -91,21 +88,22 @@ public class LoginService {
             .apellido(apellido)
             .build();
 
-      if (rol.equals("ADMINISTRADOR")) {
-        usuario.setRol(Rol.ADMIN);
-        usuariosRepository.save(usuario);
+        if (code == 3333) {
+            usuario.setRol(Rol.ADMIN);
+            usuariosRepository.save(usuario);
 
-        Administrador administrador = new Administrador();
-        administrador.setUsuario(usuario);
-        administradorRepository.save(administrador);
-      } else {
-        usuario.setRol(Rol.CONTRIBUYENTE);
-        usuariosRepository.save(usuario);
-        Contribuyente contribuyente = new Contribuyente();
-        contribuyente.setUsuario(usuario);
-        contribuyenteRepository.save(contribuyente);
-      }
-
+            Administrador administrador = new Administrador();
+            administrador.setUsuario(usuario);
+            administradorRepository.save(administrador);
+        }else if (code == null){
+            usuario.setRol(Rol.CONTRIBUYENTE);
+            usuariosRepository.save(usuario);
+            Contribuyente contribuyente = new Contribuyente();
+            contribuyente.setUsuario(usuario);
+            contribuyenteRepository.save(contribuyente);
+        }else {
+            throw new BadCodeException("Codigo de administrador no valido");
+        }
         return usuario;
     }
 
@@ -124,5 +122,4 @@ public class LoginService {
                 .role(usuario.getRol())
                 .build();
     }
-
 }

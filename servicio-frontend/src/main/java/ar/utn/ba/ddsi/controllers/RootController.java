@@ -1,5 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.exceptions.BadCodeException;
+import ar.utn.ba.ddsi.exceptions.UsuarioExistenteException;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.models.entities.DatosRegister;
@@ -58,21 +60,55 @@ public class RootController {
 
   @GetMapping("/register")
   public String register(Model model) {
-    model.addAttribute("datosRegister", new DatosRegister());
+    // Si el modelo NO contiene 'datosRegister' (ej. no viene de un error), lo inicializamos
+    if (!model.containsAttribute("datosRegister")) {
+      model.addAttribute("datosRegister", new DatosRegister());
+    }
     return "landing-page/register";
   }
 
   @PostMapping("/register")
-  public String registrarse(@ModelAttribute("datosRegister") DatosRegister datosRegister, Model model, RedirectAttributes redirectAttributes) {
+  public String registrarse(
+      @ModelAttribute("datosRegister") DatosRegister datosRegister,
+      Model model,
+      RedirectAttributes redirectAttributes) {
 
     try {
-      rootService.registrar(datosRegister.getNombre(), datosRegister.getApellido(), datosRegister.getEmail(), datosRegister.getContrasenia(), datosRegister.getContraseniaRepetida());
-      redirectAttributes.addFlashAttribute("exito", "Se ha registrado correctamente");
-      return "redirect:/login";
-    } catch (Exception ex) {
-      redirectAttributes.addFlashAttribute("error", "Hubo una falla al registrarse");
-      return "redirect:/register";
+      // Llama al servicio de registro
+      rootService.registrar(
+          datosRegister.getNombre(),
+          datosRegister.getApellido(),
+          datosRegister.getEmail(),
+          datosRegister.getContrasenia(),
+          datosRegister.getContraseniaRepetida(),
+          datosRegister.getCodigoAdministrador()
+      );
 
+      // Si tiene éxito, redirige a login con mensaje de éxito
+      redirectAttributes.addFlashAttribute("exito", "¡Registro exitoso! Ahora puedes iniciar sesión.");
+      return "redirect:/login";
+
+    } catch (BadCodeException ex) {
+
+      model.addAttribute("error", ex.getMessage());
+      model.addAttribute("datosRegister", datosRegister);
+
+      return "landing-page/register";
+
+    } catch (UsuarioExistenteException ex) {
+
+      model.addAttribute("error", ex.getMessage());
+      model.addAttribute("datosRegister", datosRegister);
+
+      return "landing-page/register";
+
+    } catch (Exception ex) {
+      log.error("Error desconocido durante el registro", ex);
+
+      // Error genérico (ej. Contraseñas no coinciden, error de DB, etc.)
+      model.addAttribute("error", "Hubo una falla al registrarse. Verifique los datos e intente nuevamente.");
+      model.addAttribute("datosRegister", datosRegister);
+      return "landing-page/register";
     }
   }
 }

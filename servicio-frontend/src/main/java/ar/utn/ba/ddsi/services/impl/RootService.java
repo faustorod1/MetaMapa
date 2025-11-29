@@ -1,9 +1,13 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.exceptions.BadCodeException;
+import ar.utn.ba.ddsi.exceptions.UsuarioExistenteException;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.dto.external.UserRolesDTO;
 import ar.utn.ba.ddsi.services.IRootService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,16 +20,18 @@ import java.util.Map;
 
 @Service
 public class RootService implements IRootService {
+    private final ObjectMapper objectMapper;
     WebClient agregadorWebClient;
     WebClient usuariosWebClient;
     WebApiCallerService webApiCallerService;
     private final String authServiceUrl;
 
-    public RootService(@Value("${servicio.agregador.api.base-url}") String agregadorBaseUrl, @Value("${servicio.usuarios.api.base-url}") String servicioDeUsuarios, WebApiCallerService webApiCallerService) {
+    public RootService(@Value("${servicio.agregador.api.base-url}") String agregadorBaseUrl, @Value("${servicio.usuarios.api.base-url}") String servicioDeUsuarios, WebApiCallerService webApiCallerService, ObjectMapper objectMapper) {
         agregadorWebClient = WebClient.builder().baseUrl(agregadorBaseUrl).build();
         usuariosWebClient = WebClient.builder().baseUrl(servicioDeUsuarios).build();
         this.authServiceUrl = servicioDeUsuarios;
         this.webApiCallerService = webApiCallerService;
+        this.objectMapper = objectMapper;
     }
 
     public AuthResponseDTO login(String email, String password) {
@@ -71,7 +77,7 @@ public class RootService implements IRootService {
         }
     }
 
-    public AuthResponseDTO registrar(String nombre, String apellido, String email, String password, String repetedPassword) {
+    public AuthResponseDTO registrar(String nombre, String apellido, String email, String password, String repetedPassword, String code) {
 
         try {
             return usuariosWebClient.post()
@@ -81,19 +87,36 @@ public class RootService implements IRootService {
                             "apellido", apellido,
                             "email", email,
                             "password", password,
-                            "repetedPassword", repetedPassword))
+                            "repetedPassword", repetedPassword,
+                            "code", code))
                     .retrieve()
                     .bodyToMono(AuthResponseDTO.class)
                     .block();
         } catch (WebClientResponseException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return null;
-            }
-            throw new RuntimeException("Error en el servicio de autenticación: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException("Error de conexión con el servicio de autenticación: " + e.getMessage(), e);
-        }
+            String respuestaJsonError = e.getResponseBodyAsString();
+            String mensajeLimpio = extraerMensajeDelJson(respuestaJsonError);
 
+            if (e.getStatusCode() == HttpStatus.CONFLICT) {
+                throw new UsuarioExistenteException("El correo electrónico ingresado ya está registrado.");
+            }
+
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new BadCodeException("El código de administrador proporcionado es incorrecto.");
+            }
+
+            throw new RuntimeException("Error en el servicio de autenticación (" + e.getStatusCode() + "): " + mensajeLimpio, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error inesperado al conectar con auth: " + e.getMessage(), e);
+        }
+    }
+
+    private String extraerMensajeDelJson(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            return root.path("error").asText();
+        } catch (Exception e) {
+            return "Ocurrió un error al procesar la solicitud.";
+        }
     }
 }
 

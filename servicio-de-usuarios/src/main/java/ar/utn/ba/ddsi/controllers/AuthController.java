@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dto.RefreshRequestDTO;
 import ar.utn.ba.ddsi.models.dto.TokenResponseDTO;
 import ar.utn.ba.ddsi.models.dto.UserRolesDTO;
 import ar.utn.ba.ddsi.models.entities.Usuario;
+import ar.utn.ba.ddsi.models.exceptions.BadCodeException;
 import ar.utn.ba.ddsi.models.exceptions.NotFoundException;
 import ar.utn.ba.ddsi.models.exceptions.UsuarioExistenteException;
 import ar.utn.ba.ddsi.utils.JwtUtil;
@@ -94,15 +95,22 @@ public class AuthController {
             String password = credentials.get("password");
             String nombre = credentials.get("nombre");
             String apellido = credentials.get("apellido");
-            // String rol = credentials.get("rol"); no habría que agregar esto para el register de admins?
+            String codeString = credentials.get("code");
+
+            Integer code;
+            if (codeString == null || codeString.trim().isEmpty()) {
+                code = null;
+            }else {
+                code = Integer.parseInt(codeString);
+            }
+
 
             if (email == null || email.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
 
-            // Usuario usuario = loginService.registrarUsuario(email, password, nombre, apellido, rol);
-            Usuario usuario = loginService.registrarUsuario(email, password, nombre, apellido, null);
+            Usuario usuario = loginService.registrarUsuario(email, password, nombre, apellido, code);
 
             String accessToken = loginService.generarAccessToken(usuario);
             String refreshToken = loginService.generarRefreshToken(usuario);
@@ -115,6 +123,8 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (UsuarioExistenteException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (BadCodeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

@@ -9,4 +9,5 @@ public class DatosRegister {
   private String email;
   private String contrasenia;
   private String contraseniaRepetida;
+  private String codigoAdministrador;
 }
