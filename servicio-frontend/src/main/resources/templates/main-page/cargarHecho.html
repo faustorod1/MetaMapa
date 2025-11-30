@@ -5,23 +5,22 @@
     <title>Cargar hecho | METAmapa</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/cargarHecho.css}" />
-    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>   <!--Para la flechita-->
-    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet"> <!--Para el logo-->
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
 
+    <script th:src="@{/js/locationService.js}"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 </head>
 
 <body>
-    <main>
-        <a th:href="@{/main}" id="btn-back-page"> <i class="fa-solid fa-chevron-left"></i></a>
-        <div id="fixed-logo"></div>
+<main>
+    <a th:href="@{/main}" id="btn-back-page"> <i class="fa-solid fa-chevron-left"></i></a>
+    <div id="fixed-logo"></div>
 
-        <!--/*@thymesVar id="hechoOutputDTO" type="ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO"*/-->
-        <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}" enctype="multipart/form-data"> <!--action: ¿a donde se enviarán los datos? method: metodo HTTP usado para mandar los datos -->
+    <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}" enctype="multipart/form-data">
         <div class = "container">
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"
@@ -32,74 +31,58 @@
                  style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
             </div>
 
-                <h2 id="titulo-cargarHecho">Cargar Hecho</h2>
-                <div class ="input-primerFila">
-                    <div class="input-cargarHecho">
-                        <h4>Título</h4>
-                        <label for ="titulo"></label>
-                        <input type="text" id="titulo" th:field="*{titulo}" required>
-                        <div th:if="${#fields.hasErrors('titulo')}" class="text-danger">
-                            <small th:errors="*{titulo}">Error en titulo</small>
-                        </div>
-                    </div>
-
-                    <div class="input-cargarHecho">
-                        <h4>Categoria</h4>
-
-                        <select th:field="*{categoria}" required>
-
-                            <option value="">-- Seleccionar Categoría --</option>
-
-                            <option th:each="cat : ${categorias}"
-                                    th:value="${cat.id}"
-                                    th:text="${cat.nombre}">
-                            </option>
-                        </select>
-
-                        <div th:if="${#fields.hasErrors('categoria')}" class="text-danger">
-                            <small th:errors="*{categoria}">Error en la categoría</small>
-                        </div>
-                    </div>
-
-                    <div class="input-cargarHecho">
-                        <h4>Lugar</h4>
-                        <div id="input-ubicacion-container">
-
-                            <!-- Campo visible para mostrar ambas coordenadas -->
-                            <input type="text" id="ubicacion" placeholder="Ubicación" disabled required>
-
-                            <!-- Campos ocultos mapeados al objeto hecho -->
-                            <input type="hidden" th:field="*{latitud}" id="latitud" required>
-                            <input type="hidden" th:field="*{longitud}" id="longitud" required>
-
-                            <!-- Botón para seleccionar en el mapa -->
-                            <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
-                                Seleccionar en el mapa
-                                <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
-                            </button>
-                        </div>
+            <h2 id="titulo-cargarHecho">Cargar Hecho</h2>
+            <div class ="input-primerFila">
+                <div class="input-cargarHecho">
+                    <h4>Título</h4>
+                    <input type="text" id="titulo" th:field="*{titulo}" required>
+                    <div th:if="${#fields.hasErrors('titulo')}" class="text-danger">
+                        <small th:errors="*{titulo}">Error en titulo</small>
                     </div>
                 </div>
 
                 <div class="input-cargarHecho">
-                    <h4>Descripción</h4>
-                    <label for ="descripcion"></label>
-                    <textarea id="descripcion" placeholder="Escribe una descripcion..." th:field="*{descripcion}"></textarea><!--Descripcio-->
+                    <h4>Categoria</h4>
+                    <select th:field="*{categoria}" required>
+                        <option value="">-- Seleccionar Categoría --</option>
+                        <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('categoria')}" class="text-danger">
+                        <small th:errors="*{categoria}">Error en la categoría</small>
+                    </div>
                 </div>
 
-            <div class="input-tercerFila">
-                    <div class="input-cargarHecho">
-                        <h4>Fecha y Hora</h4>
-                        <input type="datetime-local" id="fechaHecho" name="fecha" th:field="*{fechaHecho}" required>
+                <div class="input-cargarHecho">
+                    <h4>Lugar</h4>
+                    <div id="input-ubicacion-container">
+                        <input type="text" id="ubicacion" placeholder="Ubicación" disabled required>
+                        <input type="hidden" th:field="*{latitud}" id="latitud" required>
+                        <input type="hidden" th:field="*{longitud}" id="longitud" required>
+
+                        <button type="button" id="btn-show-input-lugar" onclick="toggleInputUbicacion(true)">
+                            Seleccionar en el mapa
+                            <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
+                        </button>
                     </div>
+                </div>
+            </div>
+
+            <div class="input-cargarHecho">
+                <h4>Descripción</h4>
+                <textarea id="descripcion" placeholder="Escribe una descripcion..." th:field="*{descripcion}"></textarea>
+            </div>
+
+            <div class="input-tercerFila">
+                <div class="input-cargarHecho">
+                    <h4>Fecha y Hora</h4>
+                    <input type="datetime-local" id="fechaHecho" name="fecha" th:field="*{fechaHecho}" required>
+                </div>
 
                 <div class="input-cargarHecho">
                     <h4>Etiquetas</h4>
                     <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
                     <button type="button" id="addTag" class="add-btn">➕</button>
-
                     <div id="hiddenTagsContainer"></div>
-
                     <div id="tagContainer" class="tag-container"></div>
                 </div>
             </div>
@@ -108,239 +91,234 @@
                 <div class="input-cargarHecho">
                     <label for="fotos" class="custom-file">Sube imágenes📷 </label>
                     <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
-
                     <div id="preview"></div>
                 </div>
             </div>
 
             <div class="button-footer">
-            <button class="btn-submit" type="submit" >Cargar</button>
+                <button class="btn-submit" type="submit">Cargar</button>
             </div>
         </div>
-        </form>
-    </main>
+    </form>
+</main>
 
-    <div id="mapa-input-ubicacion-container">
-        <div id="mapa-input-ubicacion"></div>
-        <div class="btn-container">
-            <button type="button" class="btn-ubicacion" id="btn-cancel-ubicacion" onclick="toggleInputUbicacion(false)">Cancelar</button>
-            <button type="button" class="btn-ubicacion hidden" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
-        </div>
+<div id="mapa-input-ubicacion-container">
+    <div id="mapa-input-ubicacion"></div>
+    <div class="btn-container">
+        <button type="button" class="btn-ubicacion" id="btn-cancel-ubicacion" onclick="toggleInputUbicacion(false)">Cancelar</button>
+        <button type="button" class="btn-ubicacion hidden" id="btn-accept-ubicacion" onclick="seleccionarUbicacionActual()">Usar esta ubicación</button>
     </div>
+</div>
 
+<script>
+    (() => {
+        const inputFotos = document.getElementById("fotos");
+        const preview = document.getElementById("preview");
+        let filesArray = [];
 
-
-
-
-    <script>
-        (() => {
-            /*** CARGA DE FOTOS ***/
-            const inputFotos = document.getElementById("fotos");
-            const preview = document.getElementById("preview");
-            let filesArray = [];
-/*
-            function agregarPathImagen(path) {
-                const index = document.querySelectorAll(".hidden-path").length;
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = `contenidosMultimedia[${index}]`;
-                input.value = path; // por ejemplo: "uploads/foto1.png"
-                input.classList.add("hidden-path");
-                document.getElementById("preview").appendChild(input);
-            }
-*/
-            function mostrarPreviews() {
-                preview.innerHTML = "";
-                filesArray.forEach((file, index) => {
-                    if (file.type.startsWith("image/")) {
-                        const reader = new FileReader();
-                        reader.onload = e => {
-                            const container = document.createElement("div");
-                            container.classList.add("preview-item");
-
-                            const img = document.createElement("img");
-                            img.src = e.target.result;
-
-                            const btn = document.createElement("button");
-                            btn.textContent = "×";
-                            btn.classList.add("remove-btn");
-                            btn.onclick = (ev) => {
-                                ev.preventDefault();
-                                eliminarArchivo(index);
-                            };
-
-                            container.appendChild(img);
-                            container.appendChild(btn);
-                            preview.appendChild(container);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
-                const dataTransfer = new DataTransfer();
-                filesArray.forEach(file => dataTransfer.items.add(file));
-                inputFotos.files = dataTransfer.files;
-            }
-
-            function eliminarArchivo(index) {
-                filesArray.splice(index, 1);
-                mostrarPreviews();
-            }
-
-            inputFotos.addEventListener("change", () => {
-                const nuevosArchivos = Array.from(inputFotos.files);
-                filesArray = filesArray.concat(nuevosArchivos);
-                mostrarPreviews();
-            });
-
-            const inputTags = document.getElementById("tagInput");
-            const addBtn = document.getElementById("addTag");
-            const tagContainer = document.getElementById("tagContainer");
-            let etiquetas = [];
-
-            function actualizarHidden() {
-                const hiddenContainer = document.getElementById("hiddenTagsContainer");
-
-                // Limpia los inputs previos
-                hiddenContainer.innerHTML = "";
-
-                // Crea los inputs como espera Spring
-                etiquetas.forEach((et, index) => {
-                    const hidden = document.createElement("input");
-                    hidden.type = "hidden";
-                    hidden.name = `etiquetas[${index}].nombre`;
-                    hidden.value = et;
-                    hidden.classList.add("hidden-tag");
-                    hiddenContainer.appendChild(hidden);
-                });
-            }
-
-            function crearEtiqueta(texto) {
-                const tagText = texto.trim();
-                if (!tagText || etiquetas.includes(tagText)) return;
-
-                etiquetas.push(tagText);
-                actualizarHidden();
-
-                const tag = document.createElement("div");
-                tag.classList.add("tag");
-                tag.textContent = tagText;
-
-                const btn = document.createElement("button");
-                btn.textContent = "×";
-                btn.onclick = (e) => {
-                    e.preventDefault();
-                    etiquetas = etiquetas.filter(et => et !== tagText);
-                    actualizarHidden();
-                    tag.remove();
-                };
-
-                tag.appendChild(btn);
-                tagContainer.appendChild(tag);
-                inputTags.value = "";
-            }
-
-            addBtn.addEventListener("click", () => crearEtiqueta(inputTags.value));
-            inputTags.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    crearEtiqueta(inputTags.value);
+        function mostrarPreviews() {
+            preview.innerHTML = "";
+            filesArray.forEach((file, index) => {
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const container = document.createElement("div");
+                        container.classList.add("preview-item");
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        const btn = document.createElement("button");
+                        btn.textContent = "×";
+                        btn.classList.add("remove-btn");
+                        btn.onclick = (ev) => { ev.preventDefault(); eliminarArchivo(index); };
+                        container.appendChild(img);
+                        container.appendChild(btn);
+                        preview.appendChild(container);
+                    };
+                    reader.readAsDataURL(file);
                 }
             });
-
-        })();
-
-        const map = L.map('mapa-input-ubicacion', {
-            center: [-34.5986333, -58.4199428],
-            zoom: 13
+            const dataTransfer = new DataTransfer();
+            filesArray.forEach(file => dataTransfer.items.add(file));
+            inputFotos.files = dataTransfer.files;
+        }
+        function eliminarArchivo(index) { filesArray.splice(index, 1); mostrarPreviews(); }
+        inputFotos.addEventListener("change", () => {
+            filesArray = filesArray.concat(Array.from(inputFotos.files));
+            mostrarPreviews();
         });
 
-        let ubicacionSeleccionada;
-        let markerUbicacionSeleccionada;
-        const inputUbicacionContainer = document.getElementById('mapa-input-ubicacion-container');
-        const inputUbicacion = document.getElementById('ubicacion');
+        const inputTags = document.getElementById("tagInput");
+        const addBtn = document.getElementById("addTag");
+        const tagContainer = document.getElementById("tagContainer");
+        let etiquetas = [];
 
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {
-                foo: 'bar',
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }
-        ).addTo(map);
-
-        const geocoder = new L.Control.Geocoder({
-            defaultMarkGeocode: false
-        })
-        .on('markgeocode', (e) => {
-            const coords = e.geocode.center;
-            if (coords !== null) {
-                console.log(coords);
-                const ubicacion = latlngToCoords(coords);
-                marcarUbicacionActual(ubicacion);
-            }
-        })
-        .addTo(map);
-
-        map.on('contextmenu', (e) => {
-            marcarUbicacionActual(latlngToCoords(e.latlng));
+        function actualizarHidden() {
+            const hiddenContainer = document.getElementById("hiddenTagsContainer");
+            hiddenContainer.innerHTML = "";
+            etiquetas.forEach((et, index) => {
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = `etiquetas[${index}].nombre`;
+                hidden.value = et;
+                hidden.classList.add("hidden-tag");
+                hiddenContainer.appendChild(hidden);
+            });
+        }
+        function crearEtiqueta(texto) {
+            const tagText = texto.trim();
+            if (!tagText || etiquetas.includes(tagText)) return;
+            etiquetas.push(tagText);
+            actualizarHidden();
+            const tag = document.createElement("div");
+            tag.classList.add("tag");
+            tag.textContent = tagText;
+            const btn = document.createElement("button");
+            btn.textContent = "×";
+            btn.onclick = (e) => {
+                e.preventDefault();
+                etiquetas = etiquetas.filter(et => et !== tagText);
+                actualizarHidden();
+                tag.remove();
+            };
+            tag.appendChild(btn);
+            tagContainer.appendChild(tag);
+            inputTags.value = "";
+        }
+        addBtn.addEventListener("click", () => crearEtiqueta(inputTags.value));
+        inputTags.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") { e.preventDefault(); crearEtiqueta(inputTags.value); }
         });
+    })();
 
-        function marcarUbicacionActual(newUbicacion) {
-            if (markerUbicacionSeleccionada) {
-                markerUbicacionSeleccionada.remove();
+
+    const boundsArgentina = [ [-58.0, -80.0], [-20.0, -50.0] ];
+    const allowedBounds = L.latLngBounds(boundsArgentina);
+
+    let ubicacionSeleccionada;       // Array [lat, lng]
+    let nombreUbicacionLegible = ""; // String "Capital, Córdoba"
+    let markerUbicacionSeleccionada;
+    let ultimaPosicionValida = null;
+
+    const inputUbicacionContainer = document.getElementById('mapa-input-ubicacion-container');
+    const inputUbicacion = document.getElementById('ubicacion'); // El input visible
+
+    // Inputs ocultos para el backend
+    const inputLat = document.getElementById("latitud");
+    const inputLng = document.getElementById("longitud");
+
+    const map = L.map('mapa-input-ubicacion', {
+        center: [-34.5986333, -58.4199428],
+        zoom: 5,
+        minZoom: 4,
+        maxBounds: boundsArgentina,
+        maxBoundsViscosity: 1.0
+    });
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        noWrap: true
+    }).addTo(map);
+
+
+    async function marcarUbicacionActual(newUbicacion) {
+        const lat = newUbicacion[0];
+        const lng = newUbicacion[1];
+
+        if (!allowedBounds.contains(newUbicacion)) {
+            alert("Estás muy lejos de la zona permitida.");
+            return;
+        }
+
+        document.body.style.cursor = 'wait';
+
+        const resultado = await LocationService.obtenerDatosUbicacion(lat, lng);
+
+        document.body.style.cursor = 'default';
+
+        if (!resultado.valid) {
+            alert("La ubicación seleccionada está fuera de la República Argentina.");
+            if (markerUbicacionSeleccionada && ultimaPosicionValida) {
+                markerUbicacionSeleccionada.setLatLng(ultimaPosicionValida);
             }
+            return;
+        }
 
-            const marker = L.marker(newUbicacion, {
+        ultimaPosicionValida = [lat, lng];
+
+        nombreUbicacionLegible = resultado.label;
+
+        if (markerUbicacionSeleccionada) {
+            markerUbicacionSeleccionada.setLatLng([lat, lng]);
+        } else {
+            markerUbicacionSeleccionada = L.marker([lat, lng], {
                 riseOnHover: true,
                 draggable: true
             }).addTo(map);
-            
-            markerUbicacionSeleccionada = marker;
-            // Muestra el botón de aceptar
-            document.getElementById('btn-accept-ubicacion').classList.remove('hidden');
+
+            markerUbicacionSeleccionada.on('dragend', async function(e) {
+                const pos = e.target.getLatLng();
+                await marcarUbicacionActual([pos.lat, pos.lng]);
+            });
         }
 
-        function toggleInputUbicacion(active) {
-            inputUbicacionContainer.classList.toggle('active', active);
-            if (active) {
-                if (ubicacionSeleccionada) {
-                    marcarUbicacionActual(ubicacionSeleccionada);
-                }
-            } else {
-                if (markerUbicacionSeleccionada) {
-                    markerUbicacionSeleccionada.remove();
-                }
+        markerUbicacionSeleccionada.bindPopup(`<b>${nombreUbicacionLegible}</b>`).openPopup();
+
+        document.getElementById('btn-accept-ubicacion').classList.remove('hidden');
+    }
+
+
+    map.on('contextmenu', (e) => {
+        marcarUbicacionActual([e.latlng.lat, e.latlng.lng]);
+    });
+
+    const geocoder = new L.Control.Geocoder({
+        defaultMarkGeocode: false,
+        geocoder: L.Control.Geocoder.nominatim({
+            geocodingQueryParams: { countrycodes: 'ar' }
+        })
+    })
+        .on('markgeocode', async (e) => {
+            const coords = e.geocode.center;
+            map.setView(coords, 13);
+            await marcarUbicacionActual([coords.lat, coords.lng]);
+        })
+        .addTo(map);
+
+
+    function toggleInputUbicacion(active) {
+        inputUbicacionContainer.classList.toggle('active', active);
+        if (active) {
+            setTimeout(() => { map.invalidateSize(); }, 100);
+            if (ubicacionSeleccionada) {
+                marcarUbicacionActual(ubicacionSeleccionada);
             }
         }
+    }
 
-        // MODIFICADO - Versión anterior en GIT 6/10
-        function seleccionarUbicacionActual() {
-            if (markerUbicacionSeleccionada) {
-                const lat = markerUbicacionSeleccionada._latlng.lat;
-                const lng = markerUbicacionSeleccionada._latlng.lng;
+    async function seleccionarUbicacionActual() {
+        if (markerUbicacionSeleccionada) {
+            const lat = markerUbicacionSeleccionada.getLatLng().lat;
+            const lng = markerUbicacionSeleccionada.getLatLng().lng;
 
-                // Guarda en la variable global
-                ubicacionSeleccionada = [lat, lng];
-
-                // Muestra en el input visible
-                inputUbicacion.value = `${lat};${lng}`;
-
-                // ✅ Asigna también a los campos ocultos del DTO
-                document.getElementById("latitud").value = lat;
-                document.getElementById("longitud").value = lng;
+            const resultado = await LocationService.obtenerDatosUbicacion(lat, lng);
+            if (!resultado.valid) {
+                alert("Ubicación inválida.");
+                return;
             }
 
-            toggleInputUbicacion(false);
+            ubicacionSeleccionada = [lat, lng];
+
+            inputUbicacion.value = resultado.label;
+
+            inputLat.value = lat;
+            inputLng.value = lng;
         }
+        toggleInputUbicacion(false);
+    }
 
-        function latlngToCoords(latlng) {
-            return [latlng.lat, latlng.lng];
-        }
-
-
-
-
-
-
-    </script>
+    function latlngToCoords(latlng) {
+        return [latlng.lat, latlng.lng];
+    }
+</script>
 </body>
 </html>
