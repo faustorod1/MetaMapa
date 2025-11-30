@@ -42,12 +42,13 @@ public class SolicitudesController {
       case PENDIENTE -> ResponseEntity.status(201).body("Solicitud creada con éxito"); // TODO: Devolver ID
       case RECHAZADA_POR_SPAM -> ResponseEntity.status(422).body("Solicitud rechazada por spam");
       case RECHAZADA_POR_FALTA_DE_CARACTERES -> ResponseEntity.status(422).body("Solicitud rechazada por insuficientes carácteres");
-      default -> ResponseEntity.internalServerError().body("Error del servidor (ㆆ _ ㆆ)");
+      default -> ResponseEntity.internalServerError().body("Error del servidor");
     };
   }
 
   @PatchMapping("/{id}/estado")
-  public ResponseEntity<SolicitudDeEliminacionOutputDTO> modificarEstadoSolicitud(@PathVariable Long id, @RequestBody ResolucionSolicitudDeEliminacionDTO resolucion) {
+  public ResponseEntity<SolicitudDeEliminacionOutputDTO> modificarEstadoSolicitud(@PathVariable Long id, @RequestBody ResolucionSolicitudDeEliminacionDTO resolucion, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    resolucion.setAdministradorQueResolvioId(userDetails.getId());
     try {
       SolicitudDeEliminacion solicitud = solicitudesService.modificarEstadoSolicitud(id, resolucion);
       return ResponseEntity.ok().body(SolicitudDeEliminacionOutputDTO.fromEntity(solicitud));

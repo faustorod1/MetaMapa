@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dto.input.*;
+import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
@@ -82,6 +83,14 @@ public class AgregadorService implements IAgregadorService {
         return webApiCallerService.get(
                 agregadorBaseUrl + "/api/solicitudes/" + id,
                 SolicitudDeEliminacionDTO.class
+        );
+    }
+
+    public void resolverEliminacion(Long id, ResolucionSolicitudDeEliminacionOutputDTO resolucion){
+        webApiCallerService.patch(
+                agregadorBaseUrl + "/api/solicitudes/" + id + "/estado",
+                resolucion,
+                Void.class
         );
     }
 }

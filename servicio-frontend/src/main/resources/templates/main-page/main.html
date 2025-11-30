@@ -33,9 +33,9 @@
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-file-pen"></i>
         </button>
-        <button class="nav-button" id="nav-button-tratar-solicitud-de-eliminacion" view="./tratarSolicitudDeEliminacion" th:if="${session.role == 'ADMIN'}">
-            <div class="nav-button-selection"></div>
-            <i class="fa-solid fa-file-excel"></i>
+        <button class="nav-button" id="nav-button-tratar-solicitud-de-eliminacion"
+                view="/api/solicitudes/tratarEliminaciones"  th:if="${session.role == 'ADMIN'}">           <div class="nav-button-selection"></div>
+                <i class="fa-solid fa-file-excel"></i>
         </button>
         <button class="nav-button" view="./administrar-colecciones" id="nav-button-adm-colecciones" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>
@@ -90,7 +90,18 @@
 
                 // Cambiar iframe
                 const view = button.getAttribute('view');
-                if (view) iframe.src = `main/${view}`;
+                if (view) {
+                    let url;
+                    // **AQUÍ ESTÁ EL CAMBIO CLAVE:**
+                    // Si la ruta 'view' empieza por '/', la usamos directamente (ruta absoluta).
+                    // Si no, le añadimos el prefijo 'main/' (ruta relativa a la carpeta 'main').
+                    if (view.startsWith('/')) {
+                        url = view;
+                    } else {
+                        url = `main/${view}`;
+                    }
+                    iframe.src = url;
+                }
             });
         }
     });

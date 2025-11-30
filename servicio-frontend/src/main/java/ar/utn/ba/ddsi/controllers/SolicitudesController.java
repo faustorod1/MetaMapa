@@ -4,7 +4,9 @@ import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
+import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -55,91 +58,88 @@ public class SolicitudesController {
   }
 
   @GetMapping("/modificacion/{id_hecho}")
-  public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes){
+  public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
     List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
     List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
 
-    try{
+    try {
       HechoDTO hecho = hechosDelContribuyente.stream().filter(h -> h.getId().equals(id_hecho)).findFirst().get();
       HechoOutputDTO hechoOutputDTO = HechoOutputDTO.fromDTOtoOutput(hecho);
 
-        model.addAttribute("hecho", hechoOutputDTO);
-        model.addAttribute("id_hecho", id_hecho);
-        model.addAttribute("categorias", categorias);
+      model.addAttribute("hecho", hechoOutputDTO);
+      model.addAttribute("id_hecho", id_hecho);
+      model.addAttribute("categorias", categorias);
 
-        return "main-page/crearSolicitudDeModificacion";
-    }catch (Exception ex){
+      return "main-page/crearSolicitudDeModificacion";
+    } catch (Exception ex) {
       return "error/403";
     }
   }
 
   @PostMapping("/solicitarModificacion")
   public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
-      log.info("DTO recibido: {}", hecho + ", Id recibido: " + id_hecho);
-     try{
-        dinamicaService.modificarHecho(id_hecho, hecho);
-        redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
-        return "redirect:/api/solicitudes/modificacion/" + id_hecho;
-      }catch (Exception ex){
-       redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
-       return "redirect:/solicitudes/modificacion/" + id_hecho;
-      }
+    log.info("DTO recibido: {}", hecho + ", Id recibido: " + id_hecho);
+    try {
+      dinamicaService.modificarHecho(id_hecho, hecho);
+      redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
+      return "redirect:/api/solicitudes/modificacion/" + id_hecho;
+    } catch (Exception ex) {
+      redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
+      return "redirect:/solicitudes/modificacion/" + id_hecho;
+    }
 
   }
 
-    // ENDPOINTS: administrador
+  // ENDPOINTS: administrador
 
-    @GetMapping("/tratarEliminaciones")
-    public String solicitudesPendientes(Model model){
-      List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
-      if (idsPendientes.isEmpty()) {
-        return "error/sinSolicitudesDeEliminacionPendientes";
-      }
-      return "redirect:/api/solicitudes/tratarEliminacion/" + idsPendientes.get(0);
-
+  @GetMapping("/tratarEliminaciones")
+  public String solicitudesPendientes(Model model) {
+    List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
+    if (idsPendientes.isEmpty()) {
+      return "error/sinSolicitudesDeEliminacionPendientes";
     }
+    return "redirect:/api/solicitudes/tratarEliminacion/" + idsPendientes.get(0);
 
-    @GetMapping("/tratarEliminacion/{solicitudId}")
-    public String formularioTratarSolicitudDeEliminacion(@PathVariable("solicitudId") Long solicitudId, Model model){
-      SolicitudDeEliminacionDTO solicitud = agregadorService.pedirSolicitudDeEliminacion(solicitudId);
-      List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
-      log.info("Solicitud a tratar: " + solicitud);
+  }
 
-      int indiceActual = idsPendientes.indexOf(solicitudId);
-      Long anteriorId = (indiceActual > 0) ? idsPendientes.get(indiceActual - 1) : null;
-      Long siguienteId = (indiceActual < idsPendientes.size() - 1) ? idsPendientes.get(indiceActual + 1) : null;
+  @GetMapping("/tratarEliminacion/{solicitudId}")
+  public String formularioTratarSolicitudDeEliminacion(@PathVariable("solicitudId") Long solicitudId, Model model) {
+    SolicitudDeEliminacionDTO solicitud = agregadorService.pedirSolicitudDeEliminacion(solicitudId);
+    List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
+    HechoDTO hecho = agregadorService.pedirHecho(solicitud.getHechoId());
+    LocalDate fechaSolicitud = solicitud.getFechaDeCarga().toLocalDate();
 
-      model.addAttribute("solicitud", solicitud);
-      model.addAttribute("anteriorId", anteriorId);
-      model.addAttribute("siguienteId", siguienteId);
+    int indiceActual = idsPendientes.indexOf(solicitudId);
+    Long anteriorId = (indiceActual > 0) ? idsPendientes.get(indiceActual - 1) : null;
+    Long siguienteId = (indiceActual < idsPendientes.size() - 1) ? idsPendientes.get(indiceActual + 1) : null;
 
-      return "main-page/tratarSolicitudDeEliminacion";
-    }
+    model.addAttribute("solicitud", solicitud);
+    model.addAttribute("hecho", hecho);
+    model.addAttribute("fechaSolicitud", fechaSolicitud);
+    model.addAttribute("anteriorId", anteriorId);
+    model.addAttribute("siguienteId", siguienteId);
 
-    /*
+    return "main-page/tratarSolicitudDeEliminacion";
+  }
+
   @PostMapping("/solicitudesDeEliminacion/resolverEliminacion")
-  public String procesarSolicitudDeEliminacion(@RequestParam Long solicitudId, @RequestParam String accion) {
+  public String procesarSolicitudDeEliminacion(@RequestParam("solicitudId") Long solicitudId, @RequestParam("accion") String accion, RedirectAttributes redirectAttributes) {
+    ResolucionSolicitudDeEliminacionOutputDTO resolucion = new ResolucionSolicitudDeEliminacionOutputDTO();
 
-    if ("aprobar".equals(accion)) {
-      agregadorService.aceptarSolicitud(solicitudId);
-    } else if ("rechazar".equals(accion)) {
-      agregadorService.rechazarSolicitud(solicitudId);
+    try {
+      if ("aprobar".equals(accion)) {
+        resolucion.setEstadoSolicitud(EstadoSolicitud.ACEPTADA);
+      } else if ("rechazar".equals(accion)) {
+        resolucion.setEstadoSolicitud(EstadoSolicitud.RECHAZADA);
+      }
+      agregadorService.resolverEliminacion(solicitudId, resolucion);
+    } catch (Exception ex) {
+      redirectAttributes.addFlashAttribute("error", "La solicitud no pudo ser tratada");
     }
 
+    return "redirect:/api/solicitudes/tratarEliminaciones";
 
-    Long proximaSolicitudId = agregadorService.obtenerPrimerIdSolicitudPendiente();
-
-    // 3. Redirigir
-    if (proximaSolicitudId != null) {
-      // Redirigir a la vista de la próxima solicitud
-      return "redirect:/solicitudesDeEliminacion/" + proximaSolicitudId;
-    } else {
-      // No quedan solicitudes
-      return "redirect:/dashboard-admin?mensaje=solicitudes_completadas";
-    }
-  }
-  */
-
+}
 
 }
 

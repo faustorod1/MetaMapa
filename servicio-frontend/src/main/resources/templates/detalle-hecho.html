@@ -17,18 +17,20 @@
         }
 
         body {
-            margin: 0;
-            background-image: url('../static/fondoLevementeCargado.png');
+            height: 90vh;
+            margin:0;
+            font-family: Arial, sans-serif;
+            background-image:url('/fondoLevementeCargado.png');
             background-size: cover;                 /* Que cubra toda la pantalla */
             background-repeat: no-repeat;           /* Que no se repita */
             background-attachment: fixed;           /* Fijo */
             background-position: center center;     /* Que esté centrada */
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
         }
+
 
         .card {
             background: var(--color-main);
@@ -38,7 +40,7 @@
             max-width: 70rem;
             width: 80%;
             position: relative;
-            margin-top:2.2rem;
+            margin-top:3rem;
         }
 
         .header {
@@ -246,8 +248,6 @@
     <div id="fixed-logo"></div>
 
 <div class="card">
-    <span class="flecha izquierda">&#10094;</span>
-    <span class="flecha derecha">&#10095;</span>
 
     <div class="header">
         <div>

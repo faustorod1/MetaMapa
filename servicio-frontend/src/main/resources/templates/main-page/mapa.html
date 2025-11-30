@@ -27,7 +27,7 @@
         <p><b>Ubicación:</b> <span id="hecho-preview__ubicacion"></span></p>
         <p id="hecho-preview__descripcion"></p>
     </div>
-    <button id="hecho-preview__btn-sol-eliminacion" onclick="openCrearSolicitudEliminacion()" th:if="${session.role == 'CONTRIBUYENTE'}">Solicitar Eliminación</button>
+    <button id="hecho-preview__btn-sol-eliminacion" onclick="openCrearSolicitudEliminacion()" th:if="${session.role == 'CONTRIBUYENTE'}" >Solicitar Eliminación</button>
     <button id="hecho-preview__btn-open-details" onclick="openDetalleHecho()">Ver detalles</button>
 </aside>
 
@@ -196,12 +196,12 @@
     // --- Botones auxiliares ---
     function openDetalleHecho() {
         if (!hechoActual) return;
-        window.location.href = `/detalle-hecho/${hechoActual.id}`;
+        window.location.href = `/hechos/detalle-hecho/${hechoActual.id}`;
     }
 
     function openCrearSolicitudEliminacion() {
         if (!hechoActual) return;
-        window.location.href = `/crearSolicitudDeEliminacion?id=${hechoActual.id}`;
+        window.location.href = `/api/solicitudes/eliminacion/${hechoActual.id}`;
     }
 
 

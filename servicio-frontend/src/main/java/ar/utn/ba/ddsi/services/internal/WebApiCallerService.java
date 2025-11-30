@@ -168,6 +168,25 @@ public class WebApiCallerService {
     }
 
 
+    public <T> T patch(String url, Object body, Class<T> responseType) {
+        return executeWithTokenRetry(accessToken ->
+                webClient
+                        .patch()
+                        .uri(url)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .bodyValue(body)
+                        .retrieve()
+
+                        .onStatus(HttpStatusCode::isError, clientResponse -> {return Mono.empty(); // Retorna un Mono vacío en caso de error
+                        })
+                        .bodyToMono(responseType)
+                        .block()
+        );
+    }
+
+
     /**
      * Ejecuta una llamada HTTP DELETE
      */
