@@ -112,6 +112,32 @@
         <p></p>
     </div>
 
+    <div class="container-hechos-destacados">
+        <h2 style="text-align: center; font-weight: bolder">Hechos Destacados</h2>
+        <div class="destacados-wrapper">
+
+            <div class="destacado-card" th:each="hecho : ${hechosDestacados}">
+
+                <h3 th:text="${hecho.titulo}">Título del Hecho</h3>
+
+                <p th:text="${hecho.descripcion}">Descripción del hecho destacado, traída del backend.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-colecciones-destacadas">
+        <h2 style="text-align: center; font-weight: bolder">Colecciones Destacadas</h2>
+        <div class="colecciones-wrapper">
+
+            <div class="coleccion-card" th:each="coleccion : ${coleccionesDestacadas}">
+                <h3 th:text="${coleccion.titulo}">Título de la Colección</h3>
+                <p th:text="${coleccion.descripcion}">Descripción de la Colección destacada.</p>
+            </div>
+
+        </div>
+    </div>
+
 </main>
 
 <footer>

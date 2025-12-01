@@ -11,6 +11,7 @@ import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.models.entities.Fuente;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -26,4 +27,5 @@ public interface IColeccionesService {
     ColeccionOutputDTO updateFuentes(String identificador, List<Long> fuentes);
     void consensuarColecciones();
     List<FuenteDTO> buscarFuentes();
+    List<ColeccionOutputDTO> buscarUltimasColecciones (LocalDateTime fecha, Integer cantidad_colecciones_destacadas);
 }

@@ -96,3 +96,103 @@ h1 {
     text-decoration: none;
     color: inherit;
 }
+
+/* Estilos para la nueva sección de Hechos Destacados */
+.container-hechos-destacados {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 3rem;
+    width: 90%; /* Ancho para la tarjeta contenedora */
+    max-width: 1200px; /* Máximo ancho en pantallas grandes */
+    padding: 1.5rem;
+    background-color: var(--color-container); /* Color de fondo claro para la tarjeta principal */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-hechos-destacados h2 {
+    margin-bottom: 1.5rem;
+    color: var(--color-main);
+}
+
+/* Configuración Flexbox para alinear las 3 tarjetas secundarias */
+.destacados-wrapper {
+    display: flex;
+    justify-content: space-around; /* Distribuye el espacio entre las tarjetas */
+    gap: 1rem; /* Espacio entre las tarjetas */
+    flex-wrap: wrap; /* Permite que las tarjetas se apilen en pantallas pequeñas */
+}
+
+.destacado-card {
+    background-color: var(--color-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    flex: 1 1 300px; /* Permite que la tarjeta crezca y se encoja, con un ancho base de 300px */
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+.destacado-card:hover {
+    transform: translateY(-5px); /* Efecto de elevación al pasar el ratón */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.destacado-card h3 {
+    color: var(--color-main-2);
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+/* --- Estilos para la sección de Colecciones Destacadas --- */
+
+.container-colecciones-destacadas {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 3rem;
+    width: 90%;
+    max-width: 1200px;
+    padding: 1.5rem;
+    /* Usamos un color de fondo diferente para distinguirlo de los hechos */
+    background-color: var(--color-secondary);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-colecciones-destacadas h2 {
+    margin-bottom: 1.5rem;
+    color: var(--color-main-2);
+}
+
+/* Configuración Flexbox para alinear las tarjetas */
+.colecciones-wrapper {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem; /* Espacio entre las 2 tarjetas */
+    flex-wrap: wrap;
+}
+
+.coleccion-card {
+    background-color: var(--color-container);
+    padding: 1.5rem;
+    border-radius: 8px;
+    /* Ajustamos para que cada una ocupe casi la mitad, dejando espacio para el gap */
+    flex: 1 1 45%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+.coleccion-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.coleccion-card h3 {
+    color: var(--color-main);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}

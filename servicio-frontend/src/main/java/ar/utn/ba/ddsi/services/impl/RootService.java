@@ -4,6 +4,8 @@ import ar.utn.ba.ddsi.exceptions.BadCodeException;
 import ar.utn.ba.ddsi.exceptions.UsuarioExistenteException;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.dto.external.UserRolesDTO;
+import ar.utn.ba.ddsi.models.dto.input.ColeccionDTO;
+import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.services.IRootService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,18 +17,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class RootService implements IRootService {
     private final ObjectMapper objectMapper;
+    String agregadorBaseUrl;
     WebClient agregadorWebClient;
     WebClient usuariosWebClient;
     WebApiCallerService webApiCallerService;
     private final String authServiceUrl;
 
     public RootService(@Value("${servicio.agregador.api.base-url}") String agregadorBaseUrl, @Value("${servicio.usuarios.api.base-url}") String servicioDeUsuarios, WebApiCallerService webApiCallerService, ObjectMapper objectMapper) {
+        this.agregadorBaseUrl = agregadorBaseUrl;
         agregadorWebClient = WebClient.builder().baseUrl(agregadorBaseUrl).build();
         usuariosWebClient = WebClient.builder().baseUrl(servicioDeUsuarios).build();
         this.authServiceUrl = servicioDeUsuarios;
@@ -107,6 +111,27 @@ public class RootService implements IRootService {
             throw new RuntimeException("Error en el servicio de autenticación (" + e.getStatusCode() + "): " + mensajeLimpio, e);
         } catch (Exception e) {
             throw new RuntimeException("Error inesperado al conectar con auth: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<HechoDTO> getHechosDestacados(Integer cantidadHechos) {
+        return this.getListaDestacadas(HechoDTO.class, "api/hechos/destacados/" + cantidadHechos.toString());
+    }
+
+    @Override
+    public List<ColeccionDTO> getColeccionesDestacadas(Integer cantidadColecciones){
+        return this.getListaDestacadas(ColeccionDTO.class, "api/colecciones/destacadas/" + cantidadColecciones.toString());
+    }
+
+    private <T> java.util.List<T> getListaDestacadas(Class<T> responseType, String url){
+        try{
+            List<T> response = agregadorWebClient.get().uri(url).retrieve().bodyToFlux(responseType).collectList().block();
+            return response;
+        }catch (WebClientResponseException e) {
+            throw new RuntimeException("Error en el servicio" + e.getStatusCode());
+        }catch (Exception e) {
+            throw new RuntimeException("Error inesperado al conectar" + e.getMessage(), e);
         }
     }
 

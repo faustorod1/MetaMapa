@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +32,18 @@ public class HechosController {
         return hechoDTO;
     }
 
-  @GetMapping("/contribuyente")      // Le sacamos el {id} por ahora, ya que se uso queda reservado para validaciones contra el token
-  public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/contribuyente")      // Le sacamos el {id} por ahora, ya que se uso queda reservado para validaciones contra el token
+    public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long contribuyenteId = userDetails.getId();
         return hechosService.buscarHechoDe(contribuyenteId);
     }
+
+    @GetMapping("/destacados/{cantidad_hechos_destacados}")
+    public List<HechoOutputDTO> buscarHechosDestacados(@PathVariable Integer cantidad_hechos_destacados) {
+        LocalDateTime fecha = LocalDateTime.now();
+        List<HechoOutputDTO> hechosDTO = this.hechosService.buscarHechos(fecha,cantidad_hechos_destacados);
+        return hechosDTO;
+    }
+
+
 }

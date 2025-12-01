@@ -3,6 +3,8 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.exceptions.BadCodeException;
 import ar.utn.ba.ddsi.exceptions.UsuarioExistenteException;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
+import ar.utn.ba.ddsi.models.dto.input.ColeccionDTO;
+import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.models.entities.DatosRegister;
 import ar.utn.ba.ddsi.services.IRootService;
@@ -18,11 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequestMapping("/")
 public class RootController {
   public IRootService rootService;
+  Integer cantidadHechosDestacados = 3;
+  Integer cantidadColeccionesDestacadas = 2;
 
   @Autowired
   public RootController(IRootService rootService) {
@@ -30,7 +36,14 @@ public class RootController {
   }
 
   @GetMapping()
-  public String home() {
+  public String home(Model model) {
+
+    List<HechoDTO> hechosDestacados = rootService.getHechosDestacados(cantidadHechosDestacados);
+    model.addAttribute("hechosDestacados", hechosDestacados);
+
+    List<ColeccionDTO> coleccionesDestacadas = rootService.getColeccionesDestacadas(cantidadColeccionesDestacadas);
+    model.addAttribute("coleccionesDestacadas", coleccionesDestacadas);
+
     return "landing-page/landing";
   }
 

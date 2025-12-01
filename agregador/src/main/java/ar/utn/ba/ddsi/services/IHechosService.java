@@ -1,10 +1,9 @@
 package ar.utn.ba.ddsi.services;
 
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +17,5 @@ public interface IHechosService {
     void actualizarHechos();
     void normalizarCategoria(List<Hecho> hechos);
     void normalizarUbicacion(List<Hecho> hechos);
+    List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener);
 }

@@ -16,8 +16,11 @@ import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -139,6 +142,17 @@ public class ColeccionesService implements IColeccionesService {
     @Override
     public List<FuenteDTO> buscarFuentes(){
         return fuentesRepository.findAll().stream().map(FuenteDTO::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ColeccionOutputDTO> buscarUltimasColecciones (LocalDateTime fecha, Integer cantidad_colecciones_destacadas){
+        // PageRequest.of(numero_pagina, tamaño_pagina)
+        Pageable pageable = PageRequest.of(0, cantidad_colecciones_destacadas);
+
+        List<Coleccion> coleccionesEncontradas = coleccionesRepository.findByFechaDeCreacionLessThanEqualOrderByFechaDeCreacionDesc(fecha, pageable);
+
+        return coleccionesEncontradas.stream()
+            .map(ColeccionOutputDTO::fromEntity).toList();
     }
 
 

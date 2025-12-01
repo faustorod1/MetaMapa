@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class Coleccion {
 
     @Column(name = "descripcion", columnDefinition = "VARCHAR(255)", nullable = true)
     private String descripcion;
+
+    @Column(name= "fecha_creacion", columnDefinition = "DATETIME", nullable = false)
+    private LocalDateTime fechaDeCreacion;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "criterio_id", referencedColumnName = "id")
@@ -93,11 +97,13 @@ public class Coleccion {
         this.descripcion = descripcion;
         this.criterioDePertenencia = criterioDePertenencia;
         this.algoritmoDeConsenso = algoritmoDeConsenso;     // Si, tambien se específica al crear la coleccion
+        this.fechaDeCreacion = LocalDateTime.now();
 
         this.fuentes = new ArrayList<>(fuentes);
         hechos = new ArrayList<>();
         hechosCargadosManualmente = new ArrayList<>();
         hechosConsensuados = new ArrayList<>();
+
     }
 
     public List<Hecho> getHechos() {

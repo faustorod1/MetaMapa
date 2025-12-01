@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/hechos/contribuyente").hasRole("CONTRIBUYENTE")
                         .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/api/hechos/destacados/{cantidad_hechos_destacados}", "/api/colecciones/destacadas/{cantidad_colecciones_destacadas}").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/categorias", "/api/categorias/{id}").permitAll()
 
 

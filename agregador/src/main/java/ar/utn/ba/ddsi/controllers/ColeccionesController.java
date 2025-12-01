@@ -10,6 +10,7 @@ import ar.utn.ba.ddsi.services.IColeccionesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,14 @@ public class ColeccionesController {
     public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros) {
         return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros);
     }
+
+    @GetMapping("/destacadas/{cantidad_colecciones_destacadas}")
+    public List<ColeccionOutputDTO> buscarColeccionesDestacadas(@PathVariable Integer cantidad_colecciones_destacadas) {
+        LocalDateTime fecha = LocalDateTime.now();
+        return this.coleccionesService.buscarUltimasColecciones(fecha,cantidad_colecciones_destacadas);
+    }
+
+
 
     // API Administrativa ----------------------------------------------------------------------------------------------
 

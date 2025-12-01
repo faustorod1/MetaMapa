@@ -19,6 +19,8 @@ import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
@@ -29,7 +31,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Objects;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -351,6 +353,17 @@ public class HechosService implements IHechosService {
                 .subscribe();
 
         applicationEventPublisher.publishEvent(new HechoEliminadoEvent(hecho));
+    }
+
+    @Override
+    public List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener) {
+        // PageRequest.of(numero_pagina, tamaño_pagina)
+        Pageable pageable = PageRequest.of(0, cantidad_obtener);
+
+        List<Hecho> hechosEncontrados = hechosRepository.findByFechaDeCargaLessThanEqualOrderByFechaDeCargaDesc(fecha, pageable);
+
+        return hechosEncontrados.stream()
+            .map(HechoOutputDTO::fromEntity).toList();
     }
 }
 
