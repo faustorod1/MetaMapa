@@ -46,7 +46,7 @@ public class SolicitudesController {
     };
   }
 
-  @PatchMapping("/{id}/estado")
+  @PatchMapping("eliminacion/{id}/estado")
   public ResponseEntity<SolicitudDeEliminacionOutputDTO> modificarEstadoSolicitud(@PathVariable Long id, @RequestBody ResolucionSolicitudDeEliminacionDTO resolucion, @AuthenticationPrincipal CustomUserDetails userDetails) {
     resolucion.setAdministradorQueResolvioId(userDetails.getId());
     try {
@@ -57,19 +57,19 @@ public class SolicitudesController {
     }
   }
 
-  @GetMapping
-  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes(){
-    return solicitudesService.obtenerSolicitudes();
+  @GetMapping("/eliminacion")
+  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesDeEliminacion(){
+    return solicitudesService.obtenerSolicitudesDeEliminacion();
   }
 
-  @GetMapping("/{id}")
-  public SolicitudDeEliminacionOutputDTO obtenerSolicitudPorId(@PathVariable Long id){
-    return solicitudesService.obtenerSolicitudPorID(id);
+  @GetMapping("/eliminacion/{id}")
+  public SolicitudDeEliminacionOutputDTO obtenerSolicitudDeEliminacionPorId(@PathVariable Long id){
+    return solicitudesService.obtenerSolicitudDeEliminacionPorID(id);
   }
 
-  @GetMapping("/idsPendientes")
-  public List<Long> obtenerIDsPendientes(){
-    return solicitudesService.obtenerIDsPendientes();
+  @GetMapping("/idsEliminacionPendientes")
+  public List<Long> obtenerIDsEliminacionPendientes(){
+    return solicitudesService.obtenerIDsEliminacionPendientes();
   }
 
 

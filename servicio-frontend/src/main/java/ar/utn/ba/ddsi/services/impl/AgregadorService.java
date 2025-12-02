@@ -72,25 +72,26 @@ public class AgregadorService implements IAgregadorService {
                 String.class);
    }
 
-   public List<Long> pedirIDsPendientes(){
+   public List<Long> pedirIDsEliminacionesPendientes(){
       return webApiCallerService.getList(
-              agregadorBaseUrl + "/api/solicitudes/idsPendientes",
+              agregadorBaseUrl + "/api/solicitudes/idsEliminacionPendientes",
               Long.class
       );
    }
 
     public SolicitudDeEliminacionDTO pedirSolicitudDeEliminacion(Long id) {
         return webApiCallerService.get(
-                agregadorBaseUrl + "/api/solicitudes/" + id,
+                agregadorBaseUrl + "/api/solicitudes/eliminacion/" + id,
                 SolicitudDeEliminacionDTO.class
         );
     }
 
     public void resolverEliminacion(Long id, ResolucionSolicitudDeEliminacionOutputDTO resolucion){
         webApiCallerService.patch(
-                agregadorBaseUrl + "/api/solicitudes/" + id + "/estado",
+                agregadorBaseUrl + "/api/solicitudes/eliminacion/" + id + "/estado",
                 resolucion,
                 Void.class
         );
     }
+
 }

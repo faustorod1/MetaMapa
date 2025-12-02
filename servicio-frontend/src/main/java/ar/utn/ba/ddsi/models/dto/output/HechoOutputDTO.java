@@ -44,7 +44,7 @@ public class HechoOutputDTO {
                 .descripcion(hecho.getDescripcion())
                 .categoria(hecho.getCategoria().getNombre())
                 .fechaHecho(hecho.getFechaHecho())
-                .contribuyenteId(hecho.getContribuyente())
+                .contribuyenteId(hecho.getContribuyenteId())
                 .latitud(hecho.getLugarAcontecimiento().getLatitud())
                 .longitud(hecho.getLugarAcontecimiento().getLongitud())
                 .etiquetas(etiquetasOutput)

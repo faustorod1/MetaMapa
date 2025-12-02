@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudCreadaDTO;
+import ar.utn.ba.ddsi.models.dto.output.SolicitudDeModificacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudResueltaDTO;
 import ar.utn.ba.ddsi.models.exceptions.NoHaySolicitudPendienteException;
 import ar.utn.ba.ddsi.models.exceptions.SolicitudFueraDePlazoException;
@@ -15,16 +16,13 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
-@Controller
-@RequestMapping("api/solicitudes")
+@RestController
+@RequestMapping("/api/solicitudes")
 public class SolicitudesController {
   private ISolicitudesService solicitudesService;
 
@@ -56,4 +54,16 @@ public class SolicitudesController {
       return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
     }
   }
+
+  @GetMapping("/idsModificacionesPendientes")
+  public List<Long> obtenerIDsModificacionPendientes(){
+    return solicitudesService.obtenerIDsModificacionPendientes();
+  }
+
+  @GetMapping("/modificacion/{id}")
+  public SolicitudDeModificacionOutputDTO obtenerSolicitudDeModificacionPorId(@PathVariable Long id){
+    return solicitudesService.obtenerSolicitudDeModificacionPorID(id);
+  }
+
+
 }

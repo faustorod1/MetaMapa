@@ -43,7 +43,7 @@ public class SolicitudesService implements ISolicitudesService {
   }
 
   @Override
-  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes(){
+  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesDeEliminacion(){
       return solicitudesRepository
           .findAll()
           .stream()
@@ -52,23 +52,23 @@ public class SolicitudesService implements ISolicitudesService {
   }
 
   @Override
-  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesPendientes(){
-      return obtenerSolicitudes().stream()
+  public List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesDeEliminacionPendientes(){
+      return obtenerSolicitudesDeEliminacion().stream()
               .filter(solicitud -> solicitud.getEstado().equals(EstadoSolicitud.PENDIENTE))
               .toList();
   }
 
   @Override
-  public SolicitudDeEliminacionOutputDTO obtenerSolicitudPorID(Long id){
-    return obtenerSolicitudesPendientes().stream()
+  public SolicitudDeEliminacionOutputDTO obtenerSolicitudDeEliminacionPorID(Long id){
+    return obtenerSolicitudesDeEliminacionPendientes().stream()
             .filter(solicitud -> solicitud.getId().equals(id))
             .findFirst()
             .orElse(null);
   }
 
   @Override
-  public List<Long> obtenerIDsPendientes(){
-    return obtenerSolicitudesPendientes().stream()
+  public List<Long> obtenerIDsEliminacionPendientes(){
+    return obtenerSolicitudesDeEliminacionPendientes().stream()
             .map(SolicitudDeEliminacionOutputDTO::getId).toList();
   }
 }

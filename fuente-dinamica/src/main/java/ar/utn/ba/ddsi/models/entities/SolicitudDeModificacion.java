@@ -67,6 +67,9 @@ public class SolicitudDeModificacion {
   @Column(name = "administrador_Id", nullable = true)
   private Long administradorId = null;
 
+  @Column(name = "fecha_de_carga", nullable = false, columnDefinition = "DATETIME")
+  private LocalDateTime fechaDeCarga;
+
   protected SolicitudDeModificacion() {}
 
 

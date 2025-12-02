@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.models.dto.input.SolicitudDeModificacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
@@ -59,4 +60,21 @@ public class DinamicaService implements IDinamicaService {
                String.class
         );
     }
+
+
+    public List<Long> pedirIDsModificacionesPendientes(){
+        return webApiCallerService.getList(
+                dinamicaBaseUrl + "/api/solicitudes/idsModificacionesPendientes",
+                Long.class
+        );
+    }
+
+    public SolicitudDeModificacionDTO pedirSolicitudDeModificacion(Long solicitudId){
+        return webApiCallerService.get(
+                dinamicaBaseUrl + "/api/solicitudes/modificacion/" + solicitudId,
+                SolicitudDeModificacionDTO.class
+        );
+    }
+
+
 }

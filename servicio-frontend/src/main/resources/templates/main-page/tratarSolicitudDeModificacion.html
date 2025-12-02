@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title> Tratar solicitud de modificación | METAmapa</title>
     <meta charset="utf-8">
@@ -7,188 +7,444 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" th:href="@{/css/cargarHecho.css}" />
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
     <style>
+        /* --- ESTILOS BASE (Mismos que Tratar Eliminación) --- */
         body{
-            background-image: url('../../static/fondoLevementeCargado.png');
-            background-size: cover;                 /* Que cubra toda la pantalla */
-            background-repeat: no-repeat;           /* Que no se repita */
-            background-attachment: fixed;           /* Fijo */
-            background-position: center center;     /* Que esté centrada */
+            background-image: url('/fondoLevementeCargado.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 90vh;
             margin: 0;
         }
 
         .container{
+            margin-top: 4rem;
             background-color: var(--color-main);
+            color: white; /* Color principal del texto */
             border-radius: 1rem;
-            padding: 0.8rem;
-            padding-bottom: 0;
+            padding: 1rem; /* Aumentado para mejor separación */
+            width: 85vw;
+            max-width: 1200px; /* Ancho máximo para el layout de dos columnas */
+            height: 82vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        .input-primerFila{
-            padding:0;
-        }
-
-        .input-cargarHecho{
-            margin:0;
-        }
-
-        #titulo-cargarHecho{
+        .header-titulo{
+            color: white;
+            margin-bottom: 0.5rem;
+            margin-top:0.2rem;
             text-align: center;
+            border-bottom: 1px solid black;
+            padding-bottom: 0.35rem;
+        }
+
+        .header-info{
+            color: white;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+
+        /* --- ESTILOS DE COMPARACIÓN (Dual Column Layout) --- */
+        .content-area {
+            /* Restar la altura de header, info y footer */
+            height: calc(100% - 7rem);
+            overflow-y: auto;
+            padding: 0 0.5rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .hecho-column, .propuesta-column {
+            flex: 1;
+            padding: 0.5rem;
+            background-color: #f7f7f7; /* Fondo más claro para las columnas */
+            color: black;
+            border-radius: 0.5rem;
+            height: fit-content;
+        }
+
+        .hecho-column {
+            border-right: 3px solid var(--color-main-2);
+        }
+
+        .column-header {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+            margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 0.1rem solid black;
+            border-bottom: 2px solid var(--color-main-2);
         }
 
-        #tituloHecho{
-            max-height: 4.5em;
-            overflow: auto;
-            text-align: right;
-            direction: rtl;
+        /* --- ESTILOS DE CAMPOS --- */
+        .field-group {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.3rem;
         }
 
-        #categoria{
-            max-height: 4.5em;
-            overflow: auto;
-            text-align: right;
-            direction: rtl;
-        }
-
-        .input-primerFila{
+        .field-group h4 {
+            font-size: 1.0rem;
+            margin: 0 0 0.3rem 0;
+            color: #333;
+            font-weight: bold;
             display: flex;
-            gap: 0.5rem;
-            justify-content: space-between;
             align-items: center;
-            margin-top: 1.5rem;
         }
 
-        label {
-            max-height: 4.5em; /* por ejemplo 3 líneas */
-            overflow: auto;    /* agrega scroll si es necesario */
+        .field-group h4 i {
+            margin-left: 0.5rem;
+            color: var(--color-main-2);
         }
 
-        .buttons-footer{
+        .field-value {
+            background-color: white;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            min-height: 2rem;
+            display: block;
+        }
+
+        textarea.field-value {
+            resize: vertical;
+            min-height: 4rem;
+        }
+
+        /* Resaltado de modificación */
+        .field-group.modified .field-value {
+            background-color: #ffe0b2; /* Naranja claro para resaltar */
+            border-color: #ff9800;
+            font-weight: 600;
+        }
+
+        /* Etiquetas y Multimedia */
+        .tag-container {
             display: flex;
-            align-items: flex-end;
-            justify-content:flex-end;
-            gap: 0.1rem;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            padding: 0.3rem 0;
+        }
+
+        .tag {
+            background-color: var(--color-main-2);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .media-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding-top: 0.5rem;
+        }
+
+        .media-preview-item {
+            width: 70px;
+            height: 70px;
+            overflow: hidden;
+            border-radius: 0.3rem;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
+        }
+
+        .media-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .btn-submit{
-            margin:0.3rem;
-        }
-
-        .add-btn {
-            padding: 6px 12px;
-            margin-left: 5px;
-            background: var(--color-main-2);
-            color: white;
+            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 0.5em;
+            margin-bottom: 0.5rem;
+            border-radius: 2em;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: var(--color-main-2);
             border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
         }
 
-        .custom-file {
-            display: inline-block;
-            padding: 0.5rem;
-            background: #8f8e8e;
-            color: white;
-            border-radius: 0.3rem;
-            cursor: pointer;
+        .btn-submit:hover {
+            background-color: var(--color-main-2-hover);
         }
 
-        .custom-file{
+
+        .buttons-footer{
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+        }
+
+
+        .field-group .field-value {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        textarea.field-value {
+            resize: none;
+            min-height: 4rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .flecha {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            cursor: pointer;
             background: var(--color-main-2);
+            border-radius: 50%;
+            padding: 0.5rem;
+            user-select: none;
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.2);
+            transition: background 0.2s ease;
+            color: white;
+            text-decoration: none;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
         }
-        .custom-file:hover {
+
+        .flecha:hover {
             background: var(--color-main-2-hover);
         }
 
+        .flecha.izquierda { left: -3rem; }
+        .flecha.derecha { right: -3rem; }
+
+        #btn-back-page {
+            position: fixed;
+            top: 1em;
+            left: 1em;
+            text-decoration: none;
+            font-weight: bolder;
+            color: black;
+            cursor: pointer;
+            z-index: 20;
+        }
+        #btn-back-page:hover {
+            color: grey;
+        }
+
+        /* Estilos para botones de acción específicos */
+        .btn-reject {
+            background-color: #dc3545; /* Rojo */
+            color: white;
+        }
+        .btn-reject:hover {
+            background-color: #c82333;
+        }
+
+        .btn-approve {
+            background-color: #28a745; /* Verde */
+            color: white;
+        }
+        .btn-approve:hover {
+            background-color: #1e7e34;
+        }
+
     </style>
-
-
 </head>
 <body>
-<main>
-    <div id="fixed-logo"></div>
-
-    <div class="container">
-        <h2 id="titulo-cargarHecho"> Hecho a tratar</h2>
 
 
-        <div class ="input-primerFila">
-            <div class="input-cargarHecho">
+<div class="modal" id="resolution-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div class="container" style="background:white; padding:2rem; border-radius:1rem; width:400px; height: auto; color: black; margin-top: 0;">
+        <h3 id="modal-title" style="text-align: center; color: var(--color-main-2);"></h3>
+        <form id="resolution-form" method="POST" th:action="@{/api/solicitudes/resolver/__${solicitud.id}__}">
+            <div class="motivo-area">
+                <label for="motivoDeEstado" style="font-weight: bold;">Motivo:</label>
+                <textarea id="motivoDeEstado" name="motivoDeEstado" placeholder="Escriba el motivo de la decisión (opcional, obligatorio para rechazo)" style="width: 100%; min-height: 4rem; margin-top: 0.5rem;"></textarea>
+            </div>
+            <input type="hidden" name="estadoNuevo" id="estadoNuevo">
+            <div class="buttons-footer" style="justify-content: space-around; margin-top: 1rem; border: none; padding-top: 0;">
+                <button type="button" class="btn-submit btn-reject" onclick="document.getElementById('resolution-modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn-submit btn-approve" id="confirm-resolution-btn">Confirmar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="container">
+
+    <a th:if="${anteriorId != null}"
+       th:href="@{/api/solicitudes/tratarModificacion/__${anteriorId}__}"
+       class="flecha izquierda">
+        <i class="fa-solid fa-chevron-left"></i>
+    </a>
+
+    <a th:if="${siguienteId != null}"
+       th:href="@{/api/solicitudes/tratarModificacion/__${siguienteId}__}"
+       class="flecha derecha">
+        <i class="fa-solid fa-chevron-right"></i>
+    </a>
+
+    <div class="header-titulo">
+        <h2>Tratar Solicitud de Modificación</h2>
+    </div>
+
+    <div class="header-info">
+        Solicitud id: <strong th:text="${solicitud.id}">123</strong> |
+        Fecha de carga: <span th:text="${fechaSolicitud}">DD/MM/AAAA</span> |
+        Contribuyente ID: <span th:text="${hecho.contribuyenteId}"></span>
+    </div>
+
+    <div class="content-area">
+
+        <div class="hecho-column">
+            <div class="column-header">Hecho Original</div>
+
+            <div class="field-group">
                 <h4>Título</h4>
-                <label for ="tituloHecho"></label>
-                <input type="text" id="tituloHecho" name="tituloHecho" value="Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones" readonly>
+                <span class="field-value" th:text="${hecho.titulo}">Título original del hecho</span>
             </div>
 
-            <div class="input-cargarHecho">
-                <h4>Categoria</h4>
-                <label for ="categoria"></label>
-                <input type="text" id="categoria" value="Ráfagas de más de 100 km/h" readonly>
+            <div class="field-group">
+                <h4>Categoría</h4>
+                <span class="field-value" th:text="${hecho.categoria.nombre}">Categoría original</span>
             </div>
 
-            <div class="input-cargarHecho">
-                <h4>Lugar</h4>
-                <div class="input-with-icon">
-                    <i class="fa-solid fa-magnifying-glass input-icon" id="input-icon"></i>
-                    <input type="text" id="lugar" name="lugar" value="San Vicente, Misiones" readonly>
-                </div>
-            </div>
-        </div>
-
-        <div class="input-cargarHecho">
-            <h4>Descripción</h4>
-            <label for ="descripcion"></label>
-            <textarea id="descripcion" placeholder="La región de San Vicente en Misiones sufrió los efectos de una intensa ráfagas de más de 100 km/h. El incidente obligando a evacuar a residentes de la zona. Se ha convocado al comité de crisis para coordinar las acciones de respuesta." readonly></textarea><!--Descripcio-->
-        </div>
-
-        <div class="input-tercerFila">
-            <div class="input-cargarHecho">
-                <h4>Fecha</h4>
-                <input type="text" id="fecha" name="fecha" value="21/12/2007" readonly style="text-align: center">
+            <div class="field-group">
+                <h4>Descripción</h4>
+                <textarea class="field-value" readonly th:text="${hecho.descripcion}">Descripción original</textarea>
             </div>
 
-            <div class="input-cargarHecho">
+            <div class="field-group">
+                <h4>Fecha del Hecho</h4>
+                <span class="field-value" th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha original</span>
+            </div>
+
+            <div class="field-group">
+                <h4>Ubicación (Lat/Lon)</h4>
+                <span class="field-value" th:text="${'Lat: ' + hecho.lugarAcontecimiento.latitud + ' / Lon: ' + hecho.lugarAcontecimiento.longitud}">Lugar original</span>
+            </div>
+
+            <div class="field-group">
                 <h4>Etiquetas</h4>
-                <input type="text" id="tagInput" class="tag-input" placeholder="Escribe una etiqueta...">
-                <button type="button" id="addTag" class="add-btn">➕</button>
-                <!-- contenedor visual -->
-                <div id="tagContainer" class="tag-container">
-                        <span class="tag">accidente</span>
-                        <span class="tag">avión</span>
+                <div class="tag-container">
+                    <span class="tag" th:each="tag : ${hecho.etiquetas}" th:text="${tag}">etiqueta</span>
+                    <span th:if="${#lists.isEmpty(hecho.etiquetas)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay etiquetas</span>
                 </div>
-                <!-- input oculto con las etiquetas -->
-                <input type="hidden" name="tags" id="hiddenTags">
             </div>
+
+
+            <div class="field-group">
+                <h4>Contenidos Multimedia</h4>
+                <div class="media-preview-container">
+                    <div class="media-preview-item" th:each="multimedia : ${hecho.contenidosMultimedia}">
+                        <img th:src="${multimedia}" alt="Media Original">
+                    </div>
+                    <span th:if="${#lists.isEmpty(hecho.contenidosMultimedia)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay contenido multimedia</span>
+                </div>
+            </div>
+
         </div>
 
-        <div class="input-imagenes">
-            <div class="input-cargarHecho">
-                <label for="fotos" class="custom-file">Sube imágenes📷 </label>
-                <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
-                <div id="preview"></div>
-            </div>
-        </div>
+        <div class="propuesta-column">
+            <div class="column-header">Propuesta de Modificación</div>
 
-        <div class="buttons-footer">
-            <button class="btn-submit" type="submit">Rechazar</button>
-            <button class="btn-submit" type="submit">Aprobar</button>
+            <div class="field-group">
+                <h4>Título <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <span class="field-value" th:text="${solicitud.tituloNuevo}">Nuevo Título</span>
+            </div>
+
+            <div class="field-group" >
+                <h4>Categoría <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <span class="field-value" th:text="${solicitud.categoriaNueva}">Nueva Categoría</span>
+            </div>
+
+            <div class="field-group">
+                <h4>Descripción <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <textarea class="field-value" readonly th:text="${solicitud.descripcionNueva}">Nueva Descripción</textarea>
+            </div>
+
+            <div class="field-group">
+                <h4>Fecha del Hecho <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <span class="field-value" th:text="${#temporals.format(solicitud.fechaHechoNueva, 'dd/MM/yyyy HH:mm')}">Nueva Fecha</span>
+            </div>
+
+            <div class="field-group">
+                <h4>Ubicación (Lat/Lon) <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <span class="field-value" th:text="${'Lat: ' + solicitud.latitudNueva + ' / Lon: ' + solicitud.longitudNueva}">Nuevo Lugar</span>
+            </div>
+
+            <div class="field-group" th:if="${solicitud.etiquetasNuevas != null}">
+                <h4>Etiquetas <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <div class="tag-container">
+                    <span class="tag" th:each="tag : ${solicitud.etiquetasNuevas}" th:text="${tag}">nueva etiqueta</span>
+                    <span th:if="${#lists.isEmpty(solicitud.etiquetasNuevas)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay etiquetas</span>
+                </div>
+            </div>
+
+            <div class="field-group" th:if="${solicitud.contenidosMultimediaNuevos != null}">
+                <h4>Contenidos Multimedia <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                <div class="media-preview-container">
+                    <div class="media-preview-item" th:each="multimedia : ${solicitud.contenidosMultimediaNuevos}">
+                        <img th:src="${multimedia}" alt="Nuevo Contenido Multimedia">
+                    </div>
+                    <span th:if="${#lists.isEmpty(solicitud.contenidosMultimediaNuevos)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay contenido multimedia</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
+
+    <div class="buttons-footer">
+        <div class="spacer"></div>
+        <div class="action-buttons">
+            <button class="btn-submit" type="submit" name="accion" value="rechazar">Rechazar</button>
+            <button class="btn-submit" type="submit" name="accion" value="aprobar_con_sugerencia">Aprobar con sugerencia</button>
+            <button class="btn-submit" type="submit" name="accion" value="aprobar">Aprobar</button>
+        </div>
     </div>
 
-</main>
+</div>
 
+<script>
+    function openResolutionModal(estado, title) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('estadoNuevo').value = estado;
+        document.getElementById('resolution-modal').style.display = 'flex';
+
+        const motivoTextarea = document.getElementById('motivoDeEstado');
+        if (estado === 'RECHAZADA') {
+            motivoTextarea.required = true;
+            motivoTextarea.placeholder = "Escriba el motivo del rechazo (obligatorio)";
+        } else {
+            motivoTextarea.required = false;
+            motivoTextarea.placeholder = "Escriba el motivo de la aceptación (opcional)";
+        }
+    }
+</script>
 
 </body>
-
 </html>

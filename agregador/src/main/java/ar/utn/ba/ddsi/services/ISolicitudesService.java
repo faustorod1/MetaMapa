@@ -11,9 +11,9 @@ import java.util.List;
 public interface ISolicitudesService {
     SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitud);
     SolicitudDeEliminacion modificarEstadoSolicitud(Long id, ResolucionSolicitudDeEliminacionDTO resolucionDto);
-    List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudes();
-    List<Long> obtenerIDsPendientes();
-    SolicitudDeEliminacionOutputDTO obtenerSolicitudPorID(Long id);
-    List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesPendientes();
+    List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesDeEliminacion();
+    List<Long> obtenerIDsEliminacionPendientes();
+    SolicitudDeEliminacionOutputDTO obtenerSolicitudDeEliminacionPorID(Long id);
+    List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesDeEliminacionPendientes();
 
 }

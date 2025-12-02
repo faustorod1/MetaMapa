@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
+import ar.utn.ba.ddsi.models.dto.input.SolicitudDeModificacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
@@ -45,8 +46,6 @@ public class SolicitudesController {
   @PostMapping("/solicitarEliminacion")
   public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeEliminacionOutputDTO solicitud, RedirectAttributes redirectAttributes) {
     Long id = solicitud.getHechoId();
-
-    log.info("Solicitud recibida: " + solicitud);
     try {
       agregadorService.solicitarEliminacion(solicitud);
       redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
@@ -56,6 +55,11 @@ public class SolicitudesController {
       return "redirect:/solicitudes/eliminacion/" + id;
     }
   }
+
+
+
+  // TODO: el hecho no debe poder ser modificado si ya fue eliminado
+  // TODO: desplegar correctamente las categorías
 
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
@@ -78,7 +82,6 @@ public class SolicitudesController {
 
   @PostMapping("/solicitarModificacion")
   public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
-    log.info("DTO recibido: {}", hecho + ", Id recibido: " + id_hecho);
     try {
       dinamicaService.modificarHecho(id_hecho, hecho);
       redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
@@ -93,8 +96,8 @@ public class SolicitudesController {
   // ENDPOINTS: administrador
 
   @GetMapping("/tratarEliminaciones")
-  public String solicitudesPendientes(Model model) {
-    List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
+  public String eliminacionesPendientes() {
+    List<Long> idsPendientes = agregadorService.pedirIDsEliminacionesPendientes();
     if (idsPendientes.isEmpty()) {
       return "error/sinSolicitudesDeEliminacionPendientes";
     }
@@ -105,7 +108,7 @@ public class SolicitudesController {
   @GetMapping("/tratarEliminacion/{solicitudId}")
   public String formularioTratarSolicitudDeEliminacion(@PathVariable("solicitudId") Long solicitudId, Model model) {
     SolicitudDeEliminacionDTO solicitud = agregadorService.pedirSolicitudDeEliminacion(solicitudId);
-    List<Long> idsPendientes = agregadorService.pedirIDsPendientes();
+    List<Long> idsPendientes = agregadorService.pedirIDsEliminacionesPendientes();
     HechoDTO hecho = agregadorService.pedirHecho(solicitud.getHechoId());
     LocalDate fechaSolicitud = solicitud.getFechaDeCarga().toLocalDate();
 
@@ -135,11 +138,48 @@ public class SolicitudesController {
       agregadorService.resolverEliminacion(solicitudId, resolucion);
     } catch (Exception ex) {
       redirectAttributes.addFlashAttribute("error", "La solicitud no pudo ser tratada");
+      return "redirect:/api/solicitudes/tratarEliminacion/" + solicitudId;
     }
 
     return "redirect:/api/solicitudes/tratarEliminaciones";
 
 }
+
+  @GetMapping("/tratarModificaciones")
+  public String modificacionesPendientes() {
+    List<Long> idsPendientes = dinamicaService.pedirIDsModificacionesPendientes();
+    if (idsPendientes.isEmpty()) {
+      return "error/sinSolicitudesDeModificacionPendientes";
+    }
+    return "redirect:/api/solicitudes/tratarModificacion/" + idsPendientes.get(0);
+
+  }
+
+
+  @GetMapping("/tratarModificacion/{solicitudId}")
+  public String formularioTratarSolicitudDeModificacion(@PathVariable("solicitudId") Long solicitudId, Model model) {
+    SolicitudDeModificacionDTO solicitud = dinamicaService.pedirSolicitudDeModificacion(solicitudId);
+    List<Long> idsPendientes = dinamicaService.pedirIDsModificacionesPendientes();
+    HechoDTO hecho = agregadorService.pedirHecho(solicitud.getIdHecho());
+    LocalDate fechaSolicitud = solicitud.getFechaDeCarga().toLocalDate();
+
+
+    int indiceActual = idsPendientes.indexOf(solicitudId);
+    Long anteriorId = (indiceActual > 0) ? idsPendientes.get(indiceActual - 1) : null;
+    Long siguienteId = (indiceActual < idsPendientes.size() - 1) ? idsPendientes.get(indiceActual + 1) : null;
+
+    model.addAttribute("hecho", hecho);
+    model.addAttribute("solicitud", solicitud);
+    model.addAttribute("fechaSolicitud", fechaSolicitud);
+    model.addAttribute("anteriorId", anteriorId);
+    model.addAttribute("siguienteId", siguienteId);
+
+    return "main-page/tratarSolicitudDeModificacion";
+  }
+
+
+
+
 
 }
 
