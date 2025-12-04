@@ -63,7 +63,7 @@ public class Hecho {
     @Column(name = "etiqueta")
     private Set<String> etiquetas = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "hecho_id", referencedColumnName = "id")
     @Builder.Default
     private List<HechoSnapshot> snapshots = new ArrayList<>();

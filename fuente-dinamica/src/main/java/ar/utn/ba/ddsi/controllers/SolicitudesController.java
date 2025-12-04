@@ -13,6 +13,7 @@ import ar.utn.ba.ddsi.models.exceptions.SolicitudYaProcesadaException;
 import ar.utn.ba.ddsi.models.exceptions.UnauthorizedException;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,8 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+
+
 @RestController
 @RequestMapping("/api/solicitudes")
+@Slf4j
 public class SolicitudesController {
   private ISolicitudesService solicitudesService;
 
@@ -45,6 +49,9 @@ public class SolicitudesController {
 
   @PatchMapping("/{idHecho}/estado")
   public ResponseEntity<?> resolverSolicitud (@PathVariable Long idHecho, @RequestBody ResolucionDTO resolucion, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    log.info("Resolucion recibida:" + resolucion);
+
+
     try {
       SolicitudResueltaDTO dto = solicitudesService.procesarSoliPendiente(idHecho, resolucion, userDetails.getId());
       return ResponseEntity.ok(dto);

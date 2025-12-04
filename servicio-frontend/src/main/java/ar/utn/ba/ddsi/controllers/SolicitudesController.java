@@ -229,15 +229,16 @@ public class SolicitudesController {
     ResolucionSolicitudDeModificacionOutputDTO resolucion = new ResolucionSolicitudDeModificacionOutputDTO();
     resolucion.setMotivoDeEstado(motivoDeEstado);
 
-    if(accion.equals("aceptada")) {
-      resolucion.setEstadoNuevo(EstadoSolicitud.ACEPTADA);
-    }else if(accion.equals("rechazada")) {
-      resolucion.setEstadoNuevo(EstadoSolicitud.RECHAZADA);
-    }else if (accion.equals("aceptada_con_sugerencia")){
-      resolucion.setEstadoNuevo(EstadoSolicitud.ACEPTADA_CON_SUGERENCIA);
-    }else{
-      return "error/404";
-    }
+      switch (accion) {
+          case "aceptada" -> resolucion.setEstadoNuevo(EstadoSolicitud.ACEPTADA);
+          case "rechazada" -> resolucion.setEstadoNuevo(EstadoSolicitud.RECHAZADA);
+          case "aceptada_con_sugerencia" -> resolucion.setEstadoNuevo(EstadoSolicitud.ACEPTADA_CON_SUGERENCIA);
+          default -> {
+              return "error/404";
+          }
+      }
+
+    log.info("Resolucion a enviarse:" + resolucion);
 
    dinamicaService.resolverModificacion(id_hecho_externo, resolucion);
    return "redirect:/api/solicitudes/tratarModificaciones";

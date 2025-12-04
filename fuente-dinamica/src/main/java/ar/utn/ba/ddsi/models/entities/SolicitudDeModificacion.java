@@ -92,6 +92,7 @@ public class SolicitudDeModificacion {
       hecho.setDescripcion(descripcionNueva);
       hecho.setCategoria(categoriaNueva);
       hecho.setTitulo(tituloNuevo);
+      hecho.setSolicitudDeModificacion(null);
 
       if(etiquetasNuevas != null){
         hecho.setEtiquetas(etiquetasNuevas);
@@ -99,6 +100,9 @@ public class SolicitudDeModificacion {
       if(contenidosMultimediaNuevos != null){
         hecho.setContenidosMultimedia(contenidosMultimediaNuevos);
       }
+    }
+    if(estado == RECHAZADA){
+      hecho.setSolicitudDeModificacion(null);
     }
   }
 }

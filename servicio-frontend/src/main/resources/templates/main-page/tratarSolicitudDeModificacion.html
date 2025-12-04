@@ -10,7 +10,6 @@
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- ESTILOS BASE (Mismos que Tratar Eliminación) --- */
         body{
             background-image: url('/fondoLevementeCargado.png');
             background-size: cover;
@@ -19,20 +18,22 @@
             background-position: center center;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 90vh;
+            align-items: flex-start;
+            min-height: 100vh;
             margin: 0;
+            padding-bottom: 2rem;
         }
 
         .container{
             margin-top: 4rem;
+            margin-bottom: 2rem;
             background-color: var(--color-main);
-            color: white; /* Color principal del texto */
+            color: white;
             border-radius: 1rem;
-            padding: 1rem; /* Aumentado para mejor separación */
+            padding: 1rem;
             width: 85vw;
-            max-width: 1200px; /* Ancho máximo para el layout de dos columnas */
-            height: 82vh;
+            max-width: 1200px;
+            height: auto;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -55,11 +56,8 @@
         }
 
 
-        /* --- ESTILOS DE COMPARACIÓN (Dual Column Layout) --- */
         .content-area {
-            /* Restar la altura de header, info y footer */
-            height: calc(100% - 7rem - 5rem); /* Ajuste de altura para dejar espacio al motivo */
-            overflow-y: auto;
+            height: auto;
             padding: 0 0.5rem;
             display: flex;
             gap: 1.5rem;
@@ -68,13 +66,11 @@
         .hecho-column, .propuesta-column {
             flex: 1;
             padding: 0.5rem;
-            background-color: #f7f7f7; /* Fondo más claro para las columnas */
+            background-color: #f7f7f7;
             color: black;
             border-radius: 0.5rem;
             height: fit-content;
         }
-
-        /* [Se mantienen el resto de estilos de columnas, campos, y flechas] */
 
         .hecho-column {
             border-right: 3px solid var(--color-main-2);
@@ -104,6 +100,11 @@
             font-weight: bold;
             display: flex;
             align-items: center;
+        }
+
+        .spacer {
+            flex: 0 0 auto;
+            width: 0.1rem;
         }
 
         .field-group h4 i {
@@ -246,9 +247,8 @@
             color: grey;
         }
 
-        /* Estilos para botones de acción específicos */
         .btn-reject {
-            background-color: #dc3545; /* Rojo */
+            background-color: #dc3545;
             color: white;
         }
         .btn-reject:hover {
@@ -256,7 +256,7 @@
         }
 
         .btn-approve {
-            background-color: #28a745; /* Verde */
+            background-color: #28a745;
             color: white;
         }
         .btn-approve:hover {
@@ -305,7 +305,7 @@
         </a>
 
         <div class="header-titulo">
-            <h2>Tratar Solicitud de Modificación</h2>
+            <h2>Solicitud de modificación</h2>
         </div>
 
         <div class="header-info">
@@ -412,7 +412,7 @@
         </div>
 
         <div class="motivo-area-directo">
-            <label for="motivoDeEstado">Motivo de la Decisión (obligatorio):</label>
+            <label for="motivoDeEstado">Motivo de la decisión (obligatorio):</label>
             <textarea id="motivoDeEstado" name="motivoDeEstado" required placeholder="Escriba aquí el motivo de la decisión."></textarea>
         </div>
 
