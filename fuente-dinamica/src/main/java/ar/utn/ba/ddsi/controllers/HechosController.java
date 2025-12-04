@@ -29,6 +29,16 @@ public class  HechosController {
     return hechosService.getAll_DTO();
   }
 
+  @GetMapping("/{id}")
+  public HechoOutputDTO buscarHechoNoEliminado(@PathVariable Long id) {
+    return hechosService.buscarHechoNoEliminado(id);
+  }
+
+  @GetMapping("/ids")
+  public List<Long> buscarIdsHechos(){
+    return hechosService.buscarIdsHechos();
+  }
+
   @GetMapping(params = "desde") // localhost:8082/api/hechos?desde=algo
   public List<HechoOutputDTO> buscarTodosCargadosDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
     return this.hechosService.getAllDesde_DTO(desde);

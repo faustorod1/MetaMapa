@@ -32,13 +32,22 @@ public class AgregadorService implements IAgregadorService {
         .block();
   }
 
+   public List<Long> pedirIDsHechos(){
+      return agregadorWebClient.get()
+        .uri("/api/hechos/ids")
+        .retrieve()
+        .bodyToFlux(Long.class)
+        .collectList()
+        .block();
+   }
+
   public List<FuenteDTO> buscarFuentes(){
     return webApiCallerService.getList( agregadorBaseUrl + "/api/colecciones/fuentes", FuenteDTO.class);
   }
 
-  public HechoDTO pedirHecho(Long id) {
+  public HechoDTO pedirHecho(Long id) {             // Al front solo traemos hechos disponibles. Los eliminados no
     return agregadorWebClient.get()
-            .uri("/api/hechos/{id}", id)
+            .uri("/api/hechos/disponible/{id}", id)
             .retrieve()
             .bodyToMono(HechoDTO.class)
             .block();

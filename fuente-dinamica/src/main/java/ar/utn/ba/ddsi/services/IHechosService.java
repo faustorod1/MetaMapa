@@ -15,7 +15,8 @@ public interface IHechosService {
   List<HechoOutputDTO> getAllDesde_DTO(LocalDateTime desde);
   HechoOutputDTO crearHecho(HechoInputDTO hechoInputDTO, List<MultipartFile> imagenes);
   void marcarComoELiminado(Long id);
-
+  HechoOutputDTO buscarHechoNoEliminado(Long id);
+  List<Long> buscarIdsHechos();
   //Métodos para uso interno
   Hecho getById(Long id);
   HechoOutputDTO hechoToDTO (Hecho hecho);

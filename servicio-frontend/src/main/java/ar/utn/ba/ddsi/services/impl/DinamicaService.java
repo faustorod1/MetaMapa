@@ -1,7 +1,9 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.input.SolicitudDeModificacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeModificacionOutputDTO;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +13,6 @@ import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -53,6 +54,19 @@ public class DinamicaService implements IDinamicaService {
         );
     }
 
+    public HechoDTO pedirHecho(Long id) {             // Al front solo traemos hechos disponibles. Los eliminados no
+        return webApiCallerService.get(
+                dinamicaBaseUrl + "/api/hechos/" + id,
+                HechoDTO.class);
+
+    }
+
+    public List<Long> pedirIDsHechos() {
+        return webApiCallerService.getList(
+                dinamicaBaseUrl + "/api/hechos/ids",
+                Long.class);
+    }
+
     public void modificarHecho(Long id_hecho, HechoOutputDTO hecho){
         webApiCallerService.put(
                 dinamicaBaseUrl + "/api/solicitudes/" + id_hecho,
@@ -73,6 +87,14 @@ public class DinamicaService implements IDinamicaService {
         return webApiCallerService.get(
                 dinamicaBaseUrl + "/api/solicitudes/modificacion/" + solicitudId,
                 SolicitudDeModificacionDTO.class
+        );
+    }
+
+    public void resolverModificacion(Long hechoId, ResolucionSolicitudDeModificacionOutputDTO resolucion){
+        webApiCallerService.patch(
+           dinamicaBaseUrl + "/api/solicitudes/" + hechoId + "/estado",
+               resolucion,
+               Void.class
         );
     }
 

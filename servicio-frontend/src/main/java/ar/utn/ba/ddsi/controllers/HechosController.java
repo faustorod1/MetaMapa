@@ -3,7 +3,6 @@ import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import lombok.extern.slf4j.Slf4j;
 
-import ar.utn.ba.ddsi.exceptions.HechoMalCargadoException;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.services.IDinamicaService;
@@ -55,10 +54,13 @@ public class HechosController {
 
     @GetMapping("detalle-hecho/{id_hecho}")
     public String detalleHecho(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
-        HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
-        model.addAttribute("hechoDTO", hecho);
-        return "detalle-hecho";
-
+       try {
+           HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+           model.addAttribute("hechoDTO", hecho);
+           return "detalle-hecho";
+       }catch (Exception ex) {
+           return "error/404";
+       }
     }
 
 

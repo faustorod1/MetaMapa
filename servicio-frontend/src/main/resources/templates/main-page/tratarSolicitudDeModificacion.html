@@ -58,7 +58,7 @@
         /* --- ESTILOS DE COMPARACIÓN (Dual Column Layout) --- */
         .content-area {
             /* Restar la altura de header, info y footer */
-            height: calc(100% - 7rem);
+            height: calc(100% - 7rem - 5rem); /* Ajuste de altura para dejar espacio al motivo */
             overflow-y: auto;
             padding: 0 0.5rem;
             display: flex;
@@ -74,6 +74,8 @@
             height: fit-content;
         }
 
+        /* [Se mantienen el resto de estilos de columnas, campos, y flechas] */
+
         .hecho-column {
             border-right: 3px solid var(--color-main-2);
         }
@@ -88,7 +90,6 @@
             border-bottom: 2px solid var(--color-main-2);
         }
 
-        /* --- ESTILOS DE CAMPOS --- */
         .field-group {
             margin-bottom: 1rem;
             padding: 0.5rem;
@@ -127,14 +128,6 @@
             min-height: 4rem;
         }
 
-        /* Resaltado de modificación */
-        .field-group.modified .field-value {
-            background-color: #ffe0b2; /* Naranja claro para resaltar */
-            border-color: #ff9800;
-            font-weight: 600;
-        }
-
-        /* Etiquetas y Multimedia */
         .tag-container {
             display: flex;
             flex-wrap: wrap;
@@ -190,8 +183,8 @@
 
 
         .buttons-footer{
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
+            margin-top: 0.3rem;
+            padding-top: 0.2rem;
             justify-content: space-between;
             align-items: center;
             display: flex;
@@ -270,164 +263,170 @@
             background-color: #1e7e34;
         }
 
+
+        .motivo-area-directo {
+            padding: 0.5rem 0.5rem 0.5rem;
+            margin-top: 1rem;
+            background-color: #3f51b5;
+            border-radius: 0.5rem;
+        }
+        .motivo-area-directo label {
+            font-weight: bold;
+            color: white;
+        }
+        .motivo-area-directo textarea {
+            width: 100%;
+            min-height: 3rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
 
+<form method="POST" th:action="@{/api/solicitudes/solicitudesDeModificacion/resolverModificacion}">
+    <div id="fixed-logo"></div>
 
-<div class="modal" id="resolution-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
-    <div class="container" style="background:white; padding:2rem; border-radius:1rem; width:400px; height: auto; color: black; margin-top: 0;">
-        <h3 id="modal-title" style="text-align: center; color: var(--color-main-2);"></h3>
-        <form id="resolution-form" method="POST" th:action="@{/api/solicitudes/resolver/__${solicitud.id}__}">
-            <div class="motivo-area">
-                <label for="motivoDeEstado" style="font-weight: bold;">Motivo:</label>
-                <textarea id="motivoDeEstado" name="motivoDeEstado" placeholder="Escriba el motivo de la decisión (opcional, obligatorio para rechazo)" style="width: 100%; min-height: 4rem; margin-top: 0.5rem;"></textarea>
-            </div>
-            <input type="hidden" name="estadoNuevo" id="estadoNuevo">
-            <div class="buttons-footer" style="justify-content: space-around; margin-top: 1rem; border: none; padding-top: 0;">
-                <button type="button" class="btn-submit btn-reject" onclick="document.getElementById('resolution-modal').style.display='none'">Cancelar</button>
-                <button type="submit" class="btn-submit btn-approve" id="confirm-resolution-btn">Confirmar</button>
-            </div>
-        </form>
-    </div>
-</div>
+    <div class="container">
 
+        <a th:if="${anteriorId != null}"
+           th:href="@{/api/solicitudes/tratarModificacion/__${anteriorId}__}"
+           class="flecha izquierda">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
 
-<div class="container">
+        <a th:if="${siguienteId != null}"
+           th:href="@{/api/solicitudes/tratarModificacion/__${siguienteId}__}"
+           class="flecha derecha">
+            <i class="fa-solid fa-chevron-right"></i>
+        </a>
 
-    <a th:if="${anteriorId != null}"
-       th:href="@{/api/solicitudes/tratarModificacion/__${anteriorId}__}"
-       class="flecha izquierda">
-        <i class="fa-solid fa-chevron-left"></i>
-    </a>
+        <div class="header-titulo">
+            <h2>Tratar Solicitud de Modificación</h2>
+        </div>
 
-    <a th:if="${siguienteId != null}"
-       th:href="@{/api/solicitudes/tratarModificacion/__${siguienteId}__}"
-       class="flecha derecha">
-        <i class="fa-solid fa-chevron-right"></i>
-    </a>
+        <div class="header-info">
+            Solicitud id: <strong th:text="${solicitud.id}">123</strong> |
+            Fecha de carga: <span th:text="${fechaSolicitud}">DD/MM/AAAA</span> |
+            Contribuyente ID: <span th:text="${hecho.contribuyenteId}"></span>
+        </div>
 
-    <div class="header-titulo">
-        <h2>Tratar Solicitud de Modificación</h2>
-    </div>
+        <input type="hidden" name="hechoId" th:value="${hecho.id}">
 
-    <div class="header-info">
-        Solicitud id: <strong th:text="${solicitud.id}">123</strong> |
-        Fecha de carga: <span th:text="${fechaSolicitud}">DD/MM/AAAA</span> |
-        Contribuyente ID: <span th:text="${hecho.contribuyenteId}"></span>
-    </div>
-
-    <div class="content-area">
-
-        <div class="hecho-column">
-            <div class="column-header">Hecho Original</div>
-
-            <div class="field-group">
-                <h4>Título</h4>
-                <span class="field-value" th:text="${hecho.titulo}">Título original del hecho</span>
-            </div>
-
-            <div class="field-group">
-                <h4>Categoría</h4>
-                <span class="field-value" th:text="${hecho.categoria.nombre}">Categoría original</span>
-            </div>
-
-            <div class="field-group">
-                <h4>Descripción</h4>
-                <textarea class="field-value" readonly th:text="${hecho.descripcion}">Descripción original</textarea>
-            </div>
-
-            <div class="field-group">
-                <h4>Fecha del Hecho</h4>
-                <span class="field-value" th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha original</span>
-            </div>
-
-            <div class="field-group">
-                <h4>Ubicación (Lat/Lon)</h4>
-                <span class="field-value" th:text="${'Lat: ' + hecho.lugarAcontecimiento.latitud + ' / Lon: ' + hecho.lugarAcontecimiento.longitud}">Lugar original</span>
-            </div>
-
-            <div class="field-group">
-                <h4>Etiquetas</h4>
-                <div class="tag-container">
-                    <span class="tag" th:each="tag : ${hecho.etiquetas}" th:text="${tag}">etiqueta</span>
-                    <span th:if="${#lists.isEmpty(hecho.etiquetas)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay etiquetas</span>
+        <div class="content-area">
+            <div class="hecho-column">
+                <div class="column-header">Hecho Original</div>
+                <div class="field-group">
+                    <h4>Título</h4>
+                    <span class="field-value" th:text="${hecho.titulo}">Título original del hecho</span>
                 </div>
-            </div>
 
+                <div class="field-group">
+                    <h4>Categoría</h4>
+                    <span class="field-value" th:text="${hecho.categoria.nombre}">Categoría original</span>
+                </div>
 
-            <div class="field-group">
-                <h4>Contenidos Multimedia</h4>
-                <div class="media-preview-container">
-                    <div class="media-preview-item" th:each="multimedia : ${hecho.contenidosMultimedia}">
-                        <img th:src="${multimedia}" alt="Media Original">
+                <div class="field-group">
+                    <h4>Descripción</h4>
+                    <textarea class="field-value" readonly th:text="${hecho.descripcion}">Descripción original</textarea>
+                </div>
+
+                <div class="field-group">
+                    <h4>Fecha del Hecho</h4>
+                    <span class="field-value" th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha original</span>
+                </div>
+
+                <div class="field-group">
+                    <h4>Ubicación (Lat/Lon)</h4>
+                    <span class="field-value" th:text="${'Lat: ' + hecho.lugarAcontecimiento.latitud + ' / Lon: ' + hecho.lugarAcontecimiento.longitud}">Lugar original</span>
+                </div>
+
+                <div class="field-group">
+                    <h4>Etiquetas</h4>
+                    <div class="tag-container">
+                        <span class="tag" th:each="tag : ${hecho.etiquetas}" th:text="${tag}">etiqueta</span>
+                        <span th:if="${#lists.isEmpty(hecho.etiquetas)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay etiquetas</span>
                     </div>
-                    <span th:if="${#lists.isEmpty(hecho.contenidosMultimedia)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay contenido multimedia</span>
                 </div>
-            </div>
 
-        </div>
 
-        <div class="propuesta-column">
-            <div class="column-header">Propuesta de Modificación</div>
-
-            <div class="field-group">
-                <h4>Título <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <span class="field-value" th:text="${solicitud.tituloNuevo}">Nuevo Título</span>
-            </div>
-
-            <div class="field-group" >
-                <h4>Categoría <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <span class="field-value" th:text="${solicitud.categoriaNueva}">Nueva Categoría</span>
-            </div>
-
-            <div class="field-group">
-                <h4>Descripción <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <textarea class="field-value" readonly th:text="${solicitud.descripcionNueva}">Nueva Descripción</textarea>
-            </div>
-
-            <div class="field-group">
-                <h4>Fecha del Hecho <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <span class="field-value" th:text="${#temporals.format(solicitud.fechaHechoNueva, 'dd/MM/yyyy HH:mm')}">Nueva Fecha</span>
-            </div>
-
-            <div class="field-group">
-                <h4>Ubicación (Lat/Lon) <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <span class="field-value" th:text="${'Lat: ' + solicitud.latitudNueva + ' / Lon: ' + solicitud.longitudNueva}">Nuevo Lugar</span>
-            </div>
-
-            <div class="field-group" th:if="${solicitud.etiquetasNuevas != null}">
-                <h4>Etiquetas <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <div class="tag-container">
-                    <span class="tag" th:each="tag : ${solicitud.etiquetasNuevas}" th:text="${tag}">nueva etiqueta</span>
-                    <span th:if="${#lists.isEmpty(solicitud.etiquetasNuevas)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay etiquetas</span>
-                </div>
-            </div>
-
-            <div class="field-group" th:if="${solicitud.contenidosMultimediaNuevos != null}">
-                <h4>Contenidos Multimedia <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
-                <div class="media-preview-container">
-                    <div class="media-preview-item" th:each="multimedia : ${solicitud.contenidosMultimediaNuevos}">
-                        <img th:src="${multimedia}" alt="Nuevo Contenido Multimedia">
+                <div class="field-group">
+                    <h4>Contenidos Multimedia</h4>
+                    <div class="media-preview-container">
+                        <div class="media-preview-item" th:each="multimedia : ${hecho.contenidosMultimedia}">
+                            <img th:src="${multimedia}" alt="Media Original">
+                        </div>
+                        <span th:if="${#lists.isEmpty(hecho.contenidosMultimedia)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay contenido multimedia</span>
                     </div>
-                    <span th:if="${#lists.isEmpty(solicitud.contenidosMultimediaNuevos)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay contenido multimedia</span>
                 </div>
             </div>
 
+            <div class="propuesta-column">
+                <div class="column-header">Propuesta de Modificación</div>
+                <div class="field-group">
+                    <h4>Título <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <span class="field-value" th:text="${solicitud.tituloNuevo}">Nuevo Título</span>
+                </div>
+
+                <div class="field-group" >
+                    <h4>Categoría <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <span class="field-value" th:text="${solicitud.categoriaNueva}">Nueva Categoría</span>
+                </div>
+
+                <div class="field-group">
+                    <h4>Descripción <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <textarea class="field-value" readonly th:text="${solicitud.descripcionNueva}">Nueva Descripción</textarea>
+                </div>
+
+                <div class="field-group">
+                    <h4>Fecha del Hecho <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <span class="field-value" th:text="${#temporals.format(solicitud.fechaHechoNueva, 'dd/MM/yyyy HH:mm')}">Nueva Fecha</span>
+                </div>
+
+                <div class="field-group">
+                    <h4>Ubicación (Lat/Lon) <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <span class="field-value" th:text="${'Lat: ' + solicitud.latitudNueva + ' / Lon: ' + solicitud.longitudNueva}">Nuevo Lugar</span>
+                </div>
+
+                <div class="field-group" th:if="${solicitud.etiquetasNuevas != null}">
+                    <h4>Etiquetas <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <div class="tag-container">
+                        <span class="tag" th:each="tag : ${solicitud.etiquetasNuevas}" th:text="${tag}">nueva etiqueta</span>
+                        <span th:if="${#lists.isEmpty(solicitud.etiquetasNuevas)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay etiquetas</span>
+                    </div>
+                </div>
+
+                <div class="field-group" th:if="${solicitud.contenidosMultimediaNuevos != null}">
+                    <h4>Contenidos Multimedia <i class="fa-solid fa-wand-magic-sparkles"></i></h4>
+                    <div class="media-preview-container">
+                        <div class="media-preview-item" th:each="multimedia : ${solicitud.contenidosMultimediaNuevos}">
+                            <img th:src="${multimedia}" alt="Nuevo Contenido Multimedia">
+                        </div>
+                        <span th:if="${#lists.isEmpty(solicitud.contenidosMultimediaNuevos)}" class="field-value" style="padding:0.1rem 0.5rem; background-color: transparent; border: none;">No hay contenido multimedia</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-
-    <div class="buttons-footer">
-        <div class="spacer"></div>
-        <div class="action-buttons">
-            <button class="btn-submit" type="submit" name="accion" value="rechazar">Rechazar</button>
-            <button class="btn-submit" type="submit" name="accion" value="aprobar_con_sugerencia">Aprobar con sugerencia</button>
-            <button class="btn-submit" type="submit" name="accion" value="aprobar">Aprobar</button>
+        <div class="motivo-area-directo">
+            <label for="motivoDeEstado">Motivo de la Decisión (obligatorio):</label>
+            <textarea id="motivoDeEstado" name="motivoDeEstado" placeholder="Escriba aquí el motivo de la decisión."></textarea>
         </div>
-    </div>
 
-</div>
+        <div class="buttons-footer">
+            <div class="spacer"></div>
+            <div class="action-buttons">
+                <button class="btn-submit btn-reject" type="submit" name="accion" value="rechazada">Rechazar</button>
+                <button class="btn-submit" type="submit" name="accion" value="aceptada_con_sugerencia">Aprobar con sugerencia</button>
+                <button class="btn-submit btn-approve" type="submit" name="accion" value="aprobada">Aprobar</button>
+            </div>
+        </div>
+
+    </div>
+</form>
 
 <script>
     function openResolutionModal(estado, title) {

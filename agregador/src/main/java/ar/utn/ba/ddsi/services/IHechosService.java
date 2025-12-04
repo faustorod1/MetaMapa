@@ -10,7 +10,9 @@ import java.util.Map;
 public interface IHechosService {
     List<HechoOutputDTO> buscarTodos(Map<String, String> params);
     HechoOutputDTO buscarHecho(Long id);
+    HechoOutputDTO buscarHechoNoEliminado(Long id);
     Hecho obtenerPorId(Long id);
+    Hecho obtenerNoEliminadoPorId(Long id);
     List<Hecho> getFromMetaMapa();
     List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales);
     List<HechoOutputDTO> buscarHechoDe(Long contribuyenteId);
@@ -18,4 +20,5 @@ public interface IHechosService {
     void normalizarCategoria(List<Hecho> hechos);
     void normalizarUbicacion(List<Hecho> hechos);
     List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener);
+    List<Long> buscarIdsHechosNoEliminados();
 }

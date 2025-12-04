@@ -7,6 +7,7 @@ import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,21 @@ public class HechosService implements IHechosService {
                 .stream()
                 .map(this::hechoToDTO)
                 .toList();
+    }
+
+    @Override
+    public HechoOutputDTO buscarHechoNoEliminado(Long id) {
+        Hecho hecho = hechosRepository.findById(id).orElse(null);
+        if (hecho == null || hecho.isEliminado()) {
+            throw new EntityNotFoundException("El Hecho con ID: " + id + " está marcado como eliminado.");
+        } else {
+            return hechoToDTO(hecho);
+        }
+    }
+
+    @Override
+    public List<Long> buscarIdsHechos(){
+        return hechosRepository.findAll().stream().filter(hecho -> !hecho.isEliminado()).map(Hecho::getId).collect(Collectors.toList());
     }
 
     @Override

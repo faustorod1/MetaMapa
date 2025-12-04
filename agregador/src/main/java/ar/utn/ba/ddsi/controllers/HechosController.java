@@ -32,6 +32,16 @@ public class HechosController {
         return hechoDTO;
     }
 
+    @GetMapping("/disponible/{id}")
+    public HechoOutputDTO buscarHechoNoEliminado(@PathVariable Long id) {
+        return this.hechosService.buscarHechoNoEliminado(id);
+    }
+
+    @GetMapping("/ids")
+    public List<Long> buscarIdsHechosNoEliminados(){
+        return this.hechosService.buscarIdsHechosNoEliminados();
+    }
+
     @GetMapping("/contribuyente")      // Le sacamos el {id} por ahora, ya que se uso queda reservado para validaciones contra el token
     public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long contribuyenteId = userDetails.getId();

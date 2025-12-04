@@ -16,6 +16,7 @@ import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.models.repositories.IDepartamentosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -93,11 +94,33 @@ public class HechosService implements IHechosService {
         return HechoOutputDTO.fromEntity(obtenerPorId(id));
     }
 
+    @Override
+    public HechoOutputDTO buscarHechoNoEliminado(Long id){
+        return HechoOutputDTO.fromEntity(obtenerNoEliminadoPorId(id));
+    }
+
     // -------------------------------------------------------- Métodos de trabajo interno ---------------------------------------------------------------------------//
     @Override
     public Hecho obtenerPorId(Long id){
         return hechosRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Hecho obtenerNoEliminadoPorId(Long id){
+        Hecho hecho = hechosRepository.findById(id).orElse(null);
+        if (hecho == null || hecho.isEliminado()){
+            throw new EntityNotFoundException("El Hecho con ID: " + id + " está marcado como eliminado.");
+        }else{
+            return hecho;
+        }
+    }
+
+    @Override
+    public List<Long> buscarIdsHechosNoEliminados(){
+        return hechosRepository.findAll().stream().filter(hecho -> !hecho.isEliminado()).map(Hecho::getId).collect(Collectors.toList());
+    }
+
+
 
     @Override
     public void actualizarHechos(){

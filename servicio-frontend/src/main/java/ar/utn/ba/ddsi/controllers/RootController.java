@@ -2,17 +2,14 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.exceptions.BadCodeException;
 import ar.utn.ba.ddsi.exceptions.UsuarioExistenteException;
-import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import ar.utn.ba.ddsi.models.dto.input.ColeccionDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.entities.DatosLogin;
 import ar.utn.ba.ddsi.models.entities.DatosRegister;
 import ar.utn.ba.ddsi.services.IRootService;
-import ar.utn.ba.ddsi.services.impl.RootService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
