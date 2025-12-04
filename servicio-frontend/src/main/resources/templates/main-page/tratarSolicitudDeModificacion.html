@@ -314,7 +314,7 @@
             Contribuyente ID: <span th:text="${hecho.contribuyenteId}"></span>
         </div>
 
-        <input type="hidden" name="hechoId" th:value="${hecho.id}">
+        <input type="hidden" name="id_hecho_externo" th:value="${solicitud.idHecho}">
 
         <div class="content-area">
             <div class="hecho-column">
@@ -413,15 +413,15 @@
 
         <div class="motivo-area-directo">
             <label for="motivoDeEstado">Motivo de la Decisión (obligatorio):</label>
-            <textarea id="motivoDeEstado" name="motivoDeEstado" placeholder="Escriba aquí el motivo de la decisión."></textarea>
+            <textarea id="motivoDeEstado" name="motivoDeEstado" required placeholder="Escriba aquí el motivo de la decisión."></textarea>
         </div>
 
         <div class="buttons-footer">
             <div class="spacer"></div>
             <div class="action-buttons">
                 <button class="btn-submit btn-reject" type="submit" name="accion" value="rechazada">Rechazar</button>
-                <button class="btn-submit" type="submit" name="accion" value="aceptada_con_sugerencia">Aprobar con sugerencia</button>
-                <button class="btn-submit btn-approve" type="submit" name="accion" value="aprobada">Aprobar</button>
+                <button class="btn-submit" type="submit" name="accion" value="aceptada_con_sugerencia">Aceptar con sugerencia</button>
+                <button class="btn-submit btn-approve" type="submit" name="accion" value="aceptada">Aceptar</button>
             </div>
         </div>
 
@@ -429,20 +429,7 @@
 </form>
 
 <script>
-    function openResolutionModal(estado, title) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('estadoNuevo').value = estado;
-        document.getElementById('resolution-modal').style.display = 'flex';
 
-        const motivoTextarea = document.getElementById('motivoDeEstado');
-        if (estado === 'RECHAZADA') {
-            motivoTextarea.required = true;
-            motivoTextarea.placeholder = "Escriba el motivo del rechazo (obligatorio)";
-        } else {
-            motivoTextarea.required = false;
-            motivoTextarea.placeholder = "Escriba el motivo de la aceptación (opcional)";
-        }
-    }
 </script>
 
 </body>

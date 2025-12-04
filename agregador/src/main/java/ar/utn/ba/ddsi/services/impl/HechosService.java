@@ -116,13 +116,6 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public List<Long> buscarIdsHechosNoEliminados(){
-        return hechosRepository.findAll().stream().filter(hecho -> !hecho.isEliminado()).map(Hecho::getId).collect(Collectors.toList());
-    }
-
-
-
-    @Override
     public void actualizarHechos(){
 
         // Ejecuta las peticiones a las fuentes y junta los resultados
@@ -359,8 +352,9 @@ public class HechosService implements IHechosService {
     }
 
     public List<HechoOutputDTO> buscarHechoDe(Long contribuyenteId) {
-        return hechosRepository.findByContribuyenteId(contribuyenteId)
-                .stream().map(HechoOutputDTO::fromEntity).toList();
+        return hechosRepository.findByContribuyenteId(contribuyenteId).stream()
+                .filter(hecho -> !hecho.isEliminado())
+                .map(HechoOutputDTO::fromEntity).toList();
     }
 
     //TODO: revisar si es funcional esto asincronico
@@ -387,6 +381,21 @@ public class HechosService implements IHechosService {
 
         return hechosEncontrados.stream()
             .map(HechoOutputDTO::fromEntity).toList();
+    }
+
+    @Override
+    public List<Long> buscarIdsExternosDinamica(){
+        return hechosRepository.findAll().stream().filter(hecho -> !hecho.isEliminado() && hecho.getOrigen()
+                .equals(OrigenHecho.CONTRIBUYENTE))
+                .map(hecho -> hecho.getIdExterno().getIdExterno()).toList();
+    }
+
+    @Override
+    public HechoOutputDTO buscarHechoDinamica (Long id_externo){
+        return hechosRepository.findAll().stream()
+                .filter(hecho -> hecho.getIdExterno().getIdExterno().equals(id_externo))
+                .filter(hecho -> hecho.getIdExterno().getFuente().getTipoDeFuente().equals(TipoDeFuente.DINAMICA))
+                .findFirst().map(HechoOutputDTO::fromEntity).orElse(null);
     }
 }
 

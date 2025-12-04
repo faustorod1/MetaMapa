@@ -20,5 +20,6 @@ public interface IAgregadorService {
   List<Long> pedirIDsEliminacionesPendientes();
   SolicitudDeEliminacionDTO pedirSolicitudDeEliminacion(Long id);
   void resolverEliminacion(Long id, ResolucionSolicitudDeEliminacionOutputDTO solicitud);
-  List<Long> pedirIDsHechos();
+  List<Long> pedirIDsExternosDinamica();
+  HechoDTO pedirHechoDinamica(Long id_externo);
 }

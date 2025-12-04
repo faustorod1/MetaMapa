@@ -37,10 +37,6 @@ public class HechosController {
         return this.hechosService.buscarHechoNoEliminado(id);
     }
 
-    @GetMapping("/ids")
-    public List<Long> buscarIdsHechosNoEliminados(){
-        return this.hechosService.buscarIdsHechosNoEliminados();
-    }
 
     @GetMapping("/contribuyente")      // Le sacamos el {id} por ahora, ya que se uso queda reservado para validaciones contra el token
     public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -53,6 +49,16 @@ public class HechosController {
         LocalDateTime fecha = LocalDateTime.now();
         List<HechoOutputDTO> hechosDTO = this.hechosService.buscarHechos(fecha,cantidad_hechos_destacados);
         return hechosDTO;
+    }
+
+    @GetMapping("/dinamica/idsExternos")
+    public List<Long> buscarIdsExternosDinamica(){
+        return hechosService.buscarIdsExternosDinamica();
+    }
+
+    @GetMapping("/dinamica/{id_externo}")
+    public HechoOutputDTO buscarHechoDinamica(@PathVariable Long id_externo) {
+        return this.hechosService.buscarHechoDinamica(id_externo);
     }
 
 

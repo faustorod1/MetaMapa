@@ -20,5 +20,6 @@ public interface IHechosService {
     void normalizarCategoria(List<Hecho> hechos);
     void normalizarUbicacion(List<Hecho> hechos);
     List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener);
-    List<Long> buscarIdsHechosNoEliminados();
+    List<Long> buscarIdsExternosDinamica();
+    HechoOutputDTO buscarHechoDinamica (Long id_externo);
 }

@@ -32,14 +32,6 @@ public class AgregadorService implements IAgregadorService {
         .block();
   }
 
-   public List<Long> pedirIDsHechos(){
-      return agregadorWebClient.get()
-        .uri("/api/hechos/ids")
-        .retrieve()
-        .bodyToFlux(Long.class)
-        .collectList()
-        .block();
-   }
 
   public List<FuenteDTO> buscarFuentes(){
     return webApiCallerService.getList( agregadorBaseUrl + "/api/colecciones/fuentes", FuenteDTO.class);
@@ -101,6 +93,21 @@ public class AgregadorService implements IAgregadorService {
                 resolucion,
                 Void.class
         );
+    }
+
+    public List<Long> pedirIDsExternosDinamica(){
+      return webApiCallerService.getList(
+              agregadorBaseUrl + "/api/hechos/dinamica/idsExternos",
+              Long.class
+      );
+    }
+
+    public HechoDTO pedirHechoDinamica(Long id_externo) {
+      return webApiCallerService.get(
+              agregadorBaseUrl + "/api/hechos/dinamica/" + id_externo,
+                 HechoDTO.class
+      );
+
     }
 
 }

@@ -71,4 +71,5 @@ public class SolicitudesService implements ISolicitudesService {
     return obtenerSolicitudesDeEliminacionPendientes().stream()
             .map(SolicitudDeEliminacionOutputDTO::getId).toList();
   }
+
 }

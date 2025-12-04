@@ -37,12 +37,16 @@ public class SolicitudesController {
   // ENDPOINTS: Contribuyente
   @GetMapping("/eliminacion/{id}")
   public String formularioSolicitudEliminacion(@PathVariable("id") Long id, Model model) {
-    SolicitudDeEliminacionOutputDTO solicitud = new SolicitudDeEliminacionOutputDTO();
-    solicitud.setHechoId(id);
-    model.addAttribute("solicitud", solicitud);
-    HechoDTO hecho = agregadorService.pedirHecho(id);
-    model.addAttribute("hecho", hecho);
-    return "crearSolicitudDeEliminacion";
+    try {
+      SolicitudDeEliminacionOutputDTO solicitud = new SolicitudDeEliminacionOutputDTO();
+      solicitud.setHechoId(id);
+      model.addAttribute("solicitud", solicitud);
+      HechoDTO hecho = agregadorService.pedirHecho(id);
+      model.addAttribute("hecho", hecho);
+      return "crearSolicitudDeEliminacion";
+    } catch (Exception ex) {
+      return "error/404";
+    }
   }
 
   @PostMapping("/solicitarEliminacion")
@@ -60,15 +64,14 @@ public class SolicitudesController {
 
 
 
-  // TODO: el hecho no debe poder ser modificado si ya fue eliminado
-  // TODO: desplegar correctamente las categorías
-
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
+    try{
     List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
     List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
-    try {
+
       HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+      Long id_externo_hecho = hecho.getIdExterno().getIdExterno();
       boolean pertenece = hechosDelContribuyente.stream().anyMatch(h -> h.getId().equals(id_hecho));
       if (!pertenece) {
         return "error/403";
@@ -78,19 +81,20 @@ public class SolicitudesController {
 
       model.addAttribute("hecho", hechoOutputDTO);
       model.addAttribute("id_hecho", id_hecho);
+      model.addAttribute("id_externo_hecho", id_externo_hecho);
       model.addAttribute("categorias", categorias);
 
       return "main-page/crearSolicitudDeModificacion";
 
-    } catch (EntityNotFoundException ex) {
+    } catch (Exception ex) {
       return "error/404";
     }
   }
 
   @PostMapping("/solicitarModificacion")
-  public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
+  public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, @RequestParam(name = "id_externo_hecho") Long id_externo_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
     try {
-      dinamicaService.modificarHecho(id_hecho, hecho);
+      dinamicaService.modificarHecho(id_externo_hecho, hecho);
       redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
       return "redirect:/api/solicitudes/modificacion/" + id_hecho;
     } catch (Exception ex) {
@@ -157,10 +161,6 @@ public class SolicitudesController {
 
 }
 
-
-// Esto está complicado: ya que la solicitud de modificacion tiene referenciando al id_hecho de la fuente dinámica.
-// Trato de ver cuando pueda como solucionar todo. Tendría que usar ids externos, eso lo se.
-/*
   @GetMapping("/tratarModificaciones")
   public String modificacionesPendientes() {
     List<Long> idsPendientes = dinamicaService.pedirIDsModificacionesPendientes();
@@ -168,7 +168,7 @@ public class SolicitudesController {
     if (idsPendientes.isEmpty()) {
       return "error/sinSolicitudesDeModificacionPendientes";
     }
-    List<Long> idsHechosValidos = agregadorService.pedirIDsExternosHechos();
+    List<Long> idsHechosValidos = agregadorService.pedirIDsExternosDinamica();
 
     List<Long> idsPendientesValidos = idsPendientes.stream()
             .filter(idSolicitud -> {Long idHecho = dinamicaService
@@ -184,15 +184,14 @@ public class SolicitudesController {
     return "redirect:/api/solicitudes/tratarModificacion/" + idSolicitud;
   }
 
-
   @GetMapping("/tratarModificacion/{solicitudId}")
   public String formularioTratarSolicitudDeModificacion(@PathVariable("solicitudId") Long solicitudId, Model model) {
-   // try {
+   try {
       SolicitudDeModificacionDTO solicitud = dinamicaService.pedirSolicitudDeModificacion(solicitudId);
-      HechoDTO hecho = agregadorService.pedirHecho(solicitud.getIdHecho());
+      HechoDTO hecho = agregadorService.pedirHechoDinamica(solicitud.getIdHecho());
 
       List<Long> idsPendientes = dinamicaService.pedirIDsModificacionesPendientes();
-      List<Long> idsHechosValidos = dinamicaService.pedirIDsHechos();
+      List<Long> idsHechosValidos = agregadorService.pedirIDsExternosDinamica();
       List<Long> idsPendientesValidos = idsPendientes.stream()
               .filter(idSolicitud -> {
                 try {
@@ -219,14 +218,14 @@ public class SolicitudesController {
       model.addAttribute("siguienteId", siguienteId);
 
       return "main-page/tratarSolicitudDeModificacion";
-   // } catch (Exception e) {
-     //   return "error/404";
-   // }
+    } catch (Exception e) {
+        return "error/404";
+    }
   }
 
 
   @PostMapping("/solicitudesDeModificacion/resolverModificacion")
-  public String procesarSolicitudDeModificacion(@RequestParam("hechoId") Long hechoId, @RequestParam("accion") String accion, @RequestParam("motivoDeEstado") String motivoDeEstado, RedirectAttributes redirectAttributes) {
+  public String procesarSolicitudDeModificacion(@RequestParam("id_hecho_externo") Long id_hecho_externo, @RequestParam("accion") String accion, @RequestParam("motivoDeEstado") String motivoDeEstado, RedirectAttributes redirectAttributes) {
     ResolucionSolicitudDeModificacionOutputDTO resolucion = new ResolucionSolicitudDeModificacionOutputDTO();
     resolucion.setMotivoDeEstado(motivoDeEstado);
 
@@ -234,15 +233,17 @@ public class SolicitudesController {
       resolucion.setEstadoNuevo(EstadoSolicitud.ACEPTADA);
     }else if(accion.equals("rechazada")) {
       resolucion.setEstadoNuevo(EstadoSolicitud.RECHAZADA);
-    }else {
+    }else if (accion.equals("aceptada_con_sugerencia")){
       resolucion.setEstadoNuevo(EstadoSolicitud.ACEPTADA_CON_SUGERENCIA);
+    }else{
+      return "error/404";
     }
 
-   dinamicaService.resolverModificacion(hechoId, resolucion);
+   dinamicaService.resolverModificacion(id_hecho_externo, resolucion);
    return "redirect:/api/solicitudes/tratarModificaciones";
 
   }
-*/
+
 
 }
 

@@ -25,6 +25,7 @@
     <form class="solicitar-modificacion-form" method="post" th:action="@{/api/solicitudes/solicitarModificacion}" th:object="${hecho}" enctype="multipart/form-data">
 
         <input type="hidden" name="id_hecho" th:value="${id_hecho}">
+        <input type="hidden" name="id_externo_hecho" th:value="${id_externo_hecho}">
 
         <div class = "container">
 
