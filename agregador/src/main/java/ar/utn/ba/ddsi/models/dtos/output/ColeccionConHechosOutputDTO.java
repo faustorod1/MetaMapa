@@ -12,6 +12,6 @@ public class ColeccionConHechosOutputDTO {
   private String identificador;
   private String titulo;
   private String descripcion;
-  private List<Hecho> hechos;
+  private List<HechoOutputDTO> hechos;
   private List<FuenteDTO> fuentes;
 }

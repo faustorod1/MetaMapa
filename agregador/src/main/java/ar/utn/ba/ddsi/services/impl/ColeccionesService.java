@@ -4,6 +4,7 @@ import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
+import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosCuradosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
@@ -57,6 +58,16 @@ public class ColeccionesService implements IColeccionesService {
             .stream()
             .map(this::coleccionConHechosOutputDTO)
             .toList();
+    }
+
+    @Override
+    public List<ColeccionConHechosCuradosOutputDTO> buscarTodosConHechosCurados(){
+        return coleccionesRepository
+                .findAll()
+                .stream()
+                .map(this::coleccionConHechosCuradosOutputDTO)
+                .toList();
+
     }
 
     @Override
@@ -141,7 +152,9 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public List<FuenteDTO> buscarFuentes(){
-        return fuentesRepository.findAll().stream().map(FuenteDTO::fromEntity).collect(Collectors.toList());
+        return fuentesRepository.findAll()
+                .stream().map(FuenteDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -153,6 +166,13 @@ public class ColeccionesService implements IColeccionesService {
 
         return coleccionesEncontradas.stream()
             .map(ColeccionOutputDTO::fromEntity).toList();
+    }
+
+    @Override
+    public List<String> buscarIdentificadores(){
+        return coleccionesRepository.findAll()
+                .stream().map(Coleccion::getIdentificador)
+                .collect(Collectors.toList());
     }
 
 
@@ -186,7 +206,18 @@ public class ColeccionesService implements IColeccionesService {
         dto.setIdentificador(coleccion.getIdentificador());
         dto.setTitulo(coleccion.getTitulo());
         dto.setDescripcion(coleccion.getDescripcion());
-        dto.setHechos(coleccion.getHechos());
+        dto.setHechos(coleccion.getHechos().stream().map(HechoOutputDTO::fromEntity).toList());
+        dto.setFuentes(coleccion.getFuentes().stream().map(FuenteDTO::fromEntity).toList());
+        return dto;
+    }
+
+    private ColeccionConHechosCuradosOutputDTO coleccionConHechosCuradosOutputDTO(Coleccion coleccion){
+        ColeccionConHechosCuradosOutputDTO dto = new ColeccionConHechosCuradosOutputDTO();
+
+        dto.setIdentificador(coleccion.getIdentificador());
+        dto.setTitulo(coleccion.getTitulo());
+        dto.setDescripcion(coleccion.getDescripcion());
+        dto.setHechos(coleccion.getHechosConsensuados().stream().map(HechoOutputDTO::fromEntity).toList());
         dto.setFuentes(coleccion.getFuentes().stream().map(FuenteDTO::fromEntity).toList());
         return dto;
     }

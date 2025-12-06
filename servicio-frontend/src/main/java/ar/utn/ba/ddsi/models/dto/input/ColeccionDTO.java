@@ -10,5 +10,6 @@ public class ColeccionDTO implements Serializable {
   private String identificador;
   private String titulo;
   private String descripcion;
+  private CriterioDTO criterioDePertenencia;
   private List<FuenteDTO> fuentes;
 }

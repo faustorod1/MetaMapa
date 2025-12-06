@@ -47,10 +47,4 @@ public class HechoOutputDTO {
                 .build();
     }
 
-
-
-
-
-
-
 }

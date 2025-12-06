@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dto.input.*;
+import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
@@ -34,8 +35,11 @@ public class AgregadorService implements IAgregadorService {
 
 
   public List<FuenteDTO> buscarFuentes(){
-    return webApiCallerService.getList( agregadorBaseUrl + "/api/colecciones/fuentes", FuenteDTO.class);
+    return webApiCallerService.getList(
+            agregadorBaseUrl + "/api/colecciones/fuentes",
+            FuenteDTO.class);
   }
+
 
   public HechoDTO pedirHecho(Long id) {             // Al front solo traemos hechos disponibles. Los eliminados no
     return agregadorWebClient.get()
@@ -50,6 +54,33 @@ public class AgregadorService implements IAgregadorService {
          agregadorBaseUrl + "/api/hechos/contribuyente",
          HechoDTO.class);
    }
+
+   public List<String> pedirIdentificadoresDeColecciones(){
+      return webApiCallerService.getList(
+              agregadorBaseUrl + "/api/colecciones/identificadores",
+              String.class);
+   }
+
+    public void cargarColeccion(ColeccionOutputDTO coleccion){
+      webApiCallerService.post(
+              agregadorBaseUrl + "/api/colecciones/cargar",
+              coleccion,
+              void.class);
+  }
+
+
+    public List<ColeccionConHechosDTO> pedirColeccionesConHechos(){
+      return webApiCallerService.getList(
+                agregadorBaseUrl + "/api/colecciones/con-hechos",
+              ColeccionConHechosDTO.class);
+  }
+
+    public List<ColeccionConHechosDTO> pedirColeccionesConHechosCurados(){
+        return webApiCallerService.getList(
+                agregadorBaseUrl + "/api/colecciones/con-hechos-curados",
+                ColeccionConHechosDTO.class);
+    }
+
 
    public List<CategoriaDTO> pedirCategorias() {
       return webApiCallerService.getList(

@@ -1,13 +1,16 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
+import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosCuradosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -40,7 +43,6 @@ public class ColeccionesController {
     }
 
 
-
     // API Administrativa ----------------------------------------------------------------------------------------------
 
     @GetMapping("/con-hechos")
@@ -48,8 +50,17 @@ public class ColeccionesController {
         return this.coleccionesService.buscarTodosConHechos();
     }
 
+    @GetMapping("/con-hechos-curados")
+    public List<ColeccionConHechosCuradosOutputDTO> buscarTodosConHechosCurados(){
+        return this.coleccionesService.buscarTodosConHechosCurados();
+    }
 
-    @PostMapping
+    @GetMapping("/identificadores")
+    public List<String> buscarIdentificadores(){
+        return coleccionesService.buscarIdentificadores();
+    }
+
+    @PostMapping("/cargar")
     public ColeccionOutputDTO crearColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
         return coleccionesService.crearColeccion(coleccionInputDTO);
     }

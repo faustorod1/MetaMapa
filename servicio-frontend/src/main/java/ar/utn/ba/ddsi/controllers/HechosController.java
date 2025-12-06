@@ -63,8 +63,6 @@ public class HechosController {
        }
     }
 
-
-
     // ENDPOINTS: administradores
     @GetMapping("importarCSV")
     public String formularioImportarCSV() {
@@ -82,6 +80,18 @@ public class HechosController {
             redirectAttributes.addFlashAttribute("error", "Error al importar los archivos");
             return "redirect:/hechos/importarCSV";
       }
+    }
+
+    @GetMapping("/mis-hechos")
+    public String misHechos(Model model) {
+        try {
+            List<HechoDTO> hechos = agregadorService.pedirHechosDeContribuyente();
+            model.addAttribute("hechosDelContribuyente", hechos);
+            return "main-page/mis-hechos";
+        } catch (Exception ex) {
+            log.error("Error al cargar los hechos del contribuyente: {}", ex.getMessage());
+            return "error/404";
+        }
     }
 
     }

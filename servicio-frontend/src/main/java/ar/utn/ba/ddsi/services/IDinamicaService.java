@@ -14,6 +14,5 @@ public interface IDinamicaService {
     List<Long> pedirIDsModificacionesPendientes();
     SolicitudDeModificacionDTO pedirSolicitudDeModificacion(Long solicitudId);
     void resolverModificacion(Long hechoId, ResolucionSolicitudDeModificacionOutputDTO resolucion);
-    HechoDTO pedirHecho(Long id);
-    List<Long> pedirIDsHechos();
+
 }

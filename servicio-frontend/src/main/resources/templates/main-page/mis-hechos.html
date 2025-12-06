@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Mis-Hechos | METAmapa</title>
@@ -151,6 +151,67 @@
             color: gray;
         }
 
+        .card-container {
+            display: flex;
+            gap: 1.5rem; /* Aumentar la separación entre tarjetas */
+            flex-wrap: wrap;
+            background: var(--color-secondary);
+            height: 100%;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 10px 10px 30px 30px rgba(126, 124, 124, 0.07) inset;
+        }
+
+        .card {
+            background: #e8ffe8; /* Fondo más claro o blanco */
+            border: 1px solid #c8ecc8; /* Borde sutil */
+            border-left: 5px solid #4CAF50; /* Línea de acento verde */
+            border-radius: 8px; /* Bordes más redondeados */
+            padding: 0.8rem; /* Más espacio interno */
+            height: auto; /* Dejar que el contenido defina la altura */
+            min-width: 260px;
+            max-width: 280px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para profundidad */
+            transition: transform 0.2s;
+            overflow: visible; /* Importante para la sombra */
+        }
+
+        .card:hover {
+            transform: translateY(-5px); /* Efecto al pasar el ratón */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #00796b; /* Color del texto del título más profesional */
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #444;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .icon-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #00796b;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .icon-button:hover{
+            color: #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -180,49 +241,50 @@
         </div>
 
     </aside>
-<main class="main">
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar Hechos...">
-    </div>
-
-
-
-    <div class="card-container">
-        <div class="card">
-            <h3>"Titular Destacado"</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
-            <button class="icon-button" view="./CrearSolicitudDeEliminacion.html"><i class="fa-regular fa-pen-to-square"></i></button>
+    <main class="main">
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Buscar Hechos...">
         </div>
-        <div class="card">
-            <h3>“Titular Destacado”</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
-            <button class="icon-button" view ="./CrearSolicitudDeEliminacion.html"><i class="fa-regular fa-pen-to-square"></i></button>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}" style="width: 100%; margin-bottom: 1rem; color: red;"></div>
+
+        <div class="card-container">
+
+            <div th:if="${hechosDelContribuyente == null or #lists.isEmpty(hechosDelContribuyente)}" class="alert alert-info" style="width: 100%; text-align: center; color: #333;">
+                <i class="fa-solid fa-circle-info"></i> Aún no has registrado ningún hecho.
+            </div>
+
+            <div class="card" th:each="hecho : ${hechosDelContribuyente}">
+
+                <h3 th:text="${hecho.titulo}">Titular Destacado</h3>
+
+                <p th:text="${hecho.descripcion}">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras metus.</p>
+
+                <div style="font-size: 12px; opacity: 0.7;">
+                    Fecha: <span th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">15/05/2025</span>
+
+                    <th:block th:if="${hecho.categoria != null}">
+                        | Categoría: <span th:text="${hecho.categoria.nombre}">Vialidad</span>
+                    </th:block>
+                </div>
+
+                <div class="card-actions">
+
+                    <a th:href="@{/hechos/detalle-hecho/{id}(id=${hecho.id})}" class="icon-button view-button" title="Ver detalle del hecho">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+
+                    <a th:href="@{/api/solicitudes/modificacion/{id_hecho}(id_hecho=${hecho.id})}" class="icon-button edit-button" title="Crear solicitud de modificación">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+
+                </div>
+            </div>
         </div>
-    </div>
-
-
-</main>
-
+    </main>
 </body>
 
 <script>
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const navButtons = document.querySelectorAll('.icon-button');
-        const iframe = document.getElementById('main-iframe');
-
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                navButtons.forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-                const view = button.getAttribute('data-view');
-                if (view) iframe.src = view;
-            });
-        });
-    });
-
 </script>
 </html>
-
-

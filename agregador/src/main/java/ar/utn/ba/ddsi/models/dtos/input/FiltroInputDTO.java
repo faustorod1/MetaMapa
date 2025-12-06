@@ -31,7 +31,7 @@ public class FiltroInputDTO {
         }else if(this.getTipoDeFiltro().equals("fechaDeCarga")){
             return new FiltroPorFechaDeCarga((String) this.getParametros().get("desde"),(String) this.getParametros().get("hasta"));
         }else{
-            throw new RuntimeException("Tipo de filtro no encontrado (╯°□°)╯︵ ┻━┻");
+            throw new RuntimeException("Tipo de filtro no encontrado");
         }
     }
 }

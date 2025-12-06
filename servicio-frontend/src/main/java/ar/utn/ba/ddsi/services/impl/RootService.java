@@ -96,7 +96,7 @@ public class RootService implements IRootService {
                     .retrieve()
                     .bodyToMono(AuthResponseDTO.class)
                     .block();
-        } catch (WebClientResponseException e) {
+       } catch (WebClientResponseException e) {
             String respuestaJsonError = e.getResponseBodyAsString();
             String mensajeLimpio = extraerMensajeDelJson(respuestaJsonError);
 

@@ -1,9 +1,7 @@
 package ar.utn.ba.ddsi.services;
 
-import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
-import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
-import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
-import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
+import ar.utn.ba.ddsi.models.dto.input.*;
+import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 
@@ -22,4 +20,9 @@ public interface IAgregadorService {
   void resolverEliminacion(Long id, ResolucionSolicitudDeEliminacionOutputDTO solicitud);
   List<Long> pedirIDsExternosDinamica();
   HechoDTO pedirHechoDinamica(Long id_externo);
+  List<String> pedirIdentificadoresDeColecciones();
+  void cargarColeccion(ColeccionOutputDTO coleccion);
+  List<ColeccionConHechosDTO> pedirColeccionesConHechos();
+  List<ColeccionConHechosDTO> pedirColeccionesConHechosCurados();
+
 }
