@@ -14,14 +14,18 @@ import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.models.repositories.IDepartamentosRepository;
+import ar.utn.ba.ddsi.models.specifications.HechoSpecs;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
@@ -78,15 +82,20 @@ public class HechosService implements IHechosService {
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
-    public List<HechoOutputDTO> buscarTodos(Map<String, String> params) {
-        Criterio filtrosDeUsuario = new Criterio(params);
+    public Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable) {
+        Specification<Hecho> spec = HechoSpecs.porFiltros(params);
+        Page<Hecho> paginaLocal = hechosRepository.findAll(spec, pageable);
 
-        List<Hecho> hechosLocales = hechosRepository.findAll();
+        if (paginaLocal.isEmpty()) {
+            return Page.empty(pageable);
+        }
 
-        List<Hecho> actualizadosConMetamapa = actualizarListaConHechosMetamapa(hechosLocales);
+        List<Hecho> hechosDeLaPagina = new ArrayList<>(paginaLocal.getContent());
+        List<Hecho> actualizadosConMetamapa = actualizarListaConHechosMetamapa(hechosDeLaPagina);
 
-        return filtrosDeUsuario.aplicarA(actualizadosConMetamapa)
-                .stream().map(HechoOutputDTO::fromEntity).toList();
+        Page<Hecho> paginaFinal = new PageImpl<>(actualizadosConMetamapa, pageable, paginaLocal.getTotalElements());
+
+        return paginaFinal.map(HechoOutputDTO::fromEntity);
     }
 
     @Override

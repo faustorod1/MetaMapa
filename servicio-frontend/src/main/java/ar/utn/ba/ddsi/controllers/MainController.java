@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
+import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,8 @@ public class MainController {
   @GetMapping("mapa")
   public String mapa(Model model, RedirectAttributes redirectAttributes) {
     try{
-      List<HechoDTO> hechos  = agregadorService.buscarHechos();
+      Page<HechoDTO> pagina  = agregadorService.buscarHechos(0, 15);
+      List<HechoDTO> hechos = pagina.getContent();
       model.addAttribute("hechos", hechos);
       return "main-page/mapa";
     } catch (Exception e) {

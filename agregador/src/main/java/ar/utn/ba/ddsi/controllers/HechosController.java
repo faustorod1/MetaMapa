@@ -4,6 +4,9 @@ import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -22,8 +25,8 @@ public class HechosController {
     }
 
     @GetMapping
-    public List<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros) {
-        return this.hechosService.buscarTodos(parametros);
+    public Page<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return this.hechosService.buscarTodos(parametros, pageable);
     }
 
     @GetMapping("{id}")

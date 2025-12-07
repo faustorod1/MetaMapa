@@ -4,11 +4,13 @@ import ar.utn.ba.ddsi.models.dto.input.*;
 import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface IAgregadorService {
   List<HechoDTO> buscarHechos();
+  Page<HechoDTO> buscarHechos(int page, int size);
   List<FuenteDTO> buscarFuentes();
   HechoDTO pedirHecho(Long id);
   void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud);

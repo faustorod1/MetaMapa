@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.models.dto.RestPage;
 import ar.utn.ba.ddsi.models.dto.input.*;
 import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
@@ -7,6 +8,8 @@ import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -32,6 +35,17 @@ public class AgregadorService implements IAgregadorService {
         .collectList()
         .block();
   }
+  public Page<HechoDTO> buscarHechos(int page, int size) {
+    return agregadorWebClient.get()
+      .uri(uriBuilder -> uriBuilder
+        .path("/api/hechos")
+        .queryParam("page", page)
+        .queryParam("size", size)
+        .build())
+      .retrieve()
+      .bodyToMono(new ParameterizedTypeReference<RestPage<HechoDTO>>() {})
+      .block();
+    }
 
 
   public List<FuenteDTO> buscarFuentes(){
