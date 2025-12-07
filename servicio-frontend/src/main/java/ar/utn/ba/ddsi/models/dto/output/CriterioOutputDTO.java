@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -13,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CriterioOutputDTO {
-    public List<FiltroOutputDTO> filtros;
+    public List<FiltroOutputDTO> filtros = new ArrayList<>();
 }

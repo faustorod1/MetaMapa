@@ -9,6 +9,7 @@ import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.services.IColeccionesService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/colecciones")
 public class ColeccionesController {
@@ -62,6 +64,7 @@ public class ColeccionesController {
 
     @PostMapping("/cargar")
     public ColeccionOutputDTO crearColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
+        log.info("Entró en crearColeccion:" + coleccionInputDTO);
         return coleccionesService.crearColeccion(coleccionInputDTO);
     }
 

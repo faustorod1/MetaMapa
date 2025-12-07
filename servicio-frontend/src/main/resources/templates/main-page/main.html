@@ -16,10 +16,11 @@
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-house"></i>
         </button>
-        <button class="nav-button" view="/hechos/mis-hechos" id="nav-button-mis-hechos" sec:authorize="isAuthenticated()">
+        <button class="nav-button" view="/hechos/mis-hechos" id="nav-button-mis-hechos" th:if="${session.role == 'CONTRIBUYENTE'}">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-folder"></i>
         </button>
+
 
         <button class="nav-button" id="nav-button-modo-de-navegacion">
             <div class="nav-button-selection"></div>

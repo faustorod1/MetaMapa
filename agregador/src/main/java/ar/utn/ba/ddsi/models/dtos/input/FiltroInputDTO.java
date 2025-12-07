@@ -21,9 +21,11 @@ public class FiltroInputDTO {
         }else if(this.getTipoDeFiltro().equals("categoria")){
             return new FiltroPorCategoria(new Categoria((String) this.getParametros().get("nombre")));
         }else if(this.getTipoDeFiltro().equals("ubicacion")){
-            Double latitud = (Double) this.getParametros().get("latitud");
-            Double longitud = (Double) this.getParametros().get("longitud");
-            return new FiltroPorUbicacion(new Coordenada(latitud, longitud));
+            String latStr = (String) parametros.get("latitud");
+            String lonStr = (String) parametros.get("longitud");
+            Double lat = Double.valueOf(latStr);
+            Double lon = Double.valueOf(lonStr);
+            return new FiltroPorUbicacion(new Coordenada(lat, lon));
         }else if(this.getTipoDeFiltro().equals("fechaHecho")){
             LocalDateTime desde = LocalDateTime.parse((String) this.getParametros().get("desde"));
             LocalDateTime hasta = LocalDateTime.parse((String) this.getParametros().get("hasta"));
