@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.models.dtos.output;
 
+import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Criterio;
@@ -20,6 +21,7 @@ public class ColeccionOutputDTO {
     private String descripcion;
     private CriterioOutputDTO criterioDePertenencia;
     private List<FuenteDTO> fuentes;
+    private String algoritmoDeConsenso;
 
     public static ColeccionOutputDTO fromEntity(Coleccion coleccion) {
         ColeccionOutputDTO dto = new ColeccionOutputDTO();
@@ -29,6 +31,7 @@ public class ColeccionOutputDTO {
         dto.setDescripcion(coleccion.getDescripcion());
         dto.setFuentes(coleccion.getFuentes().stream().map(FuenteDTO::fromEntity).toList());
         dto.setCriterioDePertenencia(CriterioOutputDTO.fromEntity(coleccion.getCriterioDePertenencia()));
+        dto.setAlgoritmoDeConsenso(new AlgoritmoDeConsensoConverter().convertToDatabaseColumn(coleccion.getAlgoritmoDeConsenso()));
         return dto;
     }
 }

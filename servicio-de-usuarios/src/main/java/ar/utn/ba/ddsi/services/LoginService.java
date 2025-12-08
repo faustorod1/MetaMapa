@@ -88,21 +88,22 @@ public class LoginService {
             .apellido(apellido)
             .build();
 
-        if (code == 3333) {
+        if (code != null && code.equals(3333)) {
             usuario.setRol(Rol.ADMIN);
             usuariosRepository.save(usuario);
 
             Administrador administrador = new Administrador();
             administrador.setUsuario(usuario);
             administradorRepository.save(administrador);
-        }else if (code == null){
+            return usuario;
+        }else if(code != null && !code.equals(3333)){
+            throw new BadCodeException("Codigo de administrador no valido");
+        }else {
             usuario.setRol(Rol.CONTRIBUYENTE);
             usuariosRepository.save(usuario);
             Contribuyente contribuyente = new Contribuyente();
             contribuyente.setUsuario(usuario);
             contribuyenteRepository.save(contribuyente);
-        }else {
-            throw new BadCodeException("Codigo de administrador no valido");
         }
         return usuario;
     }

@@ -82,6 +82,12 @@ public class AgregadorService implements IAgregadorService {
               void.class);
   }
 
+  public List<ColeccionDTO> pedirColecciones(){
+      return webApiCallerService.getList(
+              agregadorBaseUrl + "/api/colecciones",
+              ColeccionDTO.class);
+  }
+
 
     public List<ColeccionConHechosDTO> pedirColeccionesConHechos(){
       return webApiCallerService.getList(

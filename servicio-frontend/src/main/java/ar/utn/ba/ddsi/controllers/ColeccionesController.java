@@ -69,6 +69,8 @@ public class ColeccionesController {
        }
     }
 
+
+
  /*
     @GetMapping("/editar/{id_coleccion}")
     public String formularioEditarColeccion(@PathVariable("id_coleccion") String identificador, Model model, RedirectAttributes redirectAttributes) {
@@ -119,6 +121,13 @@ public class ColeccionesController {
 
     */
 
+
+    @GetMapping
+    public String mostrarColecciones(Model model){
+        List<ColeccionDTO> colecciones = agregadorService.pedirColecciones();
+        model.addAttribute("colecciones", colecciones);
+        return "administrar-colecciones";
+    }
 
 
 }

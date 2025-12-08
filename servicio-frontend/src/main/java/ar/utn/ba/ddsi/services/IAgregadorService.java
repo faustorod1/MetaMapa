@@ -26,5 +26,6 @@ public interface IAgregadorService {
   void cargarColeccion(ColeccionOutputDTO coleccion);
   List<ColeccionConHechosDTO> pedirColeccionesConHechos();
   List<ColeccionConHechosDTO> pedirColeccionesConHechosCurados();
+  List<ColeccionDTO> pedirColecciones();
 
 }

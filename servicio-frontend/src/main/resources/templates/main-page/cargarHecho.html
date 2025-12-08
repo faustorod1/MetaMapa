@@ -17,7 +17,6 @@
 
 <body>
 <main>
-    <a th:href="@{/main}" id="btn-back-page"> <i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
 
     <form class="cargar-hecho-form" method="post" th:action="@{/hechos/cargar}" th:object="${hechoOutputDTO}" enctype="multipart/form-data">
@@ -45,7 +44,7 @@
                     <h4>Categoria</h4>
                     <select th:field="*{categoria}" required>
                         <option value="">-- Seleccionar Categoría --</option>
-                        <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre}"></option>
+                        <option th:each="cat : ${categorias}" th:value="${cat.nombre}" th:text="${cat.nombre}"></option>
                     </select>
                     <div th:if="${#fields.hasErrors('categoria')}" class="text-danger">
                         <small th:errors="*{categoria}">Error en la categoría</small>

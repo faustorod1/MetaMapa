@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Administrar Colecciones</title>
+  <title>Administrar Colecciones | METAmapa</title>
+  <meta charset="UTF-8">
   <link rel="stylesheet" th:href="@{/css/style.css}" />
-
   <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
   <style>
     html{
@@ -15,11 +14,25 @@
       height: 100%;
       font-family: Arial, sans-serif;
       display: flex;
-      background-image: url('../static/fondoLevementeCargado.png');
+      /* Se asume que este es el fondo levemente cargado */
+      background-image: url('/fondoLevementeCargado.png');
       background-attachment: fixed;
       background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
+    }
+
+    /* 3) Separación del Contenedor General del Margen Izquierdo */
+    .main-container {
+      padding: 1rem;
+      height: 95%;
+      width: 95%;
+      /* Asumido color secundario */
+      background: var(--color-secondary);
+      border-radius: 6px;
+      /* Margen ajustado para separación izquierda */
+      margin: 1.5rem 1rem 1rem 1rem;
+      max-width: 1200px;
     }
 
     .header {
@@ -29,23 +42,17 @@
       gap: 1rem;
     }
 
-    .main-container {
-      padding: 1rem;
-      height: 95%;
-      width: 95%;
-      background: var(--color-secondary);
-      border-radius: 6px;
-      margin: auto;
-    }
-
-
-    .main-container h2{
-      align-self: self-start;
+    .header h2 {
+      color: black;
+      text-align: center;
+      width: 100%;
+      margin-bottom: 0;
     }
 
     .search-bar {
       display: flex;
       align-items: center;
+      /* Asumido color secundario 2 */
       background: var(--color-secondary-2);
       padding: 0.4rem 0.8rem;
       border-radius: 20px;
@@ -58,11 +65,13 @@
       outline: none;
       font-size: 1rem;
       margin-left: 0.5rem;
+      /* Asumido color principal 2 */
       color: var(--color-main-2);
       height: 100%;
     }
 
     .collection {
+      /* Asumido color principal (azul oscuro/morado) */
       background: var(--color-main);
       border-radius: 12px;
       padding: 1rem;
@@ -72,54 +81,60 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
+    /* 1) Color Blanco para todo el texto y 2) Layout de 2 Filas (Flexbox) */
     .collection-info {
-      flex: 1;
-      color: black;
-    }
+      color: white; /* Color del texto base */
+      flex-grow: 1;
 
-    .collection-info h3 {
-      margin: 0 0 0.5rem;
-    }
-
-    .collection-info p {
-      margin: 0.25rem 0;
-      color: var(--color-secondary);
-    }
-
-    .hechos-container {
+      /* Flexbox para layout de 2 columnas por fila */
       display: flex;
-      gap: 1rem;
-      flex: 2;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
 
-    .hecho-card {
-      background: var(--color-main-2);
-      border-radius: 12px;
-      padding: 0.5rem;
-      flex: 1;
+    /* Título de Colección Centrado y ocupando todo el ancho */
+    .collection-info h3 {
+      color: white;
       text-align: center;
-      border: none;
-      cursor: pointer;
+      width: 100%; /* Ocupa toda la fila */
+      margin: 0 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5); /* Separador blanco */
     }
 
-    .hecho-card:hover {
-      background: var(--color-main-2-hover);
-      border-radius: 6px;
-      padding: 0.5rem;
-      flex: 1;
-      text-align: center;
+    /* Cada campo (p) ocupa la mitad del ancho para crear dos columnas */
+    .collection-info p {
+      width: 48%;
+      color: white;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      /* Aseguramos que los valores se alineen bien en la izquierda de su espacio */
+      text-align: left;
     }
 
+    .collection-info p strong {
+      color: white;
+      white-space: nowrap;
+    }
+
+    .collection-info p span {
+      color: white;
+    }
+
+    /* Se mantiene .collection-actions para los botones */
     .collection-actions {
       display: flex;
       flex-direction: column;
       justify-content: center;
       gap: 0.5rem;
+      /* Asumido color principal 2 (verde) */
       background: var(--color-main-2);
       padding: 0.5rem;
       border-radius: 12px;
     }
 
+    /* Estilo para los botones de acción (aplicable a <a> y <button>) */
     .collection-actions button {
       border: none;
       background: transparent;
@@ -128,8 +143,14 @@
       font-size: 1.2rem;
     }
 
+    .collection-actions a button:hover,
     .collection-actions button:hover {
+      /* Asumido color hover */
       color: var(--color-main-2-hover);
+    }
+
+    .collection-actions a {
+      text-decoration: none;
     }
 
     .separator{
@@ -144,6 +165,7 @@
       border-radius: 2em;
       font-size: 2rem;
       font-weight: 900;
+      /* Asumido color principal 2 */
       background: var(--color-main-2);
       color: white;
       width: 2em;
@@ -174,29 +196,29 @@
     </div>
   </div>
   <hr class="separator">
-  <div class="collection">
-    <div class="collection-info">
-      <h3>Nombre de Colección</h3>
-      <p><strong>Descripción:</strong> Texto de descripción </p>
-      <p><strong>Fuentes:</strong> Proxy y estática</p>
-      <p><strong>Algoritmo de Consenso:</strong> ***** </p>
-    </div>
 
-    <div class="hechos-container">
-      <button class="hecho-card">“Título”<br>Lorem ipsum</button>
-      <button class="hecho-card">“Título”<br>Lorem ipsum</button>
-      <button class="hecho-card">“Título”<br>Lorem ipsum</button>
+  <div th:each="coleccion : ${colecciones}" class="collection">
+    <div class="collection-info">
+      <h3 th:text="${coleccion.titulo}">Nombre de Colección</h3>
+
+      <p><strong>Identificador:</strong> <span th:text="${coleccion.identificador}">ID-001</span></p>
+      <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Texto de descripción</span> </p>
+
+      <p><strong>Algoritmo de Consenso:</strong> <span th:text="${coleccion.algoritmoDeConsenso}">Mayoria simple</span> </p>
+      <p><strong>Fuentes:</strong>
+        <span th:text="${#strings.listJoin(coleccion.fuentes.![tipoDeFuente.toString()], ', ')}">Proxy, Estática</span>
+      </p>
     </div>
 
     <div class="collection-actions">
-      <button><i class="fa-solid fa-pen-to-square"></i></button>
-      <button><i class="fa-solid fa-trash"></i></button>
-      <button><i class="fa-solid fa-arrow-right"></i></button>
+      <button title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+      <button title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+
+      <a th:href="@{/colecciones/detalle/{id}(id=${coleccion.identificador})}" title="Detalle" style="display: block;">
+        <button><i class="fa-solid fa-arrow-right"></i></button>
+      </a>
     </div>
   </div>
-  <button class="btn-add" id="btn-add">
-    <i class="fa-solid fa-plus"></i>
-  </button>
 
 </div>
 </body>

@@ -33,6 +33,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes").hasAnyRole("CONTRIBUYENTE","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.POST, "/api/categorias").permitAll()
+
+
                         .requestMatchers(HttpMethod.POST, "/api/colecciones/cargar").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/colecciones/fuentes").hasRole("ADMIN")

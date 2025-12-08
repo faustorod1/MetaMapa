@@ -23,10 +23,12 @@ public class FiltroPorUbicacion extends Filtro {
 
     @Override
     public List<Hecho> aplicar(List<Hecho> lista){
-        List<Hecho> filtrados = new ArrayList<>(lista);
-        filtrados = lista.stream().filter(h -> h.getLugarAcontecimiento().equals(lugar)).toList();
-        return filtrados;
+        double radio = 50.0; // Si los hechos estan a menos de 1km => se agrega a la lista
+        return lista.stream()
+            .filter(h -> {
+                Coordenada coordHecho = h.getLugarAcontecimiento();
+                return coordHecho.estaDentroDeRadio(this.lugar, radio);
+            })
+            .toList();
     }
-
-    //TODO: implementar un algoritmo q filtre por un radio cercano a una coordenada en vez de q sean literalmente iguales
 }
