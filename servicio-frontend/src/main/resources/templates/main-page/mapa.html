@@ -7,6 +7,8 @@
     <link rel="stylesheet" th:href="@{/css/mapa.css}">
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
+    <script th:src="@{/js/hechoLoader.js}"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
@@ -65,10 +67,12 @@
 
 <!-- JSON de hechos embebido -->
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const hechos = /*[[${hechos}]]*/ [];
+    let hechos = [];
+    cargarHechos().then(hechosNuevos => {
+        hechos = hechosNuevos;
+        addHechoListToMap(hechos);
+    });
     console.log("Hechos cargados desde el backend:", hechos);
-    /*]]>*/
 </script>
 
 <script>
@@ -135,9 +139,6 @@
     }).addTo(map);
 
     map.addLayer(markersLayer);
-
-    // --- Carga de marcadores ---
-    addHechoListToMap(hechos);
 
     function addHechoListToMap(hechos) {
         if (!hechos || hechos.length === 0) return;

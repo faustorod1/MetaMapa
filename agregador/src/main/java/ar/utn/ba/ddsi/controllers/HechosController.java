@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/hechos")
+@CrossOrigin(origins = "*")
 public class HechosController {
     private IHechosService hechosService;
 
