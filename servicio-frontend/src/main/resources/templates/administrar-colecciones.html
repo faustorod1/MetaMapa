@@ -14,25 +14,24 @@
       height: 100%;
       font-family: Arial, sans-serif;
       display: flex;
-      /* Se asume que este es el fondo levemente cargado */
       background-image: url('/fondoLevementeCargado.png');
       background-attachment: fixed;
       background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
+      justify-content: center;
     }
 
-    /* 3) Separación del Contenedor General del Margen Izquierdo */
     .main-container {
       padding: 1rem;
       height: 95%;
       width: 95%;
-      /* Asumido color secundario */
       background: var(--color-secondary);
       border-radius: 6px;
-      /* Margen ajustado para separación izquierda */
-      margin: 1.5rem 1rem 1rem 1rem;
+      margin-top: 1.5rem;
       max-width: 1200px;
+      display: flex; /* Para mejor manejo del contenido */
+      flex-direction: column;
     }
 
     .header {
@@ -40,19 +39,26 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
+      margin-bottom: 10px;
     }
 
     .header h2 {
       color: black;
-      text-align: center;
-      width: 100%;
-      margin-bottom: 0;
+      text-align: left; /* Cambiado de center a left para mejor flujo con el buscador */
+      margin: 0;
+      /* Eliminado width: 100% para permitir que los controles estén al lado */
+    }
+
+    /* Nuevo contenedor para agrupar buscador y botón */
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
     .search-bar {
       display: flex;
       align-items: center;
-      /* Asumido color secundario 2 */
       background: var(--color-secondary-2);
       padding: 0.4rem 0.8rem;
       border-radius: 20px;
@@ -65,13 +71,46 @@
       outline: none;
       font-size: 1rem;
       margin-left: 0.5rem;
-      /* Asumido color principal 2 */
-      color: var(--color-main-2);
+      color: #333; /* Ajustado para mejor visibilidad */
       height: 100%;
     }
 
+    /* Estilo del nuevo botón (+) */
+    .btn-header-add {
+      background-color: var(--color-main-2);
+      color: white;
+      border: none;
+      border-radius: 12px; /* Mismo radio que las tarjetas de acciones */
+      height: 3rem; /* Altura para igualar visualmente */
+      width: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.5rem;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-header-add:hover {
+      background-color: var(--color-main-2-hover);
+    }
+
+    .separator{
+      border: none;
+      border-top: 2px solid #444;
+      margin: 0 0 20px 0;
+      width: 100%;
+    }
+
+    .collections-wrapper {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
     .collection {
-      /* Asumido color principal (azul oscuro/morado) */
       background: var(--color-main);
       border-radius: 12px;
       padding: 1rem;
@@ -79,37 +118,32 @@
       display: flex;
       gap: 1rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease; /* Transición para el filtrado */
     }
 
-    /* 1) Color Blanco para todo el texto y 2) Layout de 2 Filas (Flexbox) */
     .collection-info {
-      color: white; /* Color del texto base */
+      color: white;
       flex-grow: 1;
-
-      /* Flexbox para layout de 2 columnas por fila */
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
     }
 
-    /* Título de Colección Centrado y ocupando todo el ancho */
     .collection-info h3 {
       color: white;
       text-align: center;
-      width: 100%; /* Ocupa toda la fila */
+      width: 100%;
       margin: 0 0 1rem;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.5); /* Separador blanco */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
     }
 
-    /* Cada campo (p) ocupa la mitad del ancho para crear dos columnas */
     .collection-info p {
       width: 48%;
       color: white;
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
-      /* Aseguramos que los valores se alineen bien en la izquierda de su espacio */
       text-align: left;
     }
 
@@ -122,19 +156,18 @@
       color: white;
     }
 
-    /* Se mantiene .collection-actions para los botones */
     .collection-actions {
       display: flex;
       flex-direction: column;
       justify-content: center;
       gap: 0.5rem;
-      /* Asumido color principal 2 (verde) */
       background: var(--color-main-2);
       padding: 0.5rem;
       border-radius: 12px;
+      min-width: 40px; /* Asegura un ancho mínimo */
+      align-items: center;
     }
 
-    /* Estilo para los botones de acción (aplicable a <a> y <button>) */
     .collection-actions button {
       border: none;
       background: transparent;
@@ -145,61 +178,45 @@
 
     .collection-actions a button:hover,
     .collection-actions button:hover {
-      /* Asumido color hover */
-      color: var(--color-main-2-hover);
+      color: #dfdfdf;
     }
 
     .collection-actions a {
       text-decoration: none;
     }
 
-    .separator{
-      border: none;
-      border-top: 2px solid #444;
-      margin: 10px;
-      width: 100%;
-      align-self: center;
-    }
-
-    .btn-add {
-      border-radius: 2em;
-      font-size: 2rem;
-      font-weight: 900;
-      /* Asumido color principal 2 */
-      background: var(--color-main-2);
-      color: white;
-      width: 2em;
-      height: 2em;
-      aspect-ratio: 1;
-      border: none;
-    }
-    .btn-add:hover {
-      background-color: var(--color-main-2-hover);
-      cursor: pointer;
-    }
-    #btn-add {
-      position: fixed;
-      right: 4rem;
-      bottom: 2rem;
-      z-index: 1000;
-    }
-
   </style>
 </head>
 <body>
 <div class="main-container">
+
+  <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
+       style="margin-bottom: 20px; padding: 10px; border: 1px solid #c3e6cb; background-color: #d4edda; color: #155724; border-radius: 0.3rem;">
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"
+       style="margin-bottom: 20px; padding: 10px; border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; border-radius: 0.3rem;">
+  </div>
   <div class="header">
     <h2>Colecciones</h2>
-    <div class="search-bar">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" placeholder="Buscar Colección">
+
+    <div class="header-actions">
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Buscar Colección">
+      </div>
+
+      <a th:href="@{/colecciones/formulario-de-carga}" class="btn-header-add" title="Nueva Colección" th:if="${session.role == 'ADMIN'}">
+        <i class="fa-solid fa-plus"></i>
+      </a>
     </div>
   </div>
   <hr class="separator">
 
+  <div class="collections-wrapper" id="collectionsContainer">
   <div th:each="coleccion : ${colecciones}" class="collection">
     <div class="collection-info">
-      <h3 th:text="${coleccion.titulo}">Nombre de Colección</h3>
+      <h3 th:text="${coleccion.titulo}" class="collection-title">Nombre de Colección</h3>
 
       <p><strong>Identificador:</strong> <span th:text="${coleccion.identificador}">ID-001</span></p>
       <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Texto de descripción</span> </p>
@@ -211,15 +228,48 @@
     </div>
 
     <div class="collection-actions">
-      <button title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-      <button title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+      <a th:href="@{/colecciones/formulario-de-edicion/{id}(id=${coleccion.identificador})}" title="Editar" th:if="${session.role == 'ADMIN'}">
+        <button><i class="fa-solid fa-pen-to-square"></i></button>
+      </a>
+      <form th:action="@{/colecciones/eliminar/{id}(id=${coleccion.identificador})}"
+            method="post"
+            style="display: inline;"
+            th:if="${session.role == 'ADMIN'}">
+
+        <button type="submit" title="Eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar esta colección? Esta acción no se puede deshacer.')">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </form>
 
       <a th:href="@{/colecciones/detalle/{id}(id=${coleccion.identificador})}" title="Detalle" style="display: block;">
         <button><i class="fa-solid fa-arrow-right"></i></button>
       </a>
     </div>
   </div>
-
+  </div>
 </div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const collections = document.querySelectorAll('.collection');
+
+    searchInput.addEventListener('keyup', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+
+      collections.forEach(card => {
+        // Buscamos el h3 dentro de cada tarjeta
+        const title = card.querySelector('.collection-title').textContent.toLowerCase();
+
+        if (title.includes(searchTerm)) {
+          card.style.display = 'flex'; // Mostrar si coincide
+        } else {
+          card.style.display = 'none'; // Ocultar si no coincide
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>

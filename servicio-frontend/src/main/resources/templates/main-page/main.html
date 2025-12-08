@@ -20,8 +20,10 @@
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-folder"></i>
         </button>
-
-
+        <button class="nav-button" view="/colecciones" id="nav-button-adm-colecciones">
+            <div class="nav-button-selection"></div>
+            <i class="fa-solid fa-clipboard-list"></i>
+        </button>
         <button class="nav-button" id="nav-button-modo-de-navegacion">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-toggle-on"></i>
@@ -38,10 +40,6 @@
                 view="/api/solicitudes/tratarEliminaciones"  th:if="${session.role == 'ADMIN'}">
                 <div class="nav-button-selection"></div>
                 <i class="fa-solid fa-file-excel"></i>
-        </button>
-        <button class="nav-button" view="./administrar-colecciones" id="nav-button-adm-colecciones" th:if="${session.role == 'ADMIN'}">
-            <div class="nav-button-selection"></div>
-            <i class="fa-solid fa-clipboard-list"></i>
         </button>
         <button class="nav-button" id="nav-button-stadistics" view="./estadisticas" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>

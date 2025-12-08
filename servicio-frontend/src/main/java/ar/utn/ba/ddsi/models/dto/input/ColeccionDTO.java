@@ -19,4 +19,6 @@ public class ColeccionDTO implements Serializable {
   private CriterioDTO criterioDePertenencia;
   private List<FuenteDTO> fuentes;
   private String algoritmoDeConsenso;
+
+
 }

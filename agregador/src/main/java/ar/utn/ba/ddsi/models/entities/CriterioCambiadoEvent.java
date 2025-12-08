@@ -1,6 +1,9 @@
 package ar.utn.ba.ddsi.models.entities;
 
 
+import lombok.Getter;
+
+@Getter
 public class CriterioCambiadoEvent {
   public Coleccion coleccion;
 
@@ -8,7 +11,4 @@ public class CriterioCambiadoEvent {
     this.coleccion = coleccion;
   }
 
-  public Coleccion getColeccion() {
-    return coleccion;
-  }
 }

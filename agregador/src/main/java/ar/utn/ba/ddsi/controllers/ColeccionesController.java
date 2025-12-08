@@ -47,6 +47,12 @@ public class ColeccionesController {
 
     // API Administrativa ----------------------------------------------------------------------------------------------
 
+    @GetMapping("/{identificador}")
+    public ColeccionOutputDTO buscarPorId(@PathVariable String identificador) {
+        return coleccionesService.buscarPorId(identificador);
+    }
+
+
     @GetMapping("/con-hechos")
     public List<ColeccionConHechosOutputDTO> buscarTodosConHechos(){
         return this.coleccionesService.buscarTodosConHechos();
@@ -70,6 +76,7 @@ public class ColeccionesController {
 
     @PutMapping
     public ColeccionOutputDTO actualizarColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
+        log.info("Entró en actualizarColeccion:" + coleccionInputDTO);
         return coleccionesService.updateColeccion(coleccionInputDTO);
     }
 
@@ -89,8 +96,9 @@ public class ColeccionesController {
         return coleccionesService.updateConsenso(identificador, tipoDeConsenso);
     }
 
-    @DeleteMapping
-    public void EliminarColeccion(@RequestBody String identificador){
+    @DeleteMapping("/{identificador}")
+    public void eliminarColeccion(@PathVariable String identificador){
+        log.info("Id recibido: " + identificador);
         coleccionesService.eliminarColeccion(identificador);
     }
 

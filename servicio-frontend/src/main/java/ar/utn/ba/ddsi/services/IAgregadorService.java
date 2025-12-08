@@ -27,5 +27,8 @@ public interface IAgregadorService {
   List<ColeccionConHechosDTO> pedirColeccionesConHechos();
   List<ColeccionConHechosDTO> pedirColeccionesConHechosCurados();
   List<ColeccionDTO> pedirColecciones();
+  ColeccionDTO pedirColeccionPorId(String identificador);
+  void eliminarColeccion(String identificador);
+  public void actualizarColeccion(ColeccionOutputDTO coleccion);
 
 }

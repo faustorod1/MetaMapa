@@ -37,7 +37,9 @@ public class SecurityConfig {
 
 
                         .requestMatchers(HttpMethod.POST, "/api/colecciones/cargar").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "api/colecciones").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/colecciones/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones/fuentes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones/identificadores").permitAll()
                         .requestMatchers("/api/colecciones/{identificador}/hechos").permitAll()

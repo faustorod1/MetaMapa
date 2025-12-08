@@ -55,8 +55,8 @@
             </button>
         </form>
 
-        <form th:action="@{/colecciones}" method="get" style="display:inline;">
-            <button class="btn-add" id="btn-add-coleccion" title="Administrar colecciones" th:if="${session.role == 'ADMIN'}">
+        <form th:action="@{/colecciones/formulario-de-carga}" method="get" style="display:inline;">
+            <button class="btn-add" id="btn-add-coleccion" title="Crear colección" th:if="${session.role == 'ADMIN'}">
                 <i class="fa-solid fa-layer-group"></i>
             </button>
         </form>

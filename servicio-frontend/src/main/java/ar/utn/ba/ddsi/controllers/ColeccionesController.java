@@ -49,7 +49,6 @@ public class ColeccionesController {
            }
 
            String idRecibido = coleccion.getIdentificador().trim().toLowerCase();
-
            List<String> identificadoresEnMinusculas = identificadores.stream()
                    .map(String::toLowerCase)
                    .toList();
@@ -70,41 +69,61 @@ public class ColeccionesController {
     }
 
 
-
- /*
-    @GetMapping("/editar/{id_coleccion}")
-    public String formularioEditarColeccion(@PathVariable("id_coleccion") String identificador, Model model, RedirectAttributes redirectAttributes) {
-
+    @GetMapping("/formulario-de-edicion/{id_coleccion}")
+    public String formularioEditarColeccion(@PathVariable("id_coleccion") String id_coleccion, Model model, RedirectAttributes redirectAttributes) {
 
         try{
+            ColeccionDTO coleccion = agregadorService.pedirColeccionPorId(id_coleccion);
             List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
-            List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
+            List<FuenteDTO> fuentes = agregadorService.buscarFuentes();
 
-            HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
-            Long id_externo_hecho = hecho.getIdExterno().getIdExterno();
-            boolean pertenece = hechosDelContribuyente.stream().anyMatch(h -> h.getId().equals(id_hecho));
-            if (!pertenece) {
-                return "error/403";
-            }
+            ColeccionOutputDTO coleccionOutputDTO = ColeccionOutputDTO.fromDTOtoOutput(coleccion);
 
-            HechoOutputDTO hechoOutputDTO = HechoOutputDTO.fromDTOtoOutput(hecho);
-
-            model.addAttribute("hecho", hechoOutputDTO);
-            model.addAttribute("id_hecho", id_hecho);
-            model.addAttribute("id_externo_hecho", id_externo_hecho);
+            model.addAttribute("coleccionOutputDTO", coleccionOutputDTO);
             model.addAttribute("categorias", categorias);
-
-            return "main-page/crearSolicitudDeModificacion";
-
+            model.addAttribute("fuentes", fuentes);
+            return "main-page/editarColeccion";
         } catch (Exception ex) {
             return "error/404";
         }
     }
-            // HAY QUE COPIAR EL ESQUEMA DE LA EDICIÓN DEL HECHO
-    */
 
+    @PostMapping("/editar")
+    public String editarColeccion(@ModelAttribute("coleccionOutputDTO") ColeccionOutputDTO coleccion, RedirectAttributes redirectAttributes) {
+        try {
+            log.info("DTO recibido: {}", coleccion);
+            agregadorService.actualizarColeccion(coleccion);
+            redirectAttributes.addFlashAttribute("actualizada", "Colección actualizada");
+            return "redirect:/colecciones";
+
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al actualizar la colección");
+            return "redirect:/colecciones/formulario-de-edicion/" + coleccion.getIdentificador();
+        }
+    }
+
+
+    @GetMapping
+    public String mostrarColecciones(Model model){
+        List<ColeccionDTO> colecciones = agregadorService.pedirColecciones();
+        model.addAttribute("colecciones", colecciones);
+        return "administrar-colecciones";
+    }
+
+
+    @PostMapping("/eliminar/{id_coleccion}")
+    public String eliminarColeccion(@PathVariable("id_coleccion") String id_coleccion, RedirectAttributes redirectAttributes){
+        try {
+            agregadorService.eliminarColeccion(id_coleccion);
+            redirectAttributes.addFlashAttribute("exito", "La colección ha sido eliminada correctamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo eliminar la colección.");
+        }
+        return "redirect:/colecciones";
+    }
 
 /*
+
     @GetMapping()
     public String mostrarColeccionesConHechos(Model model){
         List<ColeccionConHechosDTO> colecciones = agregadorService.pedirColeccionesConHechos();
@@ -119,15 +138,6 @@ public class ColeccionesController {
         return "";
     }
 
-    */
-
-
-    @GetMapping
-    public String mostrarColecciones(Model model){
-        List<ColeccionDTO> colecciones = agregadorService.pedirColecciones();
-        model.addAttribute("colecciones", colecciones);
-        return "administrar-colecciones";
-    }
-
+*/
 
 }

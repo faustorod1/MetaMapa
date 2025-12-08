@@ -82,10 +82,32 @@ public class AgregadorService implements IAgregadorService {
               void.class);
   }
 
+
+  public void eliminarColeccion(String identificador){
+      webApiCallerService.delete(
+              agregadorBaseUrl + "/api/colecciones/" + identificador);
+  }
+
+
   public List<ColeccionDTO> pedirColecciones(){
       return webApiCallerService.getList(
               agregadorBaseUrl + "/api/colecciones",
               ColeccionDTO.class);
+  }
+
+  public ColeccionDTO pedirColeccionPorId(String identificador){
+      return webApiCallerService.get(
+              agregadorBaseUrl + "/api/colecciones/" + identificador,
+              ColeccionDTO.class
+      );
+  }
+
+  public void actualizarColeccion(ColeccionOutputDTO coleccion){
+      webApiCallerService.put(
+              agregadorBaseUrl + "/api/colecciones",
+              coleccion,
+              void.class
+      );
   }
 
 

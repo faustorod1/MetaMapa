@@ -159,7 +159,6 @@ public class Coleccion {
         hechos.remove(hecho);
     }
 
-    // TODO: Cuándo y cómo deberíamos ver qué hechos permanecen en la colección al actualizar?
 
     public void consensuarHechos(){
         this.hechosConsensuados.clear();        // Para asegurar que todos los hechos esten consensuados al día, vaciamos la lista
@@ -169,4 +168,14 @@ public class Coleccion {
             this.hechosConsensuados = this.hechos;      // En caso de que no se aclare un algoritmo de consenso, todos sus hechos catalogarán como "consensuados"
         }
     }
+
+    public void editar(Coleccion coleccion){
+        this.titulo = coleccion.getTitulo();
+        this.descripcion = coleccion.getDescripcion();
+        this.criterioDePertenencia = coleccion.getCriterioDePertenencia();
+        this.algoritmoDeConsenso = coleccion.getAlgoritmoDeConsenso();
+        this.fuentes = coleccion.getFuentes();
+    }
+
+
 }

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Colección | METAmapa</title>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <style>
+        body{
+            background-image: url('/fondoLevementeCargado.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 3rem;
+            margin: 0;
+        }
+
+        .container{
+            background-color: var(--color-main);
+            border-radius: 1rem;
+            padding: 0.8rem;
+            padding-bottom: 0;
+            width: 80vw;
+            max-width: 1200px;
+            color: white;
+        }
+
+        #fixed-logo {
+            position: absolute;
+            top: 1px;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background-color: transparent;
+        }
+
+        #titulo-cargarColeccion {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .input-crearColeccion{
+            padding: 0.3rem;
+            margin: 0.5rem 0 0rem 0.5rem;
+            text-align: left;
+        }
+
+        .form-row .input-crearColeccion {
+            flex-grow: 1;
+            flex-basis: 0;
+            padding: 0.3rem;
+        }
+
+        #tituloColeccion,
+        #identificadorColeccion {
+            border-radius: 0.3rem;
+            border: 1px solid;
+        }
+
+        input[type=text]{
+            border-radius: 0.3rem;
+            height: 4vh;
+            padding: 0.2rem;
+        }
+
+        .form-row input[type=text],
+        .form-row .dropdown-multiselect,
+        .form-row select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .dropdown-multiselect {
+            position: relative;
+            user-select: none;
+        }
+
+        .dropdown-multiselect button {
+            width: 100%;
+            border: 1px solid black;
+            border-radius: 0.3rem;
+            padding: 0.4rem;
+            font-size: 0.9rem;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-multiselect ul {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            border-radius: 0.3rem;
+            margin: 0;
+            padding: 0.3rem 0;
+            list-style: none;
+            z-index: 10;
+        }
+
+        .dropdown-multiselect ul li {
+            padding: 0.2rem 0.5rem;
+        }
+
+        .dropdown-multiselect ul li label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dropdown-multiselect ul li:hover {
+            background-color: #a9a9a9;
+        }
+
+        select{
+            heigth: 0.5vh;
+            padding: 0.4rem;
+            min-height:2vh;
+            border-radius: 0.3rem;
+            border: 1px solid black;
+            font-size:0.9rem;
+            margin-top:0.1rem;
+            cursor: pointer;
+        }
+
+
+        textarea{
+            margin-top:0.2em;
+            width: 100%;
+            height: 7rem;
+            margin-bottom:0;
+            resize: none;
+            border-radius: 0.3rem;
+            padding: 0.3rem;
+        }
+
+        #input-descripcion{
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #input-descripcion textarea {
+            width: 98%;
+            box-sizing: border-box;
+        }
+
+
+        .footer-container{
+            justify-content: flex-end;
+            display: flex;
+            padding:0;
+            margin-top:0.2rem;
+        }
+
+        .btn-submit{
+            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 0.5em;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 2em;
+            color: black;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            background-color: var(--color-main-2);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--color-main-2-hover);
+        }
+
+        .filtro-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filtro-item .form-row {
+            gap: 10px;
+        }
+
+        .btn-eliminar-filtro {
+            background-color: #FF6B6B;
+            color: white;
+            border: none;
+            border-radius: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div id="fixed-logo"></div>
+
+    <form th:action="@{/colecciones/editar}" th:object="${coleccionOutputDTO}" class="cargar-coleccion-form" method="post">
+        <div class="container">
+            <h2 id="titulo-cargarColeccion">Editar Colección</h2>
+
+            <div class="form-row">
+                <div class="input-crearColeccion">
+                    <h4>Título</h4>
+                    <label for="tituloColeccion"></label>
+                    <input type="text" id="tituloColeccion" name="tituloColeccion" th:field="*{titulo}" required oninvalid="this.setCustomValidity('Ingresa un título')" oninput="this.setCustomValidity('')">
+                </div>
+
+                <div class="input-crearColeccion">
+                    <h4>Identificador</h4>
+                    <label for="identificadorColeccion"></label>
+                    <input type="text" id="identificadorColeccion" name="identificadorColeccion" th:field="*{identificador}" readonly required oninvalid="this.setCustomValidity('Ingresa un identificador')" oninput="this.setCustomValidity('')">
+                </div>
+            </div>
+
+            <div class="input-crearColeccion">
+                <h4>Fuentes</h4>
+                <div class="dropdown-multiselect" tabindex="0">
+                    <button type="button" id="dropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+                        Seleccione una o más fuentes
+                        <i class="fa-solid fa-chevron-down" style="margin-left: 0.5rem;"></i>
+                    </button>
+                    <ul id="dropdownList" role="listbox" aria-multiselectable="true" hidden>
+                        <li th:each="fuente, iterStat : ${fuentes}">
+                            <label>
+                                <input type="checkbox"
+                                       th:name="|fuentes[${iterStat.index}].id|"
+                                       th:value="${fuente.id}"
+                                       th:checked="${#lists.contains(coleccionOutputDTO.fuentes, fuente)}"
+                                       data-tipo-de-fuente="${fuente.tipoDeFuente}"
+                                       data-subfuente-id="${fuente.subfuenteId}" />
+
+                                <span th:text="${fuente.tipoDeFuente == 'proxy' ? fuente.tipoDeFuente + ' - ' + fuente.subfuenteId : fuente.tipoDeFuente}"></span>
+                            </label>
+
+                            <input type="hidden"
+                                   th:name="|fuentes[${iterStat.index}].tipoDeFuente|"
+                                   th:value="${fuente.tipoDeFuente}" />
+
+                            <input type="hidden"
+                                   th:name="|fuentes[${iterStat.index}].subfuenteId|"
+                                   th:value="${fuente.subfuenteId}" />
+                        </li>
+                    </ul>
+                </div>
+                <span id="fuentesError" style="color: #FF6B6B; display: none; font-size: 0.9rem; margin-top: 5px;">
+                    Debe seleccionar al menos una fuente.
+                    </span>
+            </div>
+
+            <div class="input-crearColeccion">
+                <h4>Algoritmo de consenso</h4>
+                <select th:field="*{algoritmoDeConsenso}" id="algoritmo" name="algoritmo" required oninvalid="this.setCustomValidity('Selecciona un algoritmo')" oninput="this.setCustomValidity('')">
+                    <option value="" disabled selected>Selecciona un algoritmo</option>
+                    <option value="multiplesMenciones" >Múltiples menciones </option>
+                    <option value="mayoriaSimple">Mayoría simple</option>
+                    <option value="absoluta">Absoluta</option>
+                </select>
+                <span th:if="${#fields.hasErrors('algoritmoDeConsenso')}" th:errors="*{algoritmoDeConsenso}" style="color: red;"></span>
+            </div>
+
+            <div class="input-crearColeccion">
+                <h4>Criterio de pertenencia (filtros)</h4>
+
+                <div id="criterioContainer"></div>
+
+
+                <button type="button" id="btnAddFiltro" class="btn-submit" style="background-color: #4CAF50; margin-top: 10px; font-size: 0.9rem;">
+                    + Añadir Filtro
+                </button>
+            </div>
+
+            <div class="input-crearColeccion" id="input-descripcion">
+                <h4>Descripción</h4>
+                <label for ="descripcion"></label>
+                <textarea id="descripcion" name="descripcion" th:field="*{descripcion}" placeholder="Escribe una descripcion..."></textarea>
+            </div>
+
+            <div class="footer-container">
+                <button class="btn-submit" type="submit">Guardar Edición</button>
+            </div>
+        </div>
+    </form>
+</main>
+
+<script th:inline="javascript">
+    const CATEGORIAS_LIST = /*[[${categorias}]]*/ [];
+
+    // Filtros brutos tal como vienen del DTO
+    const FILTROS_BRUTOS = /*[[${coleccionOutputDTO.criterioDePertenencia != null ? coleccionOutputDTO.criterioDePertenencia.filtros : '[]'}]]*/ [];
+
+    // Preprocesamiento de filtros para el formulario de edición
+    const FILTROS_EXISTENTES = FILTROS_BRUTOS
+        .filter(filtro => filtro.tipoDeFiltro !== 'eliminados') // 1. Excluye el filtro 'eliminados'
+        .map(filtro => {
+            // 2. Corrección para el filtro 'ubicacion': transforma 'lugar' (array) en 'latitud' y 'longitud'
+            if (filtro.tipoDeFiltro === 'ubicacion' && filtro.parametros && filtro.parametros.lugar) {
+                const lugar = filtro.parametros.lugar;
+
+                if (Array.isArray(lugar) && lugar.length === 2) {
+                    filtro.parametros = {
+                        latitud: lugar[0],
+                        longitud: lugar[1]
+                    };
+                }
+            }
+            // 3. Ajuste de formato de fecha/hora para inputs datetime-local (si es necesario)
+            if (filtro.tipoDeFiltro === 'fechaHecho' || filtro.tipoDeFiltro === 'fechaDeCarga') {
+                for (const key in filtro.parametros) {
+                    if (filtro.parametros[key] && filtro.parametros[key].includes('T')) {
+                        filtro.parametros[key] = filtro.parametros[key].substring(0, 16);
+                    }
+                }
+            }
+            return filtro;
+        });
+
+</script>
+
+<script>
+    const dropdown = document.querySelector('.dropdown-multiselect');
+    const dropdownBtn = document.getElementById('dropdownBtn');
+    const dropdownList = document.getElementById('dropdownList');
+    const checkboxes = dropdownList.querySelectorAll('input[type="checkbox"]');
+    const fuentesError = document.getElementById('fuentesError');
+
+    function createIcon() {
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-chevron-down';
+        icon.style.marginLeft = '0.5rem';
+        return icon;
+    }
+
+    function updateButtonLabel() {
+        const selected = Array.from(checkboxes)
+            .filter(chk => chk.checked)
+            .map(chk => chk.parentElement.textContent.trim());
+
+        if (selected.length === 0) {
+            dropdownBtn.textContent = 'Seleccione una o más fuentes';
+            dropdownBtn.appendChild(createIcon());
+            fuentesError.style.display = 'block';
+        } else {
+            dropdownBtn.textContent = selected.join(', ');
+            dropdownBtn.appendChild(createIcon());
+            fuentesError.style.display = 'none';
+        }
+    }
+
+    dropdownBtn.addEventListener('click', () => {
+        const expanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+        dropdownBtn.setAttribute('aria-expanded', String(!expanded));
+        dropdownList.hidden = expanded;
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!dropdown.contains(event.target)) {
+            dropdownBtn.setAttribute('aria-expanded', 'false');
+            dropdownList.hidden = true;
+        }
+    });
+
+    checkboxes.forEach(checkbox => {
+        const listItem = checkbox.closest('li');
+        const hiddenType = listItem.querySelector(`input[name*='tipoDeFuente']`);
+        const hiddenSubId = listItem.querySelector(`input[name*='subfuenteId']`);
+
+        const syncHiddenFields = (isChecked) => {
+            if (hiddenType) hiddenType.disabled = !isChecked;
+            if (hiddenSubId) hiddenSubId.disabled = !isChecked;
+        };
+
+        checkbox.addEventListener('change', (e) => {
+            updateButtonLabel();
+            syncHiddenFields(e.target.checked);
+        });
+        syncHiddenFields(checkbox.checked);
+    });
+
+    updateButtonLabel();
+
+    const form = document.querySelector('.cargar-coleccion-form');
+    form.addEventListener('submit', (e) => {
+        const anyChecked = Array.from(checkboxes).some(chk => chk.checked);
+        if (!anyChecked) {
+            e.preventDefault();
+            fuentesError.style.display = 'block';
+            dropdownBtn.focus();
+        }
+    });
+
+    const criterioContainer = document.getElementById('criterioContainer');
+    const btnAddFiltro = document.getElementById('btnAddFiltro');
+    let filtroCount = 0;
+
+    const FILTRO_TIPOS = {
+        'titulo': {
+            label: 'Por Título',
+            params: [{ name: 'titulo', label: 'Texto del Título', type: 'text', required: true }]
+        },
+        'descripcion': {
+            label: 'Por Descripción',
+            params: [{ name: 'descripcion', label: 'Texto de la Descripción', type: 'text', required: true }]
+        },
+        'categoria': {
+            label: 'Por Categoría',
+            params: [{ name: 'categoria', label: 'Selecciona la Categoría', type: 'select_categoria', required: true }]
+        },
+        'ubicacion': {
+            label: 'Por Ubicación',
+            params: [
+                { name: 'latitud', label: 'Latitud', type: 'number', required: true, step: 'any' },
+                { name: 'longitud', label: 'Longitud', type: 'number', required: true, step: 'any' }
+            ]
+        },
+        'fechaHecho': {
+            label: 'Por Fecha del Hecho',
+            params: [
+                { name: 'desde', label: 'Desde (Fecha/Hora)', type: 'datetime-local', required: true },
+                { name: 'hasta', label: 'Hasta (Fecha/Hora)', type: 'datetime-local', required: true }
+            ]
+        },
+        'fechaDeCarga': {
+            label: 'Por Fecha de Carga',
+            params: [
+                { name: 'desde', label: 'Desde (Fecha/Hora)', type: 'datetime-local', required: true },
+                { name: 'hasta', label: 'Hasta (Fecha/Hora)', type: 'datetime-local', required: true }
+            ]
+        }
+    };
+
+    /**
+     * Función para añadir un nuevo filtro al formulario.
+     * @param {Object} [filtroData] - Opcional. Los datos del filtro a cargar (para edición).
+     */
+    function addFiltro(filtroData = null) {
+        const index = filtroCount++;
+        const currentFiltroTipo = filtroData ? filtroData.tipoDeFiltro : '';
+
+        const filtroItem = document.createElement('div');
+        filtroItem.className = 'filtro-item';
+        filtroItem.dataset.index = index;
+
+        const baseName = `criterioDePertenencia.filtros[${index}]`;
+
+        let selectOptionsHtml = '<option value="" disabled selected>Selecciona un tipo de filtro</option>';
+        for (const key in FILTRO_TIPOS) {
+            // Inyecta el atributo 'selected' si coincide con el valor existente
+            const selectedAttr = (key === currentFiltroTipo) ? 'selected' : '';
+            selectOptionsHtml += `<option value="${key}" data-key="${key}" ${selectedAttr}>${FILTRO_TIPOS[key].label}</option>`;
+        }
+
+        const tipoFiltroSelectHtml =
+            `<select id="filtroTipo-${index}" name="${baseName}.tipoDeFiltro" required>${selectOptionsHtml}</select>`;
+
+
+        filtroItem.innerHTML = `
+            <div class="form-row" style="align-items: center;">
+                <div class="input-crearColeccion" style="flex-basis: 30%;">
+                    <h4 style="margin-bottom: 5px;">Tipo de Filtro</h4>
+                    ${tipoFiltroSelectHtml}
+                </div>
+                <div style="flex-grow: 1;">
+                    <h4 style="margin-bottom: 5px;">Parámetros</h4>
+                    <div class="params-container" id="params-container-${index}"></div>
+                </div>
+                <div style="flex-basis: auto;">
+                    <h4 style="margin-bottom: 5px; opacity: 0;">&nbsp;</h4>
+                    <button type="button" class="btn-eliminar-filtro">Eliminar</button>
+                </div>
+            </div>
+        `;
+
+        const newFiltroItem = criterioContainer.appendChild(filtroItem);
+        const newTipoFiltroSelect = newFiltroItem.querySelector(`#filtroTipo-${index}`);
+        const newParamsContainer = newFiltroItem.querySelector(`#params-container-${index}`);
+        const newBtnEliminar = newFiltroItem.querySelector('.btn-eliminar-filtro');
+
+        newTipoFiltroSelect.addEventListener('change', (e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const filtroKey = selectedOption.dataset.key;
+            renderFiltroParams(newParamsContainer, filtroKey, index, null);
+        });
+
+        newBtnEliminar.onclick = () => newFiltroItem.remove();
+
+        if (filtroData && filtroData.tipoDeFiltro) {
+            // Llamamos a renderFiltroParams con los datos existentes
+            renderFiltroParams(newParamsContainer, filtroData.tipoDeFiltro, index, filtroData.parametros);
+        }
+
+        function renderFiltroParams(container, filtroKey, index, existingParams) {
+            container.innerHTML = '';
+            const filtro = FILTRO_TIPOS[filtroKey];
+            const baseName = `criterioDePertenencia.filtros[${index}]`;
+
+            if (filtro && filtro.params.length > 0) {
+                const paramsRow = document.createElement('div');
+                paramsRow.className = 'form-row';
+
+                filtro.params.forEach(param => {
+                    const paramDiv = document.createElement('div');
+                    paramDiv.className = 'input-crearColeccion';
+                    paramDiv.style.flexGrow = '1';
+
+                    const fieldName = `${baseName}.parametros[${param.name}]`;
+                    let inputHtml;
+                    const existingValue = existingParams ? existingParams[param.name] : '';
+
+                    if (param.type === 'select_categoria') {
+                        inputHtml = `<label for="${fieldName}" style="font-size: 0.9rem;">${param.label} *</label>`;
+                        inputHtml += `<select id="${fieldName}" name="${fieldName}" required style="width: 100%;">`;
+                        inputHtml += `<option value="" disabled selected>-- Elige una categoría --</option>`;
+
+                        CATEGORIAS_LIST.forEach(cat => {
+                            const selectedAttr = (existingValue && existingValue === cat.nombre) ? 'selected' : '';
+                            inputHtml += `<option value="${cat.nombre}" ${selectedAttr}>${cat.nombre}</option>`;
+                        });
+                        inputHtml += `</select>`;
+
+                    } else {
+                        const requiredAttr = param.required ? 'required' : '';
+                        const stepAttr = param.step ? `step="${param.step}"` : '';
+                        let valueAttr = '';
+                        if (existingValue) {
+                            if (param.type === 'datetime-local') {
+                                const date = new Date(existingValue);
+                                if (!isNaN(date.getTime())) {
+                                    valueAttr = `value="${date.toISOString().slice(0, 16)}"`;
+                                } else {
+                                    valueAttr = `value="${existingValue}"`;
+                                }
+                            } else {
+                                valueAttr = `value="${existingValue}"`;
+                            }
+                        }
+
+                        inputHtml = `
+                            <label for="${fieldName}" style="font-size: 0.9rem;">${param.label} ${param.required ? '*' : ''}</label>
+                            <input type="${param.type}" id="${fieldName}" name="${fieldName}" ${requiredAttr} ${stepAttr} ${valueAttr} style="width: 100%;">
+                        `;
+                    }
+
+                    paramDiv.innerHTML = inputHtml;
+                    paramsRow.appendChild(paramDiv);
+                });
+                container.appendChild(paramsRow);
+            }
+        }
+    }
+
+    btnAddFiltro.addEventListener('click', () => addFiltro());
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (FILTROS_EXISTENTES && Array.isArray(FILTROS_EXISTENTES)) {
+            FILTROS_EXISTENTES.forEach(filtro => {
+                addFiltro(filtro);
+            });
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -18,6 +18,7 @@ import java.util.Map;
 
 public interface IColeccionesService {
     List<ColeccionOutputDTO> buscarTodos();
+    ColeccionOutputDTO buscarPorId(String identificador);
     List<ColeccionConHechosOutputDTO> buscarTodosConHechos();
     List<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params);
     ColeccionOutputDTO crearColeccion(ColeccionInputDTO input);

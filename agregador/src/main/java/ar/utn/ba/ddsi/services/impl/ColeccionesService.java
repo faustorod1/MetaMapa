@@ -52,6 +52,11 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
+    public ColeccionOutputDTO buscarPorId(String identificador){
+        return ColeccionOutputDTO.fromEntity(coleccionesRepository.findByIdentificador(identificador));
+    }
+
+    @Override
     public List<ColeccionConHechosOutputDTO> buscarTodosConHechos() {
         return coleccionesRepository
             .findAll()
@@ -110,8 +115,11 @@ public class ColeccionesService implements IColeccionesService {
     @Override
     public ColeccionOutputDTO updateColeccion(ColeccionInputDTO input){
         Coleccion coleccion = input.toEntity();
-        coleccionesRepository.save(coleccion);
-        return ColeccionOutputDTO.fromEntity(coleccion);
+        Coleccion coleccionAModificar = coleccionesRepository.findByIdentificador(coleccion.getIdentificador());
+        coleccionAModificar.editar(coleccion);
+        applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccionAModificar));
+        coleccionesRepository.save(coleccionAModificar);
+        return ColeccionOutputDTO.fromEntity(coleccionAModificar);
     }
 
 
