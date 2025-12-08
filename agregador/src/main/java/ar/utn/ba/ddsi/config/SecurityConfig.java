@@ -37,12 +37,13 @@ public class SecurityConfig {
 
 
                         .requestMatchers(HttpMethod.POST, "/api/colecciones/cargar").hasRole("ADMIN")
+                        .requestMatchers("/api/colecciones/{identificador}/hechos").permitAll()
+                        .requestMatchers("/api/colecciones/{identificador}/con-hechos").permitAll()
                         .requestMatchers(HttpMethod.PUT, "api/colecciones").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/colecciones/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones/fuentes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/colecciones/identificadores").permitAll()
-                        .requestMatchers("/api/colecciones/{identificador}/hechos").permitAll()
                         .requestMatchers("/api/colecciones/con-hechos").permitAll()
 
                         .requestMatchers("/api/hechos").permitAll()

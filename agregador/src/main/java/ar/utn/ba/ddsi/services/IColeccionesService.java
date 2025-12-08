@@ -10,6 +10,8 @@ import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.models.entities.Fuente;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -19,8 +21,8 @@ import java.util.Map;
 public interface IColeccionesService {
     List<ColeccionOutputDTO> buscarTodos();
     ColeccionOutputDTO buscarPorId(String identificador);
-    List<ColeccionConHechosOutputDTO> buscarTodosConHechos();
-    List<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params);
+    Page<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params, Pageable pageable);
+    ColeccionConHechosOutputDTO buscarColeccionConHechos(String identificador, Map<String, String> params, Pageable pageable);
     ColeccionOutputDTO crearColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateColeccion(ColeccionInputDTO input);
     ColeccionOutputDTO updateCriterio(String identificador, CriterioInputDTO criterioInputDTO);

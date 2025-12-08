@@ -13,12 +13,17 @@ import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
+import ar.utn.ba.ddsi.models.specifications.HechoSpecs;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import ar.utn.ba.ddsi.services.IHechosService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -56,14 +61,6 @@ public class ColeccionesService implements IColeccionesService {
         return ColeccionOutputDTO.fromEntity(coleccionesRepository.findByIdentificador(identificador));
     }
 
-    @Override
-    public List<ColeccionConHechosOutputDTO> buscarTodosConHechos() {
-        return coleccionesRepository
-            .findAll()
-            .stream()
-            .map(this::coleccionConHechosOutputDTO)
-            .toList();
-    }
 
     @Override
     public List<ColeccionConHechosCuradosOutputDTO> buscarTodosConHechosCurados(){
@@ -76,32 +73,27 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public List<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params) {
+    public Page<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params, Pageable pageable) {
+        Page<HechoOutputDTO> paginaDTO = hechosService.obtenerPorColeccion(identificador, params, pageable)
+                .map(HechoOutputDTO::fromEntity);
+        return paginaDTO;
+    }
+
+    @Override
+    public ColeccionConHechosOutputDTO buscarColeccionConHechos(String identificador, Map<String, String> params, Pageable pageable) {
         Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
-        Criterio filtrosDeUsuario = new Criterio(params);
-
-        List<Hecho> hechosColeccion;
-        String modo = params.getOrDefault("modo", "curada");
-
-        if("irrestricta".equalsIgnoreCase(modo)){
-            hechosColeccion = coleccion.getHechos();
-        }else {
-            hechosColeccion = coleccion.getHechosConsensuados();
+        if (coleccion == null) {
+            throw new EntityNotFoundException("Colección no encontrada");
         }
-
-        // Reemplaza de la colección (ya persistida localmente) con los MetaMapa obtenidos recién
-        // Si hay algún hecho de fuente MetaMapa que NO teníamos en el agregador (porque se agregó a esa
-        // fuente MetaMapa después de la última actualización), ese hecho NO se incluye entre los hechos
-        // que devolvemos acá, ya que no sabemos si debería pertenecer a la colección.
-        List<Hecho> actualizadosConMetamapa = hechosService.actualizarListaConHechosMetamapa(hechosColeccion);
-
-        return filtrosDeUsuario.aplicarA(actualizadosConMetamapa).stream().map(HechoOutputDTO::fromEntity).toList();
+        Page<HechoOutputDTO> paginaDTO = buscarHechosPorColeccion(identificador, params, pageable);
+        return ColeccionConHechosOutputDTO.fromEntity(coleccion, paginaDTO);
     }
 
 
     @Override
     public ColeccionOutputDTO crearColeccion(ColeccionInputDTO input){
         Coleccion coleccion = input.toEntity();
+        cargarFuentesDeColeccion(coleccion);
         applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccion));
         coleccionesRepository.save(coleccion);
         return ColeccionOutputDTO.fromEntity(coleccion);
@@ -205,19 +197,17 @@ public class ColeccionesService implements IColeccionesService {
         return new ArrayList<>(diferencia);
     }
 
-    //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 
-
-    private ColeccionConHechosOutputDTO coleccionConHechosOutputDTO(Coleccion coleccion){
-        ColeccionConHechosOutputDTO dto = new ColeccionConHechosOutputDTO();
-
-        dto.setIdentificador(coleccion.getIdentificador());
-        dto.setTitulo(coleccion.getTitulo());
-        dto.setDescripcion(coleccion.getDescripcion());
-        dto.setHechos(coleccion.getHechos().stream().map(HechoOutputDTO::fromEntity).toList());
-        dto.setFuentes(coleccion.getFuentes().stream().map(FuenteDTO::fromEntity).toList());
-        return dto;
+    // Reemplaza las fuentes de la colección por sus versiones de la DB.
+    // Esto modifica a la colección recibida por parámetro
+    private void cargarFuentesDeColeccion(Coleccion coleccion){
+        List<Fuente> fuentesTruchas = coleccion.getFuentes();
+        List<Long> fuentesIds = fuentesTruchas.stream().map(Fuente::getId).toList();
+        List<Fuente> fuentesPosta = fuentesRepository.findAllByIdIn(fuentesIds);
+        coleccion.setFuentes(fuentesPosta);
     }
+
+    //  -------------------------------------------- Métodos de conversión ------------------------------------------------- //
 
     private ColeccionConHechosCuradosOutputDTO coleccionConHechosCuradosOutputDTO(Coleccion coleccion){
         ColeccionConHechosCuradosOutputDTO dto = new ColeccionConHechosCuradosOutputDTO();

@@ -2,21 +2,7 @@ package ar.utn.ba.ddsi.models.entities;
 
 import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,7 +51,7 @@ public class Coleccion {
     private List<Fuente> fuentes;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "hechos_en_coleccion_cargados_manualmente",
             joinColumns = @JoinColumn(name = "coleccion_id",
@@ -73,14 +59,14 @@ public class Coleccion {
         inverseJoinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     private List<Hecho> hechosCargadosManualmente;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "hechos_en_coleccion_consensuados",
         joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name ="hecho_id", referencedColumnName = "id"))
     private List<Hecho> hechosConsensuados;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "coleccion_hechos",
         joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),

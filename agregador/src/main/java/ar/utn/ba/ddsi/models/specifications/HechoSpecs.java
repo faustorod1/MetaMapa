@@ -1,6 +1,8 @@
 package ar.utn.ba.ddsi.models.specifications;
 
+import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
 
@@ -82,6 +84,24 @@ public class HechoSpecs {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+
+    public static Specification<Hecho> pertenecienteAColeccion(String coleccionIdentificador, boolean consensuados) {
+        return (root, query, cb) -> {
+            var subquery = query.subquery(Hecho.class);
+            Root<Coleccion> coleccionRoot = subquery.from(Coleccion.class);
+
+            jakarta.persistence.criteria.Join<Coleccion, Hecho> joinHechos = consensuados
+                    ? coleccionRoot.join("hechosConsensuados")
+                    : coleccionRoot.join("hechos");
+
+            subquery.select(joinHechos)
+                    .where(cb.equal(coleccionRoot.get("identificador"), coleccionIdentificador));
+
+            return root.in(subquery);
+        };
+    }
+
 
     private static LocalDateTime parsearFecha(String fechaStr) {
         try {

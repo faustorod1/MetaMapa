@@ -114,6 +114,24 @@ public class HechosService implements IHechosService {
         return hechosRepository.findById(id).orElse(null);
     }
 
+
+    @Override
+    public Page<Hecho> obtenerPorColeccion(String identificadorColeccion, Map<String, String> params, Pageable pageable) {
+        String modo = params.getOrDefault("modo", "curada");
+        boolean traerConsensuados = !"irrestricta".equalsIgnoreCase(modo);
+
+        Specification<Hecho> specFiltros = HechoSpecs.porFiltros(params);
+        Specification<Hecho> specColeccion = HechoSpecs.pertenecienteAColeccion(identificadorColeccion, traerConsensuados);
+        Specification<Hecho> specFinal = Specification.where(specColeccion).and(specFiltros);
+        Page<Hecho> paginaHechos = hechosRepository.findAll(specFinal, pageable);
+
+        List<Hecho> actualizadosConMetamapa = actualizarListaConHechosMetamapa(paginaHechos.getContent());
+
+        Page<Hecho> pagina = new PageImpl<>(actualizadosConMetamapa, pageable, paginaHechos.getTotalElements());
+        return pagina;
+    }
+
+
     @Override
     public Hecho obtenerNoEliminadoPorId(Long id){
         Hecho hecho = hechosRepository.findById(id).orElse(null);
@@ -298,6 +316,10 @@ public class HechosService implements IHechosService {
     }
 
 
+    // Reemplaza de la colección (ya persistida localmente) con los MetaMapa obtenidos recién
+    // Si hay algún hecho de fuente MetaMapa que NO teníamos en el agregador (porque se agregó a esa
+    // fuente MetaMapa después de la última actualización), ese hecho NO se incluye entre los hechos
+    // que devolvemos acá, ya que no sabemos si debería pertenecer a la colección.
     @Override
     public List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales) {
         Map<IdExterno, Hecho> hechosPorId = hechosLocales.stream()

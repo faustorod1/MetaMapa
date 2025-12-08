@@ -64,6 +64,7 @@ public class ColeccionesController {
            return "redirect:/colecciones/formulario-de-carga";
        } catch (Exception e) {
            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado");
+           log.error(e.getMessage());
            return "redirect:/colecciones/formulario-de-carga";
        }
     }

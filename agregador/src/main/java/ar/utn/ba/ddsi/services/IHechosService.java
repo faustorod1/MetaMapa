@@ -14,6 +14,7 @@ public interface IHechosService {
     HechoOutputDTO buscarHecho(Long id);
     HechoOutputDTO buscarHechoNoEliminado(Long id);
     Hecho obtenerPorId(Long id);
+    Page<Hecho> obtenerPorColeccion(String identificadorColeccion, Map<String, String> params, Pageable pageable);
     Hecho obtenerNoEliminadoPorId(Long id);
     List<Hecho> getFromMetaMapa();
     List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales);

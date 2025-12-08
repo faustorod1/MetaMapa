@@ -11,6 +11,9 @@ import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.services.IColeccionesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +37,13 @@ public class ColeccionesController {
     }
 
     @GetMapping("/{identificador}/hechos")
-    public List<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros) {
-        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros);
+    public Page<HechoOutputDTO> buscarHechosPorColeccion(@PathVariable String identificador, @RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return this.coleccionesService.buscarHechosPorColeccion(identificador, parametros, pageable);
+    }
+
+    @GetMapping("/{identificador}/con-hechos")
+    public ColeccionConHechosOutputDTO buscarColeccionConHechos(@PathVariable String identificador, @RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return this.coleccionesService.buscarColeccionConHechos(identificador, parametros, pageable);
     }
 
     @GetMapping("/destacadas/{cantidad_colecciones_destacadas}")
@@ -50,12 +58,6 @@ public class ColeccionesController {
     @GetMapping("/{identificador}")
     public ColeccionOutputDTO buscarPorId(@PathVariable String identificador) {
         return coleccionesService.buscarPorId(identificador);
-    }
-
-
-    @GetMapping("/con-hechos")
-    public List<ColeccionConHechosOutputDTO> buscarTodosConHechos(){
-        return this.coleccionesService.buscarTodosConHechos();
     }
 
     @GetMapping("/con-hechos-curados")
