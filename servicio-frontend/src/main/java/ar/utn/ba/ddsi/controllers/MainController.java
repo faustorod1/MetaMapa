@@ -28,9 +28,6 @@ public class MainController {
   @GetMapping("mapa")
   public String mapa(Model model, RedirectAttributes redirectAttributes) {
     try{
-      Page<HechoDTO> pagina  = agregadorService.buscarHechos(0, 15);
-      List<HechoDTO> hechos = pagina.getContent();
-      model.addAttribute("hechos", hechos);
       return "main-page/mapa";
     } catch (Exception e) {
       return "redirect:/404";
