@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.services.impl;
 
+import ar.utn.ba.ddsi.commons.DetectorDeSpam;
 import ar.utn.ba.ddsi.models.dtos.input.ResolucionSolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.models.dtos.input.SolicitudDeEliminacionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.SolicitudDeEliminacionOutputDTO;
@@ -23,9 +24,19 @@ public class SolicitudesService implements ISolicitudesService {
   @Override
   public SolicitudDeEliminacion crearSolicitud(SolicitudDeEliminacionInputDTO solicitudDto) {
     Hecho hecho = hechosService.obtenerPorId(solicitudDto.getHechoId());
-    SolicitudDeEliminacion solicitud = solicitudDto.toEntity(hecho);
-    solicitudesRepository.save(solicitud);
 
+
+    SolicitudDeEliminacion solicitud = solicitudDto.toEntity(hecho);
+    String descripcion = solicitudDto.getDescripcion();
+
+    if (descripcion == null || descripcion.length() < 500) {
+      solicitud.setEstado(EstadoSolicitud.RECHAZADA_POR_FALTA_DE_CARACTERES);
+    } else if (DetectorDeSpam.esSpam(descripcion)) {
+      solicitud.setEstado(EstadoSolicitud.RECHAZADA_POR_SPAM);
+    } else {
+      solicitud.setEstado(EstadoSolicitud.PENDIENTE);
+      solicitudesRepository.save(solicitud);
+    }
     return solicitud;
   }
 

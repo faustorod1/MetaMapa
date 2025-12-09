@@ -11,7 +11,6 @@ import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
 import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import ar.utn.ba.ddsi.services.IDinamicaService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,18 +48,27 @@ public class SolicitudesController {
     }
   }
 
-  @PostMapping("/solicitarEliminacion")
-  public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeEliminacionOutputDTO solicitud, RedirectAttributes redirectAttributes) {
+@PostMapping("/solicitarEliminacion")
+public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeEliminacionOutputDTO solicitud, RedirectAttributes redirectAttributes) {
+    log.info("DTO recibido: {}", solicitud);
     Long id = solicitud.getHechoId();
-    try {
-      agregadorService.solicitarEliminacion(solicitud);
-      redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
-      return "redirect:/api/solicitudes/eliminacion/" + id;
-    } catch (Exception ex) {
-      redirectAttributes.addFlashAttribute("error", "Error en la solicitud");
-      return "redirect:/solicitudes/eliminacion/" + id;
-    }
-  }
+   // try {
+       SolicitudDeEliminacionDTO solicitudRecibida = agregadorService.solicitarEliminacion(solicitud);
+       if(solicitudRecibida.getEstado() == (EstadoSolicitud.PENDIENTE)){
+            redirectAttributes.addFlashAttribute("exito","La solicitud ha sido creada");
+            return "redirect:/api/solicitudes/eliminacion/" + id;
+       }else if (solicitudRecibida.getEstado().equals(EstadoSolicitud.RECHAZADA_POR_SPAM)){
+            redirectAttributes.addFlashAttribute("spam","La solicitud fue rechazada por SPAM");
+            return "redirect:/api/solicitudes/eliminacion/" + id;
+       }else {
+            redirectAttributes.addFlashAttribute("falta_caracteres","La solicitud fue rechazada por falta de carácteres");
+            return "redirect:/api/solicitudes/eliminacion/" + id;
+       }
+   // }catch (Exception ex) {
+    // redirectAttributes.addFlashAttribute("error","Ocurrió un error inesperado");
+    // return "redirect:/api/solicitudes/eliminacion/" + id;
+   // }
+}
 
 
 

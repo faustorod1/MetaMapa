@@ -134,14 +134,10 @@
         }
     </style>
 
-
-
-
 </head>
     <body>
     <a th:href="@{/main}"  id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
     <div id="fixed-logo"></div>
-
 
     <div class="contenedor">
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"
@@ -150,6 +146,14 @@
 
         <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
              style="margin-bottom: 5px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
+        </div>
+
+        <div th:if="${spam}" class="alert alert-danger" th:text="${spam}"
+             style="margin-bottom: 5px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+        </div>
+
+        <div th:if="${falta_caracteres}" class="alert alert-danger" th:text="${falta_caracteres}"
+             style="margin-bottom: 5px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
         </div>
 
         <h1 id="h1-main">Solicitud de eliminación</h1>
@@ -168,7 +172,7 @@
             <button type="submit" class="enviar">Enviar</button>
         </div>
         </form>
-</div>
+    </div>
 
 <script>
     const textarea = document.getElementById("descripcion");
@@ -193,6 +197,6 @@
             alert(`La descripción debe tener al menos ${minChar} caracteres.`);
         }
     });
-    </script>
-    </body>
+</script>
+</body>
 </html>

@@ -33,17 +33,30 @@ public class SolicitudesController {
   }
 
   @PostMapping
-  public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+  public SolicitudDeEliminacionOutputDTO crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    log.info("Sol. recibida: " + dto);
+
     Long contribuyenteId = userDetails.getId();
     dto.setSolicitanteId(contribuyenteId);
     SolicitudDeEliminacion solicitud = solicitudesService.crearSolicitud(dto);
+    return SolicitudDeEliminacionOutputDTO.fromEntity(solicitud);
+
+
+    /*
+    public ResponseEntity<String> crearSolicitud(@RequestBody SolicitudDeEliminacionInputDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long contribuyenteId = userDetails.getId();
+    dto.setSolicitanteId(contribuyenteId);
+    SolicitudDeEliminacion solicitud = solicitudesService.crearSolicitud(dto);
+    return SolicitudDeEliminacionOutputDTO.fromEntity(solicitud);
+
+
 
     return switch (solicitud.getEstado()) {
       case PENDIENTE -> ResponseEntity.status(201).body("Solicitud creada con éxito"); // TODO: Devolver ID
       case RECHAZADA_POR_SPAM -> ResponseEntity.status(422).body("Solicitud rechazada por spam");
       case RECHAZADA_POR_FALTA_DE_CARACTERES -> ResponseEntity.status(422).body("Solicitud rechazada por insuficientes carácteres");
       default -> ResponseEntity.internalServerError().body("Error del servidor");
-    };
+    };*/
   }
 
   @PatchMapping("eliminacion/{id}/estado")

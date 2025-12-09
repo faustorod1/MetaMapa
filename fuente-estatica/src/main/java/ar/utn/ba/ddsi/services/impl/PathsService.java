@@ -24,7 +24,7 @@ public class PathsService implements IPathsService {
     public PathsService(@Value("${dataset.folder}") String datasetFolder) {
         this.datasetFolder = datasetFolder;
     }
-
+/*
     @Override
     public Long guardarCSVs(List<MultipartFile> archivos) {
 
@@ -42,6 +42,7 @@ public class PathsService implements IPathsService {
 
             try {
                 archivo.transferTo(archivoDestino);     // guardado de archivo
+                System.out.println("LLEGUE");
                 PathDataset pathDataset = new PathDataset(pathArchivo, LocalDateTime.now());
                 pathsRepository.save(pathDataset);
             } catch (IOException ex) {
@@ -51,6 +52,49 @@ public class PathsService implements IPathsService {
 
         return 1L;
     }
+*/
+@Override
+public Long guardarCSVs(List<MultipartFile> archivos) {
+
+    for (MultipartFile file : archivos) {
+        System.out.println("Archivo recibido: " + file.getOriginalFilename());
+    }
+
+    Path targetDir = Path.of(this.datasetFolder);
+    try {
+        java.nio.file.Files.createDirectories(targetDir);   // Creación del directorio
+    } catch (IOException e) {
+        throw new RuntimeException("No se pudo crear el directorio de destino: " + this.datasetFolder, e);
+    }
+
+    for (MultipartFile archivo : archivos) {
+        if (archivo.isEmpty()) {
+            continue;
+        }
+
+        String nombreArchivo = archivo.getOriginalFilename();
+
+        Path pathDestino = targetDir.resolve(nombreArchivo);
+
+        try {
+            java.nio.file.Files.copy(
+                    archivo.getInputStream(),
+                    pathDestino,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);// Opcional: permite sobrescribir si ya existe
+
+            String pathArchivo = pathDestino.toString();
+            System.out.println("Archivo guardado en: " + pathArchivo);
+
+            PathDataset pathDataset = new PathDataset(pathArchivo, LocalDateTime.now());
+            pathsRepository.save(pathDataset);
+        } catch (IOException ex) {
+            throw new RuntimeException("Error al intentar guardar el archivo: " + nombreArchivo, ex);
+        }
+    }
+
+    return 1L;
+}
+
 
     @Override
     public List<PathDataset> obtenerPathsDesde(LocalDateTime desde) {

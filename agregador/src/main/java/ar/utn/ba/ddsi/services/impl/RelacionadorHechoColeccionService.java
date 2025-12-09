@@ -10,6 +10,7 @@ import ar.utn.ba.ddsi.models.entities.HechosModificadosEvent;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IRelacionadorHechoColeccionService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -31,12 +32,15 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
 
   // Hecho nuevo o modificado
   @EventListener
+  @Transactional
   public void alModificarHecho(HechosModificadosEvent evento) {
     List<Hecho> hechos = evento.getHechos();
     List<Coleccion> colecciones = coleccionesRepository.findAll();
     for (Coleccion c : colecciones) {
       c.agregarTandaDeHechos(hechos);
     }
+
+    coleccionesRepository.saveAll(colecciones);
   }
 
   @EventListener

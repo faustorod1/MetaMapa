@@ -109,6 +109,7 @@ public class ColeccionesService implements IColeccionesService {
         Coleccion coleccion = input.toEntity();
         Coleccion coleccionAModificar = coleccionesRepository.findByIdentificador(coleccion.getIdentificador());
         coleccionAModificar.editar(coleccion);
+        cargarFuentesDeColeccion(coleccionAModificar);
         applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccionAModificar));
         coleccionesRepository.save(coleccionAModificar);
         return ColeccionOutputDTO.fromEntity(coleccionAModificar);

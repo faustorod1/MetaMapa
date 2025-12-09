@@ -13,7 +13,7 @@ public interface IAgregadorService {
   Page<HechoDTO> buscarHechos(int page, int size);
   List<FuenteDTO> buscarFuentes();
   HechoDTO pedirHecho(Long id);
-  void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud);
+  SolicitudDeEliminacionDTO solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud);
   List<HechoDTO> pedirHechosDeContribuyente();
   List<CategoriaDTO> pedirCategorias();
   CategoriaDTO pedirCategoriaPorID(Long id);

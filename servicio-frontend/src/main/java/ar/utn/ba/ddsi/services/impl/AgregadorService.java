@@ -139,12 +139,13 @@ public class AgregadorService implements IAgregadorService {
               .block();
    }
 
-   public void solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud) {
-      webApiCallerService.post(
-              agregadorBaseUrl + "/api/solicitudes",
-                solicitud,
-                String.class);
-   }
+    public SolicitudDeEliminacionDTO solicitarEliminacion(SolicitudDeEliminacionOutputDTO solicitud) {
+      return webApiCallerService.post(
+                    agregadorBaseUrl + "/api/solicitudes",
+                    solicitud,
+                    SolicitudDeEliminacionDTO.class);
+
+    }
 
    public List<Long> pedirIDsEliminacionesPendientes(){
       return webApiCallerService.getList(

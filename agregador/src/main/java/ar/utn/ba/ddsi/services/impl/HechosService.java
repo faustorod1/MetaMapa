@@ -212,6 +212,7 @@ public class HechosService implements IHechosService {
 
         hechosRepository.saveAll(hechos);
         applicationEventPublisher.publishEvent(new HechosModificadosEvent(hechos));
+
     }
 
 
