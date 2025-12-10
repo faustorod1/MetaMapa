@@ -12,18 +12,17 @@ import java.util.stream.Collectors;
 @Data
 @Entity @DiscriminatorValue("categoria")
 public class FiltroPorCategoria extends Filtro{
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id", nullable = true)
-    private Categoria categoria;
+    @Column(name = "nombre_categoria", nullable = true)
+    private String categoria;
 
     protected FiltroPorCategoria() {}
 
-    public FiltroPorCategoria(Categoria categoria){
+    public FiltroPorCategoria(String categoria){
         this.categoria = categoria;
     }
 
     @Override
     public List<Hecho> aplicar(List<Hecho> hechos){
-        return hechos.stream().filter(hecho -> hecho.getCategoria().equals(categoria)).collect(Collectors.toList());
+        return hechos.stream().filter(hecho -> hecho.getCategoria().getNombre().equals(categoria)).collect(Collectors.toList());
     }
 }

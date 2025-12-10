@@ -12,6 +12,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -115,12 +116,38 @@ public class AgregadorService implements IAgregadorService {
       return webApiCallerService.getList(
                 agregadorBaseUrl + "/api/colecciones/con-hechos",
               ColeccionConHechosDTO.class);
-  }
+    }
 
     public List<ColeccionConHechosDTO> pedirColeccionesConHechosCurados(){
         return webApiCallerService.getList(
                 agregadorBaseUrl + "/api/colecciones/con-hechos-curados",
                 ColeccionConHechosDTO.class);
+    }
+
+    public ColeccionConHechosDTO pedirColeccionConHechos(String id, int pagina, int tamanio){
+        String urlBase = agregadorBaseUrl + "/api/colecciones/" + id + "/con-hechos";
+        String urlFinal = UriComponentsBuilder.fromHttpUrl(urlBase)
+                .queryParam("page", pagina)
+                .queryParam("size", tamanio)
+                .toUriString();
+
+        return webApiCallerService.get(
+                urlFinal,
+                ColeccionConHechosDTO.class
+        );
+    }
+
+    public ColeccionConHechosDTO pedirColeccionConHechosCurados(String id, int pagina, int tamanio){
+        String urlBase = agregadorBaseUrl + "/api/colecciones/" + id + "/con-hechos-curados";
+        String urlFinal = UriComponentsBuilder.fromHttpUrl(urlBase)
+                .queryParam("page", pagina)
+                .queryParam("size", tamanio)
+                .toUriString();
+
+        return webApiCallerService.get(
+                urlFinal,
+                ColeccionConHechosDTO.class
+        );
     }
 
 

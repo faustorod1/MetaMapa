@@ -49,6 +49,8 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     for (Coleccion c : colecciones) {
       c.removerHechoEliminado(evento.getHechoEliminado());
     }
+
+    coleccionesRepository.saveAll(colecciones);
   }
 
   // Revisar. Llamado en: creacion de colección,
@@ -57,6 +59,8 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     Coleccion coleccion = evento.getColeccion();
     List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(coleccion.getFuentes());
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
+    coleccionesRepository.save(coleccion);
+
   }
 
   @EventListener
@@ -65,6 +69,8 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     List<Fuente> fuentesCambiadas = evento.getFuentesCambiadas();
     List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(fuentesCambiadas);
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
+
+    coleccionesRepository.save(coleccion);
   }
 
 

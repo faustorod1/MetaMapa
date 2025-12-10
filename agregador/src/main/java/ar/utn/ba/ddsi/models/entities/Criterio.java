@@ -39,7 +39,7 @@ public class Criterio {
         params.forEach((key, val) -> {
         switch (key) {
                 case "categoria":
-                    this.addFiltro(new FiltroPorCategoria((new Categoria(val))));
+                    this.addFiltro(new FiltroPorCategoria(val));
                     break;
                case "fecha_reporte_desde":
                     this.addFiltro(FiltroPorFechaDeCarga.FiltrarDesde(val));

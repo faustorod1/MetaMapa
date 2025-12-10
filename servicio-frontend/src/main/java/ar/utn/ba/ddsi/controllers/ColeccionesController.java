@@ -123,22 +123,34 @@ public class ColeccionesController {
         return "redirect:/colecciones";
     }
 
-/*
 
-    @GetMapping()
-    public String mostrarColeccionesConHechos(Model model){
+    @GetMapping("/con-hechos")
+    public String mostrarColeccionConHechos(Model model){
         List<ColeccionConHechosDTO> colecciones = agregadorService.pedirColeccionesConHechos();
         model.addAttribute("colecciones", colecciones);
         return "";
     }
 
-    @GetMapping()
+    @GetMapping("/con-hechos-curados")
     public String mostrarColeccionesConHechosCurados(Model model){
         List<ColeccionConHechosDTO> colecciones = agregadorService.pedirColeccionesConHechosCurados();
         model.addAttribute("colecciones", colecciones);
         return "";
     }
 
-*/
+    @GetMapping("/{id}/con-hechos")
+    public String mostrarColeccionPorId(@PathVariable("id") String id, Model model){
+        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id,0,10); //TODO. Cambiar esto para que no quede harcodeado
+        model.addAttribute("coleccion", coleccion);
+        return "main-page/verColeccion";
+    }
+
+    @GetMapping("/{id}/con-hechos-curados")
+    public String mostrarColeccionPorIdCurados(@PathVariable("id") String id, Model model){
+        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechosCurados(id,0,10); //TODO. Cambiar esto para que no quede harcodeado
+        model.addAttribute("coleccion",coleccion);
+        return "main-page/verColeccion";
+    }
+
 
 }

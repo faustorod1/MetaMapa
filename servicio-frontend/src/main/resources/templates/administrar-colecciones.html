@@ -185,6 +185,85 @@
       text-decoration: none;
     }
 
+    .nav-button{
+      position: relative;
+      aspect-ratio: 1;
+      width: 100%;
+      background: transparent;
+      border: none;
+      font-size: 2em;
+      outline: none;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .nav-button:hover {
+      color: dimgrey;
+    }
+    .nav-button.selected:hover {
+      color: #1b4018;
+    }
+    .nav-button-selection {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 1.5em;
+      width: 0;
+      border-radius: 0 0.5em 0.5em 0;
+      background: var(--color-main-2);
+      transition: width 0.2s ease-out;
+    }
+    .nav-button.selected > .nav-button-selection {
+      width: 1.8em;
+    }
+    .nav-button > i {
+      position: relative;
+    }
+
+    #nav-button-modo-de-navegacion {
+      background: transparent;
+      cursor: pointer;
+    }
+
+    #nav-button-modo-de-navegacion.selected > .nav-button-selection {
+      width: 1.8em;
+    }
+
+    /* Barra de selección azul siempre que esté seleccionado o no */
+    #nav-button-modo-de-navegacion > .nav-button-selection {
+      background: var(--color-main-2-hover); /* azul en cualquier estado */
+      width: 0;
+      height: 1.5em;
+      border-radius: 0 0.5em 0.5em 0;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: width 0.2s ease-out;
+    }
+
+    #nav-button-modo-de-navegacion .nav-button-selection {
+      display: none;
+    }
+
+    #nav-button-modo-de-navegacion:hover {
+      color: dimgrey;
+    }
+
+    #nav-button-modo-de-navegacion .fa-toggle-on {
+      display: none;
+    }
+    #nav-button-modo-de-navegacion .fa-toggle-off {
+      display: inline;
+    }
+
+    #nav-button-modo-de-navegacion.selected .fa-toggle-on {
+      display: inline;
+    }
+    #nav-button-modo-de-navegacion.selected .fa-toggle-off {
+      display: none;
+    }
+
   </style>
 </head>
 <body>
@@ -199,6 +278,11 @@
   </div>
   <div class="header">
     <h2>Colecciones</h2>
+    <button class="nav-button" id="nav-button-modo-de-navegacion">
+      <div class="nav-button-selection"></div>
+      <i class="fa-solid fa-toggle-on"></i>
+      <i class="fa-solid fa-toggle-off"></i>
+    </button>
 
     <div class="header-actions">
       <div class="search-bar">
@@ -241,7 +325,7 @@
         </button>
       </form>
 
-      <a th:href="@{/colecciones/detalle/{id}(id=${coleccion.identificador})}" title="Detalle" style="display: block;">
+      <a th:href="@{/colecciones/{id}/con-hechos(id=${coleccion.identificador})}" title="Detalle" style="display: block;">
         <button><i class="fa-solid fa-arrow-right"></i></button>
       </a>
     </div>

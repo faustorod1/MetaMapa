@@ -46,6 +46,8 @@ public class ColeccionesController {
         return this.coleccionesService.buscarColeccionConHechos(identificador, parametros, pageable);
     }
 
+    //TODO: Falta hacer @GetMapping("/{identificador}/con-hechos-curados")
+
     @GetMapping("/destacadas/{cantidad_colecciones_destacadas}")
     public List<ColeccionOutputDTO> buscarColeccionesDestacadas(@PathVariable Integer cantidad_colecciones_destacadas) {
         LocalDateTime fecha = LocalDateTime.now();

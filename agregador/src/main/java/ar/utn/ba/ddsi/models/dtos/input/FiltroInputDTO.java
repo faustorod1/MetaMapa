@@ -18,15 +18,9 @@ public class FiltroInputDTO {
             return new FiltroPorTitulo((String) this.getParametros().get("titulo"));
         }else if(this.getTipoDeFiltro().equals("descripcion")){
             return new FiltroPorDescripcion((String) this.getParametros().get("descripcion"));
-       /* }else {
-
-            if(this.getTipoDeFiltro().equals("categoria")){
-            String nombreCategoria = (String) this.getParametros().get("nombre");
-            Categoria categoriaExistente = categoriaRepository.findByNombre(nombreCategoria) // Asume que tienes este método en tu repo
-                    .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + nombreCategoria));
-
-            return new FiltroPorCategoria(categoriaExistente);
-            */
+        }else if(this.getTipoDeFiltro().equals("categoria")){
+            String nombreCategoria = (String) this.getParametros().get("categoria");
+            return new FiltroPorCategoria(nombreCategoria);
 
         }else if(this.getTipoDeFiltro().equals("ubicacion")){
             String latStr = (String) parametros.get("latitud");

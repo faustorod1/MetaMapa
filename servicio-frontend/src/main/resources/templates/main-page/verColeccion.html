@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis-Hechos | METAmapa</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+    <style>
+        html { height: 100%; }
+
+        body {
+            margin: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            background-image: url('/fondoLevementeCargado.png');
+            background-attachment: fixed;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        main {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-logo {
+            display: none;
+        }
+
+        .container-detalle {
+            padding: 2rem;
+            width: 95%;
+            max-width: 1200px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+            display: flex;
+            flex-direction: column;
+            min-height: 80vh;
+        }
+
+        .header-detalle {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .header-detalle h2 {
+            color: var(--color-main);
+            margin-top: 0;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-detalle p {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .header-detalle strong {
+            color: #333;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .hecho-card {
+            background: #f8f9fa;
+            border-left: 5px solid var(--color-main-2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .hecho-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .hecho-info h3 {
+            color: var(--color-main);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .hecho-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .hecho-meta > div {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hecho-meta i {
+            color: var(--color-main-2);
+        }
+
+        .hecho-info p {
+            color: #555;
+            line-height: 1.5;
+            margin: 0.5rem 0;
+        }
+
+        .hecho-info strong {
+            color: #333;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+    </style>
+        <body>
+<main>
+    <div class="container-detalle">
+
+        <div class="header-detalle">
+            <h2 th:text="${coleccion.titulo}">Título de la Colección</h2>
+            <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Descripción...</span></p>
+        </div>
+
+        <h3 style="margin-bottom: 1.5rem; color: #444;">Hechos de esta colección</h3>
+
+        <div class="hechos-container">
+
+            <div th:each="hecho : ${coleccion.hechos}" class="hecho-card">
+                <div class="hecho-info">
+
+                    <h3 th:text="${hecho.titulo}" style="margin-top: 0;">Título del Hecho</h3>
+
+                    <div class="hecho-meta">
+                        <div>
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                        </div>
+
+                        <div th:if="${hecho.lugarAcontecimiento != null}">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>
+                                    <span th:text="${hecho.lugarAcontecimiento.latitud}">Lat</span>,
+                                    <span th:text="${hecho.lugarAcontecimiento.longitud}">Lon</span>
+                                </span>
+                        </div>
+                        <div th:unless="${hecho.lugarAcontecimiento != null}">
+                            <i class="fa-solid fa-location-cross"></i> <span>Sin ubicación</span>
+                        </div>
+                    </div>
+
+                    <p>
+                        <strong>Descripción:</strong>
+                        <span th:text="${hecho.descripcion}">Desc</span>
+                    </p>
+
+                    <p th:if="${hecho.categoria != null}">
+                        <strong>Categoría:</strong>
+                        <span th:text="${hecho.categoria.nombre}" style="background: #e2e6ea; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; color: #333; font-weight: bold;">Cat</span>
+                    </p>
+
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(coleccion.hechos)}" class="empty-message">
+                <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
+                <p>No se encontraron hechos en esta colección.</p>
+            </div>
+
+        </div>
+    </div>
+</main>
+</body>
+</html>
