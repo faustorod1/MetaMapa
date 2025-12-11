@@ -116,12 +116,12 @@ public class HechosService implements IHechosService {
 
 
     @Override
-    public Page<Hecho> obtenerPorColeccion(String identificadorColeccion, Map<String, String> params, Pageable pageable) {
+    public Page<Hecho> obtenerPorColeccion(Long id, Map<String, String> params, Pageable pageable) {
         String modo = params.getOrDefault("modo", "curada");
         boolean traerConsensuados = !"irrestricta".equalsIgnoreCase(modo);
 
         Specification<Hecho> specFiltros = HechoSpecs.porFiltros(params);
-        Specification<Hecho> specColeccion = HechoSpecs.pertenecienteAColeccion(identificadorColeccion, traerConsensuados);
+        Specification<Hecho> specColeccion = HechoSpecs.pertenecienteAColeccion(id, traerConsensuados);
         Specification<Hecho> specFinal = Specification.where(specColeccion).and(specFiltros);
         Page<Hecho> paginaHechos = hechosRepository.findAll(specFinal, pageable);
 
@@ -405,10 +405,10 @@ public class HechosService implements IHechosService {
 
     @Override
     public List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener) {
-        // PageRequest.of(numero_pagina, tamaño_pagina)
         Pageable pageable = PageRequest.of(0, cantidad_obtener);
 
-        List<Hecho> hechosEncontrados = hechosRepository.findByFechaDeCargaLessThanEqualOrderByFechaDeCargaDesc(fecha, pageable);
+        List<Hecho> hechosEncontrados = hechosRepository.findByFechaDeCargaLessThanEqualOrderByFechaDeCargaDesc(fecha, pageable)
+                .stream().filter(hecho -> !hecho.isEliminado()).toList();
 
         return hechosEncontrados.stream()
             .map(HechoOutputDTO::fromEntity).toList();

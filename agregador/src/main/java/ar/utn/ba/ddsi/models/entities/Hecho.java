@@ -79,6 +79,16 @@ public class Hecho {
     @Builder.Default // si el builder no le da el valor, hace esto por defecto
     private Set<Etiqueta> etiquetas = new HashSet<>();
 
+   @ManyToMany(mappedBy = "hechos")
+    private List<Coleccion> colecciones = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "hechosConsensuados")
+    private List<Coleccion> coleccionesConsensuadas = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "hechosCargadosManualmente")
+    private List<Coleccion> coleccionesCargadasManualmente = new ArrayList<>();
+
+
     protected Hecho() {}
 
     public SolicitudDeEliminacion solicitarEliminacion(String justificacion, Long contribuyenteId) {

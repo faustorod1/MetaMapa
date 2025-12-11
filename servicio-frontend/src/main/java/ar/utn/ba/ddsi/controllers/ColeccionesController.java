@@ -8,6 +8,7 @@ import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -135,20 +136,23 @@ public class ColeccionesController {
     public String mostrarColeccionesConHechosCurados(Model model){
         List<ColeccionConHechosDTO> colecciones = agregadorService.pedirColeccionesConHechosCurados();
         model.addAttribute("colecciones", colecciones);
-        return "";
+        return "administrar-colecciones";
     }
 
+
+    // Falta cambiar PageHechosContainer para que almacene más datos de la paginación: pero dps lo probamos, y funciona
     @GetMapping("/{id}/con-hechos")
     public String mostrarColeccionPorId(@PathVariable("id") String id, Model model){
-        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id,0,10); //TODO. Cambiar esto para que no quede harcodeado
+        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id,0, 10);
+        log.info("Colección traida: " + coleccion);
         model.addAttribute("coleccion", coleccion);
         return "main-page/verColeccion";
     }
 
     @GetMapping("/{id}/con-hechos-curados")
     public String mostrarColeccionPorIdCurados(@PathVariable("id") String id, Model model){
-        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechosCurados(id,0,10); //TODO. Cambiar esto para que no quede harcodeado
-        model.addAttribute("coleccion",coleccion);
+       // ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechosCurados(id, pageable.getPageNumber(), pageable.getPageSize());
+       // model.addAttribute("coleccion",coleccion);
         return "main-page/verColeccion";
     }
 

@@ -74,7 +74,8 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public Page<HechoOutputDTO> buscarHechosPorColeccion(String identificador, Map<String, String> params, Pageable pageable) {
-        Page<HechoOutputDTO> paginaDTO = hechosService.obtenerPorColeccion(identificador, params, pageable)
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+        Page<HechoOutputDTO> paginaDTO = hechosService.obtenerPorColeccion(coleccion.getId(), params, pageable)
                 .map(HechoOutputDTO::fromEntity);
         return paginaDTO;
     }

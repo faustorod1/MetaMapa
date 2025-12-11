@@ -43,10 +43,11 @@ public class ColeccionesController {
 
     @GetMapping("/{identificador}/con-hechos")
     public ColeccionConHechosOutputDTO buscarColeccionConHechos(@PathVariable String identificador, @RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        return this.coleccionesService.buscarColeccionConHechos(identificador, parametros, pageable);
+        ColeccionConHechosOutputDTO coleccion = this.coleccionesService.buscarColeccionConHechos(identificador, parametros, pageable);
+        log.info("Coleccion: " + coleccion);
+        return coleccion;
     }
 
-    //TODO: Falta hacer @GetMapping("/{identificador}/con-hechos-curados")
 
     @GetMapping("/destacadas/{cantidad_colecciones_destacadas}")
     public List<ColeccionOutputDTO> buscarColeccionesDestacadas(@PathVariable Integer cantidad_colecciones_destacadas) {

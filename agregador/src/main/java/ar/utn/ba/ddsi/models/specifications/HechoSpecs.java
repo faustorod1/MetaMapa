@@ -2,6 +2,8 @@ package ar.utn.ba.ddsi.models.specifications;
 
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Hecho;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
@@ -85,7 +87,7 @@ public class HechoSpecs {
         };
     }
 
-
+/*
     public static Specification<Hecho> pertenecienteAColeccion(String coleccionIdentificador, boolean consensuados) {
         return (root, query, cb) -> {
             var subquery = query.subquery(Hecho.class);
@@ -101,6 +103,29 @@ public class HechoSpecs {
             return root.in(subquery);
         };
     }
+    */
+public static Specification<Hecho> pertenecienteAColeccion(Long coleccionId,
+                                                           boolean traerConsensuados) {
+
+    return (root, query, cb) -> {
+        assert query != null;
+        query.distinct(true);
+
+        // 1. JOIN DE PERTENENCIA BASE
+        Join<Hecho, Coleccion> join = root.join("colecciones", JoinType.INNER);
+        Predicate base = cb.equal(join.get("id"), coleccionId);
+
+        if (!traerConsensuados) {
+            return base;
+        }
+
+        // y colecciones son entidades/tablas distintas en el modelo Hecho
+        Join<Hecho, Coleccion> joinCons = root.join("coleccionesConsensuadas", JoinType.INNER);
+        Predicate cons = cb.equal(joinCons.get("id"), coleccionId);
+
+        return cb.and(base, cons);
+    };
+}
 
 
     private static LocalDateTime parsearFecha(String fechaStr) {

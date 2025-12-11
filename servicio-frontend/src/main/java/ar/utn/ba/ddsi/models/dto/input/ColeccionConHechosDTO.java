@@ -36,5 +36,9 @@ public class ColeccionConHechosDTO implements Serializable {
         private List<HechoDTO> content;
         private int totalPages;
         private long totalElements;
+        private int number;
+        private int size;
+        private boolean hasNext;
+        private boolean hasPrevious;
     }
 }

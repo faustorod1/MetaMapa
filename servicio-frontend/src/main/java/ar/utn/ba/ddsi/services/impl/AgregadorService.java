@@ -125,10 +125,10 @@ public class AgregadorService implements IAgregadorService {
     }
 
     public ColeccionConHechosDTO pedirColeccionConHechos(String id, int pagina, int tamanio){
-        String urlBase = agregadorBaseUrl + "/api/colecciones/" + id + "/con-hechos";
+        String urlBase = agregadorBaseUrl + "/api/colecciones/" + id + "/con-hechos"
+                + "?page=" + pagina + "&size=" + tamanio;
         String urlFinal = UriComponentsBuilder.fromHttpUrl(urlBase)
-                .queryParam("page", pagina)
-                .queryParam("size", tamanio)
+                .queryParam("modo", "irrestricta") // TODO: nos falta implementar el modo curado. Podria recibirlo por parametro
                 .toUriString();
 
         return webApiCallerService.get(
@@ -137,18 +137,6 @@ public class AgregadorService implements IAgregadorService {
         );
     }
 
-    public ColeccionConHechosDTO pedirColeccionConHechosCurados(String id, int pagina, int tamanio){
-        String urlBase = agregadorBaseUrl + "/api/colecciones/" + id + "/con-hechos-curados";
-        String urlFinal = UriComponentsBuilder.fromHttpUrl(urlBase)
-                .queryParam("page", pagina)
-                .queryParam("size", tamanio)
-                .toUriString();
-
-        return webApiCallerService.get(
-                urlFinal,
-                ColeccionConHechosDTO.class
-        );
-    }
 
 
    public List<CategoriaDTO> pedirCategorias() {
