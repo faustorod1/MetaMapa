@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "hechosSnapshots")
@@ -24,9 +25,9 @@ public class HechoSnapshot {
     private String categoria;
 
     @ElementCollection
-    @CollectionTable(name = "contenidos_multimedia_snapshot", joinColumns = @JoinColumn(name = "hecho_id"))
-    @Column(name = "path")
-    private List<String> contenidosMultimedia;
+    @CollectionTable(name = "contenidos_multimedia_snapshot", joinColumns = @JoinColumn(name = "snapshot_id"))
+    @Column(name = "url")
+    private List<String> urlsContenidos;
 
     @Embedded
     private Coordenada lugarAcontecimiento;
@@ -41,7 +42,11 @@ public class HechoSnapshot {
         this.titulo = hecho.getTitulo();
         this.descripcion = hecho.getDescripcion();
         this.categoria = hecho.getCategoria();
-        this.contenidosMultimedia = hecho.getContenidosMultimedia();
+        if (hecho.getContenidosMultimedia() != null) {
+            this.urlsContenidos = hecho.getContenidosMultimedia().stream()
+                .map(ContenidoMultimedia::getUrl)
+                .collect(Collectors.toList());
+        }
         this.lugarAcontecimiento = hecho.getLugarAcontecimiento();
         this.fechaHecho = hecho.getFechaHecho();
         this.fechaSnapshot = LocalDateTime.now();

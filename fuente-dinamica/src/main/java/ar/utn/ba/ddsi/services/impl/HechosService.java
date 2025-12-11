@@ -7,13 +7,11 @@ import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import ar.utn.ba.ddsi.services.internal.ImageUploaderService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +22,11 @@ import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 @Service
 public class HechosService implements IHechosService {
     private final IHechosRepository hechosRepository;
-    private String imagenesFolder;
+    private final ImageUploaderService imageUploaderService;
 
-    public HechosService(IHechosRepository hechosRepository,  @Value("${imagenes.folder}") String imagenesFolder) {
+    public HechosService(IHechosRepository hechosRepository, ImageUploaderService imageUploaderService) {
         this.hechosRepository = hechosRepository;
-        this.imagenesFolder = imagenesFolder;
+        this.imageUploaderService = imageUploaderService;
     }
 
 
@@ -77,22 +75,17 @@ public class HechosService implements IHechosService {
         hecho.setFechaUltimaActualizacion(LocalDateTime.now());
 
         if (imagenes != null && !imagenes.isEmpty()) {
-            List<String> paths = new ArrayList<>();
+            List<ContenidoMultimedia> listaMultimedia = new ArrayList<>();
+
             for (MultipartFile archivo : imagenes) {
                 if (archivo.isEmpty()) continue;
 
-                String nombreArchivo = archivo.getOriginalFilename();
-                String pathArchivo = this.imagenesFolder + File.separator + nombreArchivo;
-                File archivoDestino = new File(pathArchivo);
+                String urlImagen = imageUploaderService.uploadFile(archivo);
 
-                try {
-                    archivo.transferTo(archivoDestino); // guardado de archivo
-                    paths.add(pathArchivo);             // guardamos path en la entidad
-                } catch (IOException ex) {
-                    throw new RuntimeException("Error guardando archivo: " + nombreArchivo, ex);
-                }
+                ContenidoMultimedia cm = new ContenidoMultimedia(urlImagen);
+                listaMultimedia.add(cm);
             }
-            hecho.setContenidosMultimedia(paths);
+            hecho.setContenidosMultimedia(listaMultimedia);
         }
 
         hechosRepository.save(hecho);
@@ -140,11 +133,18 @@ public Hecho DTOToHecho (HechoInputDTO hechoInputDTO){      // Al guardarse el h
 }
 
 public HechoOutputDTO hechoToDTO (Hecho hecho){
+    List<String> urlsParaFrontend = new ArrayList<>();
+    if (hecho.getContenidosMultimedia() != null) {
+        urlsParaFrontend = hecho.getContenidosMultimedia().stream()
+            .map(ContenidoMultimedia::getUrl) // Extraemos el string
+            .toList();
+    }
+
     return HechoOutputDTO.builder()
             .titulo(hecho.getTitulo())
             .descripcion(hecho.getDescripcion())
             .categoria(hecho.getCategoria())
-            .contenidosMultimedia(hecho.getContenidosMultimedia())
+            .contenidosMultimedia(urlsParaFrontend)
             .lugarAcontecimiento(hecho.getLugarAcontecimiento())
             .fechaHecho(hecho.getFechaHecho())
             .fechaDeCarga(hecho.getFechaDeCarga())

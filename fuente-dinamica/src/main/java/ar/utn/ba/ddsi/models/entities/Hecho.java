@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import ar.utn.ba.ddsi.models.entities.ContenidoMultimedia;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,10 +31,10 @@ public class Hecho {
     @Column(name = "categoria", columnDefinition = "VARCHAR(100)")
     private String categoria;
 
-    @ElementCollection
-    @CollectionTable(name = "contenidos_multimedia", joinColumns = @JoinColumn(name = "hecho_id"))
-    @Column(name = "path")
-    private List<String> contenidosMultimedia;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "hecho_id")
+    private List<ContenidoMultimedia> contenidosMultimedia = new ArrayList<>();
 
     @Embedded
     private Coordenada lugarAcontecimiento;
@@ -73,5 +75,4 @@ public class Hecho {
     public void agregarSnapshot(HechoSnapshot snap){
         snapshots.add(snap);
     }
-
 }
