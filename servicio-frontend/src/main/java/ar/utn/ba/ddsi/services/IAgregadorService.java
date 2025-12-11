@@ -31,5 +31,5 @@ public interface IAgregadorService {
   void eliminarColeccion(String identificador);
   public void actualizarColeccion(ColeccionOutputDTO coleccion);
   ColeccionConHechosDTO pedirColeccionConHechos(String id, int pagina, int tamanio);
-
+  //public Page<HechoDTO> pedirHechosDeContribuyentePaginado(int page, int size);
 }

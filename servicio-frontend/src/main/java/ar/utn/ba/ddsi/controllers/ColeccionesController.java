@@ -140,10 +140,10 @@ public class ColeccionesController {
     }
 
 
-    // Falta cambiar PageHechosContainer para que almacene más datos de la paginación: pero dps lo probamos, y funciona
     @GetMapping("/{id}/con-hechos")
-    public String mostrarColeccionPorId(@PathVariable("id") String id, Model model){
-        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id,0, 10);
+    public String mostrarColeccionPorId(@PathVariable("id") String id, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
+                                        @RequestParam(name = "size", defaultValue = "10") int size){
+        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id, page, size);
         log.info("Colección traida: " + coleccion);
         model.addAttribute("coleccion", coleccion);
         return "main-page/verColeccion";
@@ -151,8 +151,8 @@ public class ColeccionesController {
 
     @GetMapping("/{id}/con-hechos-curados")
     public String mostrarColeccionPorIdCurados(@PathVariable("id") String id, Model model){
-       // ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechosCurados(id, pageable.getPageNumber(), pageable.getPageSize());
-       // model.addAttribute("coleccion",coleccion);
+       //ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechosCurados(id, pageable.getPageNumber(), pageable.getPageSize());
+       //model.addAttribute("coleccion",coleccion);
         return "main-page/verColeccion";
     }
 

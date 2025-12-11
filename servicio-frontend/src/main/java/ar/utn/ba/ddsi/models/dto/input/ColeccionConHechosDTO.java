@@ -38,7 +38,17 @@ public class ColeccionConHechosDTO implements Serializable {
         private long totalElements;
         private int number;
         private int size;
-        private boolean hasNext;
-        private boolean hasPrevious;
+        private boolean last;
+        private boolean first;
+
+        @JsonIgnore
+        public boolean isHasNext() {
+            return !this.last;
+        }
+
+        @JsonIgnore
+        public boolean isHasPrevious() {
+            return !this.first;
+        }
     }
 }

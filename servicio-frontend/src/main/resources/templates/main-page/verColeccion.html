@@ -1,227 +1,270 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Mis-Hechos | METAmapa</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+ <!DOCTYPE html>
+        <html lang="en" xmlns:th="http://www.thymeleaf.org">
+        <head>
+            <meta charset="UTF-8">
+            <title>Mis-Hechos | METAmapa</title>
+            <link rel="stylesheet" th:href="@{/css/style.css}" />
+            <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
-    <style>
-        html { height: 100%; }
+            <style>
+                html { height: 100%; }
 
-        body {
-            margin: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-            display: flex;
-            background-image: url('/fondoLevementeCargado.png');
-            background-attachment: fixed;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            justify-content: center;
-            align-items: flex-start;
-        }
+                body {
+                    margin: 0;
+                    height: 100%;
+                    font-family: Arial, sans-serif;
+                    display: flex;
+                    background-image: url('/fondoLevementeCargado.png');
+                    background-attachment: fixed;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    justify-content: center;
+                    align-items: flex-start;
+                }
 
-        main {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            align-items: center;
-        }
+                main {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    flex-direction: column;
+                    align-items: center;
+                }
 
-        .container-detalle {
-            padding: 2rem;
-            width: 95%;
-            max-width: 1200px;
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            min-height: 80vh;
-        }
+                .container-detalle {
+                    padding: 2rem;
+                    width: 95%;
+                    max-width: 1200px;
+                    margin-top: 1.5rem;
+                    margin-bottom: 1.5rem;
+                    background: white;
+                    border-radius: 1rem;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 80vh;
+                }
 
-        .header-detalle {
-            margin-bottom: 2rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 1rem;
-        }
+                .header-detalle {
+                    display: flex;
+                    justify-content: space-between; /* Título izquierda, Botón derecha */
+                    align-items: flex-start;
+                    margin-bottom: 2rem;
+                    border-bottom: 1px solid #eee;
+                    padding-bottom: 1rem;
+                }
 
-        .header-detalle h2 {
-            color: var(--color-main);
-            margin-top: 0;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
+                .header-detalle h2 {
+                    color: var(--color-main);
+                    margin-top: 0;
+                    font-size: 2rem;
+                    margin-bottom: 0.5rem;
+                }
 
-        .header-detalle p {
-            color: #555;
-            font-size: 1.1rem;
-        }
+                .header-detalle p {
+                    color: #555;
+                    font-size: 1.1rem;
+                }
 
-        h3 {
-            color: #333;
-        }
+                #nav-button-modo-de-navegacion {
+                    background: transparent;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 1.8rem;
+                    color: #333;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0 0 0 1rem;
+                    outline: none;
+                    transition: transform 0.2s;
+                }
 
-        .hecho-card {
-            background: #f8f9fa;
-            border-left: 5px solid var(--color-main-2);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
+                #nav-button-modo-de-navegacion:hover {
+                    transform: scale(1.1);
+                    color: var(--color-main);
+                }
 
-        .hecho-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+                .icon-off {
+                    display: none;
+                    color: #ccc;
+                }
 
-        .hecho-info h3 {
-            color: var(--color-main);
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 0.5rem;
-            width: 100%;
-        }
+                h3 {
+                    color: #333;
+                }
 
-        .hecho-meta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
+                .hecho-card {
+                    background: #f8f9fa;
+                    border-left: 5px solid var(--color-main-2);
+                    border-radius: 8px;
+                    padding: 1.5rem;
+                    margin-bottom: 1.5rem;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    transition: transform 0.2s;
+                }
 
-        .hecho-meta > div {
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: #555;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+                .hecho-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                }
 
-        .empty-message {
-            text-align: center;
-            padding: 3rem;
-            color: #888;
-        }
+                .hecho-info h3 {
+                    color: var(--color-main);
+                    font-size: 1.3rem;
+                    margin-bottom: 1rem;
+                    border-bottom: 1px solid #e0e0e0;
+                    padding-bottom: 0.5rem;
+                    width: 100%;
+                }
 
-        .paginacion a {
-            padding: 8px 14px;
-            background: #ddd;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
+                .hecho-meta {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                    margin-bottom: 1rem;
+                }
 
-        .paginacion a:hover {
-            background: #ccc;
-        }
-    </style>
-</head>
+                .hecho-meta > div {
+                    background-color: white;
+                    border: 1px solid #ddd;
+                    padding: 0.3rem 0.8rem;
+                    border-radius: 20px;
+                    font-size: 0.9rem;
+                    color: #555;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
 
-<body>
-<main>
-    <div class="container-detalle">
+                .empty-message {
+                    text-align: center;
+                    padding: 3rem;
+                    color: #888;
+                }
 
-        <div class="header-detalle">
-            <h2 th:text="${coleccion.titulo}">Título de la Colección</h2>
-            <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Descripción...</span></p>
-        </div>
+                .paginacion a {
+                    padding: 10px 16px;
+                    background: var(--color-main);
+                    color: white;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    transition: background 0.3s;
+                }
 
-        <h3 style="margin-bottom: 1.5rem; color: #444;">Hechos de esta colección</h3>
+                .paginacion a:hover {
+                    background: #1a2675;
+                }
 
-        <div class="hechos-container">
+                .paginacion span {
+                    display: flex;
+                    align-items: center;
+                    font-size: 1.1rem;
+                }
+            </style>
+        </head>
 
-            <!-- LISTA DE HECHOS (usar .content porque es Page) -->
-            <div th:each="hecho : ${coleccion.hechos}" class="hecho-card">
-                <div class="hecho-info">
+        <body>
+        <main>
+            <div class="container-detalle">
 
-                    <h3 th:text="${hecho.titulo}" style="margin-top: 0;">Título del Hecho</h3>
+                <div class="header-detalle">
+                    <h2 th:text="${coleccion.titulo}">Título de la Colección</h2>
+                    <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Descripción...</span></p>
 
-                    <div class="hecho-meta">
-                        <div>
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha</span>
-                        </div>
+                <button id="nav-button-modo-de-navegacion" title="Modo de navegacion">
+                    <i class="fa-solid fa-toggle-on"></i>
+                    <i class="fa-solid fa-toggle-off"></i>
+                </button>
+                </div>
 
-                        <div th:if="${hecho.lugarAcontecimiento != null}">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>
+                <h3 style="margin-bottom: 1.5rem; color: #444;">Hechos de esta colección</h3>
+
+                <div class="hechos-container">
+
+                    <!-- LISTA DE HECHOS (usar .content porque es Page) -->
+                    <div th:each="hecho : ${coleccion.hechos}" class="hecho-card">
+                        <div class="hecho-info">
+
+                            <h3 th:text="${hecho.titulo}" style="margin-top: 0;">Título del Hecho</h3>
+
+                            <div class="hecho-meta">
+                                <div>
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                    <span th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                </div>
+
+                                <div th:if="${hecho.lugarAcontecimiento != null}">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>
                                 <span th:text="${hecho.lugarAcontecimiento.latitud}">Lat</span>,
                                 <span th:text="${hecho.lugarAcontecimiento.longitud}">Lon</span>
                             </span>
-                        </div>
+                                </div>
 
-                        <div th:unless="${hecho.lugarAcontecimiento != null}">
-                            <i class="fa-solid fa-location-cross"></i> <span>Sin ubicación</span>
+                                <div th:unless="${hecho.lugarAcontecimiento != null}">
+                                    <i class="fa-solid fa-location-cross"></i> <span>Sin ubicación</span>
+                                </div>
+                            </div>
+
+                            <p>
+                                <strong>Descripción:</strong>
+                                <span th:text="${hecho.descripcion}">Desc</span>
+                            </p>
+
+                            <p th:if="${hecho.categoria != null}">
+                                <strong>Categoría:</strong>
+                                <span th:text="${hecho.categoria.nombre}"
+                                      style="background: #e2e6ea; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
+                            Cat
+                        </span>
+                            </p>
+
                         </div>
                     </div>
 
-                    <p>
-                        <strong>Descripción:</strong>
-                        <span th:text="${hecho.descripcion}">Desc</span>
-                    </p>
+                    <div th:if="${#lists.isEmpty(coleccion.hechos)}" class="empty-message">
+                        <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
+                        <p>No se encontraron hechos en esta colección.</p>
+                    </div>
 
-                    <p th:if="${hecho.categoria != null}">
-                        <strong>Categoría:</strong>
-                        <span th:text="${hecho.categoria.nombre}"
-                              style="background: #e2e6ea; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
-                            Cat
-                        </span>
-                    </p>
 
+            </div>
+            <div class="paginacion"
+                 style="display:flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top:2rem;
+                    width: 100%;
+                    max-width: 100%;"
+                 th:with="pageMetadata=${coleccion.hechosPage}">
+
+                <div>
+                    <a th:if="${pageMetadata.hasPrevious}"
+                       th:href="@{'/colecciones/' + ${coleccion.identificador} +
+               '/con-hechos?page=' + ${pageMetadata.number - 1} +
+               '&size=' + ${pageMetadata.size}}">
+                        ← Anterior
+                    </a>
+                </div>
+
+                <span style="font-weight:bold"
+                      th:text="'Página ' + (${pageMetadata.number + 1}) + ' de ' + ${pageMetadata.totalPages}">
+                </span>
+
+                <div style="text-align: right;">
+                    <a th:if="${pageMetadata.hasNext}"
+                       th:href="@{'/colecciones/' + ${coleccion.identificador} +
+               '/con-hechos?page=' + ${pageMetadata.number + 1} +
+               '&size=' + ${pageMetadata.size}}">
+                        Siguiente →
+                    </a>
                 </div>
             </div>
-
-            <!-- MENSAJE SI NO HAY HECHOS -->
-            <div th:if="${#lists.isEmpty(coleccion.hechos)}" class="empty-message">
-                <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
-                <p>No se encontraron hechos en esta colección.</p>
-            </div>
-
         </div>
 
-        <!-- PAGINACIÓN -->
-        <div class="paginacion"
-             style="display:flex; justify-content:center; gap:1rem; margin-top:2rem;">
-
-            <!-- Botón Anterior -->
-            <a th:if="${coleccion.hechos.hasPrevious()}"
-               th:href="@{'/colecciones/' + ${coleccion.identificador} +
-                        '/con-hechos?page=' + ${coleccion.hechos.number - 1} +
-                        '&size=' + ${coleccion.hechos.size}}">
-                ← Anterior
-            </a>
-
-            <!-- Números -->
-            <span style="font-weight:bold; color:#333;">
-                Página <span th:text="${coleccion.hechos.number + 1}"></span>
-                de <span th:text="${coleccion.hechos.totalPages}"></span>
-            </span>
-
-            <!-- Botón Siguiente -->
-            <a th:if="${coleccion.hechos.hasNext()}"
-               th:href="@{'/colecciones/' + ${coleccion.identificador} +
-                        '/con-hechos?page=' + ${coleccion.hechos.number + 1} +
-                        '&size=' + ${coleccion.hechos.size}}">
-                Siguiente →
-            </a>
-
-        </div>
-
-    </div>
-</main>
+ </main>
 </body>
 </html>
+
