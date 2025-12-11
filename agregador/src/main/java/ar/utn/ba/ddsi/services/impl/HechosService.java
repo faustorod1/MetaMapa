@@ -407,8 +407,7 @@ public class HechosService implements IHechosService {
     public List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener) {
         Pageable pageable = PageRequest.of(0, cantidad_obtener);
 
-        List<Hecho> hechosEncontrados = hechosRepository.findByFechaDeCargaLessThanEqualOrderByFechaDeCargaDesc(fecha, pageable)
-                .stream().filter(hecho -> !hecho.isEliminado()).toList();
+        List<Hecho> hechosEncontrados = hechosRepository.findByFechaDeCargaLessThanEqualOrderByFechaDeCargaDesc(fecha, pageable);
 
         return hechosEncontrados.stream()
             .map(HechoOutputDTO::fromEntity).toList();
