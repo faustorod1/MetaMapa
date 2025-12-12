@@ -70,6 +70,19 @@ public class AgregadorService implements IAgregadorService {
          HechoDTO.class);
    }
 
+    @Override
+    public Page<HechoDTO> pedirHechosDeContribuyentePaginado(int page, int size) {
+        return agregadorWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/hechos/contribuyente") //TODO CORREGIR ENDPOINT
+                        .queryParam("page", page)
+                        .queryParam("size", size)
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<RestPage<HechoDTO>>() {})
+                .block();
+    }
+
    public List<String> pedirIdentificadoresDeColecciones(){
       return webApiCallerService.getList(
               agregadorBaseUrl + "/api/colecciones/identificadores",

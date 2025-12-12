@@ -8,6 +8,7 @@ import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import ar.utn.ba.ddsi.services.IEstaticaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -83,10 +84,17 @@ public class HechosController {
     }
 
     @GetMapping("/mis-hechos")
-    public String misHechos(Model model) {
+    public String misHechos(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
+    ) {
         try {
-            List<HechoDTO> hechos = agregadorService.pedirHechosDeContribuyente();
-            model.addAttribute("hechosDelContribuyente", hechos);
+            Page<HechoDTO> hechosPage = agregadorService.pedirHechosDeContribuyentePaginado(page, size);
+
+            // Pasa el objeto Page completo al modelo
+            model.addAttribute("hechosPage", hechosPage);
+
             return "main-page/mis-hechos";
         } catch (Exception ex) {
             log.error("Error al cargar los hechos del contribuyente: {}", ex.getMessage());

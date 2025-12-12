@@ -182,6 +182,41 @@
         .icon-button:hover{
             color: #4CAF50;
         }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            gap: 10px;
+        }
+
+        .pagination-button {
+            padding: 8px 15px;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            background-color: white;
+            color: #4CAF50;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            font-weight: bold;
+        }
+
+        .pagination-button:hover:not(.disabled) {
+            background-color: #f1f8e9; /* Un verde muy claro */
+        }
+
+        .pagination-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -221,11 +256,11 @@
 
         <div class="card-container">
 
-            <div th:if="${hechosDelContribuyente == null or #lists.isEmpty(hechosDelContribuyente)}" class="alert alert-info" style="width: 100%; text-align: center; color: #333;">
+            <div th:if="${hechosPage == null or hechosPage.totalElements == 0}" class="alert alert-info" style="width: 100%; text-align: center; color: #333;">
                 <i class="fa-solid fa-circle-info"></i> Aún no has registrado ningún hecho.
             </div>
 
-            <div class="card" th:each="hecho : ${hechosDelContribuyente}">
+            <div class="card" th:each="hecho : ${hechosPage.content}">
 
                 <h3 th:text="${hecho.titulo}">Titular Destacado</h3>
 
@@ -251,6 +286,37 @@
 
                 </div>
             </div>
+        </div>
+        <div class="pagination-container" th:if="${hechosPage != null and hechosPage.totalPages > 1}">
+
+            <a th:href="@{/hechos/mis-hechos(page=${hechosPage.number - 1}, size=${hechosPage.size})}"
+               th:classappend="${hechosPage.first} ? 'disabled'"
+               class="pagination-button"
+               title="Página Anterior">
+                <i class="fa-solid fa-chevron-left"></i> Anterior
+            </a>
+
+            <th:block th:with="currentPage=${hechosPage.number}, totalPages=${hechosPage.totalPages}">
+                <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <a th:if="${i < 3 or (i >= currentPage - 2 and i <= currentPage + 2) or i >= totalPages - 3}"
+                       th:href="@{/hechos/mis-hechos(page=${i}, size=${hechosPage.size})}"
+                       th:classappend="${i == currentPage} ? 'active'"
+                       class="pagination-button"
+                       th:text="${i + 1}">1</a>
+
+                    <span th:if="${(i == 3 and currentPage > 4) or (i == totalPages - 3 and currentPage < totalPages - 5)}" th:text="..."></span>
+                </th:block>
+            </th:block>
+
+            <a th:href="@{/hechos/mis-hechos(page=${hechosPage.number + 1}, size=${hechosPage.size})}"
+               th:classappend="${hechosPage.last} ? 'disabled'"
+               class="pagination-button"
+               title="Página Siguiente">
+                Siguiente <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+        </div>
+
         </div>
     </main>
 </body>
