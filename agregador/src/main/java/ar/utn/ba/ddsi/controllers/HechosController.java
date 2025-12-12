@@ -42,10 +42,14 @@ public class HechosController {
     }
 
 
-    @GetMapping("/contribuyente")      // Le sacamos el {id} por ahora, ya que se uso queda reservado para validaciones contra el token
-    public List<HechoOutputDTO> buscarHechoContribuyente(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/contribuyente")
+    public Page<HechoOutputDTO> buscarHechoContribuyente(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam Map<String, String> parametros,
+            @PageableDefault(size = 10, page = 0) Pageable pageable
+    ) {
         Long contribuyenteId = userDetails.getId();
-        return hechosService.buscarHechoDe(contribuyenteId);
+        return hechosService.obtenerPorContribuyente(contribuyenteId, parametros, pageable);
     }
 
     @GetMapping("/destacados/{cantidad_hechos_destacados}")

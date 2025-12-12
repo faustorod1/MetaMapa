@@ -17,7 +17,7 @@ public interface IHechosService {
     Page<Hecho> obtenerPorColeccion(Long id, Map<String, String> params, Pageable pageable);    Hecho obtenerNoEliminadoPorId(Long id);
     List<Hecho> getFromMetaMapa();
     List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales);
-    List<HechoOutputDTO> buscarHechoDe(Long contribuyenteId);
+    Page<HechoOutputDTO> obtenerPorContribuyente(Long contribuyenteId, Map<String, String> params, Pageable pageable);
     void actualizarHechos();
     void normalizarCategoria(List<Hecho> hechos);
     void normalizarUbicacion(List<Hecho> hechos);

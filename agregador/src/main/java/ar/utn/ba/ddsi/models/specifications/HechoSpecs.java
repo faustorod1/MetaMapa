@@ -87,45 +87,35 @@ public class HechoSpecs {
         };
     }
 
-/*
-    public static Specification<Hecho> pertenecienteAColeccion(String coleccionIdentificador, boolean consensuados) {
+    public static Specification<Hecho> pertenecienteAColeccion(Long coleccionId,
+                                                               boolean traerConsensuados) {
+
         return (root, query, cb) -> {
-            var subquery = query.subquery(Hecho.class);
-            Root<Coleccion> coleccionRoot = subquery.from(Coleccion.class);
+            assert query != null;
+            query.distinct(true);
 
-            jakarta.persistence.criteria.Join<Coleccion, Hecho> joinHechos = consensuados
-                    ? coleccionRoot.join("hechosConsensuados")
-                    : coleccionRoot.join("hechos");
+            // 1. JOIN DE PERTENENCIA BASE
+            Join<Hecho, Coleccion> join = root.join("colecciones", JoinType.INNER);
+            Predicate base = cb.equal(join.get("id"), coleccionId);
 
-            subquery.select(joinHechos)
-                    .where(cb.equal(coleccionRoot.get("identificador"), coleccionIdentificador));
+            if (!traerConsensuados) {
+                return base;
+            }
 
-            return root.in(subquery);
+            // y colecciones son entidades/tablas distintas en el modelo Hecho
+            Join<Hecho, Coleccion> joinCons = root.join("coleccionesConsensuadas", JoinType.INNER);
+            Predicate cons = cb.equal(joinCons.get("id"), coleccionId);
+
+            return cb.and(base, cons);
         };
     }
-    */
-public static Specification<Hecho> pertenecienteAColeccion(Long coleccionId,
-                                                           boolean traerConsensuados) {
 
-    return (root, query, cb) -> {
-        assert query != null;
-        query.distinct(true);
 
-        // 1. JOIN DE PERTENENCIA BASE
-        Join<Hecho, Coleccion> join = root.join("colecciones", JoinType.INNER);
-        Predicate base = cb.equal(join.get("id"), coleccionId);
-
-        if (!traerConsensuados) {
-            return base;
-        }
-
-        // y colecciones son entidades/tablas distintas en el modelo Hecho
-        Join<Hecho, Coleccion> joinCons = root.join("coleccionesConsensuadas", JoinType.INNER);
-        Predicate cons = cb.equal(joinCons.get("id"), coleccionId);
-
-        return cb.and(base, cons);
-    };
-}
+    public static Specification<Hecho> porContribuyente(Long idContribuyente) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("contribuyenteId"), idContribuyente);
+        };
+    }
 
 
     private static LocalDateTime parsearFecha(String fechaStr) {

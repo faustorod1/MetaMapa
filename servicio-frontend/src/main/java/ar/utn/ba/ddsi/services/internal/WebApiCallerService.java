@@ -1,10 +1,13 @@
 package ar.utn.ba.ddsi.services.internal;
 
 import ar.utn.ba.ddsi.exceptions.NotFoundException;
+import ar.utn.ba.ddsi.models.dto.RestPage;
 import ar.utn.ba.ddsi.models.dto.external.RefreshTokenDTO;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -93,6 +96,18 @@ public class WebApiCallerService {
                         .retrieve()
                         .bodyToFlux(responseType)
                         .collectList()
+                        .block()
+        );
+    }
+
+    public <T> Page<T> getPage(String url, ParameterizedTypeReference<RestPage<T>> responseType) {
+        return executeWithTokenRetry(accessToken ->
+                webClient
+                        .get()
+                        .uri(url)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .retrieve()
+                        .bodyToMono(responseType)
                         .block()
         );
     }

@@ -86,8 +86,8 @@ public class HechosController {
     @GetMapping("/mis-hechos")
     public String misHechos(
             Model model,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "15") int size
+            @RequestParam(name="page", defaultValue = "0") int page,
+            @RequestParam(name="size", defaultValue = "15") int size
     ) {
         try {
             Page<HechoDTO> hechosPage = agregadorService.pedirHechosDeContribuyentePaginado(page, size);

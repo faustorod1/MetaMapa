@@ -72,15 +72,13 @@ public class AgregadorService implements IAgregadorService {
 
     @Override
     public Page<HechoDTO> pedirHechosDeContribuyentePaginado(int page, int size) {
-        return agregadorWebClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/api/hechos/contribuyente") //TODO CORREGIR ENDPOINT
-                        .queryParam("page", page)
-                        .queryParam("size", size)
-                        .build())
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<RestPage<HechoDTO>>() {})
-                .block();
+      String url = UriComponentsBuilder
+              .fromHttpUrl(agregadorBaseUrl + "/api/hechos/contribuyente")
+              .queryParam("page", page)
+              .queryParam("size", size)
+              .toUriString();
+
+      return webApiCallerService.getPage(url, new ParameterizedTypeReference<RestPage<HechoDTO>>() {});
     }
 
    public List<String> pedirIdentificadoresDeColecciones(){

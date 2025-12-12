@@ -108,6 +108,15 @@ public class HechosService implements IHechosService {
         return HechoOutputDTO.fromEntity(obtenerNoEliminadoPorId(id));
     }
 
+    public Page<HechoOutputDTO> obtenerPorContribuyente(Long contribuyenteId, Map<String, String> params, Pageable pageable) {
+        Specification<Hecho> specFiltros = HechoSpecs.porFiltros(params);
+        Specification<Hecho> specContribuyente = HechoSpecs.porContribuyente(contribuyenteId);
+        Specification<Hecho> specFinal = Specification.where(specContribuyente).and(specFiltros);
+        Page<Hecho> paginaHechos = hechosRepository.findAll(specFinal, pageable);
+
+        return paginaHechos.map(HechoOutputDTO::fromEntity);
+    }
+
     // -------------------------------------------------------- Métodos de trabajo interno ---------------------------------------------------------------------------//
     @Override
     public Hecho obtenerPorId(Long id){
@@ -380,12 +389,6 @@ public class HechosService implements IHechosService {
         viejo.setFechaUltimaActualizacion(LocalDateTime.now());
         viejo.setRevisado(nuevo.isRevisado());
         viejo.setDepartamento(nuevo.getDepartamento());
-    }
-
-    public List<HechoOutputDTO> buscarHechoDe(Long contribuyenteId) {
-        return hechosRepository.findByContribuyenteId(contribuyenteId).stream()
-                .filter(hecho -> !hecho.isEliminado())
-                .map(HechoOutputDTO::fromEntity).toList();
     }
 
     //TODO: revisar si es funcional esto asincronico
