@@ -86,8 +86,11 @@
                 }
 
                 .icon-off {
-                    display: none;
-                    color: #ccc;
+                    color: #888; /* Color gris suave para el modo 'Off' */
+                }
+
+                .icon-on {
+                    color: var(--color-main); /* Por ejemplo, el color principal para el modo 'On' */
                 }
 
                 h3 {
@@ -170,13 +173,32 @@
             <div class="container-detalle">
 
                 <div class="header-detalle">
+                    <div>
                     <h2 th:text="${coleccion.titulo}">Título de la Colección</h2>
-                    <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Descripción...</span></p>
+                        <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Descripción...</span></p>
+                    </div>
 
-                <button id="nav-button-modo-de-navegacion" title="Modo de navegacion">
-                    <i class="fa-solid fa-toggle-on"></i>
-                    <i class="fa-solid fa-toggle-off"></i>
-                </button>
+                    <div th:with="nextMode=${isIrrestricta} ? 'curada' : 'irrestricta'">
+                        <a id="nav-button-modo-de-navegacion"
+                           title="Cambiar modo de navegación"
+                           th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=0&size=' + ${coleccion.hechosPage.size} + '&modo=' + ${nextMode}}">
+
+                            <i th:classappend="${isIrrestricta}
+                                ? ' fa-solid fa-toggle-off'
+                                : ' fa-solid fa-toggle-on'"
+                            th:styleappend="${isIrrestricta}
+                            ? 'color: #888;'
+                            : 'color: var(--color-main);'">
+                            </i>
+
+                            <span style="font-size: 0.8rem; font-weight: bold; margin-left: 0.5rem; color: #555;">
+                            Modo:
+                            <span th:text="${isIrrestricta} ? 'IRRESTRICTA' : 'CURADA'"
+                    th:styleappend="${isIrrestricta} ? 'color: var(--color-main);' : 'color: #888;'">
+                    </span>
+        </span>
+                        </a>
+                    </div>
                 </div>
 
                 <h3 style="margin-bottom: 1.5rem; color: #444;">Hechos de esta colección</h3>
@@ -231,40 +253,29 @@
 
 
             </div>
-            <div class="paginacion"
-                 style="display:flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-top:2rem;
-                    width: 100%;
-                    max-width: 100%;"
-                 th:with="pageMetadata=${coleccion.hechosPage}">
+                <div class="paginacion"
+                     style="display:flex; justify-content: space-between; align-items: center; margin-top:2rem; width: 100%;"
+                     th:with="pageMetadata=${coleccion.hechosPage}, currentMode=${currentMode}">
 
-                <div>
-                    <a th:if="${pageMetadata.hasPrevious}"
-                       th:href="@{'/colecciones/' + ${coleccion.identificador} +
-               '/con-hechos?page=' + ${pageMetadata.number - 1} +
-               '&size=' + ${pageMetadata.size}}">
-                        ← Anterior
-                    </a>
-                </div>
+                    <div>
+                        <a th:if="${pageMetadata != null and pageMetadata.hasPrevious}"
+                           th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=' + ${pageMetadata.number - 1} + '&size=' + ${pageMetadata.size} + '&modo=' + ${currentMode}}">
+                            ← Anterior
+                        </a>
+                    </div>
 
-                <span style="font-weight:bold"
-                      th:text="'Página ' + (${pageMetadata.number + 1}) + ' de ' + ${pageMetadata.totalPages}">
-                </span>
+                    <span style="font-weight:bold"
+                          th:text="'Página ' + (${pageMetadata.number + 1}) + ' de ' + ${pageMetadata.totalPages}">
+                    </span>
 
-                <div style="text-align: right;">
-                    <a th:if="${pageMetadata.hasNext}"
-                       th:href="@{'/colecciones/' + ${coleccion.identificador} +
-               '/con-hechos?page=' + ${pageMetadata.number + 1} +
-               '&size=' + ${pageMetadata.size}}">
-                        Siguiente →
-                    </a>
+                    <div style="text-align: right;">
+                        <a th:if="${pageMetadata != null and pageMetadata.hasNext}"
+                           th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=' + ${pageMetadata.number + 1} + '&size=' + ${pageMetadata.size} + '&modo=' + ${currentMode}}">
+                            Siguiente →
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-
- </main>
-</body>
-</html>
-
+        </main>
+        </body>
+ </html>

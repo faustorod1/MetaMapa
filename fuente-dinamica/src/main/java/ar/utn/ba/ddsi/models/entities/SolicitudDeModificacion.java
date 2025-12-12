@@ -50,11 +50,13 @@ public class SolicitudDeModificacion {
   @CollectionTable(name = "etiquetas_nuevas", joinColumns = @JoinColumn(name = "solicitud_de_modificacion_id"))
   @Column(name = "etiqueta")
   private Set<String> etiquetasNuevas;
-
+/*
   @ElementCollection
   @CollectionTable(name = "contenidos_multimedia_nuevo", joinColumns = @JoinColumn(name = "hecho_id"))
   @Column(name = "path")
   private List<String> contenidosMultimediaNuevos;
+  */
+
   //---------------------------------------------
 
   @Enumerated(EnumType.STRING)
@@ -97,9 +99,12 @@ public class SolicitudDeModificacion {
       if(etiquetasNuevas != null){
         hecho.setEtiquetas(etiquetasNuevas);
       }
+      /*
       if(contenidosMultimediaNuevos != null){
         hecho.setContenidosMultimedia(contenidosMultimediaNuevos);
       }
+      */
+
     }
     if(estado == RECHAZADA){
       hecho.setSolicitudDeModificacion(null);

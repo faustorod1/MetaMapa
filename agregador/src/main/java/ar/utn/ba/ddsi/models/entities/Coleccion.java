@@ -145,14 +145,14 @@ public class Coleccion {
         hechos.remove(hecho);
     }
 
-
     public void consensuarHechos(){
-        this.hechosConsensuados.clear();        // Para asegurar que todos los hechos esten consensuados al día, vaciamos la lista
-        if(this.algoritmoDeConsenso != null){
-            this.hechosConsensuados = this.algoritmoDeConsenso.consensuar(this.hechos, this.fuentes);    // Los volvemos a consensuar
-        }else{
-            this.hechosConsensuados = this.hechos;      // En caso de que no se aclare un algoritmo de consenso, todos sus hechos catalogarán como "consensuados"
-        }
+        List<Hecho> nuevos = (this.algoritmoDeConsenso != null)
+                ? this.algoritmoDeConsenso.consensuar(this.hechos, this.fuentes)
+                : new ArrayList<>(this.hechos);
+
+        System.out.println("Resultado de AlgoritmoDeConsenso.consensuar(): " + nuevos.size() + " hechos.");
+        this.hechosConsensuados.clear();
+        this.hechosConsensuados.addAll(nuevos);
     }
 
     public void editar(Coleccion coleccion){

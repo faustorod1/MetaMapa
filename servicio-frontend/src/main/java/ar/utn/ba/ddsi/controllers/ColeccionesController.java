@@ -142,10 +142,13 @@ public class ColeccionesController {
 
     @GetMapping("/{id}/con-hechos")
     public String mostrarColeccionPorId(@PathVariable("id") String id, Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-                                        @RequestParam(name = "size", defaultValue = "10") int size){
-        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id, page, size);
+                                        @RequestParam(name = "size", defaultValue = "10") int size,
+                                        @RequestParam(name = "modo", defaultValue = "irrestricta") String modo){
+        ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id, page, size, modo);
         log.info("Colección traida: " + coleccion);
         model.addAttribute("coleccion", coleccion);
+        model.addAttribute("currentMode", modo);
+        model.addAttribute("isIrrestricta", modo.equals("irrestricta"));
         return "main-page/verColeccion";
     }
 

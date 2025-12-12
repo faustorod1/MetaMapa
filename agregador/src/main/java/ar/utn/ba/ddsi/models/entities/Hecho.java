@@ -123,14 +123,17 @@ public class Hecho {
 
         if (!this.titulo.equals(otroHecho.getTitulo())) {
             return false;
-        }
+        } else {
 
-        return  Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
-                Objects.equals(this.categoria, otroHecho.getCategoria()) &&
-                Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) &&
-                Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&
-                Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+            return  //Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
+                    Objects.equals(this.categoria, otroHecho.getCategoria()); //&&
+            //Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) &&
+            //Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&
+            //Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+
+        }
     }
+
 
 
 
@@ -142,11 +145,11 @@ public class Hecho {
             return false;
         }
 
-        return !Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
-                !Objects.equals(this.categoria, otroHecho.getCategoria()) ||
-                !Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) ||
-                !Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
-                !Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+        return //!Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
+                !Objects.equals(this.categoria, otroHecho.getCategoria()); // ||
+                //!Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) ||
+                //!Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
+                //!Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
     }
 
     public Provincia getProvincia(){

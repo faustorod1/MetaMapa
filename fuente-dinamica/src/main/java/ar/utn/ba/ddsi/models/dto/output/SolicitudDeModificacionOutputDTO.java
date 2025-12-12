@@ -48,7 +48,7 @@ public class SolicitudDeModificacionOutputDTO {
         dto.setLongitudNueva(solicitud.getLongitudNueva());
         dto.setFechaHechoNueva(solicitud.getFechaHechoNueva());
         dto.setEtiquetasNuevas(solicitud.getEtiquetasNuevas());
-        dto.setContenidosMultimediaNuevos(solicitud.getContenidosMultimediaNuevos());
+       // dto.setContenidosMultimediaNuevos(solicitud.getContenidosMultimediaNuevos());
         return dto;
     }
 

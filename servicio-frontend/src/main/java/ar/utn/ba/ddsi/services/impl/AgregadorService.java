@@ -135,11 +135,11 @@ public class AgregadorService implements IAgregadorService {
                 ColeccionConHechosDTO.class);
     }
 
-    public ColeccionConHechosDTO pedirColeccionConHechos(String id, int pagina, int tamanio){
+    public ColeccionConHechosDTO pedirColeccionConHechos(String id, int pagina, int tamanio, String modo){
         String urlBase = agregadorBaseUrl + "/api/colecciones/" + id + "/con-hechos"
                 + "?page=" + pagina + "&size=" + tamanio;
         String urlFinal = UriComponentsBuilder.fromHttpUrl(urlBase)
-                .queryParam("modo", "irrestricta") // TODO: nos falta implementar el modo curado. Podria recibirlo por parametro
+                .queryParam("modo", modo)
                 .toUriString();
 
         return webApiCallerService.get(
