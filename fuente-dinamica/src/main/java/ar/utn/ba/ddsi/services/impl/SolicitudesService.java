@@ -82,7 +82,7 @@ public class SolicitudesService implements ISolicitudesService {
                     .fechaHechoNueva(hechoInput.getFechaHecho())
                     .etiquetasNuevas(hechoInput.getEtiquetas().stream().map(EtiquetaDTO::getNombre).collect(Collectors.toCollection(HashSet::new)))
                     .estado(EstadoSolicitud.PENDIENTE)
-                    // .contenidosMultimediaNuevos() TODO: falta el manejo del contenidoMultimedia
+                   // .contenidosMultimediaNuevos();
                     .build();
 
     hecho.setSolicitudDeModificacion(nuevaSolicitudDeModificacion);

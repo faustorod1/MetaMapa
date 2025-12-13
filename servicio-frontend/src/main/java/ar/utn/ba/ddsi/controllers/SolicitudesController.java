@@ -74,16 +74,14 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
 
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
-    try{
+   // try{
     List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
-    List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
+        // List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
 
       HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+      // log.info("hechos recibido: " + hechosDelContribuyente);
       Long id_externo_hecho = hecho.getIdExterno().getIdExterno();
-      boolean pertenece = hechosDelContribuyente.stream().anyMatch(h -> h.getId().equals(id_hecho));
-      if (!pertenece) {
-        return "error/403";
-      }
+      // boolean pertenece = hechosDelContribuyente.stream().anyMatch(h -> h.getId().equals(id_hecho));
 
       HechoOutputDTO hechoOutputDTO = HechoOutputDTO.fromDTOtoOutput(hecho);
 
@@ -94,9 +92,9 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
 
       return "main-page/crearSolicitudDeModificacion";
 
-    } catch (Exception ex) {
-      return "error/404";
-    }
+   // } catch (Exception ex) {
+    //  return "error/404";
+    //}
   }
 
   @PostMapping("/solicitarModificacion")

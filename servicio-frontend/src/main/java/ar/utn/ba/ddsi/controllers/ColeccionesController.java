@@ -152,12 +152,5 @@ public class ColeccionesController {
         return "main-page/verColeccion";
     }
 
-    @GetMapping("/{id}/con-hechos-curados")
-    public String mostrarColeccionPorIdCurados(@PathVariable("id") String id, Model model){
-       //ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechosCurados(id, pageable.getPageNumber(), pageable.getPageSize());
-       //model.addAttribute("coleccion",coleccion);
-        return "main-page/verColeccion";
-    }
-
 
 }

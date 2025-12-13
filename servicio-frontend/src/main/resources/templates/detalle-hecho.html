@@ -21,10 +21,10 @@
             margin:0;
             font-family: Arial, sans-serif;
             background-image: var(--imagen-fondo-levemente-cargado);
-            background-size: cover;                 /* Que cubra toda la pantalla */
-            background-repeat: no-repeat;           /* Que no se repita */
-            background-attachment: fixed;           /* Fijo */
-            background-position: center center;     /* Que esté centrada */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
             align-items: center;
             justify-content: center;
             display: flex;
@@ -36,11 +36,13 @@
             background: var(--color-main);
             border-radius: 1rem;
             padding: 1.5rem;
-            height:80vh;
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
             max-width: 70rem;
             width: 80%;
             position: relative;
-            margin-top:3rem;
+            margin-top:5rem;
         }
 
         .header {
@@ -74,17 +76,22 @@
             margin-bottom: 0.8rem;
         }
 
-        .imagenes {
+        /* Contenedor principal de imágenes */
+        .contenedor-imagenes {
             display: flex;
-            justify-content: space-between;
-            gap: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
             margin: 0.5rem 0;
-            padding:0;
+            overflow-y: auto;
+            max-height: 70vh;
+            padding: 0.5rem 0;
         }
 
-        .imagen {
-            flex: 1;
-            height: 15rem;
+        /* Imágenes de tamaño igual (achicadas) */
+        .imagen-miniatura {
+            /* Calcula para que quepan 5 imágenes por fila */
+            flex: 0 0 calc(20% - 0.4rem);
+            height: 6rem;
             background: white;
             border-radius: 0.5rem;
             overflow: hidden;
@@ -92,15 +99,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: transform 0.3s ease;
         }
-        .imagen img {
+        .imagen-miniatura:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .imagen-miniatura img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 0.5rem;
             transition: transform 0.3s ease;
         }
-        .imagen:hover img {
+        .imagen-miniatura:hover img {
             transform: scale(1.05);
         }
 
@@ -138,20 +151,18 @@
             background: var(--color-main-2-hover);
         }
 
-        .menu {
-            background-color: var(--color-main-2);
-            font-size: 2rem;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            line-height: 1;
-            transition: background 0.2s ease;
-        }
 
-        .menu:hover {
-            background: var(--color-main-2-hover);
+        /* Estilos para detalles en fila */
+        .detalles-fila {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 0.8rem;
         }
-
+        .detalles-fila .coordenadas,
+        .detalles-fila .fuente {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
 
 
         .flecha {
@@ -239,13 +250,28 @@
             color: grey;
         }
 
-
+        /* Estilos de detalle (color modificado) */
+        .coordenadas, .fuente, .etiquetas, .metadata small {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.7); /* Gris claro sutil */
+        }
+        .etiquetas {
+            margin-top: 0.8rem;
+            font-weight: 500;
+        }
+        .metadata {
+            margin-top: 0.5rem;
+        }
+        .metadata small {
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
 
-    <a th:href="@{/main}" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
-    <div id="fixed-logo"></div>
+<a th:href="@{/main}" id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+<div id="fixed-logo"></div>
 
 <div class="card">
 
@@ -253,10 +279,37 @@
         <div>
             <span class="titulo" th:text="${hechoDTO.titulo}">Titulo del hecho</span>
             <span class="categoria" th:text="${hechoDTO.categoria.nombre}">Categoria</span>
+
             <div class="fecha" th:text="${hechoDTO.fechaHecho.toLocalDate()}">DD/MM/AAAA</div>
-            <div class="ubicacion" th:text="${hechoDTO.departamento.getNombre() + ', ' + hechoDTO.departamento.getProvincia().getNombre()}">Una Dirección 1234</div>
+
+            <div class="ubicacion" th:if="${hechoDTO.departamento}">
+                <i class="fa-solid fa-location-dot"></i>
+                <span th:text="${hechoDTO.departamento.getNombre() + ', ' + hechoDTO.departamento.getProvincia().getNombre()}">Departamento, Provincia</span>
+            </div>
+
+            <div class="detalles-fila">
+
+                <div class="coordenadas" th:if="${hechoDTO.lugarAcontecimiento}">
+                    <i class="fa-solid fa-globe"></i>
+                    Coordenadas: <span th:text="${hechoDTO.lugarAcontecimiento.latitud}">Latitud</span>, <span th:text="${hechoDTO.lugarAcontecimiento.longitud}">Longitud</span>
+                </div>
+
+                <div class="fuente" th:if="${hechoDTO.idExterno != null and hechoDTO.idExterno.fuente != null}">
+                    <i class="fa-solid fa-link"></i>
+                    Fuente: <span th:text="${hechoDTO.idExterno.fuente.tipoDeFuente}">Tipo de Fuente</span>
+                </div>
+
+            </div>
+
+            <div class="etiquetas" th:if="${hechoDTO.etiquetas != null and not #sets.isEmpty(hechoDTO.etiquetas)}">
+                <i class="fa-solid fa-tag"></i>
+                Etiquetas:
+                <span th:each="etiqueta : ${hechoDTO.etiquetas}" th:text="'#' + ${etiqueta} + ' '">#etiqueta</span>
+            </div>
+
+
+
         </div>
-        <div class="menu">⋮</div>
     </div>
 
 
@@ -264,60 +317,59 @@
         <textarea style="resize: none" placeholder="Descripción" readonly th:text="${hechoDTO.descripcion}"></textarea>
     </div>
 
-    <div class="imagenes" th:if="${hechoDTO.contenidosMultimedia != null and not #lists.isEmpty(hechoDTO.contenidosMultimedia)}">
-        <div class="imagen" th:each="multimedia : ${hechoDTO.contenidosMultimedia}">
+    <div class="contenedor-imagenes" th:if="${hechoDTO.contenidosMultimedia != null and not #lists.isEmpty(hechoDTO.contenidosMultimedia)}">
+        <div class="imagen-miniatura" th:each="multimedia : ${hechoDTO.contenidosMultimedia}">
 
             <img th:src="${multimedia.pathImagen}"
                  th:alt="'Imagen del hecho ' + ${hechoDTO.titulo}" />
 
         </div>
-
     </div>
 
-    <!-- Modal para imagen expandida -->
     <div class="modal" id="modal">
         <div class="modal-content">
-        <span class="close-modal" id="closeModal">&times;</span>
-        <img src="" alt="Imagen expandida" id="modalImage" />
+            <span class="close-modal" id="closeModal">&times;</span>
+            <img src="" alt="Imagen expandida" id="modalImage" />
         </div>
-        </div>
+    </div>
+</div>
 
-<script>
-    // Seleccionar elementos relevantes
-    const modal = document.getElementById('modal');
-    const modalImage = document.getElementById('modalImage');
-    const closeModalBtn = document.getElementById('closeModal');
-    // Todas las imágenes pequeñas
-    const imagenes = document.querySelectorAll('.imagen img');
-    imagenes.forEach(img => {
-        img.addEventListener('click', () => {
-            modal.style.display = 'flex';
-            modalImage.src = img.src;
-            modalImage.alt = img.alt;
+    <script>
+        // Seleccionar elementos relevantes
+        const modal = document.getElementById('modal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModalBtn = document.getElementById('closeModal');
+        // Todas las imágenes pequeñas
+        const imagenes = document.querySelectorAll('.imagen-miniatura img');
+        imagenes.forEach(img => {
+            img.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                modalImage.src = img.src;
+                modalImage.alt = img.alt;
+            });
         });
-    });
-    // Cerrar modal al hacer clic en la X
-    closeModalBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        modalImage.src = '';
-        modalImage.alt = '';
-    });
-    // Cerrar modal al hacer clic fuera de la imagen
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+        // Cerrar modal al hacer clic en la X
+        closeModalBtn.addEventListener('click', () => {
             modal.style.display = 'none';
             modalImage.src = '';
             modalImage.alt = '';
-        }
-    });
-    // También se puede cerrar con la tecla ESC (opcional)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'flex') {
-            modal.style.display = 'none';
-            modalImage.src = '';
-            modalImage.alt = '';
-        }
-    });
-</script>
+        });
+        // Cerrar modal al hacer clic fuera de la imagen
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                modalImage.src = '';
+                modalImage.alt = '';
+            }
+        });
+        // También se puede cerrar con la tecla ESC (opcional)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                modal.style.display = 'none';
+                modalImage.src = '';
+                modalImage.alt = '';
+            }
+        });
+    </script>
 </body>
 </html>
