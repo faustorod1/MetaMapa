@@ -5,6 +5,7 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.exceptions.SolicitudYaProcesadaException;
 import jakarta.persistence.*;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -101,7 +102,10 @@ public class SolicitudDeModificacion {
       }
       /*
       if(contenidosMultimediaNuevos != null){
-        hecho.setContenidosMultimedia(contenidosMultimediaNuevos);
+        List<ContenidoMultimedia> nuevasEntidades = contenidosMultimediaNuevos.stream()
+            .map(ContenidoMultimedia::new)
+            .collect(Collectors.toList());
+        hecho.setContenidosMultimedia(nuevasEntidades);
       }
       */
 
