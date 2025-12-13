@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig {
@@ -19,7 +22,7 @@ public class SecurityConfig {
 
     @Autowired
     public SecurityConfig(CustomAuthenticationSuccessHandler successHandler) {
-      this.successHandler = successHandler;
+        this.successHandler = successHandler;
     }
 
     @Bean
@@ -39,17 +42,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/login", "/logout", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
-                                        "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}", "/colecciones").permitAll()
+                                "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}", "/colecciones", "/colecciones/{id}/con-hechos").permitAll()
                         .requestMatchers("/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion", "/api/solicitudes/modificacion/{id_hecho}", "api/solicitudes/solicitarModificacion").hasAnyRole("CONTRIBUYENTE","ADMIN")
                         .requestMatchers("/colecciones/formulario-de-carga", "/colecciones/cargar", "/colecciones/formulario-de-edicion/{id_coleccion}","/colecciones/editar", "/api/solicitudes/tratarEliminaciones", "/api/solicitudes/tratarEliminacion/{id}", "/api/solicitudes/resolverEliminacion", "/api/solicitudes/tratarModificaciones", "/api/solicitudes/tratarModificacion/{solicitudId}").hasRole("ADMIN")
                         .requestMatchers("/404","/403","/401").permitAll()
                         .requestMatchers("/sinSolicitudesDeEliminacionPendientes", "/sinSolicitudesDeModificacionPendientes").hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
-                      .successHandler(successHandler)
+                        .successHandler(successHandler)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -58,9 +61,15 @@ public class SecurityConfig {
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) ->
-                                response.sendRedirect("/login?unauthorized")
-                        )
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            String path = request.getRequestURI();
+
+                            if (request.getQueryString() != null) {
+                                path += "?" + request.getQueryString();
+                            }
+                            String encodedPath = URLEncoder.encode(path, StandardCharsets.UTF_8);
+                            response.sendRedirect("/login?requestedView=" + encodedPath);
+                        })
                         .accessDeniedHandler((request, response, accessDeniedException) ->
                                 response.sendRedirect("/403")
                         )

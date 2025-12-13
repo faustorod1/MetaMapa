@@ -37,11 +37,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     session.setAttribute("email", authentication.getName());
 
     String rol = authentication.getAuthorities().stream()
-        .map(GrantedAuthority::getAuthority)
-        .findFirst()
-        .orElse("ROLE_USER");
+            .map(GrantedAuthority::getAuthority)
+            .findFirst()
+            .orElse("ROLE_USER");
     session.setAttribute("role", rol.replace("ROLE_", ""));
 
-    response.sendRedirect("/main");
+    String requestedView = request.getParameter("requestedView");
+    System.out.println(requestedView);
+    if (requestedView != null && !requestedView.isEmpty()) {
+      response.sendRedirect(requestedView);
+    } else {
+      response.sendRedirect("/main");
+    }
   }
 }

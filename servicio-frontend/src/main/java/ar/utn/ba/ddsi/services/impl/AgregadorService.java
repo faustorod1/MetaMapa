@@ -101,18 +101,22 @@ public class AgregadorService implements IAgregadorService {
   }
 
 
-  public List<ColeccionDTO> pedirColecciones(){
-      return webApiCallerService.getList(
-              agregadorBaseUrl + "/api/colecciones",
-              ColeccionDTO.class);
-  }
+    public List<ColeccionDTO> pedirColecciones(){
+        return agregadorWebClient.get()
+                .uri(agregadorBaseUrl + "/api/colecciones")
+                .retrieve()
+                .bodyToFlux(ColeccionDTO.class)
+                .collectList()
+                .block();
+    }
 
-  public ColeccionDTO pedirColeccionPorId(String identificador){
-      return webApiCallerService.get(
-              agregadorBaseUrl + "/api/colecciones/" + identificador,
-              ColeccionDTO.class
-      );
-  }
+    public ColeccionDTO pedirColeccionPorId(String identificador){
+        return agregadorWebClient.get()
+                .uri("/api/colecciones/{identificador}", identificador)
+                .retrieve()
+                .bodyToMono(ColeccionDTO.class)
+                .block();
+    }
 
   public void actualizarColeccion(ColeccionOutputDTO coleccion){
       webApiCallerService.put(
@@ -142,20 +146,24 @@ public class AgregadorService implements IAgregadorService {
                 .queryParam("modo", modo)
                 .toUriString();
 
-        return webApiCallerService.get(
-                urlFinal,
-                ColeccionConHechosDTO.class
-        );
+        return agregadorWebClient.get()
+                .uri(urlFinal)
+                .retrieve()
+                .bodyToMono(ColeccionConHechosDTO.class)
+                .block();
     }
 
 
+    public List<CategoriaDTO> pedirCategorias() {
+        return agregadorWebClient.get()
+                .uri(agregadorBaseUrl + "/api/categorias")
+                .retrieve()
+                .bodyToFlux(CategoriaDTO.class)
+                .collectList()
+                .block();
+    }
 
-   public List<CategoriaDTO> pedirCategorias() {
-      return webApiCallerService.getList(
-              agregadorBaseUrl + "/api/categorias",
-              CategoriaDTO.class
-      );
-   }
+
 
    public CategoriaDTO pedirCategoriaPorID(Long id){
       return agregadorWebClient.get()

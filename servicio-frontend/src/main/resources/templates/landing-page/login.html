@@ -14,7 +14,7 @@
         body {
             min-height: 100%;
             margin: 5rem;
-            background-image: var(--imagen-fondo-levemente-cargado);
+            background-image: url('/fondoLevementeCargado.png');
             background-attachment: fixed;
             background-position: center center;
             background-repeat: no-repeat;
@@ -33,44 +33,46 @@
 </head>
 
 <body>
-    <a th:href="@{/}"  id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
-    <div id="fixed-logo"></div>
+<a th:href="@{/}"  id="btn-back-page"><i class="fa-solid fa-chevron-left"></i></a>
+<div id="fixed-logo"></div>
 
-    <form th:action="@{/login}" th:object="${datosLogin}" class="login-form" method="POST">
+<form th:action="@{/login}" th:object="${datosLogin}" class="login-form" method="POST">
 
-        <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
-             style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
-        </div>
+    <div th:if="${exito}" class="alert alert-success" th:text="${exito}"
+         style="margin-bottom: 20px; padding: 10px; border: 1px ;background-color: #d4edda; color: #155724;">
+    </div>
 
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"
-             style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
-        </div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"
+         style="margin-bottom: 20px; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;">
+    </div>
 
 
-        <h2>Iniciar sesión</h2>
-        <div class="input-container">
-            <label for="username">Correo electrónico</label>
-            <input type="email" id="username" th:field="*{username}" name="username" required>
+    <h2>Iniciar sesión</h2>
+    <div class="input-container">
+        <label for="username">Correo electrónico</label>
+        <input type="email" id="username" th:field="*{username}" name="username" required>
 
-        </div>
-        <div class="input-container">
-            <label for="password">Contraseña</label>
-            <span>
+    </div>
+    <div class="input-container">
+        <label for="password">Contraseña</label>
+        <span>
                 <i class="fa-solid fa-eye password-show"
-                    id="password-show"
-                    onclick="togglePasswordVisible('password-show')"></i>
+                   id="password-show"
+                   onclick="togglePasswordVisible('password-show')"></i>
                 <input type="password" id="password" name="password" th:field="*{password}" required>
             </span>
-        </div>
+    </div>
 
 
-        <button class="btn-submit" type="submit" id="btn-login">Iniciar sesión</button>
+    <button class="btn-submit" type="submit" id="btn-login">Iniciar sesión</button>
 
 
-        <div id="go-to-login">
-            ¿Todavía no tiene una cuenta? <a th:href="@{/register}">Crear cuenta</a>
-        </div>
-    </form>
+    <div id="go-to-login">
+        ¿Todavía no tiene una cuenta? <a th:href="@{/register}">Crear cuenta</a>
+    </div>
+
+    <input type="hidden" name="requestedView" th:if="${param.requestedView}" th:value="${param.requestedView}" />
+</form>
 
 </body>
 </html>
