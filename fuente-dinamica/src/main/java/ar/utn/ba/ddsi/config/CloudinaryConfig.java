@@ -8,11 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-@ConditionalOnProperty(
-        name = "cloudinary.enabled", // Spring buscará esta propiedad
-        havingValue = "true",        // Y solo creará el bean si su valor es 'true'
-        matchIfMissing = false       // SI LA PROPIEDAD NO EXISTE, NO CREES EL BEAN
-)
+
 @Configuration
 public class CloudinaryConfig {
   @Value("${cloudinary.cloud_name}")

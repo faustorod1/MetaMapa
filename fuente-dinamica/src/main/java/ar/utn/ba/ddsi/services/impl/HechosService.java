@@ -8,6 +8,7 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
 // import ar.utn.ba.ddsi.services.internal.ImageUploaderService;
+import ar.utn.ba.ddsi.services.internal.ImageUploaderService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,11 +23,11 @@ import static ar.utn.ba.ddsi.models.entities.OrigenHecho.CONTRIBUYENTE;
 @Service
 public class HechosService implements IHechosService {
     private final IHechosRepository hechosRepository;
-  //  private final ImageUploaderService imageUploaderService;
+    private final ImageUploaderService imageUploaderService;
 
-    public HechosService(IHechosRepository hechosRepository/*, ImageUploaderService imageUploaderService*/) {
+    public HechosService(IHechosRepository hechosRepository, ImageUploaderService imageUploaderService) {
         this.hechosRepository = hechosRepository;
-     //   this.imageUploaderService = imageUploaderService;
+        this.imageUploaderService = imageUploaderService;
     }
 
 
@@ -80,12 +81,12 @@ public class HechosService implements IHechosService {
             for (MultipartFile archivo : imagenes) {
                 if (archivo.isEmpty()) continue;
 
-             //   String urlImagen = imageUploaderService.uploadFile(archivo);
+               String urlImagen = imageUploaderService.uploadFile(archivo);
 
-              //  ContenidoMultimedia cm = new ContenidoMultimedia(urlImagen);
-               // listaMultimedia.add(cm);
+               ContenidoMultimedia cm = new ContenidoMultimedia(urlImagen);
+               listaMultimedia.add(cm);
             }
-           // hecho.setContenidosMultimedia(listaMultimedia);
+            hecho.setContenidosMultimedia(listaMultimedia);
         }
 
         hechosRepository.save(hecho);

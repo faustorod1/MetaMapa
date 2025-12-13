@@ -13,8 +13,8 @@ public class ColeccionesScheduler {
         this.coleccionesService = coleccionesService;
     }
 
-   // @Scheduled(fixedRate = 30000)
-    @Scheduled(cron = "0 00 4 * * *", zone = "America/Argentina/Buenos_Aires")
+    @Scheduled(fixedRate = 60*1000)
+    //@Scheduled(cron = "0 00 4 * * *", zone = "America/Argentina/Buenos_Aires")
     public void consensuarHechosDeColecciones(){
         coleccionesService.consensuarColecciones();
     }

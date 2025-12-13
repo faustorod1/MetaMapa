@@ -117,19 +117,15 @@ public class Hecho {
         return idExterno.getFuente().equals(fuente);
     }
 
-    public boolean hechoIgualA(Hecho otroHecho) {
-        //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS
+    public boolean hechoIgualA(Hecho otroHecho) {   // Consideramos que un hechoA = hechoB si coinciden en titulo, categoria y fecha
         if (otroHecho == null) return false;
 
         if (!this.titulo.equals(otroHecho.getTitulo())) {
             return false;
         } else {
 
-            return  //Objects.equals(this.descripcion, otroHecho.getDescripcion()) &&
-                    Objects.equals(this.categoria, otroHecho.getCategoria()); //&&
-            //Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) &&
-            //Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) &&
-            //Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+            return  Objects.equals(this.categoria, otroHecho.getCategoria()) &&
+                    Objects.equals(this.fechaHecho.toLocalDate(), otroHecho.getFechaHecho().toLocalDate());
 
         }
     }
@@ -137,19 +133,15 @@ public class Hecho {
 
 
 
-    public boolean mismoTituloDiferentesAtributos(Hecho otroHecho) {
-        //NO CONSIDERAMOS ELIMINADO, REVISADO, ID, IDEXTERNO, CONTRIBUYENTE, ORIGEN, FECHAULTIMAACTUALIZACION, FECHADECARGA SOLICITUDESDEELIMINACION NI ETIQUETAS
+    public boolean mismoTituloDiferentesAtributos(Hecho otroHecho) {  // Consideramos que un hechoA = hechoB si coinciden en titulo, categoria y fecha
         if (otroHecho == null) return false;
 
         if (!this.titulo.equals(otroHecho.titulo)) {
             return false;
         }
 
-        return //!Objects.equals(this.descripcion, otroHecho.getDescripcion()) ||
-                !Objects.equals(this.categoria, otroHecho.getCategoria()); // ||
-                //!Objects.equals(this.contenidosMultimedia, otroHecho.getContenidosMultimedia()) ||
-                //!Objects.equals(this.lugarAcontecimiento, otroHecho.getLugarAcontecimiento()) ||
-                //!Objects.equals(this.fechaHecho, otroHecho.getFechaHecho());
+        return  !Objects.equals(this.categoria, otroHecho.getCategoria()) ||
+                !Objects.equals(this.fechaHecho.toLocalDate(), otroHecho.getFechaHecho().toLocalDate());
     }
 
     public Provincia getProvincia(){

@@ -38,7 +38,6 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     List<Coleccion> colecciones = coleccionesRepository.findAll();
     for (Coleccion c : colecciones) {
       c.agregarTandaDeHechos(hechos);
-      c.consensuarHechos();
     }
 
     coleccionesRepository.saveAll(colecciones);
@@ -62,8 +61,6 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     Coleccion coleccion = evento.getColeccion();
     List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(coleccion.getFuentes());
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
-    coleccion.consensuarHechos();
-    System.out.println("ANTES DE GUARDAR, Hechos Consensuados en Coleccion: " + coleccion.getIdentificador() + " tiene: " + coleccion.getHechosConsensuados().size());
     coleccionesRepository.save(coleccion);
 
   }
@@ -75,7 +72,6 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
     List<Fuente> fuentesCambiadas = evento.getFuentesCambiadas();
     List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(fuentesCambiadas);
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
-    coleccion.consensuarHechos();
 
     coleccionesRepository.save(coleccion);
   }
