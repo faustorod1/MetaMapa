@@ -112,13 +112,43 @@
                     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 }
 
-                .hecho-info h3 {
-                    color: var(--color-main);
-                    font-size: 1.3rem;
+                .hecho-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center; /* Alinea verticalmente */
                     margin-bottom: 1rem;
                     border-bottom: 1px solid #e0e0e0;
                     padding-bottom: 0.5rem;
                     width: 100%;
+                }
+
+                .hecho-header h3 {
+                    color: var(--color-main);
+                    font-size: 1.3rem;
+                    margin: 0;
+                }
+
+                .btn-detalle-hecho {
+                    background-color: var(--color-main-2);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 35px;
+                    height: 35px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                    text-decoration: none;
+                }
+
+                .btn-detalle-hecho:hover {
+                    background-color: #218838;
+                }
+
+                .btn-detalle-hecho i {
+                    font-size: 1rem;
                 }
 
                 .hecho-meta {
@@ -208,8 +238,15 @@
                     <!-- LISTA DE HECHOS (usar .content porque es Page) -->
                     <div th:each="hecho : ${coleccion.hechos}" class="hecho-card">
                         <div class="hecho-info">
-
+                            <div class="hecho-header">
                             <h3 th:text="${hecho.titulo}" style="margin-top: 0;">Título del Hecho</h3>
+
+                            <a th:href="@{/hechos/detalle-hecho/{id}(id=${hecho.id})}"
+                               class="btn-detalle-hecho"
+                               title="Ver detalle del hecho">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                            </div>
 
                             <div class="hecho-meta">
                                 <div>
