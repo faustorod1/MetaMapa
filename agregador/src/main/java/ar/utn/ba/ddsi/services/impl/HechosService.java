@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.commons.DivisorEnLotes;
+import ar.utn.ba.ddsi.models.dtos.RestPage;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestMultipleDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
@@ -15,12 +16,14 @@ import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.models.repositories.IDepartamentosRepository;
 import ar.utn.ba.ddsi.models.specifications.HechoSpecs;
+import ar.utn.ba.ddsi.services.IGeorefService;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -64,6 +67,9 @@ public class HechosService implements IHechosService {
 
     @Autowired
     private WebApiCallerService webApiCallerService;
+
+    @Autowired
+    private IGeorefService georefService;
 
     @Autowired
     public HechosService(IHechosRepository hechosRepository, @Value("${fuente.estatica.api.base-url}") String fuenteEstaticaApiBaseUrl, @Value("${fuente.dinamica.api.base-url}") String fuenteDinamicaApiBaseUrl, @Value("${fuente.proxy.api.base-url}") String fuenteProxyApiBaseUrl, @Value("${georef.api.base-url}") String georefApiBaseUrl, ApplicationEventPublisher applicationEventPublisher, WebApiCallerService webApiCallerService) {
@@ -153,31 +159,48 @@ public class HechosService implements IHechosService {
 
     @Override
     public void actualizarHechos(){
+        int BATCH_SIZE = 100;
 
-        // Ejecuta las peticiones a las fuentes y junta los resultados
-        List<HechoFuenteDTO> hechosFuente = new ArrayList<>();
-        webClients.forEach((key, value) -> {
+        webClients.forEach(((tipoDeFuente, webClient) -> {
             try {
-                LocalDateTime desde = fechaUltimaActualizacionFuentes.get(key);
-                List<HechoFuenteDTO> hechosFuenteDTO = getFromFuente(value, desde);
-                if (hechosFuenteDTO != null && !hechosFuenteDTO.isEmpty()) {
-                    logger.info("Se encontraron {} hechos de la fuente: {}", hechosFuenteDTO.size(), key);
-                    hechosFuente.addAll(hechosFuenteDTO);
-                } else {
-                    logger.warn("No se recibieron hechos de la fuente: {}", key);
-                }
-                fechaUltimaActualizacionFuentes.put(key, LocalDateTime.now());
-            } catch (Exception e) {
-                logger.error("Error al obtener hechos de la fuente {}: {}", key, e.getMessage());
-                //e.printStackTrace();
-            }
-        });
+                LocalDateTime desde = fechaUltimaActualizacionFuentes.get(tipoDeFuente);
+                LocalDateTime inicioProceso = LocalDateTime.now();
 
-        // Carga las fuentes del repo y los setea en los hechos obtenidos
+                int page = 0;
+                boolean hayMasPaginas = true;
+
+                while (hayMasPaginas) {
+                    RestPage<HechoFuenteDTO> pagina = getFromFuentePaginado(webClient, desde, page, BATCH_SIZE);
+
+                    if (pagina != null && !pagina.getContent().isEmpty()) {
+                        procesarLoteDeHechos(pagina.getContent());
+                        logger.info("Fuente {}: Procesada página {} con {} hechos.", tipoDeFuente, page, pagina.getNumberOfElements());
+                    }
+
+                    if (pagina == null || pagina.isLast() || pagina.getContent().isEmpty()) {
+                        hayMasPaginas = false;
+                    } else {
+                        page++;
+                    }
+
+                    fechaUltimaActualizacionFuentes.put(tipoDeFuente, inicioProceso);
+                    logger.info("Sincronización finalizada exitosamente con fuente: {}", tipoDeFuente);
+                }
+            } catch (Exception e) {
+                logger.error("Error crítico sincronizando fuente {}: {}", tipoDeFuente, e.getMessage());
+            }
+        }));
+
+    }
+
+    private void procesarLoteDeHechos(List<HechoFuenteDTO> dtos) {
+        if (dtos == null || dtos.isEmpty()) return;
+
         List<Fuente> fuentes = fuentesRepository.findAll();
 
-        List<Hecho> hechos = new ArrayList<>(hechosFuente.stream().map(dto -> {
+        List<Hecho> hechosDelLote = new ArrayList<>(dtos.stream().map(dto -> {
             Hecho hecho = dto.toEntity();
+
             Fuente fuente = fuentes.stream().filter(f -> {
                 boolean fuenteCoincide = f.getTipoDeFuente().name().equals(dto.getTipoDeFuente());
                 if (f.getSubfuenteId() == null || dto.getSubfuenteId() == null) {
@@ -188,42 +211,38 @@ public class HechosService implements IHechosService {
                 Fuente nuevaFuente = new Fuente();
                 nuevaFuente.setTipoDeFuente(TipoDeFuente.valueOf(dto.getTipoDeFuente()));
                 nuevaFuente.setSubfuenteId(dto.getSubfuenteId());
-
-                fuentesRepository.save(nuevaFuente);
-                fuentes.add(nuevaFuente);
-                return nuevaFuente;
+                Fuente guardada = fuentesRepository.save(nuevaFuente);
+                fuentes.add(guardada);
+                return guardada;
             });
-
             hecho.getIdExterno().setFuente(fuente);
             return hecho;
         }).toList());
 
-        // Busca los hechos que comparten ID Externo con los actualizados, pues van a tener que modificarlos
-        List<IdExterno> ids = hechos.stream().map(Hecho::getIdExterno).toList();
-        List<Hecho> hechosAModificar = hechosRepository.findAllByIdExternoIn(ids);
+        List<IdExterno> idsDelLote = hechosDelLote.stream().map(Hecho::getIdExterno).toList();
+        List<Hecho> hechosExistentesEnDB = hechosRepository.findAllByIdExternoIn(idsDelLote);
 
-        normalizarCategoria(hechos);
-        normalizarUbicacion(hechos);
+        normalizarCategoria(hechosDelLote);
+        normalizarUbicacion(hechosDelLote);
 
-        // Para cada hecho normalizado, si ya existía en el agregador, lo actualiza
-        for (int i = 0; i < hechos.size(); i++) {
-            Hecho hechoNormalizado = hechos.get(i);
-            Hecho viejo = hechosAModificar.stream()
+        for (int i = 0; i < hechosDelLote.size(); i++) {
+            Hecho hechoNormalizado = hechosDelLote.get(i);
+
+            Hecho viejo = hechosExistentesEnDB.stream()
                     .filter(h -> h.getIdExterno().equals(hechoNormalizado.getIdExterno()))
                     .findFirst().orElse(null);
+
             if (viejo != null) {
                 modificarHecho(viejo, hechoNormalizado);
-                hechos.set (i, viejo);
-            } else{
+                hechosDelLote.set(i, viejo);
+            } else {
                 hechoNormalizado.setFechaUltimaActualizacion(LocalDateTime.now());
             }
         }
 
-        hechosRepository.saveAll(hechos);
-        applicationEventPublisher.publishEvent(new HechosModificadosEvent(hechos));
-
+        hechosRepository.saveAll(hechosDelLote);
+        applicationEventPublisher.publishEvent(new HechosModificadosEvent(hechosDelLote));
     }
-
 
     @Override
     public void normalizarCategoria(List<Hecho> hechos){
@@ -253,77 +272,26 @@ public class HechosService implements IHechosService {
 
     @Override
     public void normalizarUbicacion(List<Hecho> hechos){
-        List<Hecho> requierenGeorref = new ArrayList<>();
-        hechos.forEach(hecho -> {
-            if (hecho.getLugarAcontecimiento() != null) {
-                requierenGeorref.add(hecho);
-            }
-            else {
-                // TODO Normalización tipo categoría
-            }
-        });
-
-        Map<Coordenada, List<Hecho>> hechosPorCoordenada = requierenGeorref.stream()
-                .collect(Collectors.groupingBy(Hecho::getLugarAcontecimiento));
-        List<Coordenada> coordenadas = hechosPorCoordenada.keySet().stream().toList();
-
-        List<List<Coordenada>> lotes = DivisorEnLotes.dividir(coordenadas, 300);
-
-        List<Map<Coordenada, Departamento>> listaDeMapas = Flux.fromIterable(lotes)
-                .concatMap(this::georreferenciacionInversa)
-                .collectList()
-                .block();
-
-        if (listaDeMapas == null) {
+        List<Hecho> requierenGeorref = hechos.stream()
+                .filter(h -> h.getLugarAcontecimiento() != null)
+                .toList();
+        if (requierenGeorref.isEmpty()) {
             return;
         }
 
-        Map<Coordenada, Departamento> combinados = new HashMap<>();
-        listaDeMapas.forEach(combinados::putAll);
+        List<Coordenada> coordenadas = requierenGeorref.stream()
+                .map(Hecho::getLugarAcontecimiento)
+                .distinct()
+                .toList();
 
-        combinados.forEach((coordenada, departamento) ->
-                hechosPorCoordenada.get(coordenada).forEach(hechoAModificar ->
-                        hechoAModificar.setDepartamento(departamento)
-                )
-        );
+        Map<Coordenada, Departamento> mapaDepartamentos = georefService.obtenerDepartamentos(coordenadas);
 
-    }
-
-
-    public Mono<Map<Coordenada, Departamento>> georreferenciacionInversa(List<Coordenada> coordenadas){
-
-        List<GeorefRequestDTO> coordFormat = coordenadas.stream().map(GeorefRequestDTO::fromCoordenada).toList();
-        List<Departamento> departamentos = departamentosRepository.findAll();
-
-        GeorefRequestMultipleDTO reqBody = new GeorefRequestMultipleDTO();
-        reqBody.setUbicaciones(coordFormat);
-
-        return webClientGeoref
-                .post()
-                .uri("/ubicacion")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(reqBody)
-                .retrieve()
-                .onStatus(
-                        HttpStatusCode::isError,
-                        clientResponse -> clientResponse.bodyToMono(String.class)
-                                .map(body -> new RuntimeException("Error en API Georef: " + body))
-                )
-                .bodyToMono(GeorreferenciacionDTO.class)
-                .map(dto -> Optional.ofNullable(dto.getResultados()).orElse(Collections.emptyList()))
-                .map(listaRes -> listaRes.stream().map(ResultadoGeoDTO::getUbicacion).toList())
-                .map(ubicaciones -> {
-                    Map<Coordenada, Departamento> departamentosPorCoordenada = new HashMap<>();
-                    ubicaciones.forEach(ubicacion -> {
-                        Departamento departamento = departamentos.stream().filter(m ->
-                                        m.getNombre().equals(ubicacion.getDepartamento_nombre()) &&
-                                                m.getProvincia().getNombre().equals(ubicacion.getProvincia_nombre()))
-                                .findFirst().orElse(null);
-                        Coordenada coord = new Coordenada(ubicacion.getLat(), ubicacion.getLon());
-                        departamentosPorCoordenada.put(coord, departamento);
-                    });
-                    return departamentosPorCoordenada;
-                });
+        requierenGeorref.forEach(hecho -> {
+            Departamento depto = mapaDepartamentos.get(hecho.getLugarAcontecimiento());
+            if (depto != null) {
+                hecho.setDepartamento(depto);
+            }
+        });
     }
 
 
@@ -372,6 +340,22 @@ public class HechosService implements IHechosService {
         queryParams.put("desde", fechaUltimaActualizacionStr);
         List<HechoFuenteDTO> hechos = webApiCallerService.getListWithAuth(webClient, "/api/hechos", queryParams, HechoFuenteDTO.class);
         return hechos;
+    }
+
+    private RestPage<HechoFuenteDTO> getFromFuentePaginado(WebClient webClient, LocalDateTime desde, int page, int size) {
+        String fechaUltimaActualizacionStr = desde.format(DateTimeFormatter.ISO_DATE_TIME);
+
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("desde", fechaUltimaActualizacionStr);
+        queryParams.put("page", String.valueOf(page));
+        queryParams.put("size", String.valueOf(size));
+
+        return webApiCallerService.getPageWithAuth(
+                webClient,
+                "/api/hechos",
+                queryParams,
+                new ParameterizedTypeReference<RestPage<HechoFuenteDTO>>() {}
+        );
     }
 
 

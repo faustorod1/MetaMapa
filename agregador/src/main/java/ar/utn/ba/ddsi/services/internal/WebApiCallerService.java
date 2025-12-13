@@ -3,6 +3,7 @@ package ar.utn.ba.ddsi.services.internal;
 
 import ar.utn.ba.ddsi.models.dtos.external.SystemTokenResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -50,6 +51,32 @@ public class WebApiCallerService {
             this.loginToSystem();
             return this.executeGetListRequest(webClient, uri, queryParams, responseType);
         }
+    }
+
+    /**
+     * Ejecuta una llamada HTTP GET paginada con el token system
+     */
+    public <T> T getPageWithAuth(WebClient webClient, String uri, Map<String, String> queryParams, ParameterizedTypeReference<T> responseType) {
+        try {
+            return this.executeGetRequestPage(webClient, uri, queryParams, responseType);
+        } catch (Exception e) {
+            this.loginToSystem();
+            return this.executeGetRequestPage(webClient, uri, queryParams, responseType);
+        }
+    }
+    private <T> T executeGetRequestPage(WebClient webClient, String uri, Map<String, String> queryParams, ParameterizedTypeReference<T> responseType) {
+        return webClient
+                .get()
+                .uri(uriBuilder -> {
+                    if (queryParams != null) {
+                        queryParams.forEach(uriBuilder::queryParam);
+                    }
+                    return uriBuilder.path(uri).build();
+                })
+                .header("Authorization", "Bearer " + systemAccessToken)
+                .retrieve()
+                .bodyToMono(responseType)
+                .block();
     }
 
 

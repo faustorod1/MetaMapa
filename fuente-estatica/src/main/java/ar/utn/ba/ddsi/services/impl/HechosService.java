@@ -4,6 +4,9 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.services.IHechosService;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,24 +25,42 @@ public class HechosService implements IHechosService {
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
-    public List<HechoOutputDTO> obtenerHechosCargadosDesde(LocalDateTime desde) {
+    public Page<HechoOutputDTO> obtenerHechosCargadosDesde(LocalDateTime desde, Pageable pageable) {
         List<PathDataset> paths = pathsService.obtenerPathsDesde(desde);
-        List<Hecho> hechos = Collections.synchronizedList(new ArrayList<>());
+        List<HechoOutputDTO> resultadoPagina = new ArrayList<>();
 
-        paths.parallelStream().forEach(path -> {
-            hechos.addAll(path.cargarHechos());
-        });
+        long totalGlobal = 0;
+        long startPage = pageable.getOffset();
+        long endPage = pageable.getOffset() + pageable.getPageSize();
 
-        return hechos
-                .stream()
-                .map(this::hechoOutputDTO)
-                .toList();
+        for (PathDataset path : paths) {
+            LectorDeCSV lector = new LectorDeCSV(path);
+
+            int cantidadEnArchivo = lector.contarHechos();
+
+            long inicioArchivoGlobal = totalGlobal;
+            long finArchivoGlobal = totalGlobal + cantidadEnArchivo;
+
+            boolean hayInterseccion = (finArchivoGlobal > startPage) && (inicioArchivoGlobal < endPage);
+
+            if (hayInterseccion) {
+                long skipGlobal = Math.max(startPage, inicioArchivoGlobal);
+                long endGlobal = Math.min(endPage, finArchivoGlobal);
+
+                int skipLocal = (int) (skipGlobal - inicioArchivoGlobal);
+                int limitLocal = (int) (endGlobal - skipGlobal);
+
+                List<Hecho> hechosParciales = lector.getHechosPaginados(skipLocal, limitLocal);
+
+                resultadoPagina.addAll(hechosParciales.stream().map(this::hechoOutputDTO).toList());
+            }
+
+            totalGlobal += cantidadEnArchivo;
+        }
+
+        return new PageImpl<>(resultadoPagina, pageable, totalGlobal);
     }
 
-    @Override
-    public List<HechoOutputDTO> buscarTodos() {
-        return this.obtenerHechosCargadosDesde(ancientDate);
-    }
 
 
     //---- Conversiones DTO -------------------------------------------------------------------------------
