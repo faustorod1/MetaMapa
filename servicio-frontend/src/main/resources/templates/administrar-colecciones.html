@@ -355,9 +355,7 @@
   });
 
 
-  /* --- LÓGICA DE MODO CURADO --- */
   const toggleBtn = document.getElementById('nav-button-modo-de-navegacion');
-  // Leemos si ya estaba guardado, si no existe asumimos "irrestricta"
   let modoNavegacion = localStorage.getItem('modoNavegacion') || 'irrestricta';
 
   function aplicarModo() {
@@ -384,10 +382,8 @@
               modoNavegacion = 'curada';
           }
 
-          // Guardar variable en LocalStorage (persistencia)
           localStorage.setItem('modoNavegacion', modoNavegacion);
 
-          // Aplicar cambios visuales y funcionales
           aplicarModo();
       });
   }

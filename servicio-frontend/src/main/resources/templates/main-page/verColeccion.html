@@ -280,22 +280,16 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // 1. Verificar si la URL ya tiene un modo (ej: ?modo=irrestricta)
                 const urlParams = new URLSearchParams(window.location.search);
                 const urlMode = urlParams.get('modo');
 
-                // 2. Obtener la preferencia guardada. Si no existe, default 'curada'.
                 const storedMode = localStorage.getItem('modoNavegacion') || 'irrestricta';
 
-                // 3. Lógica de Redirección Inicial:
-                // Si NO hay modo en la URL, aplicamos INMEDIATAMENTE lo que diga el localStorage.
                 if (!urlMode) {
                     const currentUrl = new URL(window.location.href);
 
-                    // Forzamos el parámetro, sea 'curada' o 'irrestricta'
                     currentUrl.searchParams.set('modo', storedMode);
 
-                    // Recargamos la página con el parámetro correcto
                     window.location.replace(currentUrl.toString());
                 }
 
