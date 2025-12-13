@@ -248,27 +248,33 @@
                                 <input type="checkbox"
                                        th:name="|fuentes[${iterStat.index}].id|"
                                        th:value="${fuente.id}"
-                                       th:checked="${#lists.contains(coleccionOutputDTO.fuentes, fuente)}"
                                        data-tipo-de-fuente="${fuente.tipoDeFuente}"
                                        data-subfuente-id="${fuente.subfuenteId}" />
 
-                                <span th:text="${fuente.tipoDeFuente == 'proxy' ? fuente.tipoDeFuente + ' - ' + fuente.subfuenteId : fuente.tipoDeFuente}"></span>
+                                <span th:text="${fuente.subfuenteId != null
+                                    ? fuente.tipoDeFuente + ' - ' + fuente.subfuenteId
+                                    : fuente.tipoDeFuente}"></span>
                             </label>
 
                             <input type="hidden"
+                                   th:name="|fuentes[${iterStat.index}].id|"
+                                   th:value="${fuente.id}"
+                                   disabled />
+
+                            <input type="hidden"
                                    th:name="|fuentes[${iterStat.index}].tipoDeFuente|"
-                                   th:value="${fuente.tipoDeFuente}" />
+                                   th:value="${fuente.tipoDeFuente}"
+                                   disabled />
 
                             <input type="hidden"
                                    th:name="|fuentes[${iterStat.index}].subfuenteId|"
-                                   th:value="${fuente.subfuenteId}" />
+                                   th:value="${fuente.subfuenteId}"
+                                   disabled />
                         </li>
                     </ul>
                 </div>
-                <span id="fuentesError" style="color: #FF6B6B; display: none; font-size: 0.9rem; margin-top: 5px;">
-                    Debe seleccionar al menos una fuente.
-                    </span>
             </div>
+
 
             <div class="input-crearColeccion">
                 <h4>Algoritmo de consenso</h4>

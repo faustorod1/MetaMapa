@@ -28,6 +28,7 @@ public class ColeccionesController {
     public String formularioCrearColeccion(Model model) {
         try {
             List<FuenteDTO> fuentes = agregadorService.buscarFuentes();
+            log.info("fuentes recibidas: " + fuentes);
             List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
             model.addAttribute("coleccionOutputDTO", new ColeccionOutputDTO());
             model.addAttribute("fuentes", fuentes);

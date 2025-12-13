@@ -74,7 +74,7 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
 
   @GetMapping("/modificacion/{id_hecho}")
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
-   // try{
+   try{
     List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
         // List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
 
@@ -92,9 +92,9 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
 
       return "main-page/crearSolicitudDeModificacion";
 
-   // } catch (Exception ex) {
-    //  return "error/404";
-    //}
+   } catch (Exception ex) {
+    return "error/404";
+    }
   }
 
   @PostMapping("/solicitarModificacion")
