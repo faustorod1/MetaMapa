@@ -20,6 +20,7 @@
     --color-accent-2-hover: #b9ef72;
     --color-container: #d9d9d9;
     --color-bkgr-campo: #bdbcbc;
+    --imagen-fondo-levemente-cargado : url('https://res.cloudinary.com/disenio-nube/image/upload/f_auto,q_auto/v1765641808/fondoLevementeCargado_noeshh.png');
 }
 /*vh es una unidad relativa de lo q se ve en la pantalla del 0 al 100*/
 

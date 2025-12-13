@@ -20,7 +20,7 @@
             height: 90vh;
             margin:0;
             font-family: Arial, sans-serif;
-            background-image:url('/fondoLevementeCargado.png');
+            background-image: var(--imagen-fondo-levemente-cargado);
             background-size: cover;                 /* Que cubra toda la pantalla */
             background-repeat: no-repeat;           /* Que no se repita */
             background-attachment: fixed;           /* Fijo */
@@ -84,7 +84,7 @@
 
         .imagen {
             flex: 1;
-            height: 9rem;
+            height: 15rem;
             background: white;
             border-radius: 0.5rem;
             overflow: hidden;
@@ -265,10 +265,12 @@
     </div>
 
     <div class="imagenes" th:if="${hechoDTO.contenidosMultimedia != null and not #lists.isEmpty(hechoDTO.contenidosMultimedia)}">
-        <img th:each="multimedia : ${hechoDTO.contenidosMultimedia}"
-             th:src="${multimedia.pathImagen}"
-             th:alt="'Imagen del hecho ' + ${hechoDTO.titulo}"
-             class="imagen-hecho"/>
+        <div class="imagen" th:each="multimedia : ${hechoDTO.contenidosMultimedia}">
+
+            <img th:src="${multimedia.pathImagen}"
+                 th:alt="'Imagen del hecho ' + ${hechoDTO.titulo}" />
+
+        </div>
 
     </div>
 
