@@ -52,7 +52,7 @@
                     <select name="categoria" id="categoria" required>
                         <option value="">-- Seleccionar Categoría --</option>
                         <option th:each="cat : ${categorias}"
-                                th:value="${cat.id}"
+                                th:value="${cat.nombre}"
                                 th:text="${cat.nombre}"
                                 th:selected="${#strings.toString(cat.nombre) == #object.categoria}">
                         </option>
