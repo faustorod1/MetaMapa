@@ -292,6 +292,7 @@
       <a th:href="@{/colecciones/formulario-de-carga}" class="btn-header-add" title="Nueva Colección" th:if="${session.role == 'ADMIN'}">
         <i class="fa-solid fa-plus"></i>
       </a>
+
     </div>
   </div>
   <hr class="separator">
@@ -311,9 +312,10 @@
     </div>
 
     <div class="collection-actions">
-      <a th:href="@{/colecciones/formulario-de-edicion/{id}(id=${coleccion.identificador})}" title="Editar" th:if="${session.role == 'ADMIN'}">
+      <a th:href="@{/colecciones/formulario-de-edicion/{id_coleccion}(id_coleccion=${coleccion.identificador})}" title="Editar" th:if="${session.role == 'ADMIN'}">
         <button><i class="fa-solid fa-pen-to-square"></i></button>
       </a>
+
       <form th:action="@{/colecciones/eliminar/{id}(id=${coleccion.identificador})}"
             method="post"
             style="display: inline;"

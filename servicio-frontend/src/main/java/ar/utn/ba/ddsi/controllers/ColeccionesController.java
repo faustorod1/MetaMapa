@@ -74,8 +74,8 @@ public class ColeccionesController {
 
     @GetMapping("/formulario-de-edicion/{id_coleccion}")
     public String formularioEditarColeccion(@PathVariable("id_coleccion") String id_coleccion, Model model, RedirectAttributes redirectAttributes) {
-
         try{
+
             ColeccionDTO coleccion = agregadorService.pedirColeccionPorId(id_coleccion);
             List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
             List<FuenteDTO> fuentes = agregadorService.buscarFuentes();
@@ -86,23 +86,23 @@ public class ColeccionesController {
             model.addAttribute("categorias", categorias);
             model.addAttribute("fuentes", fuentes);
             return "main-page/editarColeccion";
-        } catch (Exception ex) {
+       } catch (Exception ex) {
             return "error/404";
-        }
+       }
     }
 
     @PostMapping("/editar")
     public String editarColeccion(@ModelAttribute("coleccionOutputDTO") ColeccionOutputDTO coleccion, RedirectAttributes redirectAttributes) {
-        try {
+        //try {
             log.info("DTO recibido: {}", coleccion);
             agregadorService.actualizarColeccion(coleccion);
             redirectAttributes.addFlashAttribute("actualizada", "Colección actualizada");
             return "redirect:/colecciones";
 
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al actualizar la colección");
-            return "redirect:/colecciones/formulario-de-edicion/" + coleccion.getIdentificador();
-        }
+      //  } catch (Exception ex) {
+      //      redirectAttributes.addFlashAttribute("error", "Ocurrió un error inesperado al actualizar la colección");
+      //      return "redirect:/colecciones/formulario-de-edicion/" + coleccion.getIdentificador();
+     //   }
     }
 
 

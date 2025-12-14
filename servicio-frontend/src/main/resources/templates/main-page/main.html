@@ -40,6 +40,10 @@
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-chart-line"></i>
         </button>
+        <button class="nav-button" id="nav-button-panel" view="/panel" th:if="${session.role == 'ADMIN'}">
+            <div class="nav-button-selection"></div>
+            <i class="fa-solid fa-gauge-high"></i>
+        </button>
 
         <form title="Cerrar sesión" id="nav-button-logout" th:action="@{/logout}" th:if="${session.role == 'ADMIN' || session.role == 'CONTRIBUYENTE'}" method="POST">
             <button class="nav-button" type="submit">

@@ -192,7 +192,7 @@
                             <p>Último cargado: <span th:text="${ultimoHechoCargado.titulo}">Ráfagas de más de 100 km/h...</span></p>
                             <span class="detail-icons">
                                 <i class="fa-solid fa-calendar"></i>
-                                <span th:text="${#temporals.format(ultimoHechoCargado.fechaHecho, 'dd/MM/yyyy')}">21/12/2007</span>
+                                <span th:text="${#temporals.format(ultimoHechoCargado.fechaDeCarga, 'dd/MM/yyyy')}">21/12/2007</span>
 
                                 <button class="btn-config" th:title="'Ver detalle de ' + ${ultimoHechoCargado.titulo}"
                                         th:onclick="'window.location.href=\'' + @{/hechos/detalle-hecho/{id_hecho}(id_hecho=${ultimoHechoCargado.id})} + '\''">
@@ -200,21 +200,29 @@
                                 </button>
                             </span>
                         </div>
+                        <div class="detail-item" th:unless="${ultimoHechoCargado != null}">
+                            <p>Último cargado: <em>No se han cargado hechos aún.</em></p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="summary-card">
                     <p><strong>Fuentes utilizadas</strong>: <span th:text="${#lists.size(fuentes)}">2</span></p>
                     <div class="fuentes-list">
-                        <div class="detail-item fuente-particular" th:each="fuente : ${fuentes}">
-                            <p>
-                                <span th:text="${fuente.tipoDeFuente}">Estática</span>
-                                (<span th:text="${fuente.id}">1</span>)
-                            </p>
+                        <div th:if="${not #lists.isEmpty(fuentes)}">
+                            <div class="detail-item fuente-particular" th:each="fuente : ${fuentes}">
+                                <p>
+                                    <span th:text="${fuente.tipoDeFuente}">Estática</span>
+                                    (<span th:text="${fuente.id}">1</span>)
+                                </p>
 
-                            <p th:if="${fuente.subfuenteId != null}">
-                                Sub-ID Asociado: <strong><span th:text="${fuente.subfuenteId}">101</span></strong>
-                            </p>
+                                <p th:if="${fuente.subfuenteId != null}">
+                                    Sub-ID Asociado: <strong><span th:text="${fuente.subfuenteId}">101</span></strong>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="detail-item" th:if="${#lists.isEmpty(fuentes)}">
+                            <p><em>No hay fuentes registradas.</em></p>
                         </div>
                     </div>
                 </div>
@@ -232,7 +240,7 @@
     <div class="action-button-row">
         <form th:action="@{/panel/actualizarHechos}" method="post">
             <button type="submit" class="action-button btn-update" title="Solicita al agregador que busque y cargue nuevos hechos en el sistema.">
-                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <i class="fa-solid fa-arrows-rotate"></i>
                 Actualizar Hechos
             </button>
         </form>

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AgregadorService implements IAgregadorService {
@@ -119,8 +121,9 @@ public class AgregadorService implements IAgregadorService {
     }
 
   public void actualizarColeccion(ColeccionOutputDTO coleccion){
+      System.out.println("LLEGUE ACÁ");
       webApiCallerService.put(
-              agregadorBaseUrl + "/api/colecciones",
+              agregadorBaseUrl + "/api/colecciones/actualizar",
               coleccion,
               void.class
       );
@@ -252,7 +255,7 @@ public class AgregadorService implements IAgregadorService {
     public void actualizarHechos(){
        webApiCallerService.post(
               agregadorBaseUrl + "/api/hechos/actualizarTodos",
-              null,
+               new HashMap<String, String>(),
               Void.class
       );
     }
@@ -260,12 +263,8 @@ public class AgregadorService implements IAgregadorService {
     public void consensuarColecciones(){
       webApiCallerService.post(
               agregadorBaseUrl + "/api/colecciones/consensuar",
-              null,
+              new HashMap<String, String>(),
               Void.class
       );
     }
-
-
-
-
 }

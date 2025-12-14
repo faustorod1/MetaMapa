@@ -442,7 +442,7 @@ public class HechosService implements IHechosService {
         Hecho ultimoHecho = hechosRepository.findTopByOrderByFechaDeCargaDesc();
 
         if (ultimoHecho == null) {
-            throw new EntityNotFoundException("No se encontró ningún hecho cargado en el sistema.");
+            return null; // Devuelve null si no se encontró ningún hecho.
         }
 
         return HechoOutputDTO.fromEntity(ultimoHecho);

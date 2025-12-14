@@ -80,7 +80,7 @@ public class ColeccionesController {
         return coleccionesService.crearColeccion(coleccionInputDTO);
     }
 
-    @PutMapping
+    @PutMapping("/actualizar")
     public ColeccionOutputDTO actualizarColeccion(@RequestBody ColeccionInputDTO coleccionInputDTO){
         log.info("Entró en actualizarColeccion:" + coleccionInputDTO);
         return coleccionesService.updateColeccion(coleccionInputDTO);
@@ -117,6 +117,7 @@ public class ColeccionesController {
     public ResponseEntity<Void> consensuar() {
         try {
             coleccionesService.consensuarColecciones();
+            log.info("Colecciones consensuadas");
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();

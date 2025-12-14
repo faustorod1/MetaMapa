@@ -248,8 +248,8 @@
                                 <input type="checkbox"
                                        th:name="|fuentes[${iterStat.index}].id|"
                                        th:value="${fuente.id}"
-                                       data-tipo-de-fuente="${fuente.tipoDeFuente}"
-                                       data-subfuente-id="${fuente.subfuenteId}" />
+                                       th:checked="${#lists.contains(coleccionOutputDTO.fuentes.![id], fuente.id)}"
+                                       class="fuente-checkbox"/>
 
                                 <span th:text="${fuente.subfuenteId != null
                                     ? fuente.tipoDeFuente + ' - ' + fuente.subfuenteId
@@ -257,22 +257,22 @@
                             </label>
 
                             <input type="hidden"
-                                   th:name="|fuentes[${iterStat.index}].id|"
-                                   th:value="${fuente.id}"
-                                   disabled />
-
-                            <input type="hidden"
                                    th:name="|fuentes[${iterStat.index}].tipoDeFuente|"
                                    th:value="${fuente.tipoDeFuente}"
+                                   class="fuente-data-field"
                                    disabled />
 
                             <input type="hidden"
                                    th:name="|fuentes[${iterStat.index}].subfuenteId|"
                                    th:value="${fuente.subfuenteId}"
+                                   class="fuente-data-field"
                                    disabled />
                         </li>
                     </ul>
                 </div>
+                <span id="fuentesError" style="color: #FF6B6B; display: none; font-size: 0.9rem; margin-top: 5px;">
+                    Debe seleccionar al menos una fuente.
+                </span>
             </div>
 
 
@@ -290,8 +290,9 @@
             <div class="input-crearColeccion">
                 <h4>Criterio de pertenencia (filtros)</h4>
 
-                <div id="criterioContainer"></div>
-
+                <div id="criterioContainer">
+                    <input type="hidden" name="criterioDePertenencia.filtros" value="ignore" />
+                </div>
 
                 <button type="button" id="btnAddFiltro" class="btn-submit" style="background-color: #4CAF50; margin-top: 10px; font-size: 0.9rem;">
                     + Añadir Filtro
@@ -336,6 +337,7 @@
             if (filtro.tipoDeFiltro === 'fechaHecho' || filtro.tipoDeFiltro === 'fechaDeCarga') {
                 for (const key in filtro.parametros) {
                     if (filtro.parametros[key] && filtro.parametros[key].includes('T')) {
+                        // Cortar para que el formato coincida con datetime-local (YYYY-MM-DDTHH:MM)
                         filtro.parametros[key] = filtro.parametros[key].substring(0, 16);
                     }
                 }
@@ -349,7 +351,8 @@
     const dropdown = document.querySelector('.dropdown-multiselect');
     const dropdownBtn = document.getElementById('dropdownBtn');
     const dropdownList = document.getElementById('dropdownList');
-    const checkboxes = dropdownList.querySelectorAll('input[type="checkbox"]');
+    // Buscamos ahora por la clase 'fuente-checkbox'
+    const checkboxes = dropdownList.querySelectorAll('.fuente-checkbox');
     const fuentesError = document.getElementById('fuentesError');
 
     function createIcon() {
@@ -362,12 +365,12 @@
     function updateButtonLabel() {
         const selected = Array.from(checkboxes)
             .filter(chk => chk.checked)
+            // Encuentra el texto del label asociado al checkbox
             .map(chk => chk.parentElement.textContent.trim());
 
         if (selected.length === 0) {
             dropdownBtn.textContent = 'Seleccione una o más fuentes';
             dropdownBtn.appendChild(createIcon());
-            fuentesError.style.display = 'block';
         } else {
             dropdownBtn.textContent = selected.join(', ');
             dropdownBtn.appendChild(createIcon());
@@ -388,20 +391,27 @@
         }
     });
 
+    // --- Lógica de Fuentes (Sincronización de campos ocultos) ---
     checkboxes.forEach(checkbox => {
         const listItem = checkbox.closest('li');
-        const hiddenType = listItem.querySelector(`input[name*='tipoDeFuente']`);
-        const hiddenSubId = listItem.querySelector(`input[name*='subfuenteId']`);
+        // Encontrar TODOS los campos ocultos con la clase 'fuente-data-field'
+        const hiddenFields = listItem.querySelectorAll('.fuente-data-field');
 
+        // Función para sincronizar la visibilidad con el estado del checkbox
         const syncHiddenFields = (isChecked) => {
-            if (hiddenType) hiddenType.disabled = !isChecked;
-            if (hiddenSubId) hiddenSubId.disabled = !isChecked;
+            // Habilita/Deshabilita TODOS los campos de datos si el checkbox está marcado/desmarcado
+            // El checkbox (fuentes[x].id) se habilita/deshabilita implícitamente por el navegador.
+            hiddenFields.forEach(field => {
+                field.disabled = !isChecked;
+            });
         };
 
         checkbox.addEventListener('change', (e) => {
             updateButtonLabel();
             syncHiddenFields(e.target.checked);
         });
+
+        // Inicializar el estado de los campos ocultos al cargar la página (ESENCIAL para edición)
         syncHiddenFields(checkbox.checked);
     });
 
@@ -507,6 +517,7 @@
         newTipoFiltroSelect.addEventListener('change', (e) => {
             const selectedOption = e.target.options[e.target.selectedIndex];
             const filtroKey = selectedOption.dataset.key;
+            // Al cambiar, limpiamos los parámetros existentes
             renderFiltroParams(newParamsContainer, filtroKey, index, null);
         });
 
@@ -550,17 +561,9 @@
                         const requiredAttr = param.required ? 'required' : '';
                         const stepAttr = param.step ? `step="${param.step}"` : '';
                         let valueAttr = '';
-                        if (existingValue) {
-                            if (param.type === 'datetime-local') {
-                                const date = new Date(existingValue);
-                                if (!isNaN(date.getTime())) {
-                                    valueAttr = `value="${date.toISOString().slice(0, 16)}"`;
-                                } else {
-                                    valueAttr = `value="${existingValue}"`;
-                                }
-                            } else {
-                                valueAttr = `value="${existingValue}"`;
-                            }
+                        // Si hay un valor existente, lo pre-carga
+                        if (existingValue !== undefined && existingValue !== null) {
+                            valueAttr = `value="${existingValue}"`;
                         }
 
                         inputHtml = `
@@ -580,6 +583,9 @@
     btnAddFiltro.addEventListener('click', () => addFiltro());
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Ejecutamos updateButtonLabel aquí también para que el error de fuentes se oculte si ya hay fuentes seleccionadas
+        updateButtonLabel();
+
         if (FILTROS_EXISTENTES && Array.isArray(FILTROS_EXISTENTES)) {
             FILTROS_EXISTENTES.forEach(filtro => {
                 addFiltro(filtro);

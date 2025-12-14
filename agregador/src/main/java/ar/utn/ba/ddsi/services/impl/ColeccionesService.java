@@ -107,6 +107,15 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public ColeccionOutputDTO updateColeccion(ColeccionInputDTO input){
+
+        if (input.getFuentes() != null) {
+            List<FuenteDTO> fuentesValidas = input.getFuentes().stream()
+                    .filter(fuente -> fuente.getId() != null)
+                    .collect(Collectors.toList());
+            input.setFuentes(fuentesValidas);
+        }
+
+
         Coleccion coleccion = input.toEntity();
         Coleccion coleccionAModificar = coleccionesRepository.findByIdentificador(coleccion.getIdentificador());
         coleccionAModificar.editar(coleccion);

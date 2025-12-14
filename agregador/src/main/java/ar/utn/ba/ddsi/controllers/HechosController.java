@@ -1,9 +1,11 @@
 package ar.utn.ba.ddsi.controllers;
 
-import ar.utn.ba.ddsi.commons.CustomUserDetails;
+import
+        ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import ar.utn.ba.ddsi.services.IHechosService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/hechos")
 @CrossOrigin(origins = "*")
@@ -87,6 +89,7 @@ public class HechosController {
     public ResponseEntity<Void> actualizarHechos() {
         try {
             hechosService.actualizarHechos();
+            log.info("El boton de actualizacion funciono");
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
