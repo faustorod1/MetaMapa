@@ -15,5 +15,6 @@ public interface ISolicitudesService {
     List<Long> obtenerIDsEliminacionPendientes();
     SolicitudDeEliminacionOutputDTO obtenerSolicitudDeEliminacionPorID(Long id);
     List<SolicitudDeEliminacionOutputDTO> obtenerSolicitudesDeEliminacionPendientes();
-
+    Long obtenerCantidadAceptadas();
+    Long obtenerCantidadRechazadas();
 }

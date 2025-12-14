@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion", "/api/solicitudes/modificacion/{id_hecho}", "api/solicitudes/solicitarModificacion").hasAnyRole("CONTRIBUYENTE","ADMIN")
                         .requestMatchers("/colecciones/formulario-de-carga", "/colecciones/cargar", "/colecciones/formulario-de-edicion/{id_coleccion}","/colecciones/editar", "/api/solicitudes/tratarEliminaciones", "/api/solicitudes/tratarEliminacion/{id}", "/api/solicitudes/resolverEliminacion", "/api/solicitudes/tratarModificaciones", "/api/solicitudes/tratarModificacion/{solicitudId}").hasRole("ADMIN")
                         .requestMatchers("/404","/403","/401").permitAll()
-                        .requestMatchers("/sinSolicitudesDeEliminacionPendientes", "/sinSolicitudesDeModificacionPendientes").hasRole("ADMIN")
+                        .requestMatchers("/panel","/panel/actualizarHechos", "/panel/consensuarColecciones","/sinSolicitudesDeEliminacionPendientes", "/sinSolicitudesDeModificacionPendientes").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

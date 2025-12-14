@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,6 +111,17 @@ public class ColeccionesController {
     @GetMapping("/fuentes")
     public List<FuenteDTO> buscarFuentes(){
         return coleccionesService.buscarFuentes();
+    }
+
+    @PostMapping("/consensuar")
+    public ResponseEntity<Void> consensuar() {
+        try {
+            coleccionesService.consensuarColecciones();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

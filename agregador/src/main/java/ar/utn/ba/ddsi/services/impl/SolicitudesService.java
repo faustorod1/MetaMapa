@@ -83,4 +83,13 @@ public class SolicitudesService implements ISolicitudesService {
             .map(SolicitudDeEliminacionOutputDTO::getId).toList();
   }
 
+  @Override
+  public Long obtenerCantidadAceptadas(){
+    return solicitudesRepository.countByEstado(EstadoSolicitud.ACEPTADA);
+  }
+
+  @Override
+  public Long obtenerCantidadRechazadas(){
+    return solicitudesRepository.countByEstado(EstadoSolicitud.RECHAZADA);
+  }
 }

@@ -38,7 +38,7 @@ public class ColeccionesService implements IColeccionesService {
     private IFuentesRepository fuentesRepository;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, IHechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher, IFuentesRepository fuentesRepository) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, ApplicationEventPublisher applicationEventPublisher, IFuentesRepository fuentesRepository) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
         this.applicationEventPublisher = applicationEventPublisher;

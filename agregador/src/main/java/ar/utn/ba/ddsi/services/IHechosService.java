@@ -24,4 +24,6 @@ public interface IHechosService {
     List<HechoOutputDTO> buscarHechos(LocalDateTime fecha, Integer cantidad_obtener);
     List<Long> buscarIdsExternosDinamica();
     HechoOutputDTO buscarHechoDinamica (Long id_externo);
+    Integer pedirCantidadDeHechosEnElSistema();
+    HechoOutputDTO buscarUltimoHechoCargado();
 }

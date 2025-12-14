@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title> Panel de control | METAmapa</title>
     <meta charset="utf-8">
@@ -10,142 +10,242 @@
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
     <style>
-        body{
+        :root {
+            --color-fondo-principal: #1d24ca;
+            --color-fondo-secundario: #edf6fa;
+            --color-texto-principal: white;
+            --color-texto-secundario: black;
+
+            /* 1) Colores distintos para los botones */
+            --color-boton-update: #5cb85c; /* Verde distintivo para Actualizar Hechos */
+            --color-boton-consensuar: #f0ad4e; /* Naranja distintivo para Consensuar Colecciones */
+            --color-hover-update: #4cae4c;
+            --color-hover-consensuar: #ec971f;
+        }
+
+        body {
+            /* Flexbox para apilar y centrar el panel y los botones */
             background-image: var(--imagen-fondo-levemente-cargado);
-            background-size: cover;                 /* Que cubra toda la pantalla */
-            background-repeat: no-repeat;           /* Que no se repita */
-            background-attachment: fixed;           /* Fijo */
-            background-position: center center;     /* Que esté centrada */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            flex-direction: column; /* Apila el dashboard y los botones verticalmente */
+            justify-content: flex-start;
+            align-items: center; /* Centrado horizontal para ambos contenedores */
+            padding-top: 5vh;
+            padding-bottom: 5vh;
+            min-height: 100vh;
             margin: 0;
         }
 
-        .contenedor{
-            height: 85vh;
-            min-width:90vw;
-            margin:auto;
-            background-color: #1d24ca;
-            border-radius:0.5rem;
-            padding:0.5rem;
+        /* --- Contenedor de Layout Principal (Única Columna) --- */
+        .dashboard-container {
+            background-color: var(--color-fondo-principal);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            width: 90vw;
+            max-width: 1200px;
+            margin-bottom: 1.5rem; /* Espacio entre el panel y los botones */
         }
 
-        .contenedor-hechos{
-            margin: 0 0.2rem 1rem 0.2rem;
-            padding:0.5rem;
-        }
-
-        .resumen-act-hechos{
-            background-color: #edf6fa;
-            border-radius:0.2rem;
-            padding:0.5rem;
-            margin:0 1rem 1rem 0;
-            display:flex;
-            width:100%;
-            height:20vh;
-            flex-direction: column;
-            gap: 0.1rem;
-        }
-
-        h3{
-            color: white;
-        }
-
-        .hecho-particular   {
+        /* --- Estilos para Botones de Acción (DEBAJO y en FILA) --- */
+        .action-buttons-wrapper {
+            width: 90vw;
+            max-width: 1200px;
             display: flex;
-            border-radius: 0.2rem;
-            padding:0;
-            justify-content: space-between;
-            cursor: default;
-            margin-left:0.5rem;
-        }
-
-        .iconos{
-            display: flex;
-            align-items: center;
             gap: 1rem;
-            font-size: 0.9rem;
-            color: black;
-            margin-right: 0.5rem;
-            margin-left:0.1rem;
+            justify-content: center; /* Alinea los botones a la izquierda de su propio contenedor */
         }
 
-        p{
-            margin:0;
-
+        .action-button-row {
+            display: flex;
+            gap: 1rem;
         }
 
-
-        .fuente-particular{
+        .action-button {
+            /* Estilo base de los botones */
+            padding: 0.8rem 1.2rem;
+            color: white;
+            border: none;
+            border-radius: 0.3rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
             display: flex;
             align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            /* 2) El ancho fijo asegura que sean del mismo tamaño */
+            width: 250px;
+        }
+
+        /* Colores específicos para Actualizar Hechos */
+        .btn-update {
+            background-color: var(--color-boton-update);
+        }
+
+        .btn-update:hover {
+            background-color: var(--color-hover-update);
+        }
+
+        /* Colores específicos para Consensuar Colecciones */
+        .btn-consensuar {
+            background-color: var(--color-boton-consensuar);
+        }
+
+        .btn-consensuar:hover {
+            background-color: var(--color-hover-consensuar);
+        }
+
+        /* --- Estilos de Resumen --- */
+        .summary-header {
+            color: var(--color-texto-principal);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-card {
+            background-color: var(--color-fondo-secundario);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-height: 150px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: var(--color-texto-secundario);
+            font-size: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
             justify-content: space-between;
-            border-radius: 0.2rem;
-            margin-left:0.5rem;
-            cursor: default;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
         }
 
-        .btn-config{
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-icons {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.9rem;
+            color: var(--color-texto-secundario);
+        }
+
+        .btn-config {
             cursor: pointer;
-            background-color: #edf6fa;
-            border-color:transparent;
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            color: var(--color-fondo-principal);
+            font-size: 1rem;
+            transition: color 0.2s;
         }
 
+        .btn-config:hover {
+            color: #007bff;
+        }
+
+        .fuente-particular {
+            font-size: 0.95rem;
+        }
     </style>
 
 </head>
 <body>
-<div class="contenedor">
-    <div class="contenedor-hechos">
-        <h3>Hechos</h3>
-        <div class="resumen-act-hechos">
-            <p><strong>Hechos creados</strong>: 7</p>
+<div class="dashboard-container">
+    <div class="section-hechos">
+        <h3 class="summary-header"><i class="fa-solid fa-list-check"></i> Información general</h3>
 
-            <div class="hechos-particulares">
-            <div class="hecho-particular">
-                <p>Ráfagas de más de 100 km/h causa estragos en San Vicente, Misiones</p>
-                <span class="iconos">
-                    <i class="fa-solid fa-calendar"></i>21/12/2007
-                    <button class="btn-config">
-                    <i class="fa-solid fa-gear"></i>
-                        </button>
-                </span>
-            </div>
+        <div class="section-hechos">
+            <div class="summary-card-grid">
 
-                <div class="hecho-particular">
-                    <p>Incendio forestal</p>
-                    <span class="iconos">
-                        <i class="fa-solid fa-calendar"></i>9/10/2011
-                        <button class="btn-config">
-                        <i class="fa-solid fa-gear"></i>
-                            </button>
-                    </span>
+                <div class="summary-card">
+                    <p><strong>Hechos en el sistema</strong>: <span th:text="${hechosEnElSistema}">7</span></p>
+
+                    <div class="hechos-particulares">
+                        <div class="detail-item" th:if="${ultimoHechoCargado != null}">
+                            <p>Último cargado: <span th:text="${ultimoHechoCargado.titulo}">Ráfagas de más de 100 km/h...</span></p>
+                            <span class="detail-icons">
+                                <i class="fa-solid fa-calendar"></i>
+                                <span th:text="${#temporals.format(ultimoHechoCargado.fechaHecho, 'dd/MM/yyyy')}">21/12/2007</span>
+
+                                <button class="btn-config" th:title="'Ver detalle de ' + ${ultimoHechoCargado.titulo}"
+                                        th:onclick="'window.location.href=\'' + @{/hechos/detalle-hecho/{id_hecho}(id_hecho=${ultimoHechoCargado.id})} + '\''">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
-        </div>
-        <h3>Fuentes</h3>
-        <div class="resumen-act-hechos">
-            <p><strong>Fuentes utilizadas</strong>: 2</p>
-            <div class="fuentes-particulares" id="particular">
-                <div class="fuente-particular">
-                    <p>Estática</p>
+                <div class="summary-card">
+                    <p><strong>Fuentes utilizadas</strong>: <span th:text="${#lists.size(fuentes)}">2</span></p>
+                    <div class="fuentes-list">
+                        <div class="detail-item fuente-particular" th:each="fuente : ${fuentes}">
+                            <p>
+                                <span th:text="${fuente.tipoDeFuente}">Estática</span>
+                                (<span th:text="${fuente.id}">1</span>)
+                            </p>
+
+                            <p th:if="${fuente.subfuenteId != null}">
+                                Sub-ID Asociado: <strong><span th:text="${fuente.subfuenteId}">101</span></strong>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="fuente-particular">
-                    <p>Dinámica</p>
+
+                <div class="summary-card">
+                    <p><strong>Solicitudes aceptadas</strong>: <span th:text="${cantidadSolicitudesEliminacionAceptadas}">3</span></p>
+                    <p><strong>Solicitudes rechazadas</strong>: <span th:text="${cantidadSolicitudesEliminacionRechazadas}">3</span></p>
                 </div>
             </div>
-        </div>
-        <h3>Solicitudes de eliminación</h3>
-        <div class="resumen-act-hechos">
-            <p><strong>Solicitudes pedidas</strong>: 6</p>
-            <p><strong>Solicitudes aceptadas</strong>: 3</p>
         </div>
     </div>
 </div>
-<main>
 
+<div class="action-buttons-wrapper">
+    <div class="action-button-row">
+        <form th:action="@{/panel/actualizarHechos}" method="post">
+            <button type="submit" class="action-button btn-update" title="Solicita al agregador que busque y cargue nuevos hechos en el sistema.">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                Actualizar Hechos
+            </button>
+        </form>
+
+        <form th:action="@{/panel/consensuarColecciones}" method="post">
+            <button type="submit" class="action-button btn-consensuar" title="Inicia el proceso para validar y actualizar las colecciones de hechos.">
+                <i class="fa-solid fa-handshake"></i>
+                Consensuar Colecciones
+            </button>
+        </form>
+    </div>
+</div>
+<main>
 </main>
 </body>
+</html>

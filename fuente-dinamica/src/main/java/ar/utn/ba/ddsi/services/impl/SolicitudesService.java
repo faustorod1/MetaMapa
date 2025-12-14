@@ -35,9 +35,7 @@ public class SolicitudesService implements ISolicitudesService {
     this.solicitudesRepository = solicitudesRepository;
   }
 
-
   // --- Métodos expuestos al controller -------------------------------------------------------------------------------
-
 
   @Override
   public SolicitudResueltaDTO procesarSoliPendiente(Long id, ResolucionDTO resolucion, Long adminId) {

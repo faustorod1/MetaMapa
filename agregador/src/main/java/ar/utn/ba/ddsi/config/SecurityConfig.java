@@ -31,6 +31,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/solicitudes/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/solicitudes/idsPendientes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes").hasAnyRole("CONTRIBUYENTE","ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/cantidadAceptadas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/cantidadRechazadas").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/categorias").permitAll()
@@ -51,6 +54,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/hechos/disponible/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/hechos/dinamica/idsExternos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/hechos/dinamica/{id_externo}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "api/hechos/ultimo").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/hechos/actualizarTodos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "api/hechos/disponible/cantidad").hasRole("ADMIN")
                         .requestMatchers("/api/hechos/contribuyente").hasRole("CONTRIBUYENTE")
                         .requestMatchers("/api/solicitudes/{id}/estado").hasAnyRole("ADMIN")
 

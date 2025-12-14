@@ -218,4 +218,54 @@ public class AgregadorService implements IAgregadorService {
 
     }
 
+    // Panel de control
+
+    public Long pedirSolicitudesAceptadas(){
+        return webApiCallerService.get(
+                agregadorBaseUrl + "/api/solicitudes/cantidadAceptadas",
+                Long.class
+        );
+    }
+
+    public Long pedirSolicitudesRechazadas(){
+      return webApiCallerService.get(
+              agregadorBaseUrl + "/api/solicitudes/cantidadRechazadas",
+              Long.class
+      );
+    }
+
+    public HechoDTO pedirUltimoHechoCargado(){
+      return agregadorWebClient.get()
+              .uri("/api/hechos/ultimo")
+              .retrieve()
+              .bodyToMono(HechoDTO.class)
+              .block();
+    }
+
+    public Integer pedirCantidadDeHechosEnElSistema(){
+      return webApiCallerService.get(
+              agregadorBaseUrl + "/api/hechos/disponible/cantidad",
+                Integer.class
+      );
+    }
+
+    public void actualizarHechos(){
+       webApiCallerService.post(
+              agregadorBaseUrl + "/api/hechos/actualizarTodos",
+              null,
+              Void.class
+      );
+    }
+
+    public void consensuarColecciones(){
+      webApiCallerService.post(
+              agregadorBaseUrl + "/api/colecciones/consensuar",
+              null,
+              Void.class
+      );
+    }
+
+
+
+
 }

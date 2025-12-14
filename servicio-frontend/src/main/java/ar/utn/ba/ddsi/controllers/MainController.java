@@ -1,6 +1,8 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
+import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
@@ -38,6 +40,8 @@ public class MainController {
   public String buscador() {
     return "main-page/buscador";
   }
+
+
 
 
 

@@ -430,5 +430,22 @@ public class HechosService implements IHechosService {
                 .filter(hecho -> hecho.getIdExterno().getFuente().getTipoDeFuente().equals(TipoDeFuente.DINAMICA))
                 .findFirst().map(HechoOutputDTO::fromEntity).orElse(null);
     }
+
+
+    @Override
+    public Integer pedirCantidadDeHechosEnElSistema(){
+        return hechosRepository.countByEliminadoFalse();
+    }
+
+    @Override
+    public HechoOutputDTO buscarUltimoHechoCargado() {
+        Hecho ultimoHecho = hechosRepository.findTopByOrderByFechaDeCargaDesc();
+
+        if (ultimoHecho == null) {
+            throw new EntityNotFoundException("No se encontró ningún hecho cargado en el sistema.");
+        }
+
+        return HechoOutputDTO.fromEntity(ultimoHecho);
+    }
 }
 
