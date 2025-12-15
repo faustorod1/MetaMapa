@@ -32,7 +32,6 @@ public class SolicitudesController {
   @Autowired
   private IDinamicaService dinamicaService;
 
-
   // ENDPOINTS: Contribuyente
   @GetMapping("/eliminacion/{id}")
   public String formularioSolicitudEliminacion(@PathVariable("id") Long id, Model model) {
@@ -52,7 +51,6 @@ public class SolicitudesController {
 public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeEliminacionOutputDTO solicitud, RedirectAttributes redirectAttributes) {
     log.info("DTO recibido: {}", solicitud);
     Long id = solicitud.getHechoId();
-   // try {
        SolicitudDeEliminacionDTO solicitudRecibida = agregadorService.solicitarEliminacion(solicitud);
        if(solicitudRecibida.getEstado() == (EstadoSolicitud.PENDIENTE)){
             redirectAttributes.addFlashAttribute("exito","La solicitud ha sido creada");
@@ -64,10 +62,6 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
             redirectAttributes.addFlashAttribute("falta_caracteres","La solicitud fue rechazada por falta de carácteres");
             return "redirect:/api/solicitudes/eliminacion/" + id;
        }
-   // }catch (Exception ex) {
-    // redirectAttributes.addFlashAttribute("error","Ocurrió un error inesperado");
-    // return "redirect:/api/solicitudes/eliminacion/" + id;
-   // }
 }
 
 
@@ -76,37 +70,37 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
   public String formularioSolicitarModificacion(@PathVariable("id_hecho") Long id_hecho, Model model, RedirectAttributes redirectAttributes) {
    try{
     List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
-        // List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
+    // List<HechoDTO> hechosDelContribuyente = agregadorService.pedirHechosDeContribuyente();   // Hay que probar esto
 
-      HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
-      // log.info("hechos recibido: " + hechosDelContribuyente);
-      Long id_externo_hecho = hecho.getIdExterno().getIdExterno();
-      // boolean pertenece = hechosDelContribuyente.stream().anyMatch(h -> h.getId().equals(id_hecho));
+     HechoDTO hecho = agregadorService.pedirHecho(id_hecho);
+     // log.info("hechos recibido: " + hechosDelContribuyente);
+     Long id_externo_hecho = hecho.getIdExterno().getIdExterno();
+     // boolean pertenece = hechosDelContribuyente.stream().anyMatch(h -> h.getId().equals(id_hecho));
 
-      HechoOutputDTO hechoOutputDTO = HechoOutputDTO.fromDTOtoOutput(hecho);
+     HechoOutputDTO hechoOutputDTO = HechoOutputDTO.fromDTOtoOutput(hecho);
 
-      model.addAttribute("hecho", hechoOutputDTO);
-      model.addAttribute("id_hecho", id_hecho);
-      model.addAttribute("id_externo_hecho", id_externo_hecho);
-      model.addAttribute("categorias", categorias);
+     model.addAttribute("hecho", hechoOutputDTO);
+     model.addAttribute("id_hecho", id_hecho);
+     model.addAttribute("id_externo_hecho", id_externo_hecho);
+     model.addAttribute("categorias", categorias);
 
-      return "main-page/crearSolicitudDeModificacion";
+     return "main-page/crearSolicitudDeModificacion";
 
    } catch (Exception ex) {
-    return "error/404";
+      return "error/404";
     }
   }
 
   @PostMapping("/solicitarModificacion")
-  public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, @RequestParam(name = "id_externo_hecho") Long id_externo_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenes) {
-    try {
-      dinamicaService.modificarHecho(id_externo_hecho, hecho);
+  public String solicitarModificacion(@ModelAttribute("hecho") HechoOutputDTO hecho, @RequestParam(name = "id_hecho") Long id_hecho, @RequestParam(name = "id_externo_hecho") Long id_externo_hecho, RedirectAttributes redirectAttributes, @RequestParam(value = "fotos", required = false) List<MultipartFile> imagenesNuevas) {
+//    try {
+      dinamicaService.modificarHecho(id_externo_hecho, hecho, imagenesNuevas);
       redirectAttributes.addFlashAttribute("exito", "La solicitud ha sido creada");
       return "redirect:/api/solicitudes/modificacion/" + id_hecho;
-    } catch (Exception ex) {
-      redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
-      return "redirect:/solicitudes/modificacion/" + id_hecho;
-    }
+//    } catch (Exception ex) {
+//      redirectAttributes.addFlashAttribute("error", "Error al crear la solicitud");
+//      return "redirect:/solicitudes/modificacion/" + id_hecho;
+//    }
 
   }
 
@@ -120,7 +114,6 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
       return "error/sinSolicitudesDeEliminacionPendientes";
     }
     return "redirect:/api/solicitudes/tratarEliminacion/" + idsPendientes.get(0);
-
   }
 
   @GetMapping("/tratarEliminacion/{solicitudId}")
@@ -231,7 +224,7 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
 
 
   @PostMapping("/solicitudesDeModificacion/resolverModificacion")
-  public String procesarSolicitudDeModificacion(@RequestParam("id_hecho_externo") Long id_hecho_externo, @RequestParam("accion") String accion, @RequestParam("motivoDeEstado") String motivoDeEstado, RedirectAttributes redirectAttributes) {
+  public String procesarSolicitudDeModificacion(@RequestParam("id_hecho_externo") Long id_hecho_externo, @RequestParam("accion") String accion, @RequestParam("motivoDeEstado") String motivoDeEstado,@RequestParam(value = "imagenesConfirmadas", required = false) List<String> imagenesConfirmadas, RedirectAttributes redirectAttributes) {
     ResolucionSolicitudDeModificacionOutputDTO resolucion = new ResolucionSolicitudDeModificacionOutputDTO();
     resolucion.setMotivoDeEstado(motivoDeEstado);
 
@@ -244,15 +237,22 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
           }
       }
 
-    log.info("Resolucion a enviarse:" + resolucion);
+    if (resolucion.getEstadoNuevo() == EstadoSolicitud.ACEPTADA ||
+        resolucion.getEstadoNuevo() == EstadoSolicitud.ACEPTADA_CON_SUGERENCIA) {
+      if (imagenesConfirmadas == null) {
+        imagenesConfirmadas = new java.util.ArrayList<>();
+      }
+      resolucion.setImagenesFinales(imagenesConfirmadas);
+    }
 
-   dinamicaService.resolverModificacion(id_hecho_externo, resolucion);
+    try {
+      dinamicaService.resolverModificacion(id_hecho_externo, resolucion);
+      redirectAttributes.addFlashAttribute("exito", "Solicitud procesada correctamente.");
+    } catch (Exception e) {
+      log.error("Error al resolver modificación", e);
+      redirectAttributes.addFlashAttribute("error", "Hubo un error al procesar la solicitud.");
+    }
+
    return "redirect:/api/solicitudes/tratarModificaciones";
-
   }
-
-
 }
-
-
-

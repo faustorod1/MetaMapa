@@ -160,6 +160,20 @@ public class WebApiCallerService {
         );
     }
 
+    public <T> T putMultipart(String url, MultiValueMap<String, HttpEntity<?>> body, Class<T> responseType){
+        return executeWithTokenRetry(accessToken ->
+            webClient
+                .put()
+                .uri(url)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(BodyInserters.fromMultipartData(body))
+                .retrieve()
+                .bodyToMono(responseType)
+                .block()
+        );
+    }
+
 
     /**
      * Ejecuta una llamada HTTP PUT

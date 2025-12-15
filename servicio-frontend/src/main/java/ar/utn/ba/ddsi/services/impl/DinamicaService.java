@@ -6,6 +6,7 @@ import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeModificacionOutputDTO;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class DinamicaService implements IDinamicaService {
     WebClient dinamicaWebClient;
@@ -33,11 +35,9 @@ public class DinamicaService implements IDinamicaService {
     public void cargarHecho(HechoOutputDTO hecho, List<MultipartFile> imagenes) {
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
 
-        // Agregamos el JSON del hecho
         builder.part("hecho", hecho)
                 .header("Content-Type", "application/json");
 
-        // Agregamos cada archivo
         if (imagenes != null) {
             for (MultipartFile img : imagenes) {
                 builder.part("contenidosMultimedia", img.getResource()).filename(Objects.requireNonNull(img.getOriginalFilename())).contentType(MediaType.MULTIPART_FORM_DATA);
@@ -67,12 +67,39 @@ public class DinamicaService implements IDinamicaService {
                 Long.class);
     }
 
-    public void modificarHecho(Long id_hecho, HechoOutputDTO hecho){
-        webApiCallerService.put(
-                dinamicaBaseUrl + "/api/solicitudes/" + id_hecho,
-               hecho,
-               String.class
-        );
+    public void modificarHecho(Long id_hecho, HechoOutputDTO hecho, List<MultipartFile> imagenesNuevas){
+        System.out.println("Multiparts ----");
+        for (MultipartFile img: imagenesNuevas) {
+            System.out.println(img.getOriginalFilename());
+        }
+
+        if (hecho.getContenidosMultimedia() != null) {
+            System.out.println("Paths a conservar ---");
+            for (String path: hecho.getContenidosMultimedia()) {
+                System.out.println(path);
+            }
+        }
+
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+
+        builder.part("hechoNuevo", hecho)
+            .header("Content-Type", "application/json");
+
+        if (imagenesNuevas != null) {
+            for (MultipartFile img : imagenesNuevas) {
+                if (!img.isEmpty()) {
+                    builder.part("fotos", img.getResource())
+                        .filename(Objects.requireNonNull(img.getOriginalFilename()))
+                        .contentType(MediaType.MULTIPART_FORM_DATA);
+                }
+            }
+        }
+        MultiValueMap<String, HttpEntity<?>> multipartBody = builder.build();
+
+        System.out.println(hecho);
+
+        String rta = webApiCallerService.putMultipart(dinamicaBaseUrl + "/api/solicitudes/" + id_hecho, multipartBody, String.class);
+        System.out.println("Respuesta: " + rta);
     }
 
 

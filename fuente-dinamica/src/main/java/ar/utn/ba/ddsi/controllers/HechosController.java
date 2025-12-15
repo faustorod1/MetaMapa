@@ -50,20 +50,6 @@ public class  HechosController {
     return hechosService.crearHecho(hecho, archivos);
   }
 
-  /*
-@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public HechoOutputDTO crearHecho(
-        @RequestPart("hecho") HechoInputDTO hecho,
-        @RequestPart(value = "contenidosMultimedia", required = false) List<MultipartFile> archivos,
-        Authentication authentication
-) {
-  CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-  hecho.setContribuyenteId(userDetails.getId());
-  return hechosService.crearHecho(hecho, archivos);
-}
-   */
-
-
   // Para que el agregador le avise cuando se elimina un hecho
   @DeleteMapping
   public void eliminarHecho(@RequestParam Long id){

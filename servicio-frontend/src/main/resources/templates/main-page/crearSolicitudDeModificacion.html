@@ -14,6 +14,45 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <style>
+        /* Estilos inline para ajustar las imágenes existentes al diseño actual */
+        .contenedor-imagenes-existentes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .preview-item-existente {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .preview-item-existente img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .preview-item-existente .remove-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -100,10 +139,24 @@
 
             <div class="input-imagenes">
                 <div class="input-cargarHecho">
-                    <label for="fotos" class="custom-file">Sube imágenes📷 </label>
+
+                    <h4 th:if="${not #lists.isEmpty(hecho.contenidosMultimedia)}">Imágenes Actuales</h4>
+                    <div class="contenedor-imagenes-existentes" id="contenedor-existentes">
+                        <div th:each="url, iterStat : *{contenidosMultimedia}"
+                             class="preview-item-existente"
+                             th:id="'img-old-' + ${iterStat.index}"
+                             th:data-url="${url}"> <img th:src="${url}" alt="Imagen existente">
+
+                            <button type="button" class="remove-btn"
+                                    th:onclick="'eliminarImagenExistente(' + ${iterStat.index} + ')'">×</button>
+                        </div>
+                    </div>
+
+                    <div id="inputs-hidden-container"></div>
+
+                    <label for="fotos" class="custom-file">Agregar nuevas imágenes 📷 </label>
                     <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
-                    <div id="preview"></div>
-                </div>
+                    <div id="preview"></div> </div>
             </div>
 
             <div class="button-footer">
@@ -182,10 +235,12 @@
             mostrarPreviews();
         }
 
-        inputFotos.addEventListener("change", () => {
-            filesArray = filesArray.concat(Array.from(inputFotos.files));
-            mostrarPreviews();
-        });
+        if(inputFotos){
+            inputFotos.addEventListener("change", () => {
+                filesArray = filesArray.concat(Array.from(inputFotos.files));
+                mostrarPreviews();
+            });
+        }
 
         const inputTags = document.getElementById("tagInput");
         const addBtn = document.getElementById("addTag");
@@ -195,7 +250,6 @@
         function actualizarHidden() {
             const hiddenContainer = document.getElementById("hiddenTagsContainer");
 
-            // Limpia los inputs previos
             hiddenContainer.innerHTML = "";
             etiquetas.forEach((et, index) => {
                 const hidden = document.createElement("input");
@@ -393,6 +447,32 @@
             document.getElementById('btn-accept-ubicacion').classList.remove('hidden');
         }
     })();
+
+    const formulario = document.querySelector('.solicitar-modificacion-form');
+
+    formulario.addEventListener('submit', function(event) {
+        const containerInputs = document.getElementById('inputs-hidden-container');
+        const imagenesVivas = document.querySelectorAll('.preview-item-existente');
+
+        containerInputs.innerHTML = '';
+
+        imagenesVivas.forEach((div, index) => {
+            const url = div.getAttribute('data-url');
+            if (url) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'contenidosMultimedia';
+                input.value = url;
+                containerInputs.appendChild(input);
+            }
+        });
+    });
+    function eliminarImagenExistente(index) {
+        const elemento = document.getElementById('img-old-' + index);
+        if (elemento) {
+            elemento.remove();
+        }
+    }
 
 </script>
 </body>

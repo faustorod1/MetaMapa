@@ -70,7 +70,6 @@ public class Hecho {
     private List<SolicitudDeEliminacion> solicitudesDeEliminacion = new ArrayList<>();
 
     @Access(AccessType.FIELD)
-    @Setter(AccessLevel.NONE)
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })       // Guardado de todas las etiquetas en BD
     @JoinTable(
             name = "etiquetas_por_hecho",

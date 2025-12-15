@@ -75,4 +75,12 @@ public class Hecho {
     public void agregarSnapshot(HechoSnapshot snap){
         snapshots.add(snap);
     }
+
+    public List<String> todoMultimediaString(){
+        List<String> todos = new ArrayList<>();
+        for (ContenidoMultimedia multimedia : this.contenidosMultimedia){
+            todos.add(contenidosMultimedia.toString());
+        }
+        return todos;
+    }
 }

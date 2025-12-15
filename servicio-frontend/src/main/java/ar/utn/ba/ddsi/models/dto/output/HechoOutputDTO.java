@@ -26,7 +26,7 @@ public class HechoOutputDTO {
     private LocalDateTime fechaHecho;
     private Long contribuyenteId;
     private List<EtiquetaOutputDTO> etiquetas = new ArrayList<>();
-
+    private List<String> contenidosMultimedia;
 
 
 
@@ -44,6 +44,9 @@ public class HechoOutputDTO {
                 .latitud(hecho.getLugarAcontecimiento().getLatitud())
                 .longitud(hecho.getLugarAcontecimiento().getLongitud())
                 .etiquetas(etiquetasOutput)
+                .contenidosMultimedia(hecho.getContenidosMultimedia().stream()
+                    .map(ContenidoMultimediaDTO::getPathImagen)
+                    .collect(Collectors.toList()))
                 .build();
     }
 

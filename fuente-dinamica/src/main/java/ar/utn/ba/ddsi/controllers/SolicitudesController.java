@@ -14,10 +14,12 @@ import ar.utn.ba.ddsi.models.exceptions.UnauthorizedException;
 import ar.utn.ba.ddsi.services.ISolicitudesService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -35,10 +37,21 @@ public class SolicitudesController {
   }
 
 
-  @PutMapping("/{idHecho}")
-  public ResponseEntity<?> modificarHecho (@PathVariable Long idHecho, @RequestBody HechoInputDTO hechoNuevo, @AuthenticationPrincipal CustomUserDetails userDetails) {
+  @PutMapping(value = "/{idHecho}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> modificarHecho (@PathVariable Long idHecho, @RequestPart("hechoNuevo") HechoInputDTO hechoNuevo, @RequestPart(value = "fotos", required = false)List<MultipartFile> imagenesNuevas, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    System.out.println("Nuevo ----");
+    for (MultipartFile imagen : imagenesNuevas) {
+      System.out.println(imagen.getOriginalFilename());
+    }
+    System.out.println("Viejos (en hechoDTO) ----");
+    if (hechoNuevo.getContenidosMultimedia() != null) {
+      for (String path : hechoNuevo.getContenidosMultimedia()) {
+        System.out.println(path);
+      }
+    }
+
     try {
-      SolicitudCreadaDTO dto = solicitudesService.crearSolModificacion(idHecho, hechoNuevo, userDetails.getId());
+      SolicitudCreadaDTO dto = solicitudesService.crearSolModificacion(idHecho, hechoNuevo, imagenesNuevas, userDetails.getId());
       return ResponseEntity.ok(dto);
     } catch (UnauthorizedException e) {
       return ResponseEntity.status(403).body(Map.of("error", "No está autorizado para modificar este hecho."));

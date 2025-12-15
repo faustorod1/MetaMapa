@@ -24,4 +24,5 @@ public class HechoInputDTO {
   private LocalDateTime fechaHecho;
   private Long contribuyenteId;
   private List <EtiquetaDTO> etiquetas;
+  private List<String> contenidosMultimedia;
 }

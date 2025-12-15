@@ -5,6 +5,8 @@ import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dto.input.ResolucionDTO;
 import ar.utn.ba.ddsi.models.exceptions.SolicitudYaProcesadaException;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,12 +53,11 @@ public class SolicitudDeModificacion {
   @CollectionTable(name = "etiquetas_nuevas", joinColumns = @JoinColumn(name = "solicitud_de_modificacion_id"))
   @Column(name = "etiqueta")
   private Set<String> etiquetasNuevas;
-/*
+
   @ElementCollection
   @CollectionTable(name = "contenidos_multimedia_nuevo", joinColumns = @JoinColumn(name = "hecho_id"))
   @Column(name = "path")
   private List<String> contenidosMultimediaNuevos;
-  */
 
   //---------------------------------------------
 
@@ -84,12 +85,18 @@ public class SolicitudDeModificacion {
     this.administradorId = adminId;
     this.motivoDeEstado = resolucion.getMotivoDeEstado();
     this.estado = resolucion.getEstadoNuevo();
+
+    if(estado == RECHAZADA){
+      hecho.setSolicitudDeModificacion(null);
+      return;
+    }
     
     if (estado == ACEPTADA || estado == ACEPTADACONSUGERENCIA) {
       HechoSnapshot snapshot = new HechoSnapshot(hecho);
       hecho.agregarSnapshot(snapshot);
       hecho.setFechaUltimaActualizacion(LocalDateTime.now());
 
+      hecho.setEtiquetas(etiquetasNuevas);
       hecho.setFechaHecho(fechaHechoNueva);
       hecho.setLugarAcontecimiento(new Coordenada(latitudNueva, longitudNueva));
       hecho.setDescripcion(descripcionNueva);
@@ -100,18 +107,19 @@ public class SolicitudDeModificacion {
       if(etiquetasNuevas != null){
         hecho.setEtiquetas(etiquetasNuevas);
       }
-      /*
+
       if(contenidosMultimediaNuevos != null){
         List<ContenidoMultimedia> nuevasEntidades = contenidosMultimediaNuevos.stream()
             .map(ContenidoMultimedia::new)
-            .collect(Collectors.toList());
-        hecho.setContenidosMultimedia(nuevasEntidades);
-      }
-      */
+            .toList();
 
-    }
-    if(estado == RECHAZADA){
-      hecho.setSolicitudDeModificacion(null);
+        if (hecho.getContenidosMultimedia() == null) {
+          hecho.setContenidosMultimedia(new ArrayList<>());
+        }
+
+        hecho.getContenidosMultimedia().clear();
+        hecho.getContenidosMultimedia().addAll(nuevasEntidades);
+      }
     }
   }
 }

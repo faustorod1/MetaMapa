@@ -385,6 +385,7 @@ public class HechosService implements IHechosService {
         viejo.setCategoria(nuevo.getCategoria());
         viejo.setContenidosMultimedia(nuevo.getContenidosMultimedia());
         viejo.setLugarAcontecimiento(nuevo.getLugarAcontecimiento());
+        viejo.setEtiquetas(nuevo.getEtiquetas());
         viejo.setFechaHecho(nuevo.getFechaHecho());
         viejo.setFechaUltimaActualizacion(LocalDateTime.now());
         viejo.setRevisado(nuevo.isRevisado());

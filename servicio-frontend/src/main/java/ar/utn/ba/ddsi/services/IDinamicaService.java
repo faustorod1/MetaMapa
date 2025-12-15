@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IDinamicaService {
     void cargarHecho(HechoOutputDTO hecho, List<MultipartFile> imagenes);
-    void modificarHecho(Long id_hecho, HechoOutputDTO hecho);
+    void modificarHecho(Long id_hecho, HechoOutputDTO hecho, List<MultipartFile> imagenesNuevas);
     List<Long> pedirIDsModificacionesPendientes();
     SolicitudDeModificacionDTO pedirSolicitudDeModificacion(Long solicitudId);
     void resolverModificacion(Long hechoId, ResolucionSolicitudDeModificacionOutputDTO resolucion);
