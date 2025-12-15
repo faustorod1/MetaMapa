@@ -19,7 +19,7 @@ public class ColeccionesScheduler {
 
     }
 
-    @Scheduled(fixedRate = 60*1000)
+    @Scheduled(fixedRate = 60*60*1000)
     //@Scheduled(cron = "0 00 4 * * *", zone = "America/Argentina/Buenos_Aires")
     @Transactional
     public void consensuarHechosDeColecciones(){

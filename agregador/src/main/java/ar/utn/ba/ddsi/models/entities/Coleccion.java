@@ -72,7 +72,7 @@ public class Coleccion {
         joinColumns = @JoinColumn(name = "coleccion_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
+    @Setter//(AccessLevel.NONE) // <- Estas cosas son para que no genere getter/setter de esto
     private List<Hecho> hechos;
 
     protected Coleccion() {} //Para el ORM

@@ -4,8 +4,11 @@ package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dto.input.*;
 import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.CriterioOutputDTO;
+import ar.utn.ba.ddsi.models.dto.output.FiltroOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
+import jakarta.annotation.security.PermitAll;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -152,12 +156,46 @@ public class ColeccionesController {
                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                         @RequestParam(name = "modo", defaultValue = "irrestricta") String modo){
         ColeccionConHechosDTO coleccion = agregadorService.pedirColeccionConHechos(id, page, size, modo);
+        List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
         log.info("Colección traida: " + coleccion);
         model.addAttribute("coleccion", coleccion);
+        model.addAttribute("categorias", categorias);
         model.addAttribute("currentMode", modo);
+        model.addAttribute("filtrosForm", new FiltrosForm());
         model.addAttribute("isIrrestricta", modo.equals("irrestricta"));
         return "main-page/verColeccion";
     }
 
+    @GetMapping("/{identificador}/filtrar-hechos")
+    public String filtrarHechos(@PathVariable("identificador") String identificador,  @ModelAttribute FiltrosForm filtrosForm,
+                                Model model,@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size ) {
+
+        List<FiltroOutputDTO> listaFiltros = filtrosForm.getFiltros();
+
+        if (listaFiltros == null) {
+            listaFiltros = new ArrayList<>();
+        }
+
+        log.info("Recibida solicitud para filtrar colección: {} con {}", identificador, listaFiltros);
+        ColeccionConHechosDTO coleccionConHechosFiltrados = agregadorService.filtrarHechosColeccion(identificador, listaFiltros, page, size);
+        List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
+        model.addAttribute("coleccion", coleccionConHechosFiltrados);
+        model.addAttribute("categorias", categorias);
+        model.addAttribute("filtrosForm", filtrosForm);
+        return "main-page/verColeccion";
+    }
+
+    @Data
+    public static class FiltrosForm {
+        private List<FiltroOutputDTO> filtros = new ArrayList<>();
+
+        public List<FiltroOutputDTO> getFiltros() {
+            return filtros;
+        }
+
+        public void setFiltros(List<FiltroOutputDTO> filtros) {
+            this.filtros = filtros;
+        }
+    }
 
 }

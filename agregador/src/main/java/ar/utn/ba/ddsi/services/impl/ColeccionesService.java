@@ -3,13 +3,12 @@ package ar.utn.ba.ddsi.services.impl;
 import ar.utn.ba.ddsi.converters.AlgoritmoDeConsensoConverter;
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosCuradosOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dtos.output.*;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.entities.consenso.AlgoritmoDeConsenso;
+import ar.utn.ba.ddsi.models.entities.filtros.Filtro;
 import ar.utn.ba.ddsi.models.repositories.IColeccionesRepository;
 import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
@@ -123,6 +122,61 @@ public class ColeccionesService implements IColeccionesService {
         applicationEventPublisher.publishEvent(new CriterioCambiadoEvent(coleccionAModificar));
         coleccionesRepository.save(coleccionAModificar);
         return ColeccionOutputDTO.fromEntity(coleccionAModificar);
+    }
+
+    @Override
+    public ColeccionConHechosOutputDTO filtrarColeccion(String identificador, List<FiltroInputDTO> filtros, Pageable pageable) {
+
+        Pageable pageableDe10Hechos = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort());
+
+        Coleccion coleccion = coleccionesRepository.findByIdentificador(identificador);
+        List<Hecho> hechosActuales = coleccion.getHechos();
+
+        List<Filtro> instanciasDeFiltro = filtros.stream()
+                .map(FiltroInputDTO::toEntity)
+                .toList();
+        List<Hecho> hechosFiltrados = hechosActuales;
+
+        for (Filtro filtro : instanciasDeFiltro) {
+            hechosFiltrados = filtro.aplicar(hechosFiltrados);
+            if (hechosFiltrados.isEmpty()) {
+                break;
+            }
+        }
+        int totalHechos = hechosFiltrados.size();
+
+
+        int start = (int) pageableDe10Hechos.getOffset();
+        int end = Math.min((start + pageableDe10Hechos.getPageSize()), totalHechos);
+
+        List<Hecho> hechosEnPagina;
+        if (start >= totalHechos) {
+            hechosEnPagina = List.of();
+        } else {
+            hechosEnPagina = hechosFiltrados.subList(start, end);
+        }
+
+        List<HechoOutputDTO> hechosDTOs = hechosEnPagina.stream()
+                .map(HechoOutputDTO::fromEntity)
+                .toList();
+
+        Page<HechoOutputDTO> hechosPaginados = new PageImpl<>(
+                hechosDTOs,
+                pageableDe10Hechos,
+                totalHechos
+        );
+
+        ColeccionConHechosOutputDTO coleccionConHechosOutputDTO = new ColeccionConHechosOutputDTO();
+        coleccionConHechosOutputDTO.setIdentificador(coleccion.getIdentificador());
+        coleccionConHechosOutputDTO.setDescripcion(coleccion.getDescripcion());
+        coleccionConHechosOutputDTO.setTitulo(coleccion.getTitulo());
+        coleccionConHechosOutputDTO.setFuentes(coleccion.getFuentes().stream().map(FuenteDTO::fromEntity).toList());
+        coleccionConHechosOutputDTO.setHechos(hechosPaginados);
+
+        return coleccionConHechosOutputDTO;
     }
 
 

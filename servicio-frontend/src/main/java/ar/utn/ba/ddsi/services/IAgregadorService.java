@@ -1,9 +1,7 @@
 package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dto.input.*;
-import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
-import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
-import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
+import ar.utn.ba.ddsi.models.dto.output.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -38,4 +36,5 @@ public interface IAgregadorService {
   Integer pedirCantidadDeHechosEnElSistema();
   void actualizarHechos();
   void consensuarColecciones();
+  ColeccionConHechosDTO filtrarHechosColeccion(String identificador, List<FiltroOutputDTO> filtros, int pagina, int tamanio);
 }

@@ -2,11 +2,9 @@ package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dtos.input.ColeccionInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosCuradosOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.ColeccionOutputDTO;
-import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
+import ar.utn.ba.ddsi.models.dtos.output.*;
 import ar.utn.ba.ddsi.models.entities.Coleccion;
 import ar.utn.ba.ddsi.models.entities.Criterio;
 import ar.utn.ba.ddsi.models.entities.Fuente;
@@ -34,4 +32,6 @@ public interface IColeccionesService {
     List<ColeccionOutputDTO> buscarUltimasColecciones (LocalDateTime fecha, Integer cantidad_colecciones_destacadas);
     List<ColeccionConHechosCuradosOutputDTO> buscarTodosConHechosCurados();
     List<String> buscarIdentificadores();
-}
+    public ColeccionConHechosOutputDTO filtrarColeccion(String identificador, List<FiltroInputDTO> filtros, Pageable pageable);
+
+    }

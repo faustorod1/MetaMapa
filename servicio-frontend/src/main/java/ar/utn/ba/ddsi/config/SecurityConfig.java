@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/login", "/logout", "/register", "/informacion-legal-y-privacidad","/main","/main/mapa", "/main/buscador",
-                                "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}", "/colecciones", "/colecciones/{id}/con-hechos").permitAll()
+                                "/hechos/formulario-de-carga","/hechos/cargar","/hechos/importarCSV","/hechos/importar","/hechos/detalle-hecho/{id_hecho}", "/colecciones", "/colecciones/{id}/con-hechos", "/colecciones/{identificador}/filtrar-hechos").permitAll()
                         .requestMatchers("/api/solicitudes/eliminacion/{id}", "/api/solicitudes/solicitarEliminacion", "/api/solicitudes/modificacion/{id_hecho}", "api/solicitudes/solicitarModificacion").hasAnyRole("CONTRIBUYENTE","ADMIN")
                         .requestMatchers("/colecciones/formulario-de-carga", "/colecciones/cargar", "/colecciones/formulario-de-edicion/{id_coleccion}","/colecciones/editar", "/api/solicitudes/tratarEliminaciones", "/api/solicitudes/tratarEliminacion/{id}", "/api/solicitudes/resolverEliminacion", "/api/solicitudes/tratarModificaciones", "/api/solicitudes/tratarModificacion/{solicitudId}").hasRole("ADMIN")
                         .requestMatchers("/404","/403","/401").permitAll()

@@ -26,4 +26,5 @@ public interface IHechosService {
     HechoOutputDTO buscarHechoDinamica (Long id_externo);
     Integer pedirCantidadDeHechosEnElSistema();
     HechoOutputDTO buscarUltimoHechoCargado();
+
 }

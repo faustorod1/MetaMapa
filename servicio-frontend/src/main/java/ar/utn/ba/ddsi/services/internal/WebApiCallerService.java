@@ -4,6 +4,8 @@ import ar.utn.ba.ddsi.exceptions.NotFoundException;
 import ar.utn.ba.ddsi.models.dto.RestPage;
 import ar.utn.ba.ddsi.models.dto.external.RefreshTokenDTO;
 import ar.utn.ba.ddsi.models.dto.external.AuthResponseDTO;
+import ar.utn.ba.ddsi.models.dto.input.FiltroDTO;
+import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,6 +19,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * Servicio genérico para hacer llamadas HTTP con manejo automático de tokens

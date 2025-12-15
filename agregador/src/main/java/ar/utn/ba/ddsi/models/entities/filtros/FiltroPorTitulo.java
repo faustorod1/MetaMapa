@@ -2,11 +2,10 @@ package ar.utn.ba.ddsi.models.entities.filtros;
 
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
+import java.text.Normalizer;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.List;
 
@@ -24,6 +23,18 @@ public class FiltroPorTitulo extends Filtro {
 
     @Override
     public List<Hecho> aplicar(List<Hecho> lista) {
-        return lista.stream().filter(h -> h.getTitulo().contains(titulo)).toList();
+        String tituloBusqueda = normalizar(this.titulo);
+
+        return lista.stream().filter(h -> {
+            String tituloHecho = normalizar(h.getTitulo());
+            return tituloHecho.contains(tituloBusqueda);
+        }).toList();
+    }
+
+    private String normalizar(String input) {
+        if (input == null) return "";
+
+        String normalizado = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalizado.replaceAll("\\p{M}", "").toLowerCase();
     }
 }

@@ -6,6 +6,8 @@ import ar.utn.ba.ddsi.models.entities.Fuente;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 
 import java.util.List;
+
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 

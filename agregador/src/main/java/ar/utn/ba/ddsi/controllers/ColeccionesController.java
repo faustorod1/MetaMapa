@@ -2,6 +2,7 @@ package ar.utn.ba.ddsi.controllers;
 
 import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dtos.input.CriterioInputDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosCuradosOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.ColeccionConHechosOutputDTO;
@@ -85,6 +86,21 @@ public class ColeccionesController {
         log.info("Entró en actualizarColeccion:" + coleccionInputDTO);
         return coleccionesService.updateColeccion(coleccionInputDTO);
     }
+
+    /*@PostMapping("/{identificador}/hechos_filtrados")
+    public List<HechoOutputDTO> filtrarColeccion (@PathVariable String identificador, @RequestBody List<FiltroInputDTO> filtros){
+        List<HechoOutputDTO> hechos = coleccionesService.filtrarColeccion(identificador, filtros);
+        log.info("Hechos filtrados: " + hechos);
+        return hechos;
+    }*/
+
+    @PostMapping("/{identificador}/hechos_filtrados")
+    public ColeccionConHechosOutputDTO filtrarColeccion (@PathVariable String identificador, @RequestBody List<FiltroInputDTO> filtros, @PageableDefault(size = 10, page = 0) Pageable pageable ){
+        ColeccionConHechosOutputDTO coleccionConHechosFiltrados = coleccionesService.filtrarColeccion(identificador, filtros, pageable);
+        log.info("Hechos filtrados: " + coleccionConHechosFiltrados);
+        return coleccionConHechosFiltrados;
+    }
+
 
     @PatchMapping("{identificador}/fuentes")
     public ColeccionOutputDTO actualizarFuentes(@PathVariable String identificador, @RequestBody List<Long> idsFuentes){

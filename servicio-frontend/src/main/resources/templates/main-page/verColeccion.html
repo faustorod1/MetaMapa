@@ -1,338 +1,563 @@
- <!DOCTYPE html>
-        <html lang="en" xmlns:th="http://www.thymeleaf.org">
-        <head>
-            <meta charset="UTF-8">
-            <title>Mis-Hechos | METAmapa</title>
-            <link rel="stylesheet" th:href="@{/css/style.css}" />
-            <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> Ver colección| METAmapa</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
-            <style>
-                html { height: 100%; }
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        html { height: 100%; }
+        body {
+            margin: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            background-image: var(--imagen-fondo-levemente-cargado);
+            background-attachment: fixed;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        main {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container-detalle {
+            padding: 2rem;
+            width: 95%;
+            max-width: 1200px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 80vh;
+            position: relative; /* Necesario para el overlay */
+        }
 
-                body {
-                    margin: 0;
-                    height: 100%;
-                    font-family: Arial, sans-serif;
-                    display: flex;
-                    background-image: var(--imagen-fondo-levemente-cargado);
-                    background-attachment: fixed;
-                    background-position: center center;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                    justify-content: center;
-                    align-items: flex-start;
-                }
+        /* --- HEADER --- */
+        .header-detalle {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            gap: 20px;
+        }
 
-                main {
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                    flex-direction: column;
-                    align-items: center;
-                }
+        .header-info { flex: 1; }
+        .header-info h2 { color: var(--color-main); margin-top: 0; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header-info p { color: #555; font-size: 1.1rem; margin: 0; }
 
-                .container-detalle {
-                    padding: 2rem;
-                    width: 95%;
-                    max-width: 1200px;
-                    margin-top: 1.5rem;
-                    margin-bottom: 1.5rem;
-                    background: white;
-                    border-radius: 1rem;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 80vh;
-                }
+        /* --- ZONA DE FILTROS (CENTRO) --- */
+        .filter-section {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
 
-                .header-detalle {
-                    display: flex;
-                    justify-content: space-between; /* Título izquierda, Botón derecha */
-                    align-items: flex-start;
-                    margin-bottom: 2rem;
-                    border-bottom: 1px solid #eee;
-                    padding-bottom: 1rem;
-                }
+        /* Barra Azul Contenedora */
+        #criterioContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background-color: #0b0cbd; /* Azul Fuerte */
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+            width: 100%;
+        }
 
-                .header-detalle h2 {
-                    color: var(--color-main);
-                    margin-top: 0;
-                    font-size: 2rem;
-                    margin-bottom: 0.5rem;
-                }
+        /* ESTILOS DE LOS ITEMS DE FILTRO */
+        .filtro-item {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-                .header-detalle p {
-                    color: #555;
-                    font-size: 1.1rem;
-                }
+        .filtro-item select, .filtro-item input {
+            background-color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 4px 6px;
+            font-size: 0.85rem;
+            max-width: 140px; /* Un poco más ancho para categorías */
+            color: #333;
+        }
+        .filtro-item .param-input {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
 
-                #nav-button-modo-de-navegacion {
-                    background: transparent;
-                    border: none;
-                    cursor: pointer;
-                    font-size: 1.8rem;
-                    color: #333;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0 0 0 1rem;
-                    outline: none;
-                    transition: transform 0.2s;
-                }
+        .filtro-item label {
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #eee;
+            margin-right: 2px;
+        }
 
-                #nav-button-modo-de-navegacion:hover {
-                    transform: scale(1.1);
-                    color: var(--color-main);
-                }
+        .btn-eliminar-filtro {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 5px;
+            transition: background 0.2s;
+        }
+        .btn-eliminar-filtro:hover { background: #cc0000; }
 
-                .icon-off {
-                    color: #888; /* Color gris suave para el modo 'Off' */
-                }
+        .filter-actions { display: flex; gap: 10px; }
+        .btn-action { padding: 6px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; transition: background 0.2s; }
+        .btn-add { background-color: #e0e0e0; color: #333; }
+        .btn-add:hover { background-color: #ccc; }
+        .btn-apply { background-color: var(--color-main); color: white; }
+        .btn-apply:hover { background-color: #1a2675; }
 
-                .icon-on {
-                    color: var(--color-main); /* Por ejemplo, el color principal para el modo 'On' */
-                }
+        /* --- MODO --- */
+        .mode-container { flex: 1; display: flex; justify-content: flex-end; }
+        #nav-button-modo-de-navegacion { background: transparent; border: none; cursor: pointer; font-size: 1.8rem; color: #333; display: flex; align-items: center; padding: 0 0 0 1rem; outline: none; transition: transform 0.2s; }
+        #nav-button-modo-de-navegacion:hover { transform: scale(1.1); color: var(--color-main); }
+        .icon-off { color: #888; }
+        .icon-on { color: var(--color-main); }
 
-                h3 {
-                    color: #333;
-                }
+        /* ESTILOS DE CARGA */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            display: none; /* Inicialmente oculto */
+            justify-content: center;
+            align-items: center;
+            border-radius: 1rem;
+        }
 
-                .hecho-card {
-                    background: #f8f9fa;
-                    border-left: 5px solid var(--color-main-2);
-                    border-radius: 8px;
-                    padding: 1.5rem;
-                    margin-bottom: 1.5rem;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                    transition: transform 0.2s;
-                }
+        /* ESTILOS DE HECHOS */
+        h3 { color: #333; }
+        .hecho-card { background: #f8f9fa; border-left: 5px solid var(--color-main-2); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .hecho-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .hecho-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #e0e0e0; padding-bottom: 0.5rem; width: 100%; }
+        .hecho-header h3 { color: var(--color-main); font-size: 1.3rem; margin: 0; }
+        .btn-detalle-hecho { background-color: var(--color-main-2); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; text-decoration: none; }
+        .btn-detalle-hecho:hover { background-color: #218838; }
+        .hecho-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .hecho-meta > div { background-color: white; border: 1px solid #ddd; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; color: #555; display: flex; align-items: center; gap: 0.5rem; }
+        .empty-message { text-align: center; padding: 3rem; color: #888; }
+        .paginacion a { padding: 10px 16px; background: var(--color-main); color: white; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; }
+        .paginacion a:hover { background: #1a2675; }
+        .paginacion span { display: flex; align-items: center; font-size: 1.1rem; }
+    </style>
+</head>
 
-                .hecho-card:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                }
+<body>
+<main>
+    <div class="container-detalle">
 
-                .hecho-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center; /* Alinea verticalmente */
-                    margin-bottom: 1rem;
-                    border-bottom: 1px solid #e0e0e0;
-                    padding-bottom: 0.5rem;
-                    width: 100%;
-                }
+        <div class="loading-overlay" id="loadingOverlay">
+            <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: var(--color-main);"></i>
+        </div>
+        <div class="header-detalle">
 
-                .hecho-header h3 {
-                    color: var(--color-main);
-                    font-size: 1.3rem;
-                    margin: 0;
-                }
+            <div class="header-info">
+                <h2 th:text="${coleccion.titulo}">Título</h2>
+                <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Desc...</span></p>
+            </div>
 
-                .btn-detalle-hecho {
-                    background-color: var(--color-main-2);
-                    color: white;
-                    border: none;
-                    border-radius: 50%;
-                    width: 35px;
-                    height: 35px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    transition: background 0.2s;
-                    text-decoration: none;
-                }
+            <div class="filter-section">
+                <form id="formFiltros"
+                      th:action="@{'/colecciones/' + ${coleccion.identificador} + '/filtrar-hechos'}"
+                      method="get"
+                      style="width:100%; display:flex; flex-direction:column; gap:15px;">
+                    <input type="hidden" name="identificador" th:value="${coleccion.identificador}" id="coleccionIdentificador">
 
-                .btn-detalle-hecho:hover {
-                    background-color: #218838;
-                }
-
-                .btn-detalle-hecho i {
-                    font-size: 1rem;
-                }
-
-                .hecho-meta {
-                    display: flex;
-                    gap: 1rem;
-                    flex-wrap: wrap;
-                    margin-bottom: 1rem;
-                }
-
-                .hecho-meta > div {
-                    background-color: white;
-                    border: 1px solid #ddd;
-                    padding: 0.3rem 0.8rem;
-                    border-radius: 20px;
-                    font-size: 0.9rem;
-                    color: #555;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-
-                .empty-message {
-                    text-align: center;
-                    padding: 3rem;
-                    color: #888;
-                }
-
-                .paginacion a {
-                    padding: 10px 16px;
-                    background: var(--color-main);
-                    color: white;
-                    border-radius: 8px;
-                    text-decoration: none;
-                    font-weight: bold;
-                    transition: background 0.3s;
-                }
-
-                .paginacion a:hover {
-                    background: #1a2675;
-                }
-
-                .paginacion span {
-                    display: flex;
-                    align-items: center;
-                    font-size: 1.1rem;
-                }
-            </style>
-        </head>
-
-        <body>
-        <main>
-            <div class="container-detalle">
-
-                <div class="header-detalle">
-                    <div>
-                    <h2 th:text="${coleccion.titulo}">Título de la Colección</h2>
-                        <p><strong>Descripción:</strong> <span th:text="${coleccion.descripcion}">Descripción...</span></p>
+                    <div id="criterioContainer">
+                        <span id="placeholder-text" style="font-size: 0.9rem; opacity: 0.8;">Agrega filtros aquí...</span>
                     </div>
 
-                    <div th:with="nextMode=${isIrrestricta} ? 'curada' : 'irrestricta'">
-                        <a id="nav-button-modo-de-navegacion"
-                           title="Cambiar modo de navegación"
-                           th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=0&size=' + ${coleccion.hechosPage.size} + '&modo=' + ${nextMode}}">
+                    <div class="filter-actions">
+                        <button type="button" id="btnAddFiltro" class="btn-action btn-add">
+                            <i class="fa-solid fa-plus"></i> Añadir Filtro
+                        </button>
+                        <button type="submit" id="btnAplicarFiltros" class="btn-action btn-apply">
+                            Aplicar <i class="fa-solid fa-filter"></i>
+                        </button>
+                    </div>
+                    <div id="error-message" style="color: #dc3545; font-size: 0.9rem; display: none;"></div>
+                </form>
+            </div>
+            <div class="mode-container"
+                 th:if="${filtrosForm.filtros == null or #lists.isEmpty(filtrosForm.filtros)}"
+                 th:with="nextMode=${isIrrestricta} ? 'curada' : 'irrestricta'">
 
-                            <i th:classappend="${isIrrestricta}
-                                ? ' fa-solid fa-toggle-off'
-                                : ' fa-solid fa-toggle-on'"
-                            th:styleappend="${isIrrestricta}
-                            ? 'color: #888;'
-                            : 'color: var(--color-main);'">
-                            </i>
-
-                            <span style="font-size: 0.8rem; font-weight: bold; margin-left: 0.5rem; color: #555;">
-                            Modo:
-                            <span th:text="${isIrrestricta} ? 'IRRESTRICTA' : 'CURADA'"
-                    th:styleappend="${isIrrestricta} ? 'color: var(--color-main);' : 'color: #888;'">
+                <a id="nav-button-modo-de-navegacion"
+                   title="Cambiar modo"
+                   th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=0&size=' + ${coleccion.hechosPage.size} + '&modo=' + ${nextMode}}">
+                    <i th:classappend="${isIrrestricta} ? ' fa-solid fa-toggle-off' : ' fa-solid fa-toggle-on'"
+                       th:styleappend="${isIrrestricta} ? 'color: #888;' : 'color: var(--color-main);'">
+                    </i>
+                    <span style="font-size: 0.8rem; font-weight: bold; margin-left: 0.5rem; color: #555;">
+            Modo: <span th:text="${isIrrestricta} ? 'IRRESTRICTA' : 'CURADA'"
+                        th:styleappend="${isIrrestricta} ? 'color: var(--color-main);' : 'color: #888;'"></span>
                     </span>
-        </span>
+                </a>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 1.5rem; color: #444;">Hechos de esta colección</h3>
+
+        <div class="hechos-container" id="hechos-container-list">
+
+            <div th:each="hecho : ${coleccion.hechosPage.content}" class="hecho-card">
+                <div class="hecho-info">
+                    <div class="hecho-header">
+                        <h3 th:text="${hecho.titulo}">Título</h3>
+                        <a th:href="@{/hechos/detalle-hecho/{id}(id=${hecho.id})}" class="btn-detalle-hecho">
+                            <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
-                </div>
-
-                <h3 style="margin-bottom: 1.5rem; color: #444;">Hechos de esta colección</h3>
-
-                <div class="hechos-container">
-
-                    <!-- LISTA DE HECHOS (usar .content porque es Page) -->
-                    <div th:each="hecho : ${coleccion.hechos}" class="hecho-card">
-                        <div class="hecho-info">
-                            <div class="hecho-header">
-                            <h3 th:text="${hecho.titulo}" style="margin-top: 0;">Título del Hecho</h3>
-
-                            <a th:href="@{/hechos/detalle-hecho/{id}(id=${hecho.id})}"
-                               class="btn-detalle-hecho"
-                               title="Ver detalle del hecho">
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </a>
-                            </div>
-
-                            <div class="hecho-meta">
-                                <div>
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    <span th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha</span>
-                                </div>
-
-                                <div th:if="${hecho.lugarAcontecimiento != null}">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                    <span>
-                                <span th:text="${hecho.lugarAcontecimiento.latitud}">Lat</span>,
-                                <span th:text="${hecho.lugarAcontecimiento.longitud}">Lon</span>
-                            </span>
-                                </div>
-
-                                <div th:unless="${hecho.lugarAcontecimiento != null}">
-                                    <i class="fa-solid fa-location-cross"></i> <span>Sin ubicación</span>
-                                </div>
-                            </div>
-
-                            <p>
-                                <strong>Descripción:</strong>
-                                <span th:text="${hecho.descripcion}">Desc</span>
-                            </p>
-
-                            <p th:if="${hecho.categoria != null}">
-                                <strong>Categoría:</strong>
-                                <span th:text="${hecho.categoria.nombre}"
-                                      style="background: #e2e6ea; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
-                            Cat
-                        </span>
-                            </p>
-
+                    <div class="hecho-meta">
+                        <div>
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <span th:text="${#temporals.format(hecho.fechaHecho, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                        </div>
+                        <div th:if="${hecho.lugarAcontecimiento != null}">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span th:text="${hecho.lugarAcontecimiento.latitud} + ', ' + ${hecho.lugarAcontecimiento.longitud}">Loc</span>
+                        </div>
+                        <div th:unless="${hecho.lugarAcontecimiento != null}">
+                            <i class="fa-solid fa-location-cross"></i> <span>Sin ubicación</span>
                         </div>
                     </div>
-
-                    <div th:if="${#lists.isEmpty(coleccion.hechos)}" class="empty-message">
-                        <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
-                        <p>No se encontraron hechos en esta colección.</p>
-                    </div>
-
-
-            </div>
-                <div class="paginacion"
-                     style="display:flex; justify-content: space-between; align-items: center; margin-top:2rem; width: 100%;"
-                     th:with="pageMetadata=${coleccion.hechosPage}, currentMode=${currentMode}">
-
-                    <div>
-                        <a th:if="${pageMetadata != null and pageMetadata.hasPrevious}"
-                           th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=' + ${pageMetadata.number - 1} + '&size=' + ${pageMetadata.size} + '&modo=' + ${currentMode}}">
-                            ← Anterior
-                        </a>
-                    </div>
-
-                    <span style="font-weight:bold"
-                          th:text="'Página ' + (${pageMetadata.number + 1}) + ' de ' + ${pageMetadata.totalPages}">
-                    </span>
-
-                    <div style="text-align: right;">
-                        <a th:if="${pageMetadata != null and pageMetadata.hasNext}"
-                           th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=' + ${pageMetadata.number + 1} + '&size=' + ${pageMetadata.size} + '&modo=' + ${currentMode}}">
-                            Siguiente →
-                        </a>
-                    </div>
+                    <p><strong>Descripción:</strong> <span th:text="${hecho.descripcion}">Desc</span></p>
+                    <p th:if="${hecho.categoria != null}">
+                        <strong>Categoría:</strong>
+                        <span th:text="${hecho.categoria.nombre}" style="background: #e2e6ea; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">Cat</span>
+                    </p>
                 </div>
             </div>
-        </main>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const urlMode = urlParams.get('modo');
+            <div th:if="${#lists.isEmpty(coleccion.hechosPage.content)}" class="empty-message" id="initial-empty-message">
+                <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
+                <p>No se encontraron hechos en esta colección.</p>
+            </div>
 
-                const storedMode = localStorage.getItem('modoNavegacion') || 'irrestricta';
 
-                if (!urlMode) {
-                    const currentUrl = new URL(window.location.href);
+            <div class="paginacion" id="original-paginacion"
+                 style="display:flex; justify-content: space-between; align-items: center; margin-top:2rem; width: 100%;"
+                 th:with="pageMetadata=${coleccion.hechosPage}, currentMode=${currentMode}">
+                <div>
+                    <a th:if="${pageMetadata != null and pageMetadata.hasPrevious}"
+                       th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=' + ${pageMetadata.number - 1} + '&size=' + ${pageMetadata.size} + '&modo=' + ${currentMode}}">
+                        ← Anterior
+                    </a>
+                </div>
+                <span style="font-weight:bold" th:text="'Página ' + (${pageMetadata.number + 1}) + ' de ' + ${pageMetadata.totalPages}"></span>
+                <div style="text-align: right;">
+                    <a th:if="${pageMetadata != null and pageMetadata.hasNext}"
+                       th:href="@{'/colecciones/' + ${coleccion.identificador} + '/con-hechos?page=' + ${pageMetadata.number + 1} + '&size=' + ${pageMetadata.size} + '&modo=' + ${currentMode}}">
+                        Siguiente →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
-                    currentUrl.searchParams.set('modo', storedMode);
+<script th:inline="javascript">
+    const CATEGORIAS_LIST = /*[[${categorias}]]*/ [];
+    const IDENTIFICADOR_COLECCION = /*[[${coleccion.identificador}]]*/ '';
+</script>
+<script>
 
-                    window.location.replace(currentUrl.toString());
+    // ----------------------------------------------------
+    // 1. Lógica de Persistencia de Modo de Navegación
+    // ----------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMode = urlParams.get('modo');
+
+        const storedMode = localStorage.getItem('modoNavegacion') || 'irrestricta';
+
+        if (!urlMode) {
+            // Esto solo se ejecuta si no hay 'modo' en la URL, forzando la redirección
+            // para establecer el modo desde localStorage.
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('modo', storedMode);
+            // window.location.replace(currentUrl.toString()); // Usar replace para evitar historial extra
+        }
+    });
+
+    // ----------------------------------------------------
+    // 2. Lógica de Filtros Dinámicos (DOM y Configuración)
+    // ----------------------------------------------------
+
+    const criterioContainer = document.getElementById('criterioContainer');
+    const placeholderText = document.getElementById('placeholder-text');
+    const btnAddFiltro = document.getElementById('btnAddFiltro');
+    const formFiltros = document.getElementById('formFiltros');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const errorMessage = document.getElementById('error-message');
+
+    let filtroCount = 0;
+    let activeFilters = 0;
+
+    const FILTRO_TIPOS = {
+        'titulo': {
+            label: 'Título',
+            params: [{ name: 'titulo', label: 'Contiene', type: 'text', required: true }]
+        },
+        'descripcion': {
+            label: 'Descripción',
+            params: [{ name: 'descripcion', label: 'Contiene', type: 'text', required: true }]
+        },
+        'categoria': {
+            label: 'Categoría',
+            params: [{ name: 'categoria', label: 'Seleccionar', type: 'select_categoria', required: true }]
+        },
+        'ubicacion': {
+            label: 'Ubicación',
+            params: [
+                { name: 'latitud', label: 'Lat', type: 'number', required: true, step: 'any' },
+                { name: 'longitud', label: 'Lon', type: 'number', required: true, step: 'any' }
+            ]
+        },
+        'fechaHecho': {
+            label: 'Fecha Hecho',
+            params: [
+                { name: 'desde', label: 'Desde', type: 'datetime-local', required: true },
+                { name: 'hasta', label: 'Hasta', type: 'datetime-local', required: true }
+            ]
+        },
+        'fechaDeCarga': {
+            label: 'Fecha Carga',
+            params: [
+                { name: 'desde', label: 'Desde', type: 'datetime-local', required: true },
+                { name: 'hasta', label: 'Hasta', type: 'datetime-local', required: true }
+            ]
+        }
+    };
+
+    function updatePlaceholder() {
+        if (activeFilters > 0) {
+            placeholderText.style.display = 'none';
+        } else {
+            placeholderText.style.display = 'inline';
+        }
+    }
+
+    function renderFiltroParams(container, filtroKey, index, tipoDeFiltroSelect) {
+        container.innerHTML = '';
+        const filtro = FILTRO_TIPOS[filtroKey];
+
+        if (filtro && filtro.params.length > 0) {
+
+            const typeLabel = tipoDeFiltroSelect.options[tipoDeFiltroSelect.selectedIndex].textContent;
+            tipoDeFiltroSelect.closest('.filtro-item').querySelector('.filtro-label').textContent = typeLabel;
+
+            filtro.params.forEach(param => {
+                const paramDiv = document.createElement('div');
+                paramDiv.className = 'param-input';
+
+                const fieldId = `filtro-${index}-${param.name}`;
+                let inputElement;
+
+                if (param.type === 'select_categoria' && CATEGORIAS_LIST) {
+                    inputElement = document.createElement('select');
+                    inputElement.required = param.required;
+                    inputElement.innerHTML = `<option value="" disabled selected>${param.label}</option>`;
+                    CATEGORIAS_LIST.forEach(cat => {
+                        inputElement.innerHTML += `<option value="${cat.nombre}">${cat.nombre}</option>`;
+                    });
+                } else {
+                    inputElement = document.createElement('input');
+                    inputElement.type = param.type;
+                    inputElement.required = param.required;
+                    if (param.step) inputElement.step = param.step;
+                    inputElement.placeholder = param.label;
                 }
 
+                inputElement.id = fieldId;
+                inputElement.dataset.paramName = param.name;
+
+                paramDiv.innerHTML = `<label for="${fieldId}">${param.label}</label>`;
+                paramDiv.appendChild(inputElement);
+                container.appendChild(paramDiv);
             });
-        </script>
+        }
+    }
+
+    function addFiltro() {
+        const index = filtroCount++;
+        activeFilters++;
+
+        const filtroItem = document.createElement('div');
+        filtroItem.className = 'filtro-item';
+        filtroItem.dataset.index = index;
+
+        const tipoFiltroSelect = document.createElement('select');
+        tipoFiltroSelect.classList.add('tipo-select');
+        tipoFiltroSelect.id = `filtroTipo-${index}`;
+        tipoFiltroSelect.required = true;
+
+        let options = '<option value="" disabled selected>Tipo</option>';
+        for (const key in FILTRO_TIPOS) {
+            options += `<option value="${key}" data-key="${key}">${FILTRO_TIPOS[key].label}</option>`;
+        }
+        tipoFiltroSelect.innerHTML = options;
+
+        filtroItem.innerHTML = `
+            <span class="filtro-label" style="font-weight: bold;">Tipo</span>
+            <div class="type-select-container">
+                ${tipoFiltroSelect.outerHTML}
+            </div>
+            <div class="params-container" style="display:flex; gap:5px;"></div>
+            <button type="button" class="btn-eliminar-filtro">✕</button>
+        `;
+
+        const newFiltroItem = criterioContainer.appendChild(filtroItem);
+        const typeSelectContainer = newFiltroItem.querySelector('.type-select-container');
+        typeSelectContainer.innerHTML = '';
+        typeSelectContainer.appendChild(tipoFiltroSelect);
+
+        const newParamsContainer = newFiltroItem.querySelector('.params-container');
+        const newBtnEliminar = newFiltroItem.querySelector('.btn-eliminar-filtro');
+
+        tipoFiltroSelect.addEventListener('change', (e) => {
+            const selectedKey = e.target.value;
+            renderFiltroParams(newParamsContainer, selectedKey, index, tipoFiltroSelect);
+        });
+
+        newBtnEliminar.onclick = () => {
+            newFiltroItem.remove();
+            activeFilters--;
+            updatePlaceholder();
+            if (activeFilters === 0) {
+                window.location.reload();
+            }
+        };
+
+        updatePlaceholder();
+    }
+
+    btnAddFiltro.addEventListener('click', addFiltro);
+
+    function serializeFiltrosForGet() {
+        const params = new URLSearchParams();
+        const filtroItems = criterioContainer.querySelectorAll('.filtro-item');
+        let isValid = true;
+
+        if (filtroItems.length === 0) {
+            return { valid: true, payload: '' };
+        }
+
+        let filterIndex = 0;
+
+        for (const item of filtroItems) {
+            const tipoSelect = item.querySelector('.tipo-select');
+            const tipoDeFiltro = tipoSelect ? tipoSelect.value : null;
+
+            if (!tipoDeFiltro) {
+                isValid = false;
+                continue;
+            }
+
+            // 1. Agregar el tipo de filtro: filtros[i].tipoDeFiltro
+            params.append(`filtros[${filterIndex}].tipoDeFiltro`, tipoDeFiltro);
+
+            // 2. Agregar los parámetros
+            const paramsContainer = item.querySelector('.params-container');
+            const inputs = paramsContainer.querySelectorAll('input, select');
+
+            if (inputs.length === 0) {
+                // Si se selecciona el tipo pero no hay campos, también es un error
+                isValid = false;
+                continue;
+            }
+
+            inputs.forEach(input => {
+                if (input.required && !input.value) {
+                    isValid = false;
+                }
+                if (input.value) {
+                    // filtros[i].parametros.nombreParametro
+                    params.append(`filtros[${filterIndex}].parametros[${input.dataset.paramName}]`, input.value);
+                }
+            });
+
+            filterIndex++;
+        }
+
+        if (!isValid) {
+            return { valid: false, payload: null };
+        }
+
+        return { valid: true, payload: params.toString() };
+    }
 
 
-        </body>
- </html>
+    /* *************************************************************** */
+    /* BLOQUE CRÍTICO: LLAMADA GET PARA ENVIAR FiltrosForm */
+    /* *************************************************************** */
+    formFiltros.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMessage.style.display = 'none';
+        loadingOverlay.style.display = 'flex'; // Mostrar loading mientras redirige
+
+        // 1. Serializar los filtros a Query String indexada (filtros[i]....)
+        const { valid, payload: queryParams } = serializeFiltrosForGet();
+
+        if (!valid) {
+            errorMessage.textContent = 'Debe seleccionar un Tipo de Filtro y completar todos los campos requeridos.';
+            errorMessage.style.display = 'block';
+            loadingOverlay.style.display = 'none';
+            return;
+        }
+
+        // const urlParams = new URLSearchParams(window.location.search);
+
+        let finalUrl = `/colecciones/${IDENTIFICADOR_COLECCION}/filtrar-hechos?page=0&size=10`;
+
+        if (queryParams) {
+            finalUrl += `&${queryParams}`;
+        }
+
+        window.location.href = finalUrl;
+    });
+    /* *************************************************************** */
+    /* FIN BLOQUE CRÍTICO */
+    /* *************************************************************** */
+</script>
+</body>
+</html>

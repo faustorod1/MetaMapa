@@ -2,9 +2,7 @@ package ar.utn.ba.ddsi.services.impl;
 
 import ar.utn.ba.ddsi.models.dto.RestPage;
 import ar.utn.ba.ddsi.models.dto.input.*;
-import ar.utn.ba.ddsi.models.dto.output.ColeccionOutputDTO;
-import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeEliminacionOutputDTO;
-import ar.utn.ba.ddsi.models.dto.output.SolicitudDeEliminacionOutputDTO;
+import ar.utn.ba.ddsi.models.dto.output.*;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Value;
@@ -266,5 +264,27 @@ public class AgregadorService implements IAgregadorService {
               new HashMap<String, String>(),
               Void.class
       );
+    }
+    /*
+    public List<HechoDTO> filtrarHechosColeccion(String identificador, List<FiltroOutputDTO> filtros) {
+        String url = "/api/colecciones/" + identificador + "/hechos_filtrados";
+
+        return agregadorWebClient.post()
+                .uri(url)
+                .bodyValue(filtros)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<HechoDTO>>() {})
+                .block();
+    }*/
+
+    public ColeccionConHechosDTO filtrarHechosColeccion(String identificador, List<FiltroOutputDTO> filtros, int pagina, int tamanio) {
+        String url = "/api/colecciones/" + identificador + "/hechos_filtrados" + "?page=" + pagina + "&size=" + tamanio;
+
+        return agregadorWebClient.post()
+                .uri(url)
+                .bodyValue(filtros)
+                .retrieve()
+                .bodyToMono(ColeccionConHechosDTO.class)
+                .block();
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +61,7 @@ public class RelacionadorHechoColeccionService implements IRelacionadorHechoCole
   public void alCambiarCriterioDeColeccion(CriterioCambiadoEvent evento) {
     Coleccion coleccion = evento.getColeccion();
     List<Hecho> hechosDeFuentes = hechosRepository.findAllByIdExterno_FuenteIn(coleccion.getFuentes());
+    coleccion.setHechos(new ArrayList<>());
     coleccion.agregarTandaDeHechos(hechosDeFuentes);
     coleccionesRepository.save(coleccion);
 
