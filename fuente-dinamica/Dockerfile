@@ -4,20 +4,24 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copiar los archivos de configuración de Maven
-COPY pom.xml .
-COPY src ./src
+# 1. Copia TODO el proyecto al contenedor.
+# Esto es necesario para que Maven (el POM padre) pueda:
+# a) Entender la estructura multi-módulo.
+# b) Resolver las dependencias internas de 'fuente-dinamica' (ej. si depende de 'commons').
+COPY . .
 
-# Compilar el proyecto (sin tests)
-RUN mvn clean package -DskipTests
+# 2. Compila SOLAMENTE el módulo 'fuente-dinamica' y sus dependencias (gracias a -am).
+# Maven solo descargará las dependencias necesarias para estos módulos.
+RUN mvn clean package -DskipTests -pl fuente-dinamica -am
 
-# ==========================
-# Etapa 2: Imagen final (solo el JAR)
-# ==========================
+
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# Copiar el JAR compilado desde la etapa anterior
-COPY --from=builder /app/target/*.jar app.jar
+# 3. Copia el JAR compilado desde la carpeta 'target' del módulo 'fuente-dinamica'.
+# **IMPORTANTE**: La ruta debe ser /app/[nombre-del-modulo]/target/*.jar
+COPY --from=builder /app/fuente-dinamica/target/*.jar app.jar
+
+# Configuración del servicio
 EXPOSE 8082
 ENTRYPOINT ["java", "-jar", "app.jar"]
