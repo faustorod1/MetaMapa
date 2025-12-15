@@ -41,9 +41,7 @@ public class SolicitudesService implements ISolicitudesService {
     this.imageUploaderService = imageUploaderService;
   }
 
-
   // --- Métodos expuestos al controller -------------------------------------------------------------------------------
-
 
   @Override
   public SolicitudResueltaDTO procesarSoliPendiente(Long id, ResolucionDTO resolucion, Long adminId) {

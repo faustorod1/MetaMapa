@@ -38,7 +38,7 @@ public class ColeccionesService implements IColeccionesService {
     private IFuentesRepository fuentesRepository;
 
     @Autowired
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, IHechosRepository hechosRepository, ApplicationEventPublisher applicationEventPublisher, IFuentesRepository fuentesRepository) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechosService hechosService, ApplicationEventPublisher applicationEventPublisher, IFuentesRepository fuentesRepository) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -107,6 +107,15 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     public ColeccionOutputDTO updateColeccion(ColeccionInputDTO input){
+
+        if (input.getFuentes() != null) {
+            List<FuenteDTO> fuentesValidas = input.getFuentes().stream()
+                    .filter(fuente -> fuente.getId() != null)
+                    .collect(Collectors.toList());
+            input.setFuentes(fuentesValidas);
+        }
+
+
         Coleccion coleccion = input.toEntity();
         Coleccion coleccionAModificar = coleccionesRepository.findByIdentificador(coleccion.getIdentificador());
         coleccionAModificar.editar(coleccion);

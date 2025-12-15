@@ -15,7 +15,6 @@ import java.util.List;
 
 @Repository
 public interface IHechosRepository extends JpaRepository<Hecho, Long>, JpaSpecificationExecutor<Hecho> {
-    List<Hecho> findAllByidExterno_Fuente(Fuente fuente);
     List<Hecho> findAllByIdExterno_FuenteIn(List<Fuente> fuentes);
 
     List<Hecho> findAllByIdIn(List<Long> ids);
@@ -23,4 +22,6 @@ public interface IHechosRepository extends JpaRepository<Hecho, Long>, JpaSpecif
     List<Hecho> findByContribuyenteId(Long contribuyenteId);
     // Busca hechos donde la fecha sea <= a la fecha dada, ordenados por fecha descendente
     List<Hecho> findByFechaDeCargaLessThanEqualOrderByFechaDeCargaDesc(LocalDateTime fechaDeCarga, Pageable pageable);
+    Integer countByEliminadoFalse();
+    Hecho findTopByOrderByFechaDeCargaDesc();
 }

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AgregadorService implements IAgregadorService {
@@ -119,8 +121,9 @@ public class AgregadorService implements IAgregadorService {
     }
 
   public void actualizarColeccion(ColeccionOutputDTO coleccion){
+      System.out.println("LLEGUE ACÁ");
       webApiCallerService.put(
-              agregadorBaseUrl + "/api/colecciones",
+              agregadorBaseUrl + "/api/colecciones/actualizar",
               coleccion,
               void.class
       );
@@ -218,4 +221,50 @@ public class AgregadorService implements IAgregadorService {
 
     }
 
+    // Panel de control
+
+    public Long pedirSolicitudesAceptadas(){
+        return webApiCallerService.get(
+                agregadorBaseUrl + "/api/solicitudes/cantidadAceptadas",
+                Long.class
+        );
+    }
+
+    public Long pedirSolicitudesRechazadas(){
+      return webApiCallerService.get(
+              agregadorBaseUrl + "/api/solicitudes/cantidadRechazadas",
+              Long.class
+      );
+    }
+
+    public HechoDTO pedirUltimoHechoCargado(){
+      return agregadorWebClient.get()
+              .uri("/api/hechos/ultimo")
+              .retrieve()
+              .bodyToMono(HechoDTO.class)
+              .block();
+    }
+
+    public Integer pedirCantidadDeHechosEnElSistema(){
+      return webApiCallerService.get(
+              agregadorBaseUrl + "/api/hechos/disponible/cantidad",
+                Integer.class
+      );
+    }
+
+    public void actualizarHechos(){
+       webApiCallerService.post(
+              agregadorBaseUrl + "/api/hechos/actualizarTodos",
+               new HashMap<String, String>(),
+              Void.class
+      );
+    }
+
+    public void consensuarColecciones(){
+      webApiCallerService.post(
+              agregadorBaseUrl + "/api/colecciones/consensuar",
+              new HashMap<String, String>(),
+              Void.class
+      );
+    }
 }

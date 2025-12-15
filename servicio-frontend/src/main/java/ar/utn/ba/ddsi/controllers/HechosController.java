@@ -1,5 +1,7 @@
 package ar.utn.ba.ddsi.controllers;
 import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
+import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
+import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
 import ar.utn.ba.ddsi.services.IAgregadorService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,9 +104,5 @@ public class HechosController {
         }
     }
 
-    }
-
-
-
-
-
+  
+}
