@@ -307,7 +307,10 @@
 
       <p><strong>Algoritmo de Consenso:</strong> <span th:text="${coleccion.algoritmoDeConsenso}">Mayoria simple</span> </p>
       <p><strong>Fuentes:</strong>
-        <span th:text="${#strings.listJoin(coleccion.fuentes.![tipoDeFuente.toString()], ', ')}">Proxy, Estática</span>
+        <span th:text="${#strings.listJoin(coleccion.fuentes.![#strings.concat(
+            #strings.capitalize(#strings.toLowerCase(tipoDeFuente.toString())),
+            (subfuenteId != null ? ' - ' + subfuenteId + '' : '')
+        )], ', ')}">Proxy, Estática (ID:1)</span>
       </p>
     </div>
 
