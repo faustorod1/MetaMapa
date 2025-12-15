@@ -16,4 +16,6 @@ public abstract class APIAdapter {
                 ).toList()
         ).block();
     }
+
+    abstract public Hecho getById(String id);
 }

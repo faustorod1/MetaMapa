@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface IHechosRepository extends JpaRepository<Hecho, Long> {
     List<Hecho> findByAPIidAndIdExternoIn(Long apiId, List<String> idsExternos);
+    Hecho findByAPIidAndId(Long apiId, Long id);
     Page<Hecho> findByFechaObtencionAfter(LocalDateTime fechaObtencion, Pageable pageable);
     List<Hecho> findByAPIidIn(List<Long> apiIds);
     List<Hecho> findByAPIidInAndFechaObtencionAfter(List<Long> apiIds, LocalDateTime fechaObtencion);

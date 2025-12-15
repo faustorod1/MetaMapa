@@ -38,6 +38,10 @@ public class API {
         return hechos;
     }
 
+    public Hecho getById(String id) {
+        return adapter.getById(id);
+    }
+
     public List<Hecho> getNuevos() {
         return getAllDesde(fechaUltimaActualizacion);
     }

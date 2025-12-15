@@ -1,11 +1,13 @@
 package ar.utn.ba.ddsi.services.impl;
 
 
+import ar.utn.ba.ddsi.models.dtos.inputs.IdExternoDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IAPIsRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,6 +53,38 @@ public class HechosService implements IHechosService {
   }
 
   //----------------------------------------------------------------CONSUMIR METAMAPA----------------------------------------------------------//
+
+  public List<HechoOutputDTO> getFromMetamapaById(List<IdExternoDTO> ids) {
+    List<CompletableFuture<Hecho>> futuros = ids.stream()
+            .map(id -> CompletableFuture.supplyAsync(() -> {
+              try {
+                Hecho hecho = hechosRepository.findByAPIidAndId(id.getSubfuenteId(), id.getId());
+                if (hecho == null) {
+                  throw new EntityNotFoundException("Hecho (" + id.getSubfuenteId() + ":" + id.getId() + ") no encontrado");
+                }
+
+                API api = apisRepository.findByAPIid(id.getSubfuenteId());
+                if (api == null || !api.isMetamapa()) {
+                  return hecho;
+                }
+
+                Hecho hechoMetamapa = api.getById(hecho.getIdExterno());
+                return hechoMetamapa;
+
+              } catch (Exception e) {
+                System.out.println("Error actualizando item batch: " + id + ": " + e.getMessage());
+                return null;
+              }
+            }, apiExecutor))
+            .toList();
+
+    List<HechoOutputDTO> resultados = futuros.stream()
+            .map(CompletableFuture::join)
+            .filter(Objects::nonNull)
+            .map(HechoOutputDTO::fromEntity)
+            .toList();
+    return resultados;
+  }
 
   @Override
   public List<HechoOutputDTO> getAllFromMetamapa (){

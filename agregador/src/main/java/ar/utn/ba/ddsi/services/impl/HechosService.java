@@ -7,6 +7,7 @@ import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestMultipleDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
+import ar.utn.ba.ddsi.models.dtos.external.IdExternoDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
@@ -332,6 +333,11 @@ public class HechosService implements IHechosService {
                 .stream()
                 .map(HechoFuenteDTO::toEntity)
                 .toList();
+    }
+
+    public List<Hecho> getFromMetamapa(List<IdExternoDTO> idsExternos) {
+        return webApiCallerService
+                .post()
     }
 
     private List<HechoFuenteDTO> getFromFuente(WebClient webClient, LocalDateTime desde) {

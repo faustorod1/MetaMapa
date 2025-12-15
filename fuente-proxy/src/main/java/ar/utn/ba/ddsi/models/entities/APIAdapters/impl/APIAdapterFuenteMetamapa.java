@@ -18,6 +18,15 @@ public class APIAdapterFuenteMetamapa extends APIAdapter {
         webClient = WebClient.builder().baseUrl(url).build();
     }
 
+    public Hecho getById(String id) {
+        return webClient.get()
+                .uri("/hechos/{id}", id)
+                .retrieve()
+                .bodyToMono(HechoExternalMetamapaDTO.class)
+                .map(this::externalMetamapaToHecho)
+                .block();
+    }
+
     public Mono<List<Hecho>> getHechos() {
         return webClient
                 .get()

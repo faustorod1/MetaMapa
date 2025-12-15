@@ -1,11 +1,13 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dtos.inputs.IdExternoDTO;
 import ar.utn.ba.ddsi.models.dtos.outputs.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.impl.HechosService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -42,6 +44,12 @@ public class HechosController {
   @GetMapping("/metamapaInstanceAfter")
   public List<HechoOutputDTO> getHechosMetamapaInstanceDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
     return hechosService.getAllFromMetamapaDesde(desde);
+  }
+
+  @PostMapping("/metamapa")
+  public ResponseEntity<List<HechoOutputDTO>> getHechosMetamapaById(@RequestBody List<IdExternoDTO> dtos) {
+    List<HechoOutputDTO> hechos = hechosService.getFromMetamapaById(dtos);
+    return ResponseEntity.ok(hechos);
   }
 
 //  @PatchMapping

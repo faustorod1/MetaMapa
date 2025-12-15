@@ -33,6 +33,15 @@ public class APIAdapterFuenteCatedra extends APIAdapter {
 //        System.out.println("TOKEN: " + this.token);
 //    }
 
+    public Hecho getById(String id) {
+        return webClient.get()
+                .uri("/desastres/{id}", id)
+                .header("Authorization", "Bearer " + this.token)
+                .retrieve()
+                .bodyToMono(APICatedraHechoDTO.class)
+                .map(this::externalToHecho)
+                .block();
+    }
 
     private void iniciarSesion(){
         this.token = webClient.post().uri(uriBuilder -> uriBuilder.path("/login")
