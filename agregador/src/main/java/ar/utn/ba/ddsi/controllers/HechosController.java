@@ -91,10 +91,8 @@ public class HechosController {
     }
 
     @PostMapping("/actualizarTodos")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> actualizarHechos() {
         try {
-            SecurityContextHolder.clearContext();
             hechosService.actualizarHechos();
             log.info("El boton de actualizacion funciono");
             return ResponseEntity.ok().build();

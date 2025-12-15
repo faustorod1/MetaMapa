@@ -245,6 +245,7 @@ public class HechosService implements IHechosService {
                 }
             }
 
+            listaDeCategorias.add(hecho.getCategoria());
             categoriaRepository.save(hecho.getCategoria());
         });
     }

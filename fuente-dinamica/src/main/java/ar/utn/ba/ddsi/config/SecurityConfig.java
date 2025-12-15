@@ -28,8 +28,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/hechos").hasRole("CONTRIBUYENTE")
                         .requestMatchers(HttpMethod.DELETE, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/hechos").hasRole("SYSTEM")
-                        .requestMatchers(HttpMethod.GET, "/api/hechos").hasRole("SYSTEM")
+                        .requestMatchers(HttpMethod.GET, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/hechos/ids").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/hechos/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/solicitudes").permitAll()
