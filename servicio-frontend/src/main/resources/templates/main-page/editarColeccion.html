@@ -291,7 +291,6 @@
                 <h4>Criterio de pertenencia (filtros)</h4>
 
                 <div id="criterioContainer">
-                    <input type="hidden" name="criterioDePertenencia.filtros" value="ignore" />
                 </div>
 
                 <button type="button" id="btnAddFiltro" class="btn-submit" style="background-color: #4CAF50; margin-top: 10px; font-size: 0.9rem;">
@@ -319,31 +318,33 @@
     const FILTROS_BRUTOS = /*[[${coleccionOutputDTO.criterioDePertenencia != null ? coleccionOutputDTO.criterioDePertenencia.filtros : '[]'}]]*/ [];
 
     // Preprocesamiento de filtros para el formulario de edición
-    const FILTROS_EXISTENTES = FILTROS_BRUTOS
-        .filter(filtro => filtro.tipoDeFiltro !== 'eliminados') // 1. Excluye el filtro 'eliminados'
-        .map(filtro => {
-            // 2. Corrección para el filtro 'ubicacion': transforma 'lugar' (array) en 'latitud' y 'longitud'
-            if (filtro.tipoDeFiltro === 'ubicacion' && filtro.parametros && filtro.parametros.lugar) {
-                const lugar = filtro.parametros.lugar;
+    const FILTROS_EXISTENTES = (FILTROS_BRUTOS && Array.isArray(FILTROS_BRUTOS))
+        ? FILTROS_BRUTOS
+            .filter(filtro => filtro.tipoDeFiltro !== 'eliminados') // 1. Excluye el filtro 'eliminados'
+            .map(filtro => {
+                // 2. Corrección para el filtro 'ubicacion': transforma 'lugar' (array) en 'latitud' y 'longitud'
+                if (filtro.tipoDeFiltro === 'ubicacion' && filtro.parametros && filtro.parametros.lugar) {
+                    const lugar = filtro.parametros.lugar;
 
-                if (Array.isArray(lugar) && lugar.length === 2) {
-                    filtro.parametros = {
-                        latitud: lugar[0],
-                        longitud: lugar[1]
-                    };
-                }
-            }
-            // 3. Ajuste de formato de fecha/hora para inputs datetime-local (si es necesario)
-            if (filtro.tipoDeFiltro === 'fechaHecho' || filtro.tipoDeFiltro === 'fechaDeCarga') {
-                for (const key in filtro.parametros) {
-                    if (filtro.parametros[key] && filtro.parametros[key].includes('T')) {
-                        // Cortar para que el formato coincida con datetime-local (YYYY-MM-DDTHH:MM)
-                        filtro.parametros[key] = filtro.parametros[key].substring(0, 16);
+                    if (Array.isArray(lugar) && lugar.length === 2) {
+                        filtro.parametros = {
+                            latitud: lugar[0],
+                            longitud: lugar[1]
+                        };
                     }
                 }
-            }
-            return filtro;
-        });
+                // 3. Ajuste de formato de fecha/hora para inputs datetime-local (si es necesario)
+                if (filtro.tipoDeFiltro === 'fechaHecho' || filtro.tipoDeFiltro === 'fechaDeCarga') {
+                    for (const key in filtro.parametros) {
+                        if (filtro.parametros[key] && filtro.parametros[key].includes('T')) {
+                            // Cortar para que el formato coincida con datetime-local (YYYY-MM-DDTHH:MM)
+                            filtro.parametros[key] = filtro.parametros[key].substring(0, 16);
+                        }
+                    }
+                }
+                return filtro;
+            })
+        : [];
 
 </script>
 
@@ -479,6 +480,7 @@
         filtroItem.className = 'filtro-item';
         filtroItem.dataset.index = index;
 
+        // Se mantiene el formato de nombre para que Spring lo mapee correctamente a List<FiltroOutputDTO>
         const baseName = `criterioDePertenencia.filtros[${index}]`;
 
         let selectOptionsHtml = '<option value="" disabled selected>Selecciona un tipo de filtro</option>';

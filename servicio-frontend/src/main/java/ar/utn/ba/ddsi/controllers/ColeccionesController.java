@@ -94,7 +94,13 @@ public class ColeccionesController {
     @PostMapping("/editar")
     public String editarColeccion(@ModelAttribute("coleccionOutputDTO") ColeccionOutputDTO coleccion, RedirectAttributes redirectAttributes) {
         //try {
+
             log.info("DTO recibido: {}", coleccion);
+
+        if (coleccion.getCriterioDePertenencia() == null) {
+            coleccion.setCriterioDePertenencia(new CriterioOutputDTO());
+        }
+
             agregadorService.actualizarColeccion(coleccion);
             redirectAttributes.addFlashAttribute("actualizada", "Colección actualizada");
             return "redirect:/colecciones";
