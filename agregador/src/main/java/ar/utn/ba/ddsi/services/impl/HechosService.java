@@ -315,7 +315,7 @@ public class HechosService implements IHechosService {
             }
             return new ArrayList<>(hechosPorId.values());
         } catch (WebClientException e) {
-            e.printStackTrace();
+            logger.error("Error crítico al sincronizar hechos MetaMapa: {}", e.getMessage());
         }
         return hechosLocales;
     }

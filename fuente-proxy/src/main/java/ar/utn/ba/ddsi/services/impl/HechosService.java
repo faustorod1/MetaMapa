@@ -6,11 +6,21 @@ import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.repositories.IAPIsRepository;
 import ar.utn.ba.ddsi.models.repositories.IHechosRepository;
 import ar.utn.ba.ddsi.services.IHechosService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,85 +34,122 @@ public class HechosService implements IHechosService {
   private LocalDateTime lastCachedAPI;
   private LocalDateTime lastCachedMetamapa;
 
+  private final ExecutorService apiExecutor = Executors.newFixedThreadPool(10);
+
 
   @Override
-  public List<HechoOutputDTO> getAll() {
-    List<HechoOutputDTO> hechosAPI = this.getAllAPI();
-    List<HechoOutputDTO> hechosMeta = this.getAllFromMetamapa();
-    return Stream.concat(hechosAPI.stream(), hechosMeta.stream()).collect(Collectors.toList());
+  public Page<HechoOutputDTO> getAll(Pageable pageable) {
+    Page<Hecho> pagina = hechosRepository.findAll(pageable);
+    List<Hecho> hechos = pagina.getContent();
+    List<HechoOutputDTO> dtos = hechos.stream().map(HechoOutputDTO::fromEntity).toList();
+    return new PageImpl<>(dtos, pageable, pagina.getTotalElements());
   }
 
   @Override
-  public List<HechoOutputDTO> getAllDesde(LocalDateTime desde){
-    List<HechoOutputDTO> hechosAPI = this.getAllAPIDesde(desde);
-    List<HechoOutputDTO> hechosMeta = this.getAllFromMetamapaDesde(desde);
-    return Stream.concat(hechosAPI.stream(), hechosMeta.stream()).collect(Collectors.toList());
-  }
-
-  //----------------------------------------------------------------CONSUMIR APIEXT-------------------------------------------------------------//
-  @Override
-  public List<HechoOutputDTO> getAllAPI(){
-    if (lastCachedAPI == null || ChronoUnit.HOURS.between(lastCachedAPI, LocalDateTime.now()) >= 12) {
-      List<Hecho> hechos = apisRepository.findAllAPI().stream().flatMap(api -> api.getAll().stream()).toList();
-
-      hechosRepository.APIsaveAll(hechos); // Actualizamos Caché
-      lastCachedAPI = LocalDateTime.now();
-
-      return hechos.stream().map(HechoOutputDTO::fromEntity).toList();
-    }
-    else {
-      return hechosRepository.findAllAPI().stream().map(HechoOutputDTO::fromEntity).toList();
-    }
-  }
-
-  @Override
-  public List<HechoOutputDTO> getAllAPIDesde(LocalDateTime desde) {
-    if (lastCachedAPI == null || ChronoUnit.HOURS.between(lastCachedAPI, LocalDateTime.now()) >= 12) {
-    List<Hecho> hechos = apisRepository.findAllAPI().stream().flatMap(api -> api.getAllDesde(desde).stream()).toList();
-
-    hechosRepository.APIsaveAll(hechos);  // Actualizamos Caché
-    lastCachedAPI = LocalDateTime.now();
-
-    return hechos.stream().map(HechoOutputDTO::fromEntity).toList();
-    }
-    else {
-      return hechosRepository.findAllAfterAPI(desde).stream().map(HechoOutputDTO::fromEntity).toList();
-    }
+  public Page<HechoOutputDTO> getAllDesde(LocalDateTime desde, Pageable pageable){
+    Page<Hecho> pagina = hechosRepository.findByFechaUltimaActualizacionAfter(desde, pageable);
+    List<Hecho> hechos = pagina.getContent();
+    List<HechoOutputDTO> dtos = hechos.stream().map(HechoOutputDTO::fromEntity).toList();
+    return new PageImpl<>(dtos, pageable, pagina.getTotalElements());
   }
 
   //----------------------------------------------------------------CONSUMIR METAMAPA----------------------------------------------------------//
 
   @Override
   public List<HechoOutputDTO> getAllFromMetamapa (){
-    if (lastCachedMetamapa == null || ChronoUnit.HOURS.between(lastCachedMetamapa, LocalDateTime.now()) >= 12) {
-      List<Hecho> hechos = apisRepository.findAllMetamapa().stream().flatMap(api -> api.getAll().stream()).toList();
-
-      hechosRepository.metaSaveAll(hechos);
-      lastCachedMetamapa = LocalDateTime.now();
-
-      return hechos.stream().map(HechoOutputDTO::fromEntity).toList();
-    }else{
-      return hechosRepository.findAllMetaMapa().stream().map(HechoOutputDTO::fromEntity).toList();
-    }
+    List<API> apisMetamapa = apisRepository.findAllMetamapa();
+    List<Long> apisIds = apisMetamapa.stream().map(API::getId).toList();
+    return hechosRepository.findByAPIidIn(apisIds).stream().map(HechoOutputDTO::fromEntity).toList();
   }
 
   public List<HechoOutputDTO> getAllFromMetamapaDesde(LocalDateTime desde){
-    if (lastCachedMetamapa == null || ChronoUnit.HOURS.between(lastCachedMetamapa, LocalDateTime.now()) >= 12) {
-      List<Hecho> hechos = apisRepository.findAllMetamapa().stream().flatMap(api -> api.getAllDesde(desde).stream()).toList();
-
-      hechosRepository.metaSaveAll(hechos);  // Actualizamos Caché
-      lastCachedAPI = LocalDateTime.now();
-
-      return hechos.stream().map(HechoOutputDTO::fromEntity).toList();
-    }
-    else {
-      return hechosRepository.findAllAfterMetamapa(desde).stream().map(HechoOutputDTO::fromEntity).toList();
-    }
+    List<API> apisMetamapa = apisRepository.findAllMetamapa();
+    List<Long> apisIds = apisMetamapa.stream().map(API::getId).toList();
+    return hechosRepository.findByAPIidInAndFechaUltimaActualizacionAfter(apisIds, desde)
+            .stream().map(HechoOutputDTO::fromEntity).toList();
   }
 
   @Override
-  public void marcarComoEliminado(Long id,Long APIid){
-    hechosRepository.marcarComoEliminado(id, APIid);
+  @Transactional
+  public void actualizarHechos() {
+    List<API> apis = apisRepository.findAllAPI();
+    List<CompletableFuture<Void>> futuros = new ArrayList<>();
+
+    for (API api : apis) {
+      CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+        try {
+          System.out.println("Leyendo datos de la api: " + api.getId());
+
+          List<Hecho> nuevos = api.getNuevos();
+          guardarLoteHechos(nuevos, api);
+          api.setFechaUltimaActualizacion(LocalDateTime.now());
+
+        } catch (Exception e) {
+          System.err.println("Error en adapter " + api.getId() + ": " + e.getMessage());
+        }
+      }, apiExecutor);
+      futuros.add(future);
+    }
+    CompletableFuture.allOf(futuros.toArray(new CompletableFuture[0])).join();
+    System.out.println("Sincronización con APIs terminada");
   }
 
+  @Transactional
+  public void guardarLoteHechos(List<Hecho> nuevos, API api) {
+    List<String> idsExternos = nuevos.stream()
+            .map(Hecho::getIdExterno)
+            .toList();
+
+    List<Hecho> existentes = hechosRepository.findByAPIidAndIdExternoIn(api.getId(), idsExternos);
+
+    Map<String, Hecho> mapaExistentes = existentes.stream()
+            .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
+
+    List<Hecho> aGuardar = new ArrayList<>();
+    for (Hecho nuevo : nuevos) {
+      Hecho existente = mapaExistentes.get(nuevo.getIdExterno());
+      if (existente == null) { // INSERT
+        aGuardar.add(nuevo);
+      } else { // UPDATE
+        actualizarHecho(existente, nuevo);
+        aGuardar.add(existente);
+      }
+    }
+
+    if (!aGuardar.isEmpty()) {
+      hechosRepository.saveAll(aGuardar);
+    }
+  }
+
+  private void actualizarHecho(Hecho hechoViejo, Hecho hechoNuevo) {
+    hechoViejo.setTitulo(hechoNuevo.getTitulo());
+    hechoViejo.setDescripcion(hechoNuevo.getDescripcion());
+    hechoViejo.setCategoria(hechoNuevo.getCategoria());
+    hechoViejo.setFechaHecho(hechoNuevo.getFechaHecho());
+    hechoViejo.setEliminado(hechoNuevo.isEliminado());
+    hechoViejo.setLugarAcontecimiento(hechoNuevo.getLugarAcontecimiento());
+    if (hechoNuevo.getFechaUltimaActualizacion() != null) {
+      hechoViejo.setFechaUltimaActualizacion(hechoNuevo.getFechaUltimaActualizacion());
+    } else {
+      hechoViejo.setFechaUltimaActualizacion(LocalDateTime.now());
+    }
+
+    if (hechoViejo.getEtiquetas() == null) {
+      hechoViejo.setEtiquetas(new HashSet<>());
+    }
+    hechoViejo.getEtiquetas().clear();
+    if (hechoNuevo.getEtiquetas() != null) {
+      hechoViejo.getEtiquetas().addAll(hechoNuevo.getEtiquetas());
+    }
+
+    if (hechoViejo.getContenidoMultimedia() == null) {
+      hechoViejo.setContenidoMultimedia(new ArrayList<>());
+    }
+
+    hechoViejo.getContenidoMultimedia().clear();
+
+    if (hechoNuevo.getContenidoMultimedia() != null) {
+      hechoViejo.getContenidoMultimedia().addAll(hechoNuevo.getContenidoMultimedia());
+    }
+  }
 }

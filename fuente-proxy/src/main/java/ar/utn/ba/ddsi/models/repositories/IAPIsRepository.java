@@ -9,5 +9,5 @@ public interface IAPIsRepository {
     List<API> findAllMetamapa();
     API save(API api);
     API findByAPIid(Long id);
-
+    int count();
 }

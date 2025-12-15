@@ -6,15 +6,16 @@ import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraLoginDataDTO;
 import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraHechoDTO;
 import ar.utn.ba.ddsi.models.dtos.externals.APICatedra.APICatedraResponseDto;
 import ar.utn.ba.ddsi.models.entities.Hecho;
-import ar.utn.ba.ddsi.models.entities.APIAdapters.IAPIAdapter;
+import ar.utn.ba.ddsi.models.entities.APIAdapters.APIAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class APIAdapterFuenteCatedra implements IAPIAdapter {
+public class APIAdapterFuenteCatedra extends APIAdapter {
     private WebClient webClient;
     private String token;
     private String email;
@@ -45,7 +46,6 @@ public class APIAdapterFuenteCatedra implements IAPIAdapter {
         .block();
     }
 
-    @Override
     public Mono<List<Hecho>> getHechos() {
         if (token == null) {
             iniciarSesion();
@@ -70,7 +70,7 @@ public class APIAdapterFuenteCatedra implements IAPIAdapter {
 
     private Hecho externalToHecho (APICatedraHechoDTO dto) {
         return Hecho.builder()
-                .id(dto.getId())
+                .idExterno(dto.getId().toString())
                 .fechaHecho(dto.getFecha_hecho())
                 .fechaDeCarga(dto.getCreated_at())
                 .categoria(dto.getCategoria())

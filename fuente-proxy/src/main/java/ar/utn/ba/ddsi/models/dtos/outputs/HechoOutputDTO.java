@@ -24,7 +24,7 @@ public class HechoOutputDTO {
     private String descripcion;
     private String categoria;
     private List<String> contenidoMultimedia;
-    private OrigenHecho origen;
+    private String origen;
     private Coordenada lugarAcontecimiento;
     private LocalDateTime fechaHecho;
     private LocalDateTime fechaDeCarga;
@@ -41,7 +41,7 @@ public class HechoOutputDTO {
                 .titulo(hecho.getTitulo())
                 .descripcion(hecho.getDescripcion())
                 .categoria(hecho.getCategoria())
-                .origen(OrigenHecho.PROXY)
+                .origen("PROXY")
                 .lugarAcontecimiento(hecho.getLugarAcontecimiento())
                 .fechaHecho(hecho.getFechaHecho())
                 .fechaDeCarga(hecho.getFechaDeCarga())

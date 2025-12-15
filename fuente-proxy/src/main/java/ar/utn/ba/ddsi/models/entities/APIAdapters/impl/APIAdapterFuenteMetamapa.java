@@ -2,22 +2,22 @@ package ar.utn.ba.ddsi.models.entities.APIAdapters.impl;
 
 import ar.utn.ba.ddsi.commons.Coordenada;
 import ar.utn.ba.ddsi.models.dtos.externals.HechoExternalMetamapaDTO;
-import ar.utn.ba.ddsi.models.entities.APIAdapters.IAPIAdapter;
+import ar.utn.ba.ddsi.models.entities.APIAdapters.APIAdapter;
 import ar.utn.ba.ddsi.models.entities.Hecho;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class APIAdapterFuenteMetamapa implements IAPIAdapter{
+public class APIAdapterFuenteMetamapa extends APIAdapter {
     private WebClient webClient;
 
     public APIAdapterFuenteMetamapa(String url){
         webClient = WebClient.builder().baseUrl(url).build();
     }
 
-    @Override
     public Mono<List<Hecho>> getHechos() {
         return webClient
                 .get()
@@ -30,7 +30,7 @@ public class APIAdapterFuenteMetamapa implements IAPIAdapter{
 
     private Hecho externalMetamapaToHecho (HechoExternalMetamapaDTO dto) {
         return Hecho.builder()
-                .id(dto.getId())
+                .idExterno(dto.getId().toString())
                 .titulo(dto.getTitulo())
                 .descripcion(dto.getDescripcion())
                 .categoria(dto.getCategoria())

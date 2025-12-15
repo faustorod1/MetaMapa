@@ -17,12 +17,10 @@ public class APIsRepository implements IAPIsRepository {
 
     public APIsRepository() {
         APIs = new ArrayList<>();
-        API apiDesastres = new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false);
-        // Comentado porque solo manu tiene el mock que nos da hechos metamapa :)
-        // (Pudimos haber hecho un try catch)
-       // API apiMetamapa = new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true);
-        //save(apiMetamapa);
-        save(apiDesastres);
+        // API Cátedra
+        save(new API(new APIAdapterFuenteCatedra("ddsi@gmail.com","ddsi2025*"),false));
+        // API MetaMapa local
+        save(new API(new APIAdapterFuenteMetamapa("http://localhost:8089/api"), true));
     }
 
     @Override
@@ -46,5 +44,10 @@ public class APIsRepository implements IAPIsRepository {
     @Override
     public API findByAPIid(Long id){
         return this.APIs.stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public int count() {
+        return this.APIs.size();
     }
 }
