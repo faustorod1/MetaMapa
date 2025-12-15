@@ -13,7 +13,7 @@ public class PathDataset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name="path", columnDefinition = "varchar(255)", nullable = false)
+    @Column(name="path", columnDefinition = "TEXT", nullable = false)
     String path;
 
     @Column(name="fecha_carga", columnDefinition = "DATE", nullable = false)
