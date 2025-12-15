@@ -224,7 +224,13 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
 
 
   @PostMapping("/solicitudesDeModificacion/resolverModificacion")
-  public String procesarSolicitudDeModificacion(@RequestParam("id_hecho_externo") Long id_hecho_externo, @RequestParam("accion") String accion, @RequestParam("motivoDeEstado") String motivoDeEstado,@RequestParam(value = "imagenesConfirmadas", required = false) List<String> imagenesConfirmadas, RedirectAttributes redirectAttributes) {
+  public String procesarSolicitudDeModificacion(
+      @RequestParam("id_hecho_externo") Long id_hecho_externo,
+      @RequestParam("accion") String accion,
+      @RequestParam("motivoDeEstado") String motivoDeEstado,
+      @RequestParam(value = "imagenesConfirmadas", required = false) List<String> imagenesConfirmadas,
+      RedirectAttributes redirectAttributes
+  ) {
     ResolucionSolicitudDeModificacionOutputDTO resolucion = new ResolucionSolicitudDeModificacionOutputDTO();
     resolucion.setMotivoDeEstado(motivoDeEstado);
 
@@ -242,8 +248,10 @@ public String solicitarEliminacion(@ModelAttribute("solicitud") SolicitudDeElimi
       if (imagenesConfirmadas == null) {
         imagenesConfirmadas = new java.util.ArrayList<>();
       }
-      resolucion.setImagenesFinales(imagenesConfirmadas);
+      resolucion.setImagenesConfirmadas(imagenesConfirmadas);
     }
+
+    System.out.println(imagenesConfirmadas);
 
     try {
       dinamicaService.resolverModificacion(id_hecho_externo, resolucion);

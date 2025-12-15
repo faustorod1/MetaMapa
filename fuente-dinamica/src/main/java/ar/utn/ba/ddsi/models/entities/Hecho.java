@@ -79,7 +79,7 @@ public class Hecho {
     public List<String> todoMultimediaString(){
         List<String> todos = new ArrayList<>();
         for (ContenidoMultimedia multimedia : this.contenidosMultimedia){
-            todos.add(contenidosMultimedia.toString());
+            todos.add(multimedia.getUrl());
         }
         return todos;
     }

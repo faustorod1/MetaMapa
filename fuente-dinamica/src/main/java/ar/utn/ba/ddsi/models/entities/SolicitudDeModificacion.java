@@ -91,7 +91,7 @@ public class SolicitudDeModificacion {
       return;
     }
     
-    if (estado == ACEPTADA || estado == ACEPTADACONSUGERENCIA) {
+    if (estado == ACEPTADA || estado == ACEPTADA_CON_SUGERENCIA) {
       HechoSnapshot snapshot = new HechoSnapshot(hecho);
       hecho.agregarSnapshot(snapshot);
       hecho.setFechaUltimaActualizacion(LocalDateTime.now());

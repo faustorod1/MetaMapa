@@ -457,19 +457,19 @@
         <div class="buttons-footer">
             <div class="spacer"></div>
             <div class="action-buttons">
-                <button class="btn-submit btn-reject" type="submit" name="accion" value="rechazada">Rechazar</button>
-                <button class="btn-submit" type="submit" name="accion" value="aceptada_con_sugerencia">Aceptar con sugerencia</button>
-                <button class="btn-submit btn-approve" type="submit" name="accion" value="aceptada">Aceptar</button>
+                <button id="btn-reject" class="btn-submit btn-reject" type="submit" name="accion" value="rechazada">Rechazar</button>
+                <button id="btn-approve" class="btn-submit btn-approve" type="submit" name="accion" value="aceptada">Aceptar</button>
             </div>
         </div>
-
     </div>
 </form>
 
 <script>
+    const btnAceptar = document.querySelector('#btn-approve');
     function eliminarImagen(btn) {
         const item = btn.closest('.media-preview-item-editable');
         if (item) item.remove();
+        btnAceptar.value = "aceptada_con_sugerencia";
     }
 </script>
 

@@ -39,17 +39,6 @@ public class SolicitudesController {
 
   @PutMapping(value = "/{idHecho}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> modificarHecho (@PathVariable Long idHecho, @RequestPart("hechoNuevo") HechoInputDTO hechoNuevo, @RequestPart(value = "fotos", required = false)List<MultipartFile> imagenesNuevas, @AuthenticationPrincipal CustomUserDetails userDetails) {
-    System.out.println("Nuevo ----");
-    for (MultipartFile imagen : imagenesNuevas) {
-      System.out.println(imagen.getOriginalFilename());
-    }
-    System.out.println("Viejos (en hechoDTO) ----");
-    if (hechoNuevo.getContenidosMultimedia() != null) {
-      for (String path : hechoNuevo.getContenidosMultimedia()) {
-        System.out.println(path);
-      }
-    }
-
     try {
       SolicitudCreadaDTO dto = solicitudesService.crearSolModificacion(idHecho, hechoNuevo, imagenesNuevas, userDetails.getId());
       return ResponseEntity.ok(dto);

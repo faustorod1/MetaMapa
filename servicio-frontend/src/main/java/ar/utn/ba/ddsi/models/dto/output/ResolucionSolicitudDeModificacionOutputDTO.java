@@ -15,5 +15,5 @@ import java.util.List;
 public class ResolucionSolicitudDeModificacionOutputDTO {
     private String motivoDeEstado;
     private EstadoSolicitud estadoNuevo;
-    private List<String> imagenesFinales;
+    private List<String> imagenesConfirmadas;
 }

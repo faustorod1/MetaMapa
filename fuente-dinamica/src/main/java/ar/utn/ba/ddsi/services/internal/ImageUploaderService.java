@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 @Service
 public class ImageUploaderService {
   private final Cloudinary cloudinary;
-  private static final Pattern CLOUDINARY_URL_PATTERN = Pattern.compile(".*/upload/(?:v\\d+/)?(.+)\\.[a-z]+$");
+  private static final Pattern CLOUDINARY_URL_PATTERN = Pattern.compile(".*/upload/(?:v\\d+/)?(.+)\\.\\w+$", Pattern.CASE_INSENSITIVE);
 
   public ImageUploaderService(Cloudinary cloudinary) {
     this.cloudinary = cloudinary;
@@ -38,7 +38,15 @@ public class ImageUploaderService {
     try {
       String publicId = extractPublicIdFromUrl(url);
 
-      cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+      System.out.println("Intentando eliminar Public ID: " + publicId);
+
+      Map deleteResult = cloudinary.uploader().destroy(publicId, ObjectUtils.asMap(
+          "invalidate", true
+      ));
+
+      if (!"ok".equals(deleteResult.get("result"))) {
+        System.out.println("Advertencia Cloudinary: No se pudo eliminar o no se encontró la imagen. Resultado: " + deleteResult.get("result"));
+      }
 
     } catch (IOException e) {
       throw new RuntimeException("Error al eliminar imagen de Cloudinary: " + url, e);
@@ -50,7 +58,8 @@ public class ImageUploaderService {
     if (matcher.find()) {
       return matcher.group(1);
     }
-    return url;
+    System.out.println("Error: No se pudo extraer el Public ID de la URL: " + url);
+    return null;
   }
 }
 

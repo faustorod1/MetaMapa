@@ -51,11 +51,29 @@ public class SolicitudesService implements ISolicitudesService {
       throw new EntityNotFoundException("Hecho no encontrado");
     }
 
-    if (hechoViejo.getSolicitudDeModificacion() == null) {
+    SolicitudDeModificacion solicitud = hechoViejo.getSolicitudDeModificacion();
+
+    if (solicitud == null) {
       throw new NoHaySolicitudPendienteException(id);
     }
 
-    SolicitudDeModificacion solicitud = hechoViejo.getSolicitudDeModificacion();
+    if(resolucion.getEstadoNuevo() == EstadoSolicitud.ACEPTADA_CON_SUGERENCIA){
+      solicitud.setContenidosMultimediaNuevos(resolucion.getImagenesConfirmadas());
+    }
+
+    List<String> imagenesOriginales = hechoViejo.todoMultimediaString();
+    List<String> imagenesConservadas = solicitud.getContenidosMultimediaNuevos();
+
+    if (imagenesOriginales != null && !imagenesOriginales.isEmpty()) {
+      List<String> imagenesParaBorrar = imagenesOriginales.stream()
+          .filter(url -> imagenesConservadas == null || !imagenesConservadas.contains(url))
+          .toList();
+
+      for (String urlBorrar : imagenesParaBorrar) {
+        imageUploaderService.deleteFile(urlBorrar);
+      }
+    }
+
     solicitud.resolver(resolucion, adminId);
 
     hechosService.guardarCambios(hechoViejo);
@@ -82,10 +100,6 @@ public class SolicitudesService implements ISolicitudesService {
       List<String> imagenesParaBorrar = imagenesOriginales.stream()
           .filter(url -> imagenesViejas == null || !imagenesViejas.contains(url))
           .toList();
-
-      for (String urlBorrar : imagenesParaBorrar) {
-        imageUploaderService.deleteFile(urlBorrar);
-      }
     }
 
     List<String> urlsFinales = new ArrayList<>();

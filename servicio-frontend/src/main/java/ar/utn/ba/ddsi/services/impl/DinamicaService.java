@@ -4,6 +4,7 @@ import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.input.SolicitudDeModificacionDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dto.output.ResolucionSolicitudDeModificacionOutputDTO;
+import ar.utn.ba.ddsi.models.entities.EstadoSolicitud;
 import ar.utn.ba.ddsi.services.IDinamicaService;
 import ar.utn.ba.ddsi.services.internal.WebApiCallerService;
 import lombok.extern.slf4j.Slf4j;
@@ -68,17 +69,6 @@ public class DinamicaService implements IDinamicaService {
     }
 
     public void modificarHecho(Long id_hecho, HechoOutputDTO hecho, List<MultipartFile> imagenesNuevas){
-        System.out.println("Multiparts ----");
-        for (MultipartFile img: imagenesNuevas) {
-            System.out.println(img.getOriginalFilename());
-        }
-
-        if (hecho.getContenidosMultimedia() != null) {
-            System.out.println("Paths a conservar ---");
-            for (String path: hecho.getContenidosMultimedia()) {
-                System.out.println(path);
-            }
-        }
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
 
@@ -96,10 +86,7 @@ public class DinamicaService implements IDinamicaService {
         }
         MultiValueMap<String, HttpEntity<?>> multipartBody = builder.build();
 
-        System.out.println(hecho);
-
         String rta = webApiCallerService.putMultipart(dinamicaBaseUrl + "/api/solicitudes/" + id_hecho, multipartBody, String.class);
-        System.out.println("Respuesta: " + rta);
     }
 
 
