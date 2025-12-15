@@ -47,7 +47,7 @@ public class HechosService implements IHechosService {
 
   @Override
   public Page<HechoOutputDTO> getAllDesde(LocalDateTime desde, Pageable pageable){
-    Page<Hecho> pagina = hechosRepository.findByFechaUltimaActualizacionAfter(desde, pageable);
+    Page<Hecho> pagina = hechosRepository.findByFechaObtencionAfter(desde, pageable);
     List<Hecho> hechos = pagina.getContent();
     List<HechoOutputDTO> dtos = hechos.stream().map(HechoOutputDTO::fromEntity).toList();
     return new PageImpl<>(dtos, pageable, pagina.getTotalElements());
@@ -65,14 +65,14 @@ public class HechosService implements IHechosService {
   public List<HechoOutputDTO> getAllFromMetamapaDesde(LocalDateTime desde){
     List<API> apisMetamapa = apisRepository.findAllMetamapa();
     List<Long> apisIds = apisMetamapa.stream().map(API::getId).toList();
-    return hechosRepository.findByAPIidInAndFechaUltimaActualizacionAfter(apisIds, desde)
+    return hechosRepository.findByAPIidInAndFechaObtencionAfter(apisIds, desde)
             .stream().map(HechoOutputDTO::fromEntity).toList();
   }
 
   @Override
   @Transactional
   public void actualizarHechos() {
-    List<API> apis = apisRepository.findAllAPI();
+    List<API> apis = apisRepository.findAll();
     List<CompletableFuture<Void>> futuros = new ArrayList<>();
 
     for (API api : apis) {
@@ -100,7 +100,7 @@ public class HechosService implements IHechosService {
             .map(Hecho::getIdExterno)
             .toList();
 
-    List<Hecho> existentes = hechosRepository.findByAPIidAndIdExternoIn(api.getId(), idsExternos);
+    List<Hecho> existentes = hechosRepository.findByAPIidAndIdExternoInWithCollections(api.getId(), idsExternos);
 
     Map<String, Hecho> mapaExistentes = existentes.stream()
             .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
@@ -110,9 +110,11 @@ public class HechosService implements IHechosService {
       Hecho existente = mapaExistentes.get(nuevo.getIdExterno());
       if (existente == null) { // INSERT
         aGuardar.add(nuevo);
+        nuevo.setFechaObtencion(LocalDateTime.now());
       } else { // UPDATE
         actualizarHecho(existente, nuevo);
         aGuardar.add(existente);
+        existente.setFechaObtencion(LocalDateTime.now());
       }
     }
 

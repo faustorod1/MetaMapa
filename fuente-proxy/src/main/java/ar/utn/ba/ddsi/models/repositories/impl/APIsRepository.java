@@ -32,6 +32,9 @@ public class APIsRepository implements IAPIsRepository {
     }
 
     @Override
+    public List<API> findAll() { return new ArrayList<>(APIs); }
+
+    @Override
     public List<API> findAllAPI(){
         return APIs.stream().filter(api -> !api.isMetamapa()).toList();
     }
