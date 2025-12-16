@@ -4,6 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:keys.properties")
+@PropertySource(value = "classpath:keys.properties", ignoreResourceNotFound = true)
 public class KeysConfig {
 }
