@@ -336,6 +336,11 @@ public class HechosService implements IHechosService {
                 h.getIdExterno().getIdExterno();
 
         Map<String, Hecho> hechosPorId = hechosLocales.stream()
+                .filter(
+                        h -> h.getIdExterno() != null &&
+                                h.getIdExterno().getFuente() != null &&
+                                h.getIdExterno().getFuente().getTipoDeFuente() == TipoDeFuente.PROXY
+                )
                 .collect(Collectors.toMap(keyGenerator, h -> h));
 
         try {
