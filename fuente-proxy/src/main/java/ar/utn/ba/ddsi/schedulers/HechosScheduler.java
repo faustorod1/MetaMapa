@@ -15,7 +15,7 @@ public class HechosScheduler {
         this.hechosService = hechosService;
     }
 
-    @Scheduled(fixedRate = 30 * 60 * 1000)
+    @Scheduled(fixedRate = 6 * 60 * 60 * 1000)
     public void actualizarHechos() {
         try {
             hechosService.actualizarHechos();
