@@ -115,37 +115,34 @@
     filtroForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        let filtros = [];
+        let filtros = {};
 
         const titulo = inputTitulo.value.trim();
         const categoria = selectCategoria.value;
 
         // 🔍 Filtro por titulo (SIEMPRE)
         if (titulo) {
-            filtros.push({
-                tipoDeFiltro: "titulo",
-                parametros: { titulo: titulo }
-            });
+            filtros.titulo = titulo;
         }
 
         // 🏷 Filtro por categoria (SIEMPRE)
         if (categoria) {
-            filtros.push({
-                tipoDeFiltro: "categoria",
-                parametros: { categoria: categoria }
-            });
+            filtros.categoria = categoria;
         }
 
         cargarHechosYActualizarMapa(filtros);
     });
 
-    function cargarHechosYActualizarMapa(filtros = []) {
+    function cargarHechosYActualizarMapa(filtros = {}) {
         markersLayer.clearLayers();
         allMarkers = [];
+        hechos = [];
 
-        cargarHechos(filtros).then(hechosNuevos => {
-            hechos = hechosNuevos;
-            addHechoListToMap(hechos);
+        cargarHechos(filtros, (nuevosHechos) => {
+            hechos.push(...nuevosHechos);
+            addHechoListToMap(nuevosHechos);
+        }).then(hechosNuevos => {
+            console.log("Hechos cargados y pintados en el mapa.");
         });
     }
 
@@ -198,12 +195,12 @@
 
     map.addLayer(markersLayer);
 
-    function addHechoListToMap(hechos) {
-        if (!hechos || hechos.length === 0) return;
+    function addHechoListToMap(listaHechos) {
+        if (!listaHechos || listaHechos.length === 0) return;
 
         let nuevosMarcadores = [];
 
-        for (const hecho of hechos) {
+        for (const hecho of listaHechos) {
             if (!hecho.lugarAcontecimiento) continue;
             const { latitud, longitud } = hecho.lugarAcontecimiento;
             if (latitud == null || longitud == null) continue;
@@ -221,10 +218,9 @@
             marker.on('click', onHechoMarkerClick);
 
             nuevosMarcadores.push(marker);
-            allMarkers.push(marker);
         }
-
         markersLayer.addLayers(nuevosMarcadores);
+        allMarkers.push(...nuevosMarcadores);
     }
 
 
@@ -281,6 +277,8 @@
             });
         }
     }
+
+    cargarHechosYActualizarMapa();
 </script>
 </body>
 </html>
