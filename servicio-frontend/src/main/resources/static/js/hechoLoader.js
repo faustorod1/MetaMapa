@@ -51,7 +51,6 @@ async function cargarHechos(filtros = {}, onLoteRecibido = () => {}) {
                                 if (!res.ok) throw new Error(`Error en pág ${j}`);
                                 return res.json();
                             })
-                            .then(data => data.content)
                     );
                 }
                 const resultadosLote = await Promise.all(promesasDelLote);
