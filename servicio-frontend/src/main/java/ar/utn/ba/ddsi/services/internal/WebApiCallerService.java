@@ -45,10 +45,6 @@ public class WebApiCallerService {
         String accessToken = getAccessTokenFromSession();
         String refreshToken = getRefreshTokenFromSession();
 
-        if (accessToken == null) {
-            throw new RuntimeException("No hay token de acceso disponible");
-        }
-
         try {
             // Primer intento con el token actual
             return apiCall.execute(accessToken);

@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/hechos").hasRole("CONTRIBUYENTE")
+                        .requestMatchers(HttpMethod.POST, "/api/hechos").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/hechos").hasAnyRole("SYSTEM", "ADMIN")
