@@ -35,10 +35,33 @@
 
 <main>
     <div id="map"></div>
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar..." > <!--onfocus="openBuscador()"-->
-    </div>
+    <form id="filtro-form">
+
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"
+                   id="filtro-titulo"
+                   placeholder="Buscar por título...">
+        </div>
+
+
+        <!-- FILTRO POR CATEGORIA-->
+        <div class="search-bar">
+            <i class="fa-solid fa-tags"></i>
+            <select id="filtro-categoria">
+                <option value="">Todas las categorías</option>
+                <option th:each="cat : ${categorias}"
+                        th:value="${cat.nombre}"
+                        th:text="${cat.nombre}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-filtrar">
+            Aplicar filtros
+        </button>
+    </form>
+
 
     <button class="btn-add" id="btn-add" onclick="onBtnAddClick(event)">
         <i class="fa-solid fa-plus"></i>
@@ -63,20 +86,15 @@
             </button>
         </form>
     </div>
+
+
 </main>
 
-<!-- JSON de hechos embebido -->
-<script th:inline="javascript">
-    let hechos = [];
-    cargarHechos().then(hechosNuevos => {
-        hechos = hechosNuevos;
-        addHechoListToMap(hechos);
-    });
-    console.log("Hechos cargados desde el backend:", hechos);
-</script>
+<script th:src="@{/js/hechoLoader.js}"></script>
 
 <script>
     let hechoActual = null;
+    let hechos = [];
     let allMarkers = [];
     let markersLayer = L.markerClusterGroup();
 
@@ -89,6 +107,47 @@
         ubicacion: document.getElementById('hecho-preview__ubicacion'),
         descripcion: document.getElementById('hecho-preview__descripcion'),
     };
+
+    const filtroForm = document.getElementById('filtro-form');
+    const inputTitulo = document.getElementById('filtro-titulo');
+    const selectCategoria = document.getElementById('filtro-categoria');
+
+    filtroForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let filtros = [];
+
+        const titulo = inputTitulo.value.trim();
+        const categoria = selectCategoria.value;
+
+        // 🔍 Filtro por titulo (SIEMPRE)
+        if (titulo) {
+            filtros.push({
+                tipoDeFiltro: "titulo",
+                parametros: { titulo: titulo }
+            });
+        }
+
+        // 🏷 Filtro por categoria (SIEMPRE)
+        if (categoria) {
+            filtros.push({
+                tipoDeFiltro: "categoria",
+                parametros: { categoria: categoria }
+            });
+        }
+
+        cargarHechosYActualizarMapa(filtros);
+    });
+
+    function cargarHechosYActualizarMapa(filtros = []) {
+        markersLayer.clearLayers();
+        allMarkers = [];
+
+        cargarHechos(filtros).then(hechosNuevos => {
+            hechos = hechosNuevos;
+            addHechoListToMap(hechos);
+        });
+    }
 
     // --- Logica del buscador ---
     const searchInput = document.querySelector(".search-bar input");
@@ -141,6 +200,7 @@
 
     function addHechoListToMap(hechos) {
         if (!hechos || hechos.length === 0) return;
+
         let nuevosMarcadores = [];
 
         for (const hecho of hechos) {
@@ -168,6 +228,8 @@
     }
 
 
+
+
     // --- Interacción con el panel lateral ---
     function openHecho(hecho) {
         hechoActual = hecho;
@@ -177,7 +239,6 @@
         hechoPreview.categoria.textContent = hecho.categoria?.nombre || "Sin categoría";
         hechoPreview.fecha.textContent = hecho.fechaHecho ? hecho.fechaHecho.replace('T', ' ') : "Sin fecha";
 
-        // Mostrar departamento y provincia
         const depto = hecho.departamento?.nombre || "Desconocido";
         const prov = hecho.departamento?.provincia?.nombre || "Desconocida";
         hechoPreview.ubicacion.textContent = `${depto}, ${prov}`;

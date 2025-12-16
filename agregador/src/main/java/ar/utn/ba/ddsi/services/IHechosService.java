@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.services;
 
 import ar.utn.ba.ddsi.models.dtos.external.IdExternoDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoPreviewDTO;
 import ar.utn.ba.ddsi.models.entities.Hecho;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IHechosService {
-    Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable);
+    Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable, List<FiltroInputDTO> filtros);
     HechoOutputDTO buscarHecho(Long id);
     HechoOutputDTO buscarHechoNoEliminado(Long id);
     Hecho obtenerPorId(Long id);

@@ -2,9 +2,12 @@ package ar.utn.ba.ddsi.controllers;
 
 import
         ar.utn.ba.ddsi.commons.CustomUserDetails;
+import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoPreviewDTO;
 import ar.utn.ba.ddsi.services.IHechosService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,8 +34,21 @@ public class HechosController {
     }
 
     @GetMapping
-    public Page<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        return this.hechosService.buscarTodos(parametros, pageable);
+    public Page<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable, @RequestParam(required = false) String filtrosJson) {
+        List<FiltroInputDTO> filtros = List.of();
+        if (filtrosJson != null && !filtrosJson.isEmpty()) {
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                filtros = mapper.readValue(
+                        filtrosJson,
+                        new TypeReference<List<FiltroInputDTO>>() {}
+                );
+            } catch (JsonProcessingException e) {
+                System.err.println("Error al deserializar filtros JSON: " + e.getMessage());
+            }
+        }
+        return this.hechosService.buscarTodos(parametros, pageable, filtros);
     }
 
     @GetMapping("/preview")
