@@ -36,10 +36,6 @@
                 <div class="nav-button-selection"></div>
                 <i class="fa-solid fa-file-excel"></i>
         </button>
-        <button class="nav-button" id="nav-button-stadistics" view="./estadisticas" th:if="${session.role == 'ADMIN'}">
-            <div class="nav-button-selection"></div>
-            <i class="fa-solid fa-chart-line"></i>
-        </button>
         <button class="nav-button" id="nav-button-panel" view="/panel" th:if="${session.role == 'ADMIN'}">
             <div class="nav-button-selection"></div>
             <i class="fa-solid fa-gauge-high"></i>
