@@ -1,5 +1,7 @@
 const API_URL = 'https://agregador-15-ma-ma.dds.apps.disilab.ar/api';
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 async function cargarHechos(filtros = {}, onLoteRecibido = () => {}) {
     const BATCH_SIZE = 100;
     const CONCURRENCIA_MAXIMA = 5;
@@ -21,6 +23,7 @@ async function cargarHechos(filtros = {}, onLoteRecibido = () => {}) {
         const dataPagina0 = await responsePagina0.json();
         if (dataPagina0.content && dataPagina0.content.length > 0) {
             onLoteRecibido(dataPagina0.content);
+            await delay(100);
         }
 
         let todosLosHechos = [...dataPagina0.content];
@@ -55,11 +58,10 @@ async function cargarHechos(filtros = {}, onLoteRecibido = () => {}) {
                 const hechosDelLote = resultadosLote.flatMap(data => data.content || []);
                 if (hechosDelLote.length > 0) {
                     onLoteRecibido(hechosDelLote);
+                    todosLosHechos.push(...hechosDelLote);
                 }
 
-                resultadosLote.forEach(lista => {
-                    todosLosHechos = todosLosHechos.concat(lista);
-                });
+                await delay(200);
             }
         }
 

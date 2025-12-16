@@ -90,8 +90,6 @@
 
 </main>
 
-<script th:src="@{/js/hechoLoader.js}"></script>
-
 <script>
     let hechoActual = null;
     let hechos = [];
@@ -168,7 +166,7 @@
         markersLayer.addLayers(marcadoresFiltrados);
     }
 
-    searchInput.addEventListener('input', filtrarMapa);
+    //searchInput.addEventListener('input', filtrarMapa);
 
     // --- Fin de logica del buscador ---
 
@@ -278,7 +276,7 @@
         }
     }
 
-    cargarHechosYActualizarMapa();
+    document.addEventListener('DOMContentLoaded', cargarHechosYActualizarMapa);
 </script>
 </body>
 </html>
