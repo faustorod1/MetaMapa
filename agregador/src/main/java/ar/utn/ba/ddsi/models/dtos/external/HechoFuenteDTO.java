@@ -40,6 +40,16 @@ public class HechoFuenteDTO {
                 .fechaDeCarga(this.getFechaDeCarga())
                 .contribuyenteId(this.contribuyenteId).build();
                 hecho.getIdExterno().setIdExterno(this.getId());
+
+        if (this.getTipoDeFuente() != null) {
+            Fuente fuenteTmp = Fuente.builder()
+                    .tipoDeFuente(TipoDeFuente.valueOf(this.getTipoDeFuente()))
+                    .subfuenteId(this.getSubfuenteId())
+                    .build();
+
+            hecho.getIdExterno().setFuente(fuenteTmp);
+        }
+
         if (this.getContenidosMultimedia() != null) {
             hecho.setContenidosMultimedia(this.getContenidosMultimedia().stream().map(ContenidoMultimedia::new).toList());
         }
