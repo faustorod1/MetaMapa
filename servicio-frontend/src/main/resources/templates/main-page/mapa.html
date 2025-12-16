@@ -103,9 +103,8 @@
         const marcadoresFiltrados = allMarkers.filter(marker => {
             const hecho = marker.options.hecho; // Accedemos a la data guardada
             const titulo = hecho.titulo?.toLowerCase() || "";
-            const descripcion = hecho.descripcion?.toLowerCase() || "";
 
-            return titulo.includes(textoBusqueda) || descripcion.includes(textoBusqueda);
+            return titulo.includes(textoBusqueda);
         });
 
         // 3. Agregamos al cluster SOLO los que coinciden
@@ -190,8 +189,10 @@
         hechoPreview.self.classList.toggle('active', force);
     }
 
-    function onHechoMarkerClick(e) {
-        openHecho(e.target.options.hecho);
+    async function onHechoMarkerClick(e) {
+        const hecho = e.target.options.hecho;
+        const hechoCompleto = await cargarHecho(hecho.id);
+        openHecho(hechoCompleto);
     }
 
     // --- Botones auxiliares ---

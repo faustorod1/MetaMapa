@@ -4,44 +4,33 @@ import com.opencsv.CSVWriter;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.io.FileReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CSVReader {
 
+    private static Reader obtenerReader(String pathArchivo) throws IOException {
+        if (pathArchivo.startsWith("http")) {
+            URL url = new URL(pathArchivo);
+            return new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
+        } else {
+            return new FileReader(pathArchivo);
+        }
+    }
+
     public static ArrayList<String[]> leer(String pathArchivo) {
         ArrayList<String[]> filas = new ArrayList<>();
-        Reader reader = null;
 
-        try {
-            if (pathArchivo.startsWith("http")) {
-                URL url = new URL(pathArchivo);
-                reader = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
-            } else {
-                reader = new FileReader(pathArchivo);
-            }
+        try (Reader reader = obtenerReader(pathArchivo);
+             com.opencsv.CSVReader csvReader = new com.opencsv.CSVReader(reader)) {
 
-            try (com.opencsv.CSVReader csvReader = new com.opencsv.CSVReader(reader)) {
-                String[] fila;
-                while ((fila = csvReader.readNext()) != null) {
-                    filas.add(fila);
-                }
+            String[] fila;
+            while ((fila = csvReader.readNext()) != null) {
+                filas.add(fila);
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error al leer el CSV: " + pathArchivo, e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return filas;
     }
@@ -58,7 +47,8 @@ public class CSVReader {
     }
 
     public static int contarRegistros(String pathArchivo) {
-        try (LineNumberReader reader = new LineNumberReader(new FileReader(pathArchivo))) {
+        try (Reader sourceReader = obtenerReader(pathArchivo);
+             LineNumberReader reader = new LineNumberReader(sourceReader)) {
             while (reader.skip(Long.MAX_VALUE) > 0) {};
             return Math.max(0, reader.getLineNumber());
         } catch (Exception e) {
@@ -74,7 +64,9 @@ public class CSVReader {
      */
     public static List<String[]> leerPaginado(String pathArchivo, int skip, int limit) {
         ArrayList<String[]> filas = new ArrayList<>();
-        try (com.opencsv.CSVReader csvReader = new com.opencsv.CSVReader(new FileReader(pathArchivo))) {
+
+        try (Reader sourceReader = obtenerReader(pathArchivo);
+             com.opencsv.CSVReader csvReader = new com.opencsv.CSVReader(sourceReader)) {
 
             for (int i = 0; i < skip; i++) {
                 if (csvReader.readNext() == null) return filas;
@@ -88,6 +80,7 @@ public class CSVReader {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("Error al leer paginado: " + pathArchivo, e);
         }
         return filas;
     }

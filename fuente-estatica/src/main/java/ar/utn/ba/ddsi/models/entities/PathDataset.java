@@ -16,7 +16,7 @@ public class PathDataset {
     @Column(name="path", columnDefinition = "TEXT", nullable = false)
     String path;
 
-    @Column(name="fecha_carga", columnDefinition = "DATE", nullable = false)
+    @Column(name="fecha_carga", nullable = false)
     LocalDateTime fechaCarga;
 
     protected PathDataset() {}

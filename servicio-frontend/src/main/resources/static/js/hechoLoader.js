@@ -2,7 +2,7 @@ const API_URL = 'http://agregador-15-ma-ma.dds.apps.disilab.ar:8080/api';
 
 async function cargarHechos() {
     const BATCH_SIZE = 100;
-    const BASE_URL = `${API_URL}/hechos`;
+    const BASE_URL = `${API_URL}/hechos/preview`;
 
     try {
         console.time("CargaCompleta");
@@ -50,5 +50,18 @@ async function cargarHechos() {
     } catch (error) {
         console.error("Falló la descarga de hechos:", error);
         return [];
+    }
+}
+
+
+async function cargarHecho(id) {
+    const BASE_URL = `${API_URL}/hechos/`;
+
+    try {
+        const response = await fetch(BASE_URL + id);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(`Error al cargar datos del hecho ${id}:`, error);
     }
 }

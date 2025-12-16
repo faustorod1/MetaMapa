@@ -64,6 +64,32 @@ public class WebApiCallerService {
             return this.executeGetRequestPage(webClient, uri, queryParams, responseType);
         }
     }
+
+    /**
+     * Ejecuta una llamada HTTP POST que retorna una LISTA (Ideal para el Batch de Proxy)
+     * @param body El objeto que va en el body (ej: List<SolicitudBatchDTO>)
+     */
+    public <T> List<T> postListWithAuth(WebClient webClient, String uri, Object body, Class<T> responseType) {
+        try {
+            return this.executePostListRequest(webClient, uri, body, responseType);
+        } catch (Exception e) {
+            this.loginToSystem(); // Retry logic: Si falla (token vencido), reloguea y reintenta
+            return this.executePostListRequest(webClient, uri, body, responseType);
+        }
+    }
+    /**
+     * Ejecuta una llamada HTTP POST simple que retorna un solo objeto
+     */
+    public <T> T postWithAuth(WebClient webClient, String uri, Object body, Class<T> responseType) {
+        try {
+            return this.executePostRequest(webClient, uri, body, responseType);
+        } catch (Exception e) {
+            this.loginToSystem();
+            return this.executePostRequest(webClient, uri, body, responseType);
+        }
+    }
+
+
     private <T> T executeGetRequestPage(WebClient webClient, String uri, Map<String, String> queryParams, ParameterizedTypeReference<T> responseType) {
         return webClient
                 .get()
@@ -111,6 +137,29 @@ public class WebApiCallerService {
                 .collectList()
                 .block();
         return lista;
+    }
+
+    private <T> List<T> executePostListRequest(WebClient webClient, String uri, Object body, Class<T> responseType) {
+        return webClient
+                .post()
+                .uri(uri)
+                .header("Authorization", "Bearer " + systemAccessToken)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToFlux(responseType)
+                .collectList()
+                .block();
+    }
+
+    private <T> T executePostRequest(WebClient webClient, String uri, Object body, Class<T> responseType) {
+        return webClient
+                .post()
+                .uri(uri)
+                .header("Authorization", "Bearer " + systemAccessToken)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(responseType)
+                .block();
     }
 
     private void loginToSystem() {

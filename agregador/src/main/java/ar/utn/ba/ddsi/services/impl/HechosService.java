@@ -10,6 +10,7 @@ import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
 import ar.utn.ba.ddsi.models.dtos.external.IdExternoDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
+import ar.utn.ba.ddsi.models.dtos.output.HechoPreviewDTO;
 import ar.utn.ba.ddsi.models.entities.*;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Departamento;
 import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
@@ -24,6 +25,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,6 +36,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Flux;
@@ -46,6 +49,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +60,10 @@ public class HechosService implements IHechosService {
     private final Map<TipoDeFuente, WebClient> webClients = new HashMap<TipoDeFuente, WebClient>();
     private final Map<TipoDeFuente, LocalDateTime> fechaUltimaActualizacionFuentes = new HashMap<>();
     private final WebClient webClientGeoref;
+
+    @Autowired
+    @Lazy
+    private HechosService self;
 
     private static final Logger logger = LoggerFactory.getLogger(HechosService.class);
 
@@ -89,6 +97,7 @@ public class HechosService implements IHechosService {
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
+    @Transactional(readOnly = true)
     public Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable) {
         Specification<Hecho> spec = HechoSpecs.porFiltros(params);
         Page<Hecho> paginaLocal = hechosRepository.findAll(spec, pageable);
@@ -106,15 +115,18 @@ public class HechosService implements IHechosService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HechoOutputDTO buscarHecho(Long id){
         return HechoOutputDTO.fromEntity(obtenerPorId(id));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HechoOutputDTO buscarHechoNoEliminado(Long id){
         return HechoOutputDTO.fromEntity(obtenerNoEliminadoPorId(id));
     }
 
+    @Transactional(readOnly = true)
     public Page<HechoOutputDTO> obtenerPorContribuyente(Long contribuyenteId, Map<String, String> params, Pageable pageable) {
         Specification<Hecho> specFiltros = HechoSpecs.porFiltros(params);
         Specification<Hecho> specContribuyente = HechoSpecs.porContribuyente(contribuyenteId);
@@ -124,14 +136,26 @@ public class HechosService implements IHechosService {
         return paginaHechos.map(HechoOutputDTO::fromEntity);
     }
 
+    @Transactional(readOnly = true)
+    public Page<HechoPreviewDTO> buscarTodosPreview(Map<String, String> params, Pageable pageable) {
+        Specification<Hecho> spec = HechoSpecs.porFiltros(params);
+        Page<Hecho> pagina = hechosRepository.findAll(spec, pageable);
+        if (pagina.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return pagina.map(HechoPreviewDTO::fromEntity);
+    }
+
     // -------------------------------------------------------- Métodos de trabajo interno ---------------------------------------------------------------------------//
     @Override
+    @Transactional(readOnly = true)
     public Hecho obtenerPorId(Long id){
         return hechosRepository.findById(id).orElse(null);
     }
 
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Hecho> obtenerPorColeccion(Long id, Map<String, String> params, Pageable pageable) {
         String modo = params.getOrDefault("modo", "curada");
         boolean traerConsensuados = !"irrestricta".equalsIgnoreCase(modo);
@@ -149,6 +173,7 @@ public class HechosService implements IHechosService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Hecho obtenerNoEliminadoPorId(Long id){
         Hecho hecho = hechosRepository.findById(id).orElse(null);
         if (hecho == null || hecho.isEliminado()){
@@ -174,7 +199,7 @@ public class HechosService implements IHechosService {
                     RestPage<HechoFuenteDTO> pagina = getFromFuentePaginado(webClient, desde, page, BATCH_SIZE);
 
                     if (pagina != null && !pagina.getContent().isEmpty()) {
-                        procesarLoteDeHechos(pagina.getContent());
+                        self.procesarLoteDeHechos(pagina.getContent());
                         logger.info("Fuente {}: Procesada página {} con {} hechos.", tipoDeFuente, page, pagina.getNumberOfElements());
                     }
 
@@ -194,7 +219,8 @@ public class HechosService implements IHechosService {
 
     }
 
-    private void procesarLoteDeHechos(List<HechoFuenteDTO> dtos) {
+    @Transactional
+    public void procesarLoteDeHechos(List<HechoFuenteDTO> dtos) {
         if (dtos == null || dtos.isEmpty()) return;
 
         List<Fuente> fuentes = fuentesRepository.findAll();
@@ -302,19 +328,32 @@ public class HechosService implements IHechosService {
     // que devolvemos acá, ya que no sabemos si debería pertenecer a la colección.
     @Override
     public List<Hecho> actualizarListaConHechosMetamapa(List<Hecho> hechosLocales) {
-        Map<IdExterno, Hecho> hechosPorId = hechosLocales.stream()
-                .collect(Collectors.toMap(Hecho::getIdExterno, h -> h));
+        Function<Hecho, String> keyGenerator = h ->
+                // Ej: "PROXY_2_1005"
+                h.getOrigen() + "_" +
+                (h.getIdExterno().getFuente().getSubfuenteId() != null ? h.getIdExterno().getFuente().getSubfuenteId() : "0") +
+                "_" +
+                h.getIdExterno().getIdExterno();
+
+        Map<String, Hecho> hechosPorId = hechosLocales.stream()
+                .collect(Collectors.toMap(keyGenerator, h -> h));
 
         try {
-            List<Hecho> hechosMetaMapa = this.getFromMetaMapa();
+            List<IdExternoDTO> ids = hechosPorId.values().stream().map(
+                    h -> new IdExternoDTO(
+                            h.getIdExterno().getIdExterno(),
+                            h.getIdExterno().getFuente().getSubfuenteId()
+                    )).toList();
+            List<Hecho> hechosMetaMapa = this.getFromMetamapa(ids);
 
             for (Hecho hechoMetamapa : hechosMetaMapa) {
-                if (hechosPorId.containsKey(hechoMetamapa.getIdExterno())) {
-                    hechoMetamapa.setId(hechosPorId.get(hechoMetamapa.getIdExterno()).getId());
-                    hechosPorId.put(hechoMetamapa.getIdExterno(), hechoMetamapa);
+                String key = keyGenerator.apply(hechoMetamapa);
+                Hecho local = hechosPorId.get(key);
+                if (local != null) {
+                    modificarHecho(local, hechoMetamapa);
                 }
             }
-            return new ArrayList<>(hechosPorId.values());
+            return hechosLocales;
         } catch (WebClientException e) {
             logger.error("Error crítico al sincronizar hechos MetaMapa: {}", e.getMessage());
         }
@@ -322,22 +361,16 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public List<Hecho> getFromMetaMapa() {
-        return webApiCallerService
-                .getListWithAuth(
-                        webClients.get(TipoDeFuente.PROXY),
-                        "/api/hechos/metamapaInstance",
-                        null,
-                        HechoFuenteDTO.class
-                )
-                .stream()
-                .map(HechoFuenteDTO::toEntity)
-                .toList();
-    }
-
     public List<Hecho> getFromMetamapa(List<IdExternoDTO> idsExternos) {
         return webApiCallerService
-                .post()
+                .postListWithAuth(
+                        webClients.get(TipoDeFuente.PROXY),
+                        "/api/hechos/metamapa",
+                        idsExternos,
+                        HechoFuenteDTO.class
+                ).stream()
+                .map(HechoFuenteDTO::toEntity)
+                .toList();
     }
 
     private List<HechoFuenteDTO> getFromFuente(WebClient webClient, LocalDateTime desde) {
@@ -374,13 +407,19 @@ public class HechosService implements IHechosService {
         viejo.setTitulo(nuevo.getTitulo());
         viejo.setDescripcion(nuevo.getDescripcion());
         viejo.setCategoria(nuevo.getCategoria());
-        viejo.setContenidosMultimedia(nuevo.getContenidosMultimedia());
         viejo.setLugarAcontecimiento(nuevo.getLugarAcontecimiento());
-        viejo.setEtiquetas(nuevo.getEtiquetas());
         viejo.setFechaHecho(nuevo.getFechaHecho());
         viejo.setFechaUltimaActualizacion(LocalDateTime.now());
         viejo.setRevisado(nuevo.isRevisado());
         viejo.setDepartamento(nuevo.getDepartamento());
+
+        if (viejo.getEtiquetas() == null) viejo.setEtiquetas(new HashSet<>());
+        viejo.getEtiquetas().clear();
+        if (nuevo.getEtiquetas() != null) viejo.getEtiquetas().addAll(nuevo.getEtiquetas());
+
+        if (viejo.getContenidosMultimedia() == null) viejo.setContenidosMultimedia(new ArrayList<>());
+        viejo.getContenidosMultimedia().clear();
+        if (nuevo.getContenidosMultimedia() != null) viejo.getContenidosMultimedia().addAll(nuevo.getContenidosMultimedia());
     }
 
     //TODO: revisar si es funcional esto asincronico
@@ -425,11 +464,13 @@ public class HechosService implements IHechosService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Integer pedirCantidadDeHechosEnElSistema(){
         return hechosRepository.countByEliminadoFalse();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HechoOutputDTO buscarUltimoHechoCargado() {
         Hecho ultimoHecho = hechosRepository.findTopByOrderByFechaDeCargaDesc();
 
