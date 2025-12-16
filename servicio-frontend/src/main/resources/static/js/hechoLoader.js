@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://agregador-15-ma-ma.dds.apps.disilab.ar:8080/api';
 
 async function cargarHechos() {
     const BATCH_SIZE = 100;
