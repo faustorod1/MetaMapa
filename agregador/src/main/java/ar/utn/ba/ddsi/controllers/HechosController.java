@@ -34,21 +34,8 @@ public class HechosController {
     }
 
     @GetMapping
-    public Page<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable, @RequestParam(required = false) String filtrosJson) {
-        List<FiltroInputDTO> filtros = List.of();
-        if (filtrosJson != null && !filtrosJson.isEmpty()) {
-            ObjectMapper mapper = new ObjectMapper();
-
-            try {
-                filtros = mapper.readValue(
-                        filtrosJson,
-                        new TypeReference<List<FiltroInputDTO>>() {}
-                );
-            } catch (JsonProcessingException e) {
-                System.err.println("Error al deserializar filtros JSON: " + e.getMessage());
-            }
-        }
-        return this.hechosService.buscarTodos(parametros, pageable, filtros);
+    public Page<HechoOutputDTO> buscarTodos(@RequestParam Map<String, String> parametros, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return this.hechosService.buscarTodos(parametros, pageable);
     }
 
     @GetMapping("/preview")

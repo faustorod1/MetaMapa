@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IHechosService {
-    Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable, List<FiltroInputDTO> filtros);
+    Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable);
     HechoOutputDTO buscarHecho(Long id);
     HechoOutputDTO buscarHechoNoEliminado(Long id);
     Hecho obtenerPorId(Long id);

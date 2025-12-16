@@ -99,44 +99,18 @@ public class HechosService implements IHechosService {
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
-    public Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable, List<FiltroInputDTO> filtros) {
-
+    @Transactional(readOnly = true)
+    public Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable) {
         Specification<Hecho> spec = HechoSpecs.porFiltros(params);
-        Page<Hecho> paginaBD = hechosRepository.findAll(spec, pageable);
+        Page<Hecho> paginaLocal = hechosRepository.findAll(spec, pageable);
 
-        if (paginaBD.isEmpty()) {
+        if (paginaLocal.isEmpty()) {
             return Page.empty(pageable);
         }
 
-        List<Hecho> hechosDeLaPagina = new ArrayList<>(paginaBD.getContent());
-
+        List<Hecho> hechosDeLaPagina = new ArrayList<>(paginaLocal.getContent());
         List<Hecho> actualizadosConMetamapa = actualizarListaConHechosMetamapa(hechosDeLaPagina);
-
-        if (filtros != null && !filtros.isEmpty()) {
-
-            // 2a. Convertir DTOs de Filtro a entidades de Filtro
-            List<Filtro> instanciasDeFiltro = filtros.stream()
-                    .map(FiltroInputDTO::toEntity)
-                    .toList();
-
-            List<Hecho> hechosFiltradosEnMemoria = actualizadosConMetamapa;
-
-            // 2b. Aplicar cada filtro secuencialmente
-            for (Filtro filtro : instanciasDeFiltro) {
-                hechosFiltradosEnMemoria = filtro.aplicar(hechosFiltradosEnMemoria);
-                if (hechosFiltradosEnMemoria.isEmpty()) {
-                    break; // No hay más resultados, salir del bucle
-                }
-            }
-
-            actualizadosConMetamapa = hechosFiltradosEnMemoria;
-        }
-
-        Page<Hecho> paginaFinal = new PageImpl<>(
-                actualizadosConMetamapa,
-                pageable,
-                paginaBD.getTotalElements()
-        );
+        Page<Hecho> paginaFinal = new PageImpl<>(actualizadosConMetamapa, pageable, paginaLocal.getTotalElements());
 
         return paginaFinal.map(HechoOutputDTO::fromEntity);
     }

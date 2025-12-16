@@ -1,17 +1,20 @@
 const API_URL = 'https://agregador-15-ma-ma.dds.apps.disilab.ar/api';
 
-async function cargarHechos(filtros = []) {
+async function cargarHechos(filtros = {}) {
     const BATCH_SIZE = 100;
-    const BASE_URL = `${API_URL}/hechos`;
-    const filtrosJsonString = JSON.stringify(filtros);
+    const BASE_URL = `${API_URL}/hechos/preview`;
 
-    const filtrosCodificados = encodeURIComponent(filtrosJsonString);
+    const params = new URLSearchParams({
+        page: 0,
+        size: BATCH_SIZE,
+        ...filtros
+    });
 
     try {
         console.time("CargaCompleta");
 
         console.log("Iniciando carga inicial de hechos...");
-        const responsePagina0 = await fetch(`${BASE_URL}?page=0&size=${BATCH_SIZE}&filtrosJson=${filtrosCodificados}`);
+        const responsePagina0 = await fetch(`${BASE_URL}?${params.toString()}`);
 
         if (!responsePagina0.ok) throw new Error("Error cargando página 0");
 
@@ -27,7 +30,8 @@ async function cargarHechos(filtros = []) {
             const promesasRestantes = [];
 
             for (let i = 1; i < totalPages; i++) {
-                const promesa = fetch(`${BASE_URL}?page=${i}&size=${BATCH_SIZE}&filtrosJson=${filtrosCodificados}`)
+                params.set("page", i.toString());
+                const promesa = await fetch(`${BASE_URL}?${params.toString()}`)
                     .then(res => {
                         if (!res.ok) throw new Error(`Error en página ${i}`);
                         return res.json();
@@ -53,5 +57,18 @@ async function cargarHechos(filtros = []) {
     } catch (error) {
         console.error("Falló la descarga de hechos:", error);
         return [];
+    }
+}
+
+
+async function cargarHecho(id) {
+    const BASE_URL = `${API_URL}/hechos/`;
+
+    try {
+        const response = await fetch(BASE_URL + id);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(`Error al cargar datos del hecho ${id}:`, error);
     }
 }
