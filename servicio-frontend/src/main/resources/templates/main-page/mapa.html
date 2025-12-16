@@ -1,27 +1,29 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Mapa | METAmapa</title>
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/mapa.css}">
+
     <script src="https://kit.fontawesome.com/f5394feeef.js" crossorigin="anonymous"></script>
 
-    <script th:src="@{/js/hechoLoader.js}"></script>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 </head>
+
 <body>
-<div id="top-curtain"></div>
 
 <aside id="hecho-preview">
     <button class="btn-close" onclick="toggleHechoPreview(false)">
         <i class="fa-solid fa-xmark"></i>
     </button>
+
     <div class="data-container">
         <h3 id="hecho-preview__titulo"></h3>
         <p id="hecho-preview__categoria"></p>
@@ -29,54 +31,47 @@
         <p><b>Ubicación:</b> <span id="hecho-preview__ubicacion"></span></p>
         <p id="hecho-preview__descripcion"></p>
     </div>
-    <button id="hecho-preview__btn-sol-eliminacion" onclick="openCrearSolicitudEliminacion()" th:if="${session.role == 'CONTRIBUYENTE'}" >Solicitar Eliminación</button>
-    <button id="hecho-preview__btn-open-details" onclick="openDetalleHecho()">Ver detalles</button>
+
+    <button onclick="openDetalleHecho()">Ver detalles</button>
 </aside>
 
 <main>
     <div id="map"></div>
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar..." > <!--onfocus="openBuscador()"-->
-    </div>
 
-    <button class="btn-add" id="btn-add" onclick="onBtnAddClick(event)">
-        <i class="fa-solid fa-plus"></i>
-    </button>
+    <!-- FORMULARIO DE FILTROS -->
+    <form id="filtro-form">
 
-    <div id="btn-add-list">
-        <form th:action="@{/hechos/formulario-de-carga}" method="get" style="display:inline;">
-            <button class="btn-add" id="btn-add-hecho" title="Cargar hecho">
-                <i class="fa-solid fa-newspaper"></i>
-            </button>
-        </form>
+        <!-- BUSCADOR POR TITULO -->
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"
+                   id="filtro-titulo"
+                   placeholder="Buscar por título...">
+        </div>
 
-        <form th:action="@{/hechos/importarCSV}" method="get" style="display:inline;">
-            <button class="btn-add" id="btn-add-dataset" title="Importar DataSet" th:if="${session.role == 'ADMIN'}">
-                <i class="fa-solid fa-file-import"></i>
-            </button>
-        </form>
+        <!-- FILTRO POR CATEGORIA -->
+        <div class="search-bar">
+            <i class="fa-solid fa-tags"></i>
+            <select id="filtro-categoria">
+                <option value="">Todas las categorías</option>
+                <option th:each="cat : ${categorias}"
+                        th:value="${cat.nombre}"
+                        th:text="${cat.nombre}">
+                </option>
+            </select>
+        </div>
 
-        <form th:action="@{/colecciones/formulario-de-carga}" method="get" style="display:inline;">
-            <button class="btn-add" id="btn-add-coleccion" title="Crear colección" th:if="${session.role == 'ADMIN'}">
-                <i class="fa-solid fa-layer-group"></i>
-            </button>
-        </form>
-    </div>
+        <button type="submit" class="btn-filtrar">
+            Aplicar filtros
+        </button>
+    </form>
 </main>
 
-<!-- JSON de hechos embebido -->
-<script th:inline="javascript">
-    let hechos = [];
-    cargarHechos().then(hechosNuevos => {
-        hechos = hechosNuevos;
-        addHechoListToMap(hechos);
-    });
-    console.log("Hechos cargados desde el backend:", hechos);
-</script>
+<script th:src="@{/js/hechoLoader.js}"></script>
 
 <script>
     let hechoActual = null;
+    let hechos = [];
     let allMarkers = [];
     let markersLayer = L.markerClusterGroup();
 
@@ -90,43 +85,57 @@
         descripcion: document.getElementById('hecho-preview__descripcion'),
     };
 
-    // --- Logica del buscador ---
-    const searchInput = document.querySelector(".search-bar input");
+    // --- BUSCADORES ---
+    const filtroForm = document.getElementById('filtro-form');
+    const inputTitulo = document.getElementById('filtro-titulo');
+    const selectCategoria = document.getElementById('filtro-categoria');
 
-    function filtrarMapa() {
-        const textoBusqueda = searchInput.value.trim().toLowerCase();
+    filtroForm.addEventListener('submit', function (event) {
+        event.preventDefault();
 
-        // 1. Quitamos todos los marcadores del cluster
+        let filtros = [];
+
+        const titulo = inputTitulo.value.trim();
+        const categoria = selectCategoria.value;
+
+        // 🔍 Filtro por titulo (SIEMPRE)
+        if (titulo) {
+            filtros.push({
+                tipoDeFiltro: "titulo",
+                parametros: { titulo: titulo }
+            });
+        }
+
+        // 🏷 Filtro por categoria (SIEMPRE)
+        if (categoria) {
+            filtros.push({
+                tipoDeFiltro: "categoria",
+                parametros: { categoria: categoria }
+            });
+        }
+
+        cargarHechosYActualizarMapa(filtros);
+    });
+
+    function cargarHechosYActualizarMapa(filtros = []) {
         markersLayer.clearLayers();
+        allMarkers = [];
 
-        // 2. Filtramos la lista original 'allMarkers'
-        const marcadoresFiltrados = allMarkers.filter(marker => {
-            const hecho = marker.options.hecho; // Accedemos a la data guardada
-            const titulo = hecho.titulo?.toLowerCase() || "";
-            const descripcion = hecho.descripcion?.toLowerCase() || "";
-
-            return titulo.includes(textoBusqueda) || descripcion.includes(textoBusqueda);
+        cargarHechos(filtros).then(hechosNuevos => {
+            hechos = hechosNuevos;
+            addHechoListToMap(hechos);
         });
-
-        // 3. Agregamos al cluster SOLO los que coinciden
-        // (addLayers es mucho más rápido que agregar uno por uno)
-        markersLayer.addLayers(marcadoresFiltrados);
     }
 
-    searchInput.addEventListener('input', filtrarMapa);
+    /* ================= MAPA ================= */
 
-    // --- Fin de logica del buscador ---
-
-
-
-    // --- Inicializa el mapa ---
     const boundsArgentina = [
-        [-58.0, -80.0], // Esquina Sur-Oeste (Abajo a la izquierda, cubriendo Tierra del Fuego y Chile)
-        [-20.0, -50.0]  // Esquina Nor-Este (Arriba a la derecha, cubriendo Misiones, Uruguay, sur de Brasil)
+        [-58.0, -80.0],
+        [-20.0, -50.0]
     ];
 
     const map = L.map('map', {
-        center: [-38.4161, -63.6167], // Centro de Argentina
+        center: [-38.4161, -63.6167],
         zoom: 5,
         minZoom: 4,
         maxBounds: boundsArgentina,
@@ -142,6 +151,7 @@
 
     function addHechoListToMap(hechos) {
         if (!hechos || hechos.length === 0) return;
+
         let nuevosMarcadores = [];
 
         for (const hecho of hechos) {
@@ -168,8 +178,6 @@
         markersLayer.addLayers(nuevosMarcadores);
     }
 
-
-    // --- Interacción con el panel lateral ---
     function openHecho(hecho) {
         hechoActual = hecho;
         toggleHechoPreview(true);
@@ -178,7 +186,6 @@
         hechoPreview.categoria.textContent = hecho.categoria?.nombre || "Sin categoría";
         hechoPreview.fecha.textContent = hecho.fechaHecho ? hecho.fechaHecho.replace('T', ' ') : "Sin fecha";
 
-        // Mostrar departamento y provincia
         const depto = hecho.departamento?.nombre || "Desconocido";
         const prov = hecho.departamento?.provincia?.nombre || "Desconocida";
         hechoPreview.ubicacion.textContent = `${depto}, ${prov}`;
@@ -194,7 +201,6 @@
         openHecho(e.target.options.hecho);
     }
 
-    // --- Botones auxiliares ---
     function openDetalleHecho() {
         if (!hechoActual) return;
         window.location.href = `/hechos/detalle-hecho/${hechoActual.id}`;
@@ -205,20 +211,7 @@
         window.location.href = `/api/solicitudes/eliminacion/${hechoActual.id}`;
     }
 
-
-    function onBtnAddClick(e) {
-        const btn = e.currentTarget;
-        const active = !btn.classList.contains('active');
-        btn.classList.toggle('active', active);
-        const list = document.getElementById('btn-add-list');
-        list.classList.toggle('active', active);
-
-        if (active) { // Si debe mostrar los botones, actualiza sus variables de translate
-            list.querySelectorAll(".btn-add").forEach((btn, i) => {
-                btn.style.setProperty('--translation', `${-(i + 1) * 110}%`);
-            });
-        }
-    }
+    cargarHechosYActualizarMapa([]);
 </script>
 </body>
 </html>

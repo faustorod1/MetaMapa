@@ -1,14 +1,17 @@
 const API_URL = 'http://localhost:8080/api';
 
-async function cargarHechos() {
+async function cargarHechos(filtros = []) {
     const BATCH_SIZE = 100;
     const BASE_URL = `${API_URL}/hechos`;
+    const filtrosJsonString = JSON.stringify(filtros);
+
+    const filtrosCodificados = encodeURIComponent(filtrosJsonString);
 
     try {
         console.time("CargaCompleta");
 
         console.log("Iniciando carga inicial de hechos...");
-        const responsePagina0 = await fetch(`${BASE_URL}?page=0&size=${BATCH_SIZE}`);
+        const responsePagina0 = await fetch(`${BASE_URL}?page=0&size=${BATCH_SIZE}&filtrosJson=${filtrosCodificados}`);
 
         if (!responsePagina0.ok) throw new Error("Error cargando página 0");
 
@@ -24,7 +27,7 @@ async function cargarHechos() {
             const promesasRestantes = [];
 
             for (let i = 1; i < totalPages; i++) {
-                const promesa = fetch(`${BASE_URL}?page=${i}&size=${BATCH_SIZE}`)
+                const promesa = fetch(`${BASE_URL}?page=${i}&size=${BATCH_SIZE}&filtrosJson=${filtrosCodificados}`)
                     .then(res => {
                         if (!res.ok) throw new Error(`Error en página ${i}`);
                         return res.json();

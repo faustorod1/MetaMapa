@@ -6,9 +6,11 @@ import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestMultipleDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorefRequestDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.GeorreferenciacionDTO;
 import ar.utn.ba.ddsi.models.dtos.apigob.ResultadoGeoDTO;
+import ar.utn.ba.ddsi.models.dtos.input.FiltroInputDTO;
 import ar.utn.ba.ddsi.models.dtos.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.models.dtos.external.HechoFuenteDTO;
 import ar.utn.ba.ddsi.models.entities.*;
+import ar.utn.ba.ddsi.models.entities.filtros.Filtro;
 import ar.utn.ba.ddsi.models.entities.ubicacion.Departamento;
 import ar.utn.ba.ddsi.models.repositories.ICategoriaRepository;
 import ar.utn.ba.ddsi.models.repositories.IFuentesRepository;
@@ -82,18 +84,44 @@ public class HechosService implements IHechosService {
     // --- Métodos expuestos al controller -------------------------------------------------------------------------------
 
     @Override
-    public Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable) {
-        Specification<Hecho> spec = HechoSpecs.porFiltros(params);
-        Page<Hecho> paginaLocal = hechosRepository.findAll(spec, pageable);
+    public Page<HechoOutputDTO> buscarTodos(Map<String, String> params, Pageable pageable, List<FiltroInputDTO> filtros) {
 
-        if (paginaLocal.isEmpty()) {
+        Specification<Hecho> spec = HechoSpecs.porFiltros(params);
+        Page<Hecho> paginaBD = hechosRepository.findAll(spec, pageable);
+
+        if (paginaBD.isEmpty()) {
             return Page.empty(pageable);
         }
 
-        List<Hecho> hechosDeLaPagina = new ArrayList<>(paginaLocal.getContent());
+        List<Hecho> hechosDeLaPagina = new ArrayList<>(paginaBD.getContent());
+
         List<Hecho> actualizadosConMetamapa = actualizarListaConHechosMetamapa(hechosDeLaPagina);
 
-        Page<Hecho> paginaFinal = new PageImpl<>(actualizadosConMetamapa, pageable, paginaLocal.getTotalElements());
+        if (filtros != null && !filtros.isEmpty()) {
+
+            // 2a. Convertir DTOs de Filtro a entidades de Filtro
+            List<Filtro> instanciasDeFiltro = filtros.stream()
+                    .map(FiltroInputDTO::toEntity)
+                    .toList();
+
+            List<Hecho> hechosFiltradosEnMemoria = actualizadosConMetamapa;
+
+            // 2b. Aplicar cada filtro secuencialmente
+            for (Filtro filtro : instanciasDeFiltro) {
+                hechosFiltradosEnMemoria = filtro.aplicar(hechosFiltradosEnMemoria);
+                if (hechosFiltradosEnMemoria.isEmpty()) {
+                    break; // No hay más resultados, salir del bucle
+                }
+            }
+
+            actualizadosConMetamapa = hechosFiltradosEnMemoria;
+        }
+
+        Page<Hecho> paginaFinal = new PageImpl<>(
+                actualizadosConMetamapa,
+                pageable,
+                paginaBD.getTotalElements()
+        );
 
         return paginaFinal.map(HechoOutputDTO::fromEntity);
     }

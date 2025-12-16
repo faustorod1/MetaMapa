@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.controllers;
 
+import ar.utn.ba.ddsi.models.dto.input.CategoriaDTO;
 import ar.utn.ba.ddsi.models.dto.input.FuenteDTO;
 import ar.utn.ba.ddsi.models.dto.input.HechoDTO;
 import ar.utn.ba.ddsi.models.dto.input.SolicitudDeEliminacionDTO;
@@ -30,6 +31,8 @@ public class MainController {
   @GetMapping("mapa")
   public String mapa(Model model, RedirectAttributes redirectAttributes) {
     try{
+      List<CategoriaDTO> categorias = agregadorService.pedirCategorias();
+      model.addAttribute("categorias", categorias);
       return "main-page/mapa";
     } catch (Exception e) {
       return "redirect:/404";
