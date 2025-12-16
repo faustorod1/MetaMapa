@@ -4,6 +4,9 @@ import ar.utn.ba.ddsi.commons.CustomUserDetails;
 import ar.utn.ba.ddsi.models.dto.input.HechoInputDTO;
 import ar.utn.ba.ddsi.models.dto.output.HechoOutputDTO;
 import ar.utn.ba.ddsi.services.IHechosService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -25,8 +28,8 @@ public class  HechosController {
   }
 
   @GetMapping
-  public List<HechoOutputDTO> listarHechos() {
-    return hechosService.getAll_DTO();
+  public Page<HechoOutputDTO> listarHechos(@PageableDefault(size = 100, page = 0) Pageable pageable) {
+    return hechosService.getAll_DTO(pageable);
   }
 
   @GetMapping("/{id}")
@@ -40,8 +43,11 @@ public class  HechosController {
   }
 
   @GetMapping(params = "desde") // localhost:8082/api/hechos?desde=algo
-  public List<HechoOutputDTO> buscarTodosCargadosDesde(@RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde) {
-    return this.hechosService.getAllDesde_DTO(desde);
+  public Page<HechoOutputDTO> buscarTodosCargadosDesde(
+          @RequestParam("desde") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
+          @PageableDefault(size = 100, page = 0) Pageable pageable
+  ) {
+    return this.hechosService.getAllDesde_DTO(desde, pageable);
   }
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

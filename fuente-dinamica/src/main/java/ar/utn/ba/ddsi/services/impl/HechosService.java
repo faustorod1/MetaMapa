@@ -10,6 +10,8 @@ import ar.utn.ba.ddsi.services.IHechosService;
 // import ar.utn.ba.ddsi.services.internal.ImageUploaderService;
 import ar.utn.ba.ddsi.services.internal.ImageUploaderService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,12 +37,9 @@ public class HechosService implements IHechosService {
 
 
     @Override
-    public List<HechoOutputDTO> getAll_DTO() {
-        return hechosRepository
-                .findAll()
-                .stream()
-                .map(this::hechoToDTO)
-                .toList();
+    public Page<HechoOutputDTO> getAll_DTO(Pageable pageable) {
+        return hechosRepository.findAll(pageable)
+                .map(this::hechoToDTO);
     }
 
     @Override
@@ -59,13 +58,9 @@ public class HechosService implements IHechosService {
     }
 
     @Override
-    public List<HechoOutputDTO> getAllDesde_DTO(LocalDateTime desde) {
-        return hechosRepository
-                .findAll()
-                .stream()
-                .filter(hecho -> hecho.getFechaUltimaActualizacion().isAfter(desde))
-                .map(this::hechoToDTO)
-                .toList();
+    public Page<HechoOutputDTO> getAllDesde_DTO(LocalDateTime desde, Pageable pageable) {
+        return hechosRepository.findByFechaUltimaActualizacionAfter(desde, pageable)
+                .map(this::hechoToDTO);
     }
 
     @Override
