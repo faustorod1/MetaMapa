@@ -42,9 +42,6 @@ public class HechosService implements IHechosService {
     }
 
 
-
-
-
     //---- Conversiones DTO -------------------------------------------------------------------------------
 
     private HechoOutputDTO hechoOutputDTO(Hecho hecho) {

@@ -14,7 +14,9 @@ import java.util.UUID;
 public class CSVUploaderService {
     private final Cloudinary cloudinary;
 
-    public CSVUploaderService(@Autowired Cloudinary cloudinary) {this.cloudinary = cloudinary;}
+    public CSVUploaderService(@Autowired Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
 
     public Map uploadCsv(MultipartFile file) throws IOException {
         String originalName = file.getOriginalFilename();
