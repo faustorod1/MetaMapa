@@ -1,4 +1,4 @@
-# MetaMapa
+# MetaMapa: Sistema de gestión de mapeos colaborativos
 
 ## 📌 Project Overview
 MetaMapa is a web application designed to aggregate, visualize, and strategically manage nationwide events across Argentina. The platform serves as a centralized hub for large-scale geographic data, allowing users to access real-time insights through an interactive geographic interface.
