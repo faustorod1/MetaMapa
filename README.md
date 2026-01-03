@@ -32,7 +32,7 @@ The project implements a Layered Architecture (Controllers, Services, Domein Mod
 
 ## 📄 Documentation & Requirements
 Detailed project specifications, business rules, and functional requirements can be found in the dedicated documentation folder:
-[Project Specifications & Requirements](./docs/)
+[Project Specifications & Requirements](./docs/Specifications&Requirements)
 
 ----
 
