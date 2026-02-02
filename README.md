@@ -35,9 +35,7 @@ Detailed project specifications, business rules, and functional requirements can
 [Project Specifications & Requirements](./docs/Specifications&Requirements)
 
 ## 📸 Demo Showcase
-<video src="docs/carga-masiva-de-hechos-mediante-CSV.mp4" width="100%" controls>
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/a3cca4d8-9950-41b8-9f51-a1872bde6fe3
 
 ## ⚠️ This project template is designed for:
 
