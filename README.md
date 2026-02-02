@@ -38,7 +38,6 @@ Detailed project specifications, business rules, and functional requirements can
 <video src="docs/carga-masiva-de-hechos-mediante-CSV.mp4" width="100%" controls>
   Your browser does not support the video tag.
 </video>
-----
 
 ## ⚠️ This project template is designed for:
 
